@@ -18,10 +18,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/stainless-sdks/llama-stack-client-go/internal"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/apierror"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/apiform"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/apiquery"
+	"github.com/llamastack/llama-stack-client-go/internal"
+	"github.com/llamastack/llama-stack-client-go/internal/apierror"
+	"github.com/llamastack/llama-stack-client-go/internal/apiform"
+	"github.com/llamastack/llama-stack-client-go/internal/apiquery"
 )
 
 func getDefaultHeaders() map[string]string {

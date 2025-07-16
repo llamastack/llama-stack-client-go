@@ -3,7 +3,7 @@ package param
 import (
 	"encoding/json"
 	"fmt"
-	shimjson "github.com/stainless-sdks/llama-stack-client-go/internal/encoding/json"
+	shimjson "github.com/llamastack/llama-stack-client-go/internal/encoding/json"
 	"time"
 )
 

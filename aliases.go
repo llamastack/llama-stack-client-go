@@ -3,9 +3,9 @@
 package llamastackclient
 
 import (
-	"github.com/stainless-sdks/llama-stack-client-go/internal/apierror"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/param"
-	"github.com/stainless-sdks/llama-stack-client-go/shared"
+	"github.com/llamastack/llama-stack-client-go/internal/apierror"
+	"github.com/llamastack/llama-stack-client-go/packages/param"
+	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
 // aliased to make [param.APIUnion] private when embedding
