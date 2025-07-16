@@ -6,7 +6,7 @@ import (
 	"reflect"
 	"time"
 
-	shimjson "github.com/stainless-sdks/llama-stack-client-go/internal/encoding/json"
+	shimjson "github.com/llamastack/llama-stack-client-go/internal/encoding/json"
 
 	"github.com/tidwall/sjson"
 )

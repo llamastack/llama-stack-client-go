@@ -1,8 +1,8 @@
 package paramutil
 
 import (
-	"github.com/stainless-sdks/llama-stack-client-go/packages/param"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/respjson"
+	"github.com/llamastack/llama-stack-client-go/packages/param"
+	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 )
 
 func AddrIfPresent[T comparable](v param.Opt[T]) *T {
