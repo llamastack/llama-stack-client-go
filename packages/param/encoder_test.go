@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stainless-sdks/llama-stack-client-go/packages/param"
+	"github.com/llamastack/llama-stack-client-go/packages/param"
 )
 
 type Struct struct {
