@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/stainless-sdks/llama-stack-client-go/internal/requestconfig"
-	"github.com/stainless-sdks/llama-stack-client-go/option"
+	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
+	"github.com/llamastack/llama-stack-client-go/option"
 )
 
 // EvalJobService contains methods and other services that help with interacting

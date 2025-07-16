@@ -8,10 +8,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/llama-stack-client-go"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/testutil"
-	"github.com/stainless-sdks/llama-stack-client-go/option"
-	"github.com/stainless-sdks/llama-stack-client-go/shared"
+	"github.com/llamastack/llama-stack-client-go"
+	"github.com/llamastack/llama-stack-client-go/internal/testutil"
+	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
 func TestScoringFunctionGet(t *testing.T) {

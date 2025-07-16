@@ -1,4 +1,4 @@
-module github.com/stainless-sdks/llama-stack-client-go
+module github.com/llamastack/llama-stack-client-go
 
 go 1.21
 
