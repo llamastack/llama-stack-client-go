@@ -1,7 +1,7 @@
 package llamastackclient
 
 import (
-	"github.com/stainless-sdks/llama-stack-client-go/packages/param"
+	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"io"
 	"time"
 )
