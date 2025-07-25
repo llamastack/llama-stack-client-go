@@ -5,11 +5,11 @@ package shared
 import (
 	"encoding/json"
 
-	"github.com/stainless-sdks/llama-stack-client-go"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/apijson"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/param"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/respjson"
-	"github.com/stainless-sdks/llama-stack-client-go/shared/constant"
+	"github.com/llamastack/llama-stack-client-go"
+	"github.com/llamastack/llama-stack-client-go/internal/apijson"
+	"github.com/llamastack/llama-stack-client-go/packages/param"
+	"github.com/llamastack/llama-stack-client-go/packages/respjson"
+	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
 // aliased to make [param.APIUnion] private when embedding

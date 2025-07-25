@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/stainless-sdks/llama-stack-client-go/internal/requestconfig"
-	"github.com/stainless-sdks/llama-stack-client-go/option"
+	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
+	"github.com/llamastack/llama-stack-client-go/option"
 )
 
 // Client creates a struct with services and top level methods that help with

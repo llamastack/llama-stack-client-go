@@ -2,8 +2,8 @@ package apijson_test
 
 import (
 	"encoding/json"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/apijson"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/respjson"
+	"github.com/llamastack/llama-stack-client-go/internal/apijson"
+	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 	"testing"
 )
 

@@ -11,10 +11,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stainless-sdks/llama-stack-client-go"
-	"github.com/stainless-sdks/llama-stack-client-go/internal"
-	"github.com/stainless-sdks/llama-stack-client-go/option"
-	"github.com/stainless-sdks/llama-stack-client-go/shared"
+	"github.com/llamastack/llama-stack-client-go"
+	"github.com/llamastack/llama-stack-client-go/internal"
+	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
 type closureTransport struct {
