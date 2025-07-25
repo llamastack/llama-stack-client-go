@@ -51,6 +51,9 @@ func (r *InferenceService) BatchCompletion(ctx context.Context, body InferenceBa
 }
 
 // Generate a chat completion for the given messages using the specified model.
+//
+// Deprecated: chat_completion is deprecated. Please use
+// /v1/openai/v1/chat/completions.
 func (r *InferenceService) ChatCompletion(ctx context.Context, body InferenceChatCompletionParams, opts ...option.RequestOption) (res *shared.ChatCompletionResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "v1/inference/chat-completion"
@@ -59,6 +62,9 @@ func (r *InferenceService) ChatCompletion(ctx context.Context, body InferenceCha
 }
 
 // Generate a chat completion for the given messages using the specified model.
+//
+// Deprecated: chat_completion is deprecated. Please use
+// /v1/openai/v1/chat/completions.
 func (r *InferenceService) ChatCompletionStreaming(ctx context.Context, body InferenceChatCompletionParams, opts ...option.RequestOption) (stream *ssestream.Stream[ChatCompletionResponseStreamChunk]) {
 	var (
 		raw *http.Response
@@ -72,6 +78,9 @@ func (r *InferenceService) ChatCompletionStreaming(ctx context.Context, body Inf
 }
 
 // Generate a completion for the given content using the specified model.
+//
+// Deprecated: /v1/inference/completion is deprecated. Please use
+// /v1/openai/v1/completions.
 func (r *InferenceService) Completion(ctx context.Context, body InferenceCompletionParams, opts ...option.RequestOption) (res *CompletionResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "v1/inference/completion"
@@ -80,6 +89,9 @@ func (r *InferenceService) Completion(ctx context.Context, body InferenceComplet
 }
 
 // Generate a completion for the given content using the specified model.
+//
+// Deprecated: /v1/inference/completion is deprecated. Please use
+// /v1/openai/v1/completions.
 func (r *InferenceService) CompletionStreaming(ctx context.Context, body InferenceCompletionParams, opts ...option.RequestOption) (stream *ssestream.Stream[CompletionResponse]) {
 	var (
 		raw *http.Response
@@ -93,6 +105,9 @@ func (r *InferenceService) CompletionStreaming(ctx context.Context, body Inferen
 }
 
 // Generate embeddings for content pieces using the specified model.
+//
+// Deprecated: /v1/inference/embeddings is deprecated. Please use
+// /v1/openai/v1/embeddings.
 func (r *InferenceService) Embeddings(ctx context.Context, body InferenceEmbeddingsParams, opts ...option.RequestOption) (res *EmbeddingsResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "v1/inference/embeddings"
