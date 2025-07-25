@@ -52,7 +52,7 @@ func (r *InferenceService) BatchCompletion(ctx context.Context, body InferenceBa
 
 // Generate a chat completion for the given messages using the specified model.
 //
-// Deprecated: chat_completion is deprecated. Please use
+// Deprecated: /v1/inference/chat-completion is deprecated. Please use
 // /v1/openai/v1/chat/completions.
 func (r *InferenceService) ChatCompletion(ctx context.Context, body InferenceChatCompletionParams, opts ...option.RequestOption) (res *shared.ChatCompletionResponse, err error) {
 	opts = append(r.Options[:], opts...)
@@ -63,7 +63,7 @@ func (r *InferenceService) ChatCompletion(ctx context.Context, body InferenceCha
 
 // Generate a chat completion for the given messages using the specified model.
 //
-// Deprecated: chat_completion is deprecated. Please use
+// Deprecated: /v1/inference/chat-completion is deprecated. Please use
 // /v1/openai/v1/chat/completions.
 func (r *InferenceService) ChatCompletionStreaming(ctx context.Context, body InferenceChatCompletionParams, opts ...option.RequestOption) (stream *ssestream.Stream[ChatCompletionResponseStreamChunk]) {
 	var (
