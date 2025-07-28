@@ -287,12 +287,11 @@ func (r *PostTrainingPreferenceOptimizeParams) UnmarshalJSON(data []byte) error 
 
 // The algorithm configuration.
 //
-// The properties Epsilon, Gamma, RewardClip, RewardScale are required.
+// The properties Beta, LossType are required.
 type PostTrainingPreferenceOptimizeParamsAlgorithmConfig struct {
-	Epsilon     float64 `json:"epsilon,required"`
-	Gamma       float64 `json:"gamma,required"`
-	RewardClip  float64 `json:"reward_clip,required"`
-	RewardScale float64 `json:"reward_scale,required"`
+	Beta float64 `json:"beta,required"`
+	// Any of "sigmoid", "hinge", "ipo", "kto_pair".
+	LossType string `json:"loss_type,omitzero,required"`
 	paramObj
 }
 
@@ -302,6 +301,12 @@ func (r PostTrainingPreferenceOptimizeParamsAlgorithmConfig) MarshalJSON() (data
 }
 func (r *PostTrainingPreferenceOptimizeParamsAlgorithmConfig) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[PostTrainingPreferenceOptimizeParamsAlgorithmConfig](
+		"loss_type", "sigmoid", "hinge", "ipo", "kto_pair",
+	)
 }
 
 // Only one field can be non-zero.

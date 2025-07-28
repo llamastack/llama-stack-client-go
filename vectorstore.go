@@ -429,12 +429,12 @@ func (r *VectorStoreSearchResponseDataAttributeUnion) UnmarshalJSON(data []byte)
 }
 
 type VectorStoreNewParams struct {
-	// A name for the vector store.
-	Name string `json:"name,required"`
 	// The dimension of the embedding vectors (default: 384).
 	EmbeddingDimension param.Opt[int64] `json:"embedding_dimension,omitzero"`
 	// The embedding model to use for this vector store.
 	EmbeddingModel param.Opt[string] `json:"embedding_model,omitzero"`
+	// A name for the vector store.
+	Name param.Opt[string] `json:"name,omitzero"`
 	// The ID of the provider to use for this vector store.
 	ProviderID param.Opt[string] `json:"provider_id,omitzero"`
 	// The chunking strategy used to chunk the file(s). If not set, will use the `auto`
