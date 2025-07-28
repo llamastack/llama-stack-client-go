@@ -26,10 +26,8 @@ func TestPostTrainingPreferenceOptimizeWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.PostTraining.PreferenceOptimize(context.TODO(), llamastackclient.PostTrainingPreferenceOptimizeParams{
 		AlgorithmConfig: llamastackclient.PostTrainingPreferenceOptimizeParamsAlgorithmConfig{
-			Epsilon:     0,
-			Gamma:       0,
-			RewardClip:  0,
-			RewardScale: 0,
+			Beta:     0,
+			LossType: "sigmoid",
 		},
 		FinetunedModel: "finetuned_model",
 		HyperparamSearchConfig: map[string]llamastackclient.PostTrainingPreferenceOptimizeParamsHyperparamSearchConfigUnion{
