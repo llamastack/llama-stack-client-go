@@ -44,8 +44,7 @@ func TestVectorStoreNewWithOptionalParams(t *testing.T) {
 				OfBool: llamastackclient.Bool(true),
 			},
 		},
-		ProviderID:         llamastackclient.String("provider_id"),
-		ProviderVectorDBID: llamastackclient.String("provider_vector_db_id"),
+		ProviderID: llamastackclient.String("provider_id"),
 	})
 	if err != nil {
 		var apierr *llamastackclient.Error
