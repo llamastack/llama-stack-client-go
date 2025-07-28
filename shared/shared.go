@@ -1712,7 +1712,9 @@ type QueryConfigParam struct {
 	QueryGeneratorConfig QueryGeneratorConfigUnionParam `json:"query_generator_config,omitzero,required"`
 	// Search mode for retrieval—either "vector", "keyword", or "hybrid". Default
 	// "vector".
-	Mode param.Opt[string] `json:"mode,omitzero"`
+	//
+	// Any of "vector", "keyword", "hybrid".
+	Mode QueryConfigMode `json:"mode,omitzero"`
 	// Configuration for the ranker to use in hybrid search. Defaults to RRF ranker.
 	Ranker QueryConfigRankerUnionParam `json:"ranker,omitzero"`
 	paramObj
@@ -1725,6 +1727,16 @@ func (r QueryConfigParam) MarshalJSON() (data []byte, err error) {
 func (r *QueryConfigParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+// Search mode for retrieval—either "vector", "keyword", or "hybrid". Default
+// "vector".
+type QueryConfigMode string
+
+const (
+	QueryConfigModeVector  QueryConfigMode = "vector"
+	QueryConfigModeKeyword QueryConfigMode = "keyword"
+	QueryConfigModeHybrid  QueryConfigMode = "hybrid"
+)
 
 // Only one field can be non-zero.
 //

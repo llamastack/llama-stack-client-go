@@ -75,7 +75,7 @@ func TestToolRuntimeRagToolQueryWithOptionalParams(t *testing.T) {
 					Separator: "separator",
 				},
 			},
-			Mode: llamastackclient.String("mode"),
+			Mode: shared.QueryConfigModeVector,
 			Ranker: shared.QueryConfigRankerUnionParam{
 				OfRrf: &shared.QueryConfigRankerRrfParam{
 					ImpactFactor: 0,

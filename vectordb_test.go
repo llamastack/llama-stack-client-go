@@ -72,6 +72,7 @@ func TestVectorDBRegisterWithOptionalParams(t *testing.T) {
 		EmbeddingDimension: llamastackclient.Int(0),
 		ProviderID:         llamastackclient.String("provider_id"),
 		ProviderVectorDBID: llamastackclient.String("provider_vector_db_id"),
+		VectorDBName:       llamastackclient.String("vector_db_name"),
 	})
 	if err != nil {
 		var apierr *llamastackclient.Error
