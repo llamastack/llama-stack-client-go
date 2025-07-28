@@ -287,6 +287,21 @@ type MessageUnionParam = shared.MessageUnionParam
 // This is an alias to an internal type.
 type QueryConfigParam = shared.QueryConfigParam
 
+// Search mode for retrieval—either "vector", "keyword", or "hybrid". Default
+// "vector".
+//
+// This is an alias to an internal type.
+type QueryConfigMode = shared.QueryConfigMode
+
+// Equals "vector"
+const QueryConfigModeVector = shared.QueryConfigModeVector
+
+// Equals "keyword"
+const QueryConfigModeKeyword = shared.QueryConfigModeKeyword
+
+// Equals "hybrid"
+const QueryConfigModeHybrid = shared.QueryConfigModeHybrid
+
 // Configuration for the ranker to use in hybrid search. Defaults to RRF ranker.
 //
 // This is an alias to an internal type.

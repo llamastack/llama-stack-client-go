@@ -104,6 +104,7 @@ type ListVectorDBsResponseData struct {
 	ProviderID         string            `json:"provider_id,required"`
 	Type               constant.VectorDB `json:"type,required"`
 	ProviderResourceID string            `json:"provider_resource_id"`
+	VectorDBName       string            `json:"vector_db_name"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		EmbeddingDimension respjson.Field
@@ -112,6 +113,7 @@ type ListVectorDBsResponseData struct {
 		ProviderID         respjson.Field
 		Type               respjson.Field
 		ProviderResourceID respjson.Field
+		VectorDBName       respjson.Field
 		ExtraFields        map[string]respjson.Field
 		raw                string
 	} `json:"-"`
@@ -130,6 +132,7 @@ type VectorDBGetResponse struct {
 	ProviderID         string            `json:"provider_id,required"`
 	Type               constant.VectorDB `json:"type,required"`
 	ProviderResourceID string            `json:"provider_resource_id"`
+	VectorDBName       string            `json:"vector_db_name"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		EmbeddingDimension respjson.Field
@@ -138,6 +141,7 @@ type VectorDBGetResponse struct {
 		ProviderID         respjson.Field
 		Type               respjson.Field
 		ProviderResourceID respjson.Field
+		VectorDBName       respjson.Field
 		ExtraFields        map[string]respjson.Field
 		raw                string
 	} `json:"-"`
@@ -156,6 +160,7 @@ type VectorDBRegisterResponse struct {
 	ProviderID         string            `json:"provider_id,required"`
 	Type               constant.VectorDB `json:"type,required"`
 	ProviderResourceID string            `json:"provider_resource_id"`
+	VectorDBName       string            `json:"vector_db_name"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		EmbeddingDimension respjson.Field
@@ -164,6 +169,7 @@ type VectorDBRegisterResponse struct {
 		ProviderID         respjson.Field
 		Type               respjson.Field
 		ProviderResourceID respjson.Field
+		VectorDBName       respjson.Field
 		ExtraFields        map[string]respjson.Field
 		raw                string
 	} `json:"-"`
@@ -186,6 +192,8 @@ type VectorDBRegisterParams struct {
 	ProviderID param.Opt[string] `json:"provider_id,omitzero"`
 	// The identifier of the vector database in the provider.
 	ProviderVectorDBID param.Opt[string] `json:"provider_vector_db_id,omitzero"`
+	// The name of the vector database.
+	VectorDBName param.Opt[string] `json:"vector_db_name,omitzero"`
 	paramObj
 }
 

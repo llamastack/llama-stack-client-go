@@ -437,8 +437,6 @@ type VectorStoreNewParams struct {
 	EmbeddingModel param.Opt[string] `json:"embedding_model,omitzero"`
 	// The ID of the provider to use for this vector store.
 	ProviderID param.Opt[string] `json:"provider_id,omitzero"`
-	// The provider-specific vector database ID.
-	ProviderVectorDBID param.Opt[string] `json:"provider_vector_db_id,omitzero"`
 	// The chunking strategy used to chunk the file(s). If not set, will use the `auto`
 	// strategy.
 	ChunkingStrategy map[string]VectorStoreNewParamsChunkingStrategyUnion `json:"chunking_strategy,omitzero"`
