@@ -114,11 +114,16 @@ func (r *ChatCompletionChunkChoiceDelta) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Tool call specification for OpenAI-compatible chat completion responses.
 type ChatCompletionChunkChoiceDeltaToolCall struct {
-	Type     constant.Function                              `json:"type,required"`
-	ID       string                                         `json:"id"`
+	// Must be "function" to identify this as a function call
+	Type constant.Function `json:"type,required"`
+	// (Optional) Unique identifier for the tool call
+	ID string `json:"id"`
+	// (Optional) Function call details
 	Function ChatCompletionChunkChoiceDeltaToolCallFunction `json:"function"`
-	Index    int64                                          `json:"index"`
+	// (Optional) Index of the tool call in the list
+	Index int64 `json:"index"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Type        respjson.Field
@@ -136,9 +141,12 @@ func (r *ChatCompletionChunkChoiceDeltaToolCall) UnmarshalJSON(data []byte) erro
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// (Optional) Function call details
 type ChatCompletionChunkChoiceDeltaToolCallFunction struct {
+	// (Optional) Arguments to pass to the function as a JSON string
 	Arguments string `json:"arguments"`
-	Name      string `json:"name"`
+	// (Optional) Name of the function to call
+	Name string `json:"name"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments   respjson.Field

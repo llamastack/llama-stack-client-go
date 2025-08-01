@@ -32,7 +32,7 @@ func NewInspectService(opts ...option.RequestOption) (r InspectService) {
 	return
 }
 
-// Get the health of the service.
+// Get the current health status of the service.
 func (r *InspectService) Health(ctx context.Context, opts ...option.RequestOption) (res *HealthInfo, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "v1/health"
@@ -48,7 +48,10 @@ func (r *InspectService) Version(ctx context.Context, opts ...option.RequestOpti
 	return
 }
 
+// Health status information for the service.
 type HealthInfo struct {
+	// Current health status of the service
+	//
 	// Any of "OK", "Error", "Not Implemented".
 	Status HealthInfoStatus `json:"status,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -65,6 +68,7 @@ func (r *HealthInfo) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Current health status of the service
 type HealthInfoStatus string
 
 const (
@@ -73,12 +77,19 @@ const (
 	HealthInfoStatusNotImplemented HealthInfoStatus = "Not Implemented"
 )
 
+// Information about a registered provider including its configuration and health
+// status.
 type ProviderInfo struct {
-	API          string                             `json:"api,required"`
-	Config       map[string]ProviderInfoConfigUnion `json:"config,required"`
-	Health       map[string]ProviderInfoHealthUnion `json:"health,required"`
-	ProviderID   string                             `json:"provider_id,required"`
-	ProviderType string                             `json:"provider_type,required"`
+	// The API name this provider implements
+	API string `json:"api,required"`
+	// Configuration parameters for the provider
+	Config map[string]ProviderInfoConfigUnion `json:"config,required"`
+	// Current health status of the provider
+	Health map[string]ProviderInfoHealthUnion `json:"health,required"`
+	// Unique identifier for the provider
+	ProviderID string `json:"provider_id,required"`
+	// The type of provider implementation
+	ProviderType string `json:"provider_type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		API          respjson.Field
@@ -201,10 +212,15 @@ func (r *ProviderInfoHealthUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Information about an API route including its path, method, and implementing
+// providers.
 type RouteInfo struct {
-	Method        string   `json:"method,required"`
+	// HTTP method for the route
+	Method string `json:"method,required"`
+	// List of provider types that implement this route
 	ProviderTypes []string `json:"provider_types,required"`
-	Route         string   `json:"route,required"`
+	// The API endpoint path
+	Route string `json:"route,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Method        respjson.Field
@@ -221,7 +237,9 @@ func (r *RouteInfo) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Version information for the service.
 type VersionInfo struct {
+	// Version number of the service
 	Version string `json:"version,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {

@@ -84,6 +84,8 @@ type AgentConfigToolgroupAgentToolGroupWithArgsParam = shared.AgentConfigToolgro
 // This is an alias to an internal type.
 type AgentConfigToolgroupAgentToolGroupWithArgsArgUnionParam = shared.AgentConfigToolgroupAgentToolGroupWithArgsArgUnionParam
 
+// Response from a batch completion request.
+//
 // This is an alias to an internal type.
 type BatchCompletion = shared.BatchCompletion
 
@@ -92,6 +94,8 @@ type BatchCompletion = shared.BatchCompletion
 // This is an alias to an internal type.
 type ChatCompletionResponse = shared.ChatCompletionResponse
 
+// A metric value included in API responses.
+//
 // This is an alias to an internal type.
 type ChatCompletionResponseMetric = shared.ChatCompletionResponseMetric
 
@@ -124,15 +128,23 @@ const CompletionMessageStopReasonOutOfTokens = shared.CompletionMessageStopReaso
 // This is an alias to an internal type.
 type CompletionMessageParam = shared.CompletionMessageParam
 
+// A text content delta for streaming responses.
+//
 // This is an alias to an internal type.
 type ContentDeltaUnion = shared.ContentDeltaUnion
 
+// A text content delta for streaming responses.
+//
 // This is an alias to an internal type.
 type ContentDeltaText = shared.ContentDeltaText
 
+// An image content delta for streaming responses.
+//
 // This is an alias to an internal type.
 type ContentDeltaImage = shared.ContentDeltaImage
 
+// A tool call content delta for streaming responses.
+//
 // This is an alias to an internal type.
 type ContentDeltaToolCall = shared.ContentDeltaToolCall
 
@@ -167,6 +179,8 @@ type DocumentContentImageContentItemImageURLParam = shared.DocumentContentImageC
 // This is an alias to an internal type.
 type DocumentContentTextContentItemParam = shared.DocumentContentTextContentItemParam
 
+// A URL reference to external content.
+//
 // This is an alias to an internal type.
 type DocumentContentURLParam = shared.DocumentContentURLParam
 
@@ -317,15 +331,23 @@ type QueryConfigRankerRrfParam = shared.QueryConfigRankerRrfParam
 // This is an alias to an internal type.
 type QueryConfigRankerWeightedParam = shared.QueryConfigRankerWeightedParam
 
+// Configuration for the default RAG query generator.
+//
 // This is an alias to an internal type.
 type QueryGeneratorConfigUnionParam = shared.QueryGeneratorConfigUnionParam
 
+// Configuration for the default RAG query generator.
+//
 // This is an alias to an internal type.
 type QueryGeneratorConfigDefaultParam = shared.QueryGeneratorConfigDefaultParam
 
+// Configuration for the LLM-based RAG query generator.
+//
 // This is an alias to an internal type.
 type QueryGeneratorConfigLlmParam = shared.QueryGeneratorConfigLlmParam
 
+// Result of a RAG query containing retrieved content and metadata.
+//
 // This is an alias to an internal type.
 type QueryResult = shared.QueryResult
 
@@ -413,12 +435,16 @@ const ReturnTypeTypeAgentTurnInput = shared.ReturnTypeTypeAgentTurnInput
 // This is an alias to an internal type.
 type ReturnTypeParam = shared.ReturnTypeParam
 
+// Details of a safety violation detected by content moderation.
+//
 // This is an alias to an internal type.
 type SafetyViolation = shared.SafetyViolation
 
 // This is an alias to an internal type.
 type SafetyViolationMetadataUnion = shared.SafetyViolationMetadataUnion
 
+// Severity level of the violation
+//
 // This is an alias to an internal type.
 type SafetyViolationViolationLevel = shared.SafetyViolationViolationLevel
 
@@ -441,12 +467,20 @@ type SamplingParamsResp = shared.SamplingParamsResp
 // This is an alias to an internal type.
 type SamplingParamsStrategyUnionResp = shared.SamplingParamsStrategyUnionResp
 
+// Greedy sampling strategy that selects the highest probability token at each
+// step.
+//
 // This is an alias to an internal type.
 type SamplingParamsStrategyGreedyResp = shared.SamplingParamsStrategyGreedyResp
 
+// Top-p (nucleus) sampling strategy that samples from the smallest set of tokens
+// with cumulative probability >= p.
+//
 // This is an alias to an internal type.
 type SamplingParamsStrategyTopPResp = shared.SamplingParamsStrategyTopPResp
 
+// Top-k sampling strategy that restricts sampling to the k most likely tokens.
+//
 // This is an alias to an internal type.
 type SamplingParamsStrategyTopKResp = shared.SamplingParamsStrategyTopKResp
 
@@ -460,12 +494,20 @@ type SamplingParams = shared.SamplingParams
 // This is an alias to an internal type.
 type SamplingParamsStrategyUnion = shared.SamplingParamsStrategyUnion
 
+// Greedy sampling strategy that selects the highest probability token at each
+// step.
+//
 // This is an alias to an internal type.
 type SamplingParamsStrategyGreedy = shared.SamplingParamsStrategyGreedy
 
+// Top-p (nucleus) sampling strategy that samples from the smallest set of tokens
+// with cumulative probability >= p.
+//
 // This is an alias to an internal type.
 type SamplingParamsStrategyTopP = shared.SamplingParamsStrategyTopP
 
+// Top-k sampling strategy that restricts sampling to the k most likely tokens.
+//
 // This is an alias to an internal type.
 type SamplingParamsStrategyTopK = shared.SamplingParamsStrategyTopK
 
@@ -530,6 +572,8 @@ type ToolCallArgumentsMapItemArrayItemUnionParam = shared.ToolCallArgumentsMapIt
 // This is an alias to an internal type.
 type ToolCallArgumentsMapItemMapItemUnionParam = shared.ToolCallArgumentsMapItemMapItemUnionParam
 
+// Either an in-progress tool call string or the final parsed tool call
+//
 // This is an alias to an internal type.
 type ToolCallOrStringUnion = shared.ToolCallOrStringUnion
 

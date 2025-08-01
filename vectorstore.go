@@ -107,11 +107,16 @@ func (r *VectorStoreService) Search(ctx context.Context, vectorStoreID string, b
 
 // Response from listing vector stores.
 type ListVectorStoresResponse struct {
-	Data    []VectorStore `json:"data,required"`
-	HasMore bool          `json:"has_more,required"`
-	Object  string        `json:"object,required"`
-	FirstID string        `json:"first_id"`
-	LastID  string        `json:"last_id"`
+	// List of vector store objects
+	Data []VectorStore `json:"data,required"`
+	// Whether there are more vector stores available beyond this page
+	HasMore bool `json:"has_more,required"`
+	// Object type identifier, always "list"
+	Object string `json:"object,required"`
+	// (Optional) ID of the first vector store in the list for pagination
+	FirstID string `json:"first_id"`
+	// (Optional) ID of the last vector store in the list for pagination
+	LastID string `json:"last_id"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -132,17 +137,28 @@ func (r *ListVectorStoresResponse) UnmarshalJSON(data []byte) error {
 
 // OpenAI Vector Store object.
 type VectorStore struct {
-	ID           string                                  `json:"id,required"`
-	CreatedAt    int64                                   `json:"created_at,required"`
-	FileCounts   VectorStoreFileCounts                   `json:"file_counts,required"`
-	Metadata     map[string]VectorStoreMetadataUnion     `json:"metadata,required"`
-	Object       string                                  `json:"object,required"`
-	Status       string                                  `json:"status,required"`
-	UsageBytes   int64                                   `json:"usage_bytes,required"`
+	// Unique identifier for the vector store
+	ID string `json:"id,required"`
+	// Timestamp when the vector store was created
+	CreatedAt int64 `json:"created_at,required"`
+	// File processing status counts for the vector store
+	FileCounts VectorStoreFileCounts `json:"file_counts,required"`
+	// Set of key-value pairs that can be attached to the vector store
+	Metadata map[string]VectorStoreMetadataUnion `json:"metadata,required"`
+	// Object type identifier, always "vector_store"
+	Object string `json:"object,required"`
+	// Current status of the vector store
+	Status string `json:"status,required"`
+	// Storage space used by the vector store in bytes
+	UsageBytes int64 `json:"usage_bytes,required"`
+	// (Optional) Expiration policy for the vector store
 	ExpiresAfter map[string]VectorStoreExpiresAfterUnion `json:"expires_after"`
-	ExpiresAt    int64                                   `json:"expires_at"`
-	LastActiveAt int64                                   `json:"last_active_at"`
-	Name         string                                  `json:"name"`
+	// (Optional) Timestamp when the vector store will expire
+	ExpiresAt int64 `json:"expires_at"`
+	// (Optional) Timestamp of last activity on the vector store
+	LastActiveAt int64 `json:"last_active_at"`
+	// (Optional) Name of the vector store
+	Name string `json:"name"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID           respjson.Field
@@ -167,12 +183,18 @@ func (r *VectorStore) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// File processing status counts for the vector store
 type VectorStoreFileCounts struct {
-	Cancelled  int64 `json:"cancelled,required"`
-	Completed  int64 `json:"completed,required"`
-	Failed     int64 `json:"failed,required"`
+	// Number of files that had their processing cancelled
+	Cancelled int64 `json:"cancelled,required"`
+	// Number of files that have been successfully processed
+	Completed int64 `json:"completed,required"`
+	// Number of files that failed to process
+	Failed int64 `json:"failed,required"`
+	// Number of files currently being processed
 	InProgress int64 `json:"in_progress,required"`
-	Total      int64 `json:"total,required"`
+	// Total number of files in the vector store
+	Total int64 `json:"total,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Cancelled   respjson.Field
@@ -297,9 +319,12 @@ func (r *VectorStoreExpiresAfterUnion) UnmarshalJSON(data []byte) error {
 
 // Response from deleting a vector store.
 type VectorStoreDeleteResponse struct {
-	ID      string `json:"id,required"`
-	Deleted bool   `json:"deleted,required"`
-	Object  string `json:"object,required"`
+	// Unique identifier of the deleted vector store
+	ID string `json:"id,required"`
+	// Whether the deletion operation was successful
+	Deleted bool `json:"deleted,required"`
+	// Object type identifier for the deletion response
+	Object string `json:"object,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -316,13 +341,18 @@ func (r *VectorStoreDeleteResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Response from searching a vector store.
+// Paginated response from searching a vector store.
 type VectorStoreSearchResponse struct {
-	Data        []VectorStoreSearchResponseData `json:"data,required"`
-	HasMore     bool                            `json:"has_more,required"`
-	Object      string                          `json:"object,required"`
-	SearchQuery string                          `json:"search_query,required"`
-	NextPage    string                          `json:"next_page"`
+	// List of search result objects
+	Data []VectorStoreSearchResponseData `json:"data,required"`
+	// Whether there are more results available beyond this page
+	HasMore bool `json:"has_more,required"`
+	// Object type identifier for the search results page
+	Object string `json:"object,required"`
+	// The original search query that was executed
+	SearchQuery string `json:"search_query,required"`
+	// (Optional) Token for retrieving the next page of results
+	NextPage string `json:"next_page"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -343,10 +373,15 @@ func (r *VectorStoreSearchResponse) UnmarshalJSON(data []byte) error {
 
 // Response from searching a vector store.
 type VectorStoreSearchResponseData struct {
-	Content    []VectorStoreSearchResponseDataContent                 `json:"content,required"`
-	FileID     string                                                 `json:"file_id,required"`
-	Filename   string                                                 `json:"filename,required"`
-	Score      float64                                                `json:"score,required"`
+	// List of content items matching the search query
+	Content []VectorStoreSearchResponseDataContent `json:"content,required"`
+	// Unique identifier of the file containing the result
+	FileID string `json:"file_id,required"`
+	// Name of the file containing the result
+	Filename string `json:"filename,required"`
+	// Relevance score for this search result
+	Score float64 `json:"score,required"`
+	// (Optional) Key-value attributes associated with the file
 	Attributes map[string]VectorStoreSearchResponseDataAttributeUnion `json:"attributes"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -366,8 +401,11 @@ func (r *VectorStoreSearchResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Content item from a vector store file or search result.
 type VectorStoreSearchResponseDataContent struct {
-	Text string        `json:"text,required"`
+	// The actual text content
+	Text string `json:"text,required"`
+	// Content type, currently only "text" is supported
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -737,7 +775,9 @@ func (u *VectorStoreSearchParamsFilterUnion) asAny() any {
 
 // Ranking options for fine-tuning the search results.
 type VectorStoreSearchParamsRankingOptions struct {
-	Ranker         param.Opt[string]  `json:"ranker,omitzero"`
+	// (Optional) Name of the ranking algorithm to use
+	Ranker param.Opt[string] `json:"ranker,omitzero"`
+	// (Optional) Minimum relevance score threshold for results
 	ScoreThreshold param.Opt[float64] `json:"score_threshold,omitzero"`
 	paramObj
 }

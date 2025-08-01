@@ -147,8 +147,9 @@ func (r *AgentTurnService) ResumeStreaming(ctx context.Context, turnID string, p
 	return ssestream.NewStream[AgentTurnResponseStreamChunk](ssestream.NewDecoder(raw), err)
 }
 
-// streamed agent turn completion response.
+// Streamed agent turn completion response.
 type AgentTurnResponseStreamChunk struct {
+	// Individual event in the agent turn response stream
 	Event TurnResponseEvent `json:"event,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -166,15 +167,22 @@ func (r *AgentTurnResponseStreamChunk) UnmarshalJSON(data []byte) error {
 
 // A single turn in an interaction with an Agentic System.
 type Turn struct {
+	// List of messages that initiated this turn
 	InputMessages []TurnInputMessageUnion `json:"input_messages,required"`
-	// A message containing the model's (assistant) response in a chat conversation.
-	OutputMessage     shared.CompletionMessage `json:"output_message,required"`
-	SessionID         string                   `json:"session_id,required"`
-	StartedAt         time.Time                `json:"started_at,required" format:"date-time"`
-	Steps             []TurnStepUnion          `json:"steps,required"`
-	TurnID            string                   `json:"turn_id,required"`
-	CompletedAt       time.Time                `json:"completed_at" format:"date-time"`
-	OutputAttachments []TurnOutputAttachment   `json:"output_attachments"`
+	// The model's generated response containing content and metadata
+	OutputMessage shared.CompletionMessage `json:"output_message,required"`
+	// Unique identifier for the conversation session
+	SessionID string `json:"session_id,required"`
+	// Timestamp when the turn began
+	StartedAt time.Time `json:"started_at,required" format:"date-time"`
+	// Ordered list of processing steps executed during this turn
+	Steps []TurnStepUnion `json:"steps,required"`
+	// Unique identifier for the turn within a session
+	TurnID string `json:"turn_id,required"`
+	// (Optional) Timestamp when the turn finished, if completed
+	CompletedAt time.Time `json:"completed_at" format:"date-time"`
+	// (Optional) Files or media attached to the agent's response
+	OutputAttachments []TurnOutputAttachment `json:"output_attachments"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		InputMessages     respjson.Field
@@ -469,6 +477,7 @@ func (r *TurnOutputAttachmentContentImageContentItemImage) UnmarshalJSON(data []
 // A URL of the image or data URL in the format of data:image/{type};base64,{data}.
 // Note that URL could have length limits.
 type TurnOutputAttachmentContentImageContentItemImageURL struct {
+	// The URL string pointing to the resource
 	Uri string `json:"uri,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -505,7 +514,9 @@ func (r *TurnOutputAttachmentContentTextContentItem) UnmarshalJSON(data []byte) 
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A URL reference to external content.
 type TurnOutputAttachmentContentURL struct {
+	// The URL string pointing to the resource
 	Uri string `json:"uri,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -521,7 +532,9 @@ func (r *TurnOutputAttachmentContentURL) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// An event in an agent turn response stream.
 type TurnResponseEvent struct {
+	// Event-specific payload containing event data
 	Payload TurnResponseEventPayloadUnion `json:"payload,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -656,13 +669,17 @@ func (r *TurnResponseEventPayloadUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Payload for step start events in agent turn responses.
 type TurnResponseEventPayloadStepStart struct {
+	// Type of event being reported
 	EventType constant.StepStart `json:"event_type,required"`
-	StepID    string             `json:"step_id,required"`
-	// Type of the step in an agent turn.
+	// Unique identifier for the step within a turn
+	StepID string `json:"step_id,required"`
+	// Type of step being executed
 	//
 	// Any of "inference", "tool_execution", "shield_call", "memory_retrieval".
-	StepType string                                                    `json:"step_type,required"`
+	StepType string `json:"step_type,required"`
+	// (Optional) Additional metadata for the step
 	Metadata map[string]TurnResponseEventPayloadStepStartMetadataUnion `json:"metadata"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -733,11 +750,15 @@ func (r *TurnResponseEventPayloadStepStartMetadataUnion) UnmarshalJSON(data []by
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Payload for step progress events in agent turn responses.
 type TurnResponseEventPayloadStepProgress struct {
-	Delta     shared.ContentDeltaUnion `json:"delta,required"`
-	EventType constant.StepProgress    `json:"event_type,required"`
-	StepID    string                   `json:"step_id,required"`
-	// Type of the step in an agent turn.
+	// Incremental content changes during step execution
+	Delta shared.ContentDeltaUnion `json:"delta,required"`
+	// Type of event being reported
+	EventType constant.StepProgress `json:"event_type,required"`
+	// Unique identifier for the step within a turn
+	StepID string `json:"step_id,required"`
+	// Type of step being executed
 	//
 	// Any of "inference", "tool_execution", "shield_call", "memory_retrieval".
 	StepType string `json:"step_type,required"`
@@ -758,12 +779,15 @@ func (r *TurnResponseEventPayloadStepProgress) UnmarshalJSON(data []byte) error 
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Payload for step completion events in agent turn responses.
 type TurnResponseEventPayloadStepComplete struct {
+	// Type of event being reported
 	EventType constant.StepComplete `json:"event_type,required"`
-	// An inference step in an agent turn.
+	// Complete details of the executed step
 	StepDetails TurnResponseEventPayloadStepCompleteStepDetailsUnion `json:"step_details,required"`
-	StepID      string                                               `json:"step_id,required"`
-	// Type of the step in an agent turn.
+	// Unique identifier for the step within a turn
+	StepID string `json:"step_id,required"`
+	// Type of step being executed
 	//
 	// Any of "inference", "tool_execution", "shield_call", "memory_retrieval".
 	StepType string `json:"step_type,required"`
@@ -891,9 +915,12 @@ func (r *TurnResponseEventPayloadStepCompleteStepDetailsUnion) UnmarshalJSON(dat
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Payload for turn start events in agent turn responses.
 type TurnResponseEventPayloadTurnStart struct {
+	// Type of event being reported
 	EventType constant.TurnStart `json:"event_type,required"`
-	TurnID    string             `json:"turn_id,required"`
+	// Unique identifier for the turn within a session
+	TurnID string `json:"turn_id,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		EventType   respjson.Field
@@ -909,9 +936,11 @@ func (r *TurnResponseEventPayloadTurnStart) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Payload for turn completion events in agent turn responses.
 type TurnResponseEventPayloadTurnComplete struct {
+	// Type of event being reported
 	EventType constant.TurnComplete `json:"event_type,required"`
-	// A single turn in an interaction with an Agentic System.
+	// Complete turn data including all steps and results
 	Turn Turn `json:"turn,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -928,9 +957,11 @@ func (r *TurnResponseEventPayloadTurnComplete) UnmarshalJSON(data []byte) error 
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Payload for turn awaiting input events in agent turn responses.
 type TurnResponseEventPayloadTurnAwaitingInput struct {
+	// Type of event being reported
 	EventType constant.TurnAwaitingInput `json:"event_type,required"`
-	// A single turn in an interaction with an Agentic System.
+	// Turn data when waiting for external tool responses
 	Turn Turn `json:"turn,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1166,6 +1197,7 @@ func (r *AgentTurnNewParamsDocumentContentImageContentItemImage) UnmarshalJSON(d
 //
 // The property Uri is required.
 type AgentTurnNewParamsDocumentContentImageContentItemImageURL struct {
+	// The URL string pointing to the resource
 	Uri string `json:"uri,required"`
 	paramObj
 }
@@ -1199,8 +1231,11 @@ func (r *AgentTurnNewParamsDocumentContentTextContentItem) UnmarshalJSON(data []
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A URL reference to external content.
+//
 // The property Uri is required.
 type AgentTurnNewParamsDocumentContentURL struct {
+	// The URL string pointing to the resource
 	Uri string `json:"uri,required"`
 	paramObj
 }

@@ -31,7 +31,7 @@ func NewRouteService(opts ...option.RequestOption) (r RouteService) {
 	return
 }
 
-// List all routes.
+// List all available API routes with their methods and implementing providers.
 func (r *RouteService) List(ctx context.Context, opts ...option.RequestOption) (res *[]RouteInfo, err error) {
 	var env ListRoutesResponse
 	opts = append(r.Options[:], opts...)
@@ -44,7 +44,9 @@ func (r *RouteService) List(ctx context.Context, opts ...option.RequestOption) (
 	return
 }
 
+// Response containing a list of all available API routes.
 type ListRoutesResponse struct {
+	// List of available route information objects
 	Data []RouteInfo `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {

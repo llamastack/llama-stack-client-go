@@ -128,16 +128,26 @@ func (r *VectorStoreFileService) Content(ctx context.Context, fileID string, que
 
 // OpenAI Vector Store File object.
 type VectorStoreFile struct {
-	ID               string                                   `json:"id,required"`
-	Attributes       map[string]VectorStoreFileAttributeUnion `json:"attributes,required"`
-	ChunkingStrategy VectorStoreFileChunkingStrategyUnion     `json:"chunking_strategy,required"`
-	CreatedAt        int64                                    `json:"created_at,required"`
-	Object           string                                   `json:"object,required"`
+	// Unique identifier for the file
+	ID string `json:"id,required"`
+	// Key-value attributes associated with the file
+	Attributes map[string]VectorStoreFileAttributeUnion `json:"attributes,required"`
+	// Strategy used for splitting the file into chunks
+	ChunkingStrategy VectorStoreFileChunkingStrategyUnion `json:"chunking_strategy,required"`
+	// Timestamp when the file was added to the vector store
+	CreatedAt int64 `json:"created_at,required"`
+	// Object type identifier, always "vector_store.file"
+	Object string `json:"object,required"`
+	// Current processing status of the file
+	//
 	// Any of "completed", "in_progress", "cancelled", "failed".
-	Status        VectorStoreFileStatus    `json:"status,required"`
-	UsageBytes    int64                    `json:"usage_bytes,required"`
-	VectorStoreID string                   `json:"vector_store_id,required"`
-	LastError     VectorStoreFileLastError `json:"last_error"`
+	Status VectorStoreFileStatus `json:"status,required"`
+	// Storage space used by this file in bytes
+	UsageBytes int64 `json:"usage_bytes,required"`
+	// ID of the vector store containing this file
+	VectorStoreID string `json:"vector_store_id,required"`
+	// (Optional) Error information if file processing failed
+	LastError VectorStoreFileLastError `json:"last_error"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID               respjson.Field
@@ -277,7 +287,9 @@ func (r *VectorStoreFileChunkingStrategyUnion) UnmarshalJSON(data []byte) error 
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Automatic chunking strategy for vector store files.
 type VectorStoreFileChunkingStrategyAuto struct {
+	// Strategy type, always "auto" for automatic chunking
 	Type constant.Auto `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -293,9 +305,12 @@ func (r *VectorStoreFileChunkingStrategyAuto) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Static chunking strategy with configurable parameters.
 type VectorStoreFileChunkingStrategyStatic struct {
+	// Configuration parameters for the static chunking strategy
 	Static VectorStoreFileChunkingStrategyStaticStatic `json:"static,required"`
-	Type   constant.Static                             `json:"type,required"`
+	// Strategy type, always "static" for static chunking
+	Type constant.Static `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Static      respjson.Field
@@ -311,8 +326,11 @@ func (r *VectorStoreFileChunkingStrategyStatic) UnmarshalJSON(data []byte) error
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Configuration parameters for the static chunking strategy
 type VectorStoreFileChunkingStrategyStaticStatic struct {
+	// Number of tokens to overlap between adjacent chunks
 	ChunkOverlapTokens int64 `json:"chunk_overlap_tokens,required"`
+	// Maximum number of tokens per chunk, must be between 100 and 4096
 	MaxChunkSizeTokens int64 `json:"max_chunk_size_tokens,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -329,6 +347,7 @@ func (r *VectorStoreFileChunkingStrategyStaticStatic) UnmarshalJSON(data []byte)
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Current processing status of the file
 type VectorStoreFileStatus string
 
 const (
@@ -338,10 +357,14 @@ const (
 	VectorStoreFileStatusFailed     VectorStoreFileStatus = "failed"
 )
 
+// (Optional) Error information if file processing failed
 type VectorStoreFileLastError struct {
+	// Error code indicating the type of failure
+	//
 	// Any of "server_error", "rate_limit_exceeded".
-	Code    VectorStoreFileLastErrorCode `json:"code,required"`
-	Message string                       `json:"message,required"`
+	Code VectorStoreFileLastErrorCode `json:"code,required"`
+	// Human-readable error message describing the failure
+	Message string `json:"message,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Code        respjson.Field
@@ -357,6 +380,7 @@ func (r *VectorStoreFileLastError) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Error code indicating the type of failure
 type VectorStoreFileLastErrorCode string
 
 const (
@@ -364,13 +388,18 @@ const (
 	VectorStoreFileLastErrorCodeRateLimitExceeded VectorStoreFileLastErrorCode = "rate_limit_exceeded"
 )
 
-// Response from listing vector stores.
+// Response from listing files in a vector store.
 type VectorStoreFileListResponse struct {
-	Data    []VectorStoreFile `json:"data,required"`
-	HasMore bool              `json:"has_more,required"`
-	Object  string            `json:"object,required"`
-	FirstID string            `json:"first_id"`
-	LastID  string            `json:"last_id"`
+	// List of vector store file objects
+	Data []VectorStoreFile `json:"data,required"`
+	// Whether there are more files available beyond this page
+	HasMore bool `json:"has_more,required"`
+	// Object type identifier, always "list"
+	Object string `json:"object,required"`
+	// (Optional) ID of the first file in the list for pagination
+	FirstID string `json:"first_id"`
+	// (Optional) ID of the last file in the list for pagination
+	LastID string `json:"last_id"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -391,9 +420,12 @@ func (r *VectorStoreFileListResponse) UnmarshalJSON(data []byte) error {
 
 // Response from deleting a vector store file.
 type VectorStoreFileDeleteResponse struct {
-	ID      string `json:"id,required"`
-	Deleted bool   `json:"deleted,required"`
-	Object  string `json:"object,required"`
+	// Unique identifier of the deleted file
+	ID string `json:"id,required"`
+	// Whether the deletion operation was successful
+	Deleted bool `json:"deleted,required"`
+	// Object type identifier for the deletion response
+	Object string `json:"object,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -412,10 +444,14 @@ func (r *VectorStoreFileDeleteResponse) UnmarshalJSON(data []byte) error {
 
 // Response from retrieving the contents of a vector store file.
 type VectorStoreFileContentResponse struct {
+	// Key-value attributes associated with the file
 	Attributes map[string]VectorStoreFileContentResponseAttributeUnion `json:"attributes,required"`
-	Content    []VectorStoreFileContentResponseContent                 `json:"content,required"`
-	FileID     string                                                  `json:"file_id,required"`
-	Filename   string                                                  `json:"filename,required"`
+	// List of content items from the file
+	Content []VectorStoreFileContentResponseContent `json:"content,required"`
+	// Unique identifier for the file
+	FileID string `json:"file_id,required"`
+	// Name of the file
+	Filename string `json:"filename,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Attributes  respjson.Field
@@ -485,8 +521,11 @@ func (r *VectorStoreFileContentResponseAttributeUnion) UnmarshalJSON(data []byte
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Content item from a vector store file or search result.
 type VectorStoreFileContentResponseContent struct {
-	Text string        `json:"text,required"`
+	// The actual text content
+	Text string `json:"text,required"`
+	// Content type, currently only "text" is supported
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -609,9 +648,12 @@ func NewVectorStoreFileNewParamsChunkingStrategyAuto() VectorStoreFileNewParamsC
 	}
 }
 
+// Automatic chunking strategy for vector store files.
+//
 // This struct has a constant value, construct it with
 // [NewVectorStoreFileNewParamsChunkingStrategyAuto].
 type VectorStoreFileNewParamsChunkingStrategyAuto struct {
+	// Strategy type, always "auto" for automatic chunking
 	Type constant.Auto `json:"type,required"`
 	paramObj
 }
@@ -624,9 +666,14 @@ func (r *VectorStoreFileNewParamsChunkingStrategyAuto) UnmarshalJSON(data []byte
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Static chunking strategy with configurable parameters.
+//
 // The properties Static, Type are required.
 type VectorStoreFileNewParamsChunkingStrategyStatic struct {
+	// Configuration parameters for the static chunking strategy
 	Static VectorStoreFileNewParamsChunkingStrategyStaticStatic `json:"static,omitzero,required"`
+	// Strategy type, always "static" for static chunking
+	//
 	// This field can be elided, and will marshal its zero value as "static".
 	Type constant.Static `json:"type,required"`
 	paramObj
@@ -640,9 +687,13 @@ func (r *VectorStoreFileNewParamsChunkingStrategyStatic) UnmarshalJSON(data []by
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Configuration parameters for the static chunking strategy
+//
 // The properties ChunkOverlapTokens, MaxChunkSizeTokens are required.
 type VectorStoreFileNewParamsChunkingStrategyStaticStatic struct {
+	// Number of tokens to overlap between adjacent chunks
 	ChunkOverlapTokens int64 `json:"chunk_overlap_tokens,required"`
+	// Maximum number of tokens per chunk, must be between 100 and 4096
 	MaxChunkSizeTokens int64 `json:"max_chunk_size_tokens,required"`
 	paramObj
 }
@@ -707,10 +758,20 @@ func (u *VectorStoreFileUpdateParamsAttributeUnion) asAny() any {
 }
 
 type VectorStoreFileListParams struct {
-	After  param.Opt[string] `query:"after,omitzero" json:"-"`
+	// (Optional) A cursor for use in pagination. `after` is an object ID that defines
+	// your place in the list.
+	After param.Opt[string] `query:"after,omitzero" json:"-"`
+	// (Optional) A cursor for use in pagination. `before` is an object ID that defines
+	// your place in the list.
 	Before param.Opt[string] `query:"before,omitzero" json:"-"`
-	Limit  param.Opt[int64]  `query:"limit,omitzero" json:"-"`
-	Order  param.Opt[string] `query:"order,omitzero" json:"-"`
+	// (Optional) A limit on the number of objects to be returned. Limit can range
+	// between 1 and 100, and the default is 20.
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// (Optional) Sort order by the `created_at` timestamp of the objects. `asc` for
+	// ascending order and `desc` for descending order.
+	Order param.Opt[string] `query:"order,omitzero" json:"-"`
+	// (Optional) Filter by file status to only return files with the specified status.
+	//
 	// Any of "completed", "in_progress", "cancelled", "failed".
 	Filter VectorStoreFileListParamsFilter `query:"filter,omitzero" json:"-"`
 	paramObj
@@ -725,6 +786,7 @@ func (r VectorStoreFileListParams) URLQuery() (v url.Values, err error) {
 	})
 }
 
+// (Optional) Filter by file status to only return files with the specified status.
 type VectorStoreFileListParamsFilter string
 
 const (

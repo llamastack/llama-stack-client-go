@@ -59,11 +59,16 @@ func (r *ToolRuntimeService) ListTools(ctx context.Context, query ToolRuntimeLis
 	return
 }
 
+// Tool definition used in runtime contexts.
 type ToolDef struct {
-	Name        string                          `json:"name,required"`
-	Description string                          `json:"description"`
-	Metadata    map[string]ToolDefMetadataUnion `json:"metadata"`
-	Parameters  []ToolDefParameter              `json:"parameters"`
+	// Name of the tool
+	Name string `json:"name,required"`
+	// (Optional) Human-readable description of what the tool does
+	Description string `json:"description"`
+	// (Optional) Additional metadata about the tool
+	Metadata map[string]ToolDefMetadataUnion `json:"metadata"`
+	// (Optional) List of parameters this tool accepts
+	Parameters []ToolDefParameter `json:"parameters"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Name        respjson.Field
@@ -142,12 +147,18 @@ func (r *ToolDefMetadataUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Parameter definition for a tool.
 type ToolDefParameter struct {
-	Description   string                       `json:"description,required"`
-	Name          string                       `json:"name,required"`
-	ParameterType string                       `json:"parameter_type,required"`
-	Required      bool                         `json:"required,required"`
-	Default       ToolDefParameterDefaultUnion `json:"default,nullable"`
+	// Human-readable description of what the parameter does
+	Description string `json:"description,required"`
+	// Name of the parameter
+	Name string `json:"name,required"`
+	// Type of the parameter (e.g., string, integer)
+	ParameterType string `json:"parameter_type,required"`
+	// Whether this parameter is required for tool invocation
+	Required bool `json:"required,required"`
+	// (Optional) Default value for the parameter if not provided
+	Default ToolDefParameterDefaultUnion `json:"default,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Description   respjson.Field
@@ -218,12 +229,18 @@ func (r *ToolDefParameterDefaultUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Tool definition used in runtime contexts.
+//
 // The property Name is required.
 type ToolDefParam struct {
-	Name        string                               `json:"name,required"`
-	Description param.Opt[string]                    `json:"description,omitzero"`
-	Metadata    map[string]ToolDefMetadataUnionParam `json:"metadata,omitzero"`
-	Parameters  []ToolDefParameterParam              `json:"parameters,omitzero"`
+	// Name of the tool
+	Name string `json:"name,required"`
+	// (Optional) Human-readable description of what the tool does
+	Description param.Opt[string] `json:"description,omitzero"`
+	// (Optional) Additional metadata about the tool
+	Metadata map[string]ToolDefMetadataUnionParam `json:"metadata,omitzero"`
+	// (Optional) List of parameters this tool accepts
+	Parameters []ToolDefParameterParam `json:"parameters,omitzero"`
 	paramObj
 }
 
@@ -266,13 +283,20 @@ func (u *ToolDefMetadataUnionParam) asAny() any {
 	return nil
 }
 
+// Parameter definition for a tool.
+//
 // The properties Description, Name, ParameterType, Required are required.
 type ToolDefParameterParam struct {
-	Description   string                            `json:"description,required"`
-	Name          string                            `json:"name,required"`
-	ParameterType string                            `json:"parameter_type,required"`
-	Required      bool                              `json:"required,required"`
-	Default       ToolDefParameterDefaultUnionParam `json:"default,omitzero"`
+	// Human-readable description of what the parameter does
+	Description string `json:"description,required"`
+	// Name of the parameter
+	Name string `json:"name,required"`
+	// Type of the parameter (e.g., string, integer)
+	ParameterType string `json:"parameter_type,required"`
+	// Whether this parameter is required for tool invocation
+	Required bool `json:"required,required"`
+	// (Optional) Default value for the parameter if not provided
+	Default ToolDefParameterDefaultUnionParam `json:"default,omitzero"`
 	paramObj
 }
 
@@ -315,12 +339,16 @@ func (u *ToolDefParameterDefaultUnionParam) asAny() any {
 	return nil
 }
 
+// Result of a tool invocation.
 type ToolInvocationResult struct {
-	// A image content item
-	Content      shared.InterleavedContentUnion               `json:"content"`
-	ErrorCode    int64                                        `json:"error_code"`
-	ErrorMessage string                                       `json:"error_message"`
-	Metadata     map[string]ToolInvocationResultMetadataUnion `json:"metadata"`
+	// (Optional) The output content from the tool execution
+	Content shared.InterleavedContentUnion `json:"content"`
+	// (Optional) Numeric error code if the tool execution failed
+	ErrorCode int64 `json:"error_code"`
+	// (Optional) Error message if the tool execution failed
+	ErrorMessage string `json:"error_message"`
+	// (Optional) Additional metadata about the tool execution
+	Metadata map[string]ToolInvocationResultMetadataUnion `json:"metadata"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Content      respjson.Field
@@ -458,6 +486,7 @@ func (r ToolRuntimeListToolsParams) URLQuery() (v url.Values, err error) {
 //
 // The property Uri is required.
 type ToolRuntimeListToolsParamsMcpEndpoint struct {
+	// The URL string pointing to the resource
 	Uri string `query:"uri,required" json:"-"`
 	paramObj
 }
@@ -471,7 +500,9 @@ func (r ToolRuntimeListToolsParamsMcpEndpoint) URLQuery() (v url.Values, err err
 	})
 }
 
+// Response containing a list of tool definitions.
 type ToolRuntimeListToolsResponseEnvelope struct {
+	// List of tool definitions
 	Data []ToolDef `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {

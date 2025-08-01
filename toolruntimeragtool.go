@@ -32,7 +32,7 @@ func NewToolRuntimeRagToolService(opts ...option.RequestOption) (r ToolRuntimeRa
 	return
 }
 
-// Index documents so they can be used by the RAG system
+// Index documents so they can be used by the RAG system.
 func (r *ToolRuntimeRagToolService) Insert(ctx context.Context, body ToolRuntimeRagToolInsertParams, opts ...option.RequestOption) (err error) {
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
@@ -41,7 +41,7 @@ func (r *ToolRuntimeRagToolService) Insert(ctx context.Context, body ToolRuntime
 	return
 }
 
-// Query the RAG system for context; typically invoked by the agent
+// Query the RAG system for context; typically invoked by the agent.
 func (r *ToolRuntimeRagToolService) Query(ctx context.Context, body ToolRuntimeRagToolQueryParams, opts ...option.RequestOption) (res *shared.QueryResult, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "v1/tool-runtime/rag-tool/query"
@@ -50,9 +50,12 @@ func (r *ToolRuntimeRagToolService) Query(ctx context.Context, body ToolRuntimeR
 }
 
 type ToolRuntimeRagToolInsertParams struct {
-	ChunkSizeInTokens int64                  `json:"chunk_size_in_tokens,required"`
-	Documents         []shared.DocumentParam `json:"documents,omitzero,required"`
-	VectorDBID        string                 `json:"vector_db_id,required"`
+	// (Optional) Size in tokens for document chunking during indexing
+	ChunkSizeInTokens int64 `json:"chunk_size_in_tokens,required"`
+	// List of documents to index in the RAG system
+	Documents []shared.DocumentParam `json:"documents,omitzero,required"`
+	// ID of the vector database to store the document embeddings
+	VectorDBID string `json:"vector_db_id,required"`
 	paramObj
 }
 
@@ -65,10 +68,11 @@ func (r *ToolRuntimeRagToolInsertParams) UnmarshalJSON(data []byte) error {
 }
 
 type ToolRuntimeRagToolQueryParams struct {
-	// A image content item
-	Content     shared.InterleavedContentUnionParam `json:"content,omitzero,required"`
-	VectorDBIDs []string                            `json:"vector_db_ids,omitzero,required"`
-	// Configuration for the RAG query generation.
+	// The query content to search for in the indexed documents
+	Content shared.InterleavedContentUnionParam `json:"content,omitzero,required"`
+	// List of vector database IDs to search within
+	VectorDBIDs []string `json:"vector_db_ids,omitzero,required"`
+	// (Optional) Configuration parameters for the query operation
 	QueryConfig shared.QueryConfigParam `json:"query_config,omitzero"`
 	paramObj
 }
