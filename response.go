@@ -82,21 +82,36 @@ func (r *ResponseService) List(ctx context.Context, query ResponseListParams, op
 	return
 }
 
+// Complete OpenAI response object containing generation results and metadata.
 type ResponseObject struct {
-	ID                 string                      `json:"id,required"`
-	CreatedAt          int64                       `json:"created_at,required"`
-	Model              string                      `json:"model,required"`
-	Object             constant.Response           `json:"object,required"`
-	Output             []ResponseObjectOutputUnion `json:"output,required"`
-	ParallelToolCalls  bool                        `json:"parallel_tool_calls,required"`
-	Status             string                      `json:"status,required"`
-	Text               ResponseObjectText          `json:"text,required"`
-	Error              ResponseObjectError         `json:"error"`
-	PreviousResponseID string                      `json:"previous_response_id"`
-	Temperature        float64                     `json:"temperature"`
-	TopP               float64                     `json:"top_p"`
-	Truncation         string                      `json:"truncation"`
-	User               string                      `json:"user"`
+	// Unique identifier for this response
+	ID string `json:"id,required"`
+	// Unix timestamp when the response was created
+	CreatedAt int64 `json:"created_at,required"`
+	// Model identifier used for generation
+	Model string `json:"model,required"`
+	// Object type identifier, always "response"
+	Object constant.Response `json:"object,required"`
+	// List of generated output items (messages, tool calls, etc.)
+	Output []ResponseObjectOutputUnion `json:"output,required"`
+	// Whether tool calls can be executed in parallel
+	ParallelToolCalls bool `json:"parallel_tool_calls,required"`
+	// Current status of the response generation
+	Status string `json:"status,required"`
+	// Text formatting configuration for the response
+	Text ResponseObjectText `json:"text,required"`
+	// (Optional) Error details if the response generation failed
+	Error ResponseObjectError `json:"error"`
+	// (Optional) ID of the previous response in a conversation
+	PreviousResponseID string `json:"previous_response_id"`
+	// (Optional) Sampling temperature used for generation
+	Temperature float64 `json:"temperature"`
+	// (Optional) Nucleus sampling parameter used for generation
+	TopP float64 `json:"top_p"`
+	// (Optional) Truncation strategy applied to the response
+	Truncation string `json:"truncation"`
+	// (Optional) User identifier associated with the request
+	User string `json:"user"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                 respjson.Field
@@ -409,8 +424,11 @@ func (r *ResponseObjectOutputMessageContentArrayItemUnion) UnmarshalJSON(data []
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content for input messages in OpenAI response format.
 type ResponseObjectOutputMessageContentArrayItemInputText struct {
-	Text string             `json:"text,required"`
+	// The text content of the input message
+	Text string `json:"text,required"`
+	// Content type identifier, always "input_text"
 	Type constant.InputText `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -427,11 +445,16 @@ func (r *ResponseObjectOutputMessageContentArrayItemInputText) UnmarshalJSON(dat
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Image content for input messages in OpenAI response format.
 type ResponseObjectOutputMessageContentArrayItemInputImage struct {
+	// Level of detail for image processing, can be "low", "high", or "auto"
+	//
 	// Any of "low", "high", "auto".
-	Detail   ResponseObjectOutputMessageContentArrayItemInputImageDetail `json:"detail,required"`
-	Type     constant.InputImage                                         `json:"type,required"`
-	ImageURL string                                                      `json:"image_url"`
+	Detail ResponseObjectOutputMessageContentArrayItemInputImageDetail `json:"detail,required"`
+	// Content type identifier, always "input_image"
+	Type constant.InputImage `json:"type,required"`
+	// (Optional) URL of the image content
+	ImageURL string `json:"image_url"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Detail      respjson.Field
@@ -448,6 +471,7 @@ func (r *ResponseObjectOutputMessageContentArrayItemInputImage) UnmarshalJSON(da
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Level of detail for image processing, can be "low", "high", or "auto"
 type ResponseObjectOutputMessageContentArrayItemInputImageDetail string
 
 const (
@@ -456,6 +480,7 @@ const (
 	ResponseObjectOutputMessageContentArrayItemInputImageDetailAuto ResponseObjectOutputMessageContentArrayItemInputImageDetail = "auto"
 )
 
+// Level of detail for image processing, can be "low", "high", or "auto"
 type ResponseObjectOutputMessageContentArrayItemDetail string
 
 const (
@@ -596,11 +621,16 @@ func (r *ResponseObjectOutputMessageContentArrayItemAnnotationUnion) UnmarshalJS
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// File citation annotation for referencing specific files in response content.
 type ResponseObjectOutputMessageContentArrayItemAnnotationFileCitation struct {
-	FileID   string                `json:"file_id,required"`
-	Filename string                `json:"filename,required"`
-	Index    int64                 `json:"index,required"`
-	Type     constant.FileCitation `json:"type,required"`
+	// Unique identifier of the referenced file
+	FileID string `json:"file_id,required"`
+	// Name of the referenced file
+	Filename string `json:"filename,required"`
+	// Position index of the citation within the content
+	Index int64 `json:"index,required"`
+	// Annotation type identifier, always "file_citation"
+	Type constant.FileCitation `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		FileID      respjson.Field
@@ -620,12 +650,18 @@ func (r *ResponseObjectOutputMessageContentArrayItemAnnotationFileCitation) Unma
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// URL citation annotation for referencing external web resources.
 type ResponseObjectOutputMessageContentArrayItemAnnotationURLCitation struct {
-	EndIndex   int64                `json:"end_index,required"`
-	StartIndex int64                `json:"start_index,required"`
-	Title      string               `json:"title,required"`
-	Type       constant.URLCitation `json:"type,required"`
-	URL        string               `json:"url,required"`
+	// End position of the citation span in the content
+	EndIndex int64 `json:"end_index,required"`
+	// Start position of the citation span in the content
+	StartIndex int64 `json:"start_index,required"`
+	// Title of the referenced web resource
+	Title string `json:"title,required"`
+	// Annotation type identifier, always "url_citation"
+	Type constant.URLCitation `json:"type,required"`
+	// URL of the referenced web resource
+	URL string `json:"url,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		EndIndex    respjson.Field
@@ -705,10 +741,14 @@ const (
 	ResponseObjectOutputMessageRoleAssistant ResponseObjectOutputMessageRole = "assistant"
 )
 
+// Web search tool call output message for OpenAI responses.
 type ResponseObjectOutputWebSearchCall struct {
-	ID     string                 `json:"id,required"`
-	Status string                 `json:"status,required"`
-	Type   constant.WebSearchCall `json:"type,required"`
+	// Unique identifier for this tool call
+	ID string `json:"id,required"`
+	// Current status of the web search operation
+	Status string `json:"status,required"`
+	// Tool call type identifier, always "web_search_call"
+	Type constant.WebSearchCall `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -725,11 +765,17 @@ func (r *ResponseObjectOutputWebSearchCall) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// File search tool call output message for OpenAI responses.
 type ResponseObjectOutputFileSearchCall struct {
-	ID      string                                                     `json:"id,required"`
-	Queries []string                                                   `json:"queries,required"`
-	Status  string                                                     `json:"status,required"`
-	Type    constant.FileSearchCall                                    `json:"type,required"`
+	// Unique identifier for this tool call
+	ID string `json:"id,required"`
+	// List of search queries executed
+	Queries []string `json:"queries,required"`
+	// Current status of the file search operation
+	Status string `json:"status,required"`
+	// Tool call type identifier, always "file_search_call"
+	Type constant.FileSearchCall `json:"type,required"`
+	// (Optional) Search results returned by the file search operation
 	Results []map[string]ResponseObjectOutputFileSearchCallResultUnion `json:"results"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -801,13 +847,20 @@ func (r *ResponseObjectOutputFileSearchCallResultUnion) UnmarshalJSON(data []byt
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Function tool call output message for OpenAI responses.
 type ResponseObjectOutputFunctionCall struct {
-	Arguments string                `json:"arguments,required"`
-	CallID    string                `json:"call_id,required"`
-	Name      string                `json:"name,required"`
-	Type      constant.FunctionCall `json:"type,required"`
-	ID        string                `json:"id"`
-	Status    string                `json:"status"`
+	// JSON string containing the function arguments
+	Arguments string `json:"arguments,required"`
+	// Unique identifier for the function call
+	CallID string `json:"call_id,required"`
+	// Name of the function being called
+	Name string `json:"name,required"`
+	// Tool call type identifier, always "function_call"
+	Type constant.FunctionCall `json:"type,required"`
+	// (Optional) Additional identifier for the tool call
+	ID string `json:"id"`
+	// (Optional) Current status of the function call execution
+	Status string `json:"status"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments   respjson.Field
@@ -827,14 +880,22 @@ func (r *ResponseObjectOutputFunctionCall) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Model Context Protocol (MCP) call output message for OpenAI responses.
 type ResponseObjectOutputMcpCall struct {
-	ID          string           `json:"id,required"`
-	Arguments   string           `json:"arguments,required"`
-	Name        string           `json:"name,required"`
-	ServerLabel string           `json:"server_label,required"`
-	Type        constant.McpCall `json:"type,required"`
-	Error       string           `json:"error"`
-	Output      string           `json:"output"`
+	// Unique identifier for this MCP call
+	ID string `json:"id,required"`
+	// JSON string containing the MCP call arguments
+	Arguments string `json:"arguments,required"`
+	// Name of the MCP method being called
+	Name string `json:"name,required"`
+	// Label identifying the MCP server handling the call
+	ServerLabel string `json:"server_label,required"`
+	// Tool call type identifier, always "mcp_call"
+	Type constant.McpCall `json:"type,required"`
+	// (Optional) Error message if the MCP call failed
+	Error string `json:"error"`
+	// (Optional) Output result from the successful MCP call
+	Output string `json:"output"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -855,11 +916,16 @@ func (r *ResponseObjectOutputMcpCall) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// MCP list tools output message containing available tools from an MCP server.
 type ResponseObjectOutputMcpListTools struct {
-	ID          string                                 `json:"id,required"`
-	ServerLabel string                                 `json:"server_label,required"`
-	Tools       []ResponseObjectOutputMcpListToolsTool `json:"tools,required"`
-	Type        constant.McpListTools                  `json:"type,required"`
+	// Unique identifier for this MCP list tools operation
+	ID string `json:"id,required"`
+	// Label identifying the MCP server providing the tools
+	ServerLabel string `json:"server_label,required"`
+	// List of available tools provided by the MCP server
+	Tools []ResponseObjectOutputMcpListToolsTool `json:"tools,required"`
+	// Tool call type identifier, always "mcp_list_tools"
+	Type constant.McpListTools `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -877,10 +943,14 @@ func (r *ResponseObjectOutputMcpListTools) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Tool definition returned by MCP list tools operation.
 type ResponseObjectOutputMcpListToolsTool struct {
+	// JSON schema defining the tool's input parameters
 	InputSchema map[string]ResponseObjectOutputMcpListToolsToolInputSchemaUnion `json:"input_schema,required"`
-	Name        string                                                          `json:"name,required"`
-	Description string                                                          `json:"description"`
+	// Name of the tool
+	Name string `json:"name,required"`
+	// (Optional) Description of what the tool does
+	Description string `json:"description"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		InputSchema respjson.Field
@@ -958,8 +1028,9 @@ const (
 	ResponseObjectOutputRoleAssistant ResponseObjectOutputRole = "assistant"
 )
 
+// Text formatting configuration for the response
 type ResponseObjectText struct {
-	// Configuration for Responses API text format.
+	// (Optional) Text format configuration specifying output format requirements
 	Format ResponseObjectTextFormat `json:"format"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -975,7 +1046,7 @@ func (r *ResponseObjectText) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Configuration for Responses API text format.
+// (Optional) Text format configuration specifying output format requirements
 type ResponseObjectTextFormat struct {
 	// Must be "text", "json_schema", or "json_object" to identify the format type
 	//
@@ -1070,8 +1141,11 @@ func (r *ResponseObjectTextFormatSchemaUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// (Optional) Error details if the response generation failed
 type ResponseObjectError struct {
-	Code    string `json:"code,required"`
+	// Error code identifying the type of failure
+	Code string `json:"code,required"`
+	// Human-readable error message describing the failure
 	Message string `json:"message,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1505,9 +1579,12 @@ func (r *ResponseObjectStreamUnionItemTools) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Streaming event indicating a new response has been created.
 type ResponseObjectStreamResponseCreated struct {
-	Response ResponseObject           `json:"response,required"`
-	Type     constant.ResponseCreated `json:"type,required"`
+	// The newly created response object
+	Response ResponseObject `json:"response,required"`
+	// Event type identifier, always "response.created"
+	Type constant.ResponseCreated `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Response    respjson.Field
@@ -1523,15 +1600,18 @@ func (r *ResponseObjectStreamResponseCreated) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Streaming event for when a new output item is added to the response.
 type ResponseObjectStreamResponseOutputItemAdded struct {
-	// Corresponds to the various Message types in the Responses API. They are all
-	// under one type because the Responses API gives them all the same "type" value,
-	// and there is no way to tell them apart in certain scenarios.
-	Item           ResponseObjectStreamResponseOutputItemAddedItemUnion `json:"item,required"`
-	OutputIndex    int64                                                `json:"output_index,required"`
-	ResponseID     string                                               `json:"response_id,required"`
-	SequenceNumber int64                                                `json:"sequence_number,required"`
-	Type           constant.ResponseOutputItemAdded                     `json:"type,required"`
+	// The output item that was added (message, tool call, etc.)
+	Item ResponseObjectStreamResponseOutputItemAddedItemUnion `json:"item,required"`
+	// Index position of this item in the output list
+	OutputIndex int64 `json:"output_index,required"`
+	// Unique identifier of the response containing this output
+	ResponseID string `json:"response_id,required"`
+	// Sequential number for ordering streaming events
+	SequenceNumber int64 `json:"sequence_number,required"`
+	// Event type identifier, always "response.output_item.added"
+	Type constant.ResponseOutputItemAdded `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Item           respjson.Field
@@ -1866,8 +1946,11 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemU
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content for input messages in OpenAI response format.
 type ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputText struct {
-	Text string             `json:"text,required"`
+	// The text content of the input message
+	Text string `json:"text,required"`
+	// Content type identifier, always "input_text"
 	Type constant.InputText `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1886,11 +1969,16 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemI
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Image content for input messages in OpenAI response format.
 type ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputImage struct {
+	// Level of detail for image processing, can be "low", "high", or "auto"
+	//
 	// Any of "low", "high", "auto".
-	Detail   ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputImageDetail `json:"detail,required"`
-	Type     constant.InputImage                                                                    `json:"type,required"`
-	ImageURL string                                                                                 `json:"image_url"`
+	Detail ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputImageDetail `json:"detail,required"`
+	// Content type identifier, always "input_image"
+	Type constant.InputImage `json:"type,required"`
+	// (Optional) URL of the image content
+	ImageURL string `json:"image_url"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Detail      respjson.Field
@@ -1909,6 +1997,7 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemI
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Level of detail for image processing, can be "low", "high", or "auto"
 type ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputImageDetail string
 
 const (
@@ -1917,6 +2006,7 @@ const (
 	ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputImageDetailAuto ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputImageDetail = "auto"
 )
 
+// Level of detail for image processing, can be "low", "high", or "auto"
 type ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemDetail string
 
 const (
@@ -2061,11 +2151,16 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemA
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// File citation annotation for referencing specific files in response content.
 type ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemAnnotationFileCitation struct {
-	FileID   string                `json:"file_id,required"`
-	Filename string                `json:"filename,required"`
-	Index    int64                 `json:"index,required"`
-	Type     constant.FileCitation `json:"type,required"`
+	// Unique identifier of the referenced file
+	FileID string `json:"file_id,required"`
+	// Name of the referenced file
+	Filename string `json:"filename,required"`
+	// Position index of the citation within the content
+	Index int64 `json:"index,required"`
+	// Annotation type identifier, always "file_citation"
+	Type constant.FileCitation `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		FileID      respjson.Field
@@ -2085,12 +2180,18 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemA
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// URL citation annotation for referencing external web resources.
 type ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemAnnotationURLCitation struct {
-	EndIndex   int64                `json:"end_index,required"`
-	StartIndex int64                `json:"start_index,required"`
-	Title      string               `json:"title,required"`
-	Type       constant.URLCitation `json:"type,required"`
-	URL        string               `json:"url,required"`
+	// End position of the citation span in the content
+	EndIndex int64 `json:"end_index,required"`
+	// Start position of the citation span in the content
+	StartIndex int64 `json:"start_index,required"`
+	// Title of the referenced web resource
+	Title string `json:"title,required"`
+	// Annotation type identifier, always "url_citation"
+	Type constant.URLCitation `json:"type,required"`
+	// URL of the referenced web resource
+	URL string `json:"url,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		EndIndex    respjson.Field
@@ -2170,10 +2271,14 @@ const (
 	ResponseObjectStreamResponseOutputItemAddedItemMessageRoleAssistant ResponseObjectStreamResponseOutputItemAddedItemMessageRole = "assistant"
 )
 
+// Web search tool call output message for OpenAI responses.
 type ResponseObjectStreamResponseOutputItemAddedItemWebSearchCall struct {
-	ID     string                 `json:"id,required"`
-	Status string                 `json:"status,required"`
-	Type   constant.WebSearchCall `json:"type,required"`
+	// Unique identifier for this tool call
+	ID string `json:"id,required"`
+	// Current status of the web search operation
+	Status string `json:"status,required"`
+	// Tool call type identifier, always "web_search_call"
+	Type constant.WebSearchCall `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -2192,11 +2297,17 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemWebSearchCall) Unmarshal
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// File search tool call output message for OpenAI responses.
 type ResponseObjectStreamResponseOutputItemAddedItemFileSearchCall struct {
-	ID      string                                                                                `json:"id,required"`
-	Queries []string                                                                              `json:"queries,required"`
-	Status  string                                                                                `json:"status,required"`
-	Type    constant.FileSearchCall                                                               `json:"type,required"`
+	// Unique identifier for this tool call
+	ID string `json:"id,required"`
+	// List of search queries executed
+	Queries []string `json:"queries,required"`
+	// Current status of the file search operation
+	Status string `json:"status,required"`
+	// Tool call type identifier, always "file_search_call"
+	Type constant.FileSearchCall `json:"type,required"`
+	// (Optional) Search results returned by the file search operation
 	Results []map[string]ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultUnion `json:"results"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -2273,13 +2384,20 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultUnio
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Function tool call output message for OpenAI responses.
 type ResponseObjectStreamResponseOutputItemAddedItemFunctionCall struct {
-	Arguments string                `json:"arguments,required"`
-	CallID    string                `json:"call_id,required"`
-	Name      string                `json:"name,required"`
-	Type      constant.FunctionCall `json:"type,required"`
-	ID        string                `json:"id"`
-	Status    string                `json:"status"`
+	// JSON string containing the function arguments
+	Arguments string `json:"arguments,required"`
+	// Unique identifier for the function call
+	CallID string `json:"call_id,required"`
+	// Name of the function being called
+	Name string `json:"name,required"`
+	// Tool call type identifier, always "function_call"
+	Type constant.FunctionCall `json:"type,required"`
+	// (Optional) Additional identifier for the tool call
+	ID string `json:"id"`
+	// (Optional) Current status of the function call execution
+	Status string `json:"status"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments   respjson.Field
@@ -2301,14 +2419,22 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemFunctionCall) UnmarshalJ
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Model Context Protocol (MCP) call output message for OpenAI responses.
 type ResponseObjectStreamResponseOutputItemAddedItemMcpCall struct {
-	ID          string           `json:"id,required"`
-	Arguments   string           `json:"arguments,required"`
-	Name        string           `json:"name,required"`
-	ServerLabel string           `json:"server_label,required"`
-	Type        constant.McpCall `json:"type,required"`
-	Error       string           `json:"error"`
-	Output      string           `json:"output"`
+	// Unique identifier for this MCP call
+	ID string `json:"id,required"`
+	// JSON string containing the MCP call arguments
+	Arguments string `json:"arguments,required"`
+	// Name of the MCP method being called
+	Name string `json:"name,required"`
+	// Label identifying the MCP server handling the call
+	ServerLabel string `json:"server_label,required"`
+	// Tool call type identifier, always "mcp_call"
+	Type constant.McpCall `json:"type,required"`
+	// (Optional) Error message if the MCP call failed
+	Error string `json:"error"`
+	// (Optional) Output result from the successful MCP call
+	Output string `json:"output"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -2329,11 +2455,16 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMcpCall) UnmarshalJSON(d
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// MCP list tools output message containing available tools from an MCP server.
 type ResponseObjectStreamResponseOutputItemAddedItemMcpListTools struct {
-	ID          string                                                            `json:"id,required"`
-	ServerLabel string                                                            `json:"server_label,required"`
-	Tools       []ResponseObjectStreamResponseOutputItemAddedItemMcpListToolsTool `json:"tools,required"`
-	Type        constant.McpListTools                                             `json:"type,required"`
+	// Unique identifier for this MCP list tools operation
+	ID string `json:"id,required"`
+	// Label identifying the MCP server providing the tools
+	ServerLabel string `json:"server_label,required"`
+	// List of available tools provided by the MCP server
+	Tools []ResponseObjectStreamResponseOutputItemAddedItemMcpListToolsTool `json:"tools,required"`
+	// Tool call type identifier, always "mcp_list_tools"
+	Type constant.McpListTools `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -2353,10 +2484,14 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMcpListTools) UnmarshalJ
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Tool definition returned by MCP list tools operation.
 type ResponseObjectStreamResponseOutputItemAddedItemMcpListToolsTool struct {
+	// JSON schema defining the tool's input parameters
 	InputSchema map[string]ResponseObjectStreamResponseOutputItemAddedItemMcpListToolsToolInputSchemaUnion `json:"input_schema,required"`
-	Name        string                                                                                     `json:"name,required"`
-	Description string                                                                                     `json:"description"`
+	// Name of the tool
+	Name string `json:"name,required"`
+	// (Optional) Description of what the tool does
+	Description string `json:"description"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		InputSchema respjson.Field
@@ -2439,15 +2574,18 @@ const (
 	ResponseObjectStreamResponseOutputItemAddedItemRoleAssistant ResponseObjectStreamResponseOutputItemAddedItemRole = "assistant"
 )
 
+// Streaming event for when an output item is completed.
 type ResponseObjectStreamResponseOutputItemDone struct {
-	// Corresponds to the various Message types in the Responses API. They are all
-	// under one type because the Responses API gives them all the same "type" value,
-	// and there is no way to tell them apart in certain scenarios.
-	Item           ResponseObjectStreamResponseOutputItemDoneItemUnion `json:"item,required"`
-	OutputIndex    int64                                               `json:"output_index,required"`
-	ResponseID     string                                              `json:"response_id,required"`
-	SequenceNumber int64                                               `json:"sequence_number,required"`
-	Type           constant.ResponseOutputItemDone                     `json:"type,required"`
+	// The completed output item (message, tool call, etc.)
+	Item ResponseObjectStreamResponseOutputItemDoneItemUnion `json:"item,required"`
+	// Index position of this item in the output list
+	OutputIndex int64 `json:"output_index,required"`
+	// Unique identifier of the response containing this output
+	ResponseID string `json:"response_id,required"`
+	// Sequential number for ordering streaming events
+	SequenceNumber int64 `json:"sequence_number,required"`
+	// Event type identifier, always "response.output_item.done"
+	Type constant.ResponseOutputItemDone `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Item           respjson.Field
@@ -2781,8 +2919,11 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemUn
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content for input messages in OpenAI response format.
 type ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputText struct {
-	Text string             `json:"text,required"`
+	// The text content of the input message
+	Text string `json:"text,required"`
+	// Content type identifier, always "input_text"
 	Type constant.InputText `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -2801,11 +2942,16 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemIn
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Image content for input messages in OpenAI response format.
 type ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputImage struct {
+	// Level of detail for image processing, can be "low", "high", or "auto"
+	//
 	// Any of "low", "high", "auto".
-	Detail   ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputImageDetail `json:"detail,required"`
-	Type     constant.InputImage                                                                   `json:"type,required"`
-	ImageURL string                                                                                `json:"image_url"`
+	Detail ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputImageDetail `json:"detail,required"`
+	// Content type identifier, always "input_image"
+	Type constant.InputImage `json:"type,required"`
+	// (Optional) URL of the image content
+	ImageURL string `json:"image_url"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Detail      respjson.Field
@@ -2824,6 +2970,7 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemIn
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Level of detail for image processing, can be "low", "high", or "auto"
 type ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputImageDetail string
 
 const (
@@ -2832,6 +2979,7 @@ const (
 	ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputImageDetailAuto ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputImageDetail = "auto"
 )
 
+// Level of detail for image processing, can be "low", "high", or "auto"
 type ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemDetail string
 
 const (
@@ -2976,11 +3124,16 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemAn
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// File citation annotation for referencing specific files in response content.
 type ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemAnnotationFileCitation struct {
-	FileID   string                `json:"file_id,required"`
-	Filename string                `json:"filename,required"`
-	Index    int64                 `json:"index,required"`
-	Type     constant.FileCitation `json:"type,required"`
+	// Unique identifier of the referenced file
+	FileID string `json:"file_id,required"`
+	// Name of the referenced file
+	Filename string `json:"filename,required"`
+	// Position index of the citation within the content
+	Index int64 `json:"index,required"`
+	// Annotation type identifier, always "file_citation"
+	Type constant.FileCitation `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		FileID      respjson.Field
@@ -3000,12 +3153,18 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemAn
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// URL citation annotation for referencing external web resources.
 type ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemAnnotationURLCitation struct {
-	EndIndex   int64                `json:"end_index,required"`
-	StartIndex int64                `json:"start_index,required"`
-	Title      string               `json:"title,required"`
-	Type       constant.URLCitation `json:"type,required"`
-	URL        string               `json:"url,required"`
+	// End position of the citation span in the content
+	EndIndex int64 `json:"end_index,required"`
+	// Start position of the citation span in the content
+	StartIndex int64 `json:"start_index,required"`
+	// Title of the referenced web resource
+	Title string `json:"title,required"`
+	// Annotation type identifier, always "url_citation"
+	Type constant.URLCitation `json:"type,required"`
+	// URL of the referenced web resource
+	URL string `json:"url,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		EndIndex    respjson.Field
@@ -3085,10 +3244,14 @@ const (
 	ResponseObjectStreamResponseOutputItemDoneItemMessageRoleAssistant ResponseObjectStreamResponseOutputItemDoneItemMessageRole = "assistant"
 )
 
+// Web search tool call output message for OpenAI responses.
 type ResponseObjectStreamResponseOutputItemDoneItemWebSearchCall struct {
-	ID     string                 `json:"id,required"`
-	Status string                 `json:"status,required"`
-	Type   constant.WebSearchCall `json:"type,required"`
+	// Unique identifier for this tool call
+	ID string `json:"id,required"`
+	// Current status of the web search operation
+	Status string `json:"status,required"`
+	// Tool call type identifier, always "web_search_call"
+	Type constant.WebSearchCall `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -3107,11 +3270,17 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemWebSearchCall) UnmarshalJ
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// File search tool call output message for OpenAI responses.
 type ResponseObjectStreamResponseOutputItemDoneItemFileSearchCall struct {
-	ID      string                                                                               `json:"id,required"`
-	Queries []string                                                                             `json:"queries,required"`
-	Status  string                                                                               `json:"status,required"`
-	Type    constant.FileSearchCall                                                              `json:"type,required"`
+	// Unique identifier for this tool call
+	ID string `json:"id,required"`
+	// List of search queries executed
+	Queries []string `json:"queries,required"`
+	// Current status of the file search operation
+	Status string `json:"status,required"`
+	// Tool call type identifier, always "file_search_call"
+	Type constant.FileSearchCall `json:"type,required"`
+	// (Optional) Search results returned by the file search operation
 	Results []map[string]ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultUnion `json:"results"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -3187,13 +3356,20 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultUnion
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Function tool call output message for OpenAI responses.
 type ResponseObjectStreamResponseOutputItemDoneItemFunctionCall struct {
-	Arguments string                `json:"arguments,required"`
-	CallID    string                `json:"call_id,required"`
-	Name      string                `json:"name,required"`
-	Type      constant.FunctionCall `json:"type,required"`
-	ID        string                `json:"id"`
-	Status    string                `json:"status"`
+	// JSON string containing the function arguments
+	Arguments string `json:"arguments,required"`
+	// Unique identifier for the function call
+	CallID string `json:"call_id,required"`
+	// Name of the function being called
+	Name string `json:"name,required"`
+	// Tool call type identifier, always "function_call"
+	Type constant.FunctionCall `json:"type,required"`
+	// (Optional) Additional identifier for the tool call
+	ID string `json:"id"`
+	// (Optional) Current status of the function call execution
+	Status string `json:"status"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments   respjson.Field
@@ -3215,14 +3391,22 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemFunctionCall) UnmarshalJS
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Model Context Protocol (MCP) call output message for OpenAI responses.
 type ResponseObjectStreamResponseOutputItemDoneItemMcpCall struct {
-	ID          string           `json:"id,required"`
-	Arguments   string           `json:"arguments,required"`
-	Name        string           `json:"name,required"`
-	ServerLabel string           `json:"server_label,required"`
-	Type        constant.McpCall `json:"type,required"`
-	Error       string           `json:"error"`
-	Output      string           `json:"output"`
+	// Unique identifier for this MCP call
+	ID string `json:"id,required"`
+	// JSON string containing the MCP call arguments
+	Arguments string `json:"arguments,required"`
+	// Name of the MCP method being called
+	Name string `json:"name,required"`
+	// Label identifying the MCP server handling the call
+	ServerLabel string `json:"server_label,required"`
+	// Tool call type identifier, always "mcp_call"
+	Type constant.McpCall `json:"type,required"`
+	// (Optional) Error message if the MCP call failed
+	Error string `json:"error"`
+	// (Optional) Output result from the successful MCP call
+	Output string `json:"output"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -3243,11 +3427,16 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMcpCall) UnmarshalJSON(da
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// MCP list tools output message containing available tools from an MCP server.
 type ResponseObjectStreamResponseOutputItemDoneItemMcpListTools struct {
-	ID          string                                                           `json:"id,required"`
-	ServerLabel string                                                           `json:"server_label,required"`
-	Tools       []ResponseObjectStreamResponseOutputItemDoneItemMcpListToolsTool `json:"tools,required"`
-	Type        constant.McpListTools                                            `json:"type,required"`
+	// Unique identifier for this MCP list tools operation
+	ID string `json:"id,required"`
+	// Label identifying the MCP server providing the tools
+	ServerLabel string `json:"server_label,required"`
+	// List of available tools provided by the MCP server
+	Tools []ResponseObjectStreamResponseOutputItemDoneItemMcpListToolsTool `json:"tools,required"`
+	// Tool call type identifier, always "mcp_list_tools"
+	Type constant.McpListTools `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -3267,10 +3456,14 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMcpListTools) UnmarshalJS
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Tool definition returned by MCP list tools operation.
 type ResponseObjectStreamResponseOutputItemDoneItemMcpListToolsTool struct {
+	// JSON schema defining the tool's input parameters
 	InputSchema map[string]ResponseObjectStreamResponseOutputItemDoneItemMcpListToolsToolInputSchemaUnion `json:"input_schema,required"`
-	Name        string                                                                                    `json:"name,required"`
-	Description string                                                                                    `json:"description"`
+	// Name of the tool
+	Name string `json:"name,required"`
+	// (Optional) Description of what the tool does
+	Description string `json:"description"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		InputSchema respjson.Field
@@ -3353,13 +3546,20 @@ const (
 	ResponseObjectStreamResponseOutputItemDoneItemRoleAssistant ResponseObjectStreamResponseOutputItemDoneItemRole = "assistant"
 )
 
+// Streaming event for incremental text content updates.
 type ResponseObjectStreamResponseOutputTextDelta struct {
-	ContentIndex   int64                            `json:"content_index,required"`
-	Delta          string                           `json:"delta,required"`
-	ItemID         string                           `json:"item_id,required"`
-	OutputIndex    int64                            `json:"output_index,required"`
-	SequenceNumber int64                            `json:"sequence_number,required"`
-	Type           constant.ResponseOutputTextDelta `json:"type,required"`
+	// Index position within the text content
+	ContentIndex int64 `json:"content_index,required"`
+	// Incremental text content being added
+	Delta string `json:"delta,required"`
+	// Unique identifier of the output item being updated
+	ItemID string `json:"item_id,required"`
+	// Index position of the item in the output list
+	OutputIndex int64 `json:"output_index,required"`
+	// Sequential number for ordering streaming events
+	SequenceNumber int64 `json:"sequence_number,required"`
+	// Event type identifier, always "response.output_text.delta"
+	Type constant.ResponseOutputTextDelta `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ContentIndex   respjson.Field
@@ -3379,13 +3579,20 @@ func (r *ResponseObjectStreamResponseOutputTextDelta) UnmarshalJSON(data []byte)
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Streaming event for when text output is completed.
 type ResponseObjectStreamResponseOutputTextDone struct {
-	ContentIndex   int64                           `json:"content_index,required"`
-	ItemID         string                          `json:"item_id,required"`
-	OutputIndex    int64                           `json:"output_index,required"`
-	SequenceNumber int64                           `json:"sequence_number,required"`
-	Text           string                          `json:"text,required"`
-	Type           constant.ResponseOutputTextDone `json:"type,required"`
+	// Index position within the text content
+	ContentIndex int64 `json:"content_index,required"`
+	// Unique identifier of the completed output item
+	ItemID string `json:"item_id,required"`
+	// Index position of the item in the output list
+	OutputIndex int64 `json:"output_index,required"`
+	// Sequential number for ordering streaming events
+	SequenceNumber int64 `json:"sequence_number,required"`
+	// Final complete text content of the output item
+	Text string `json:"text,required"`
+	// Event type identifier, always "response.output_text.done"
+	Type constant.ResponseOutputTextDone `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ContentIndex   respjson.Field
@@ -3405,12 +3612,18 @@ func (r *ResponseObjectStreamResponseOutputTextDone) UnmarshalJSON(data []byte) 
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Streaming event for incremental function call argument updates.
 type ResponseObjectStreamResponseFunctionCallArgumentsDelta struct {
-	Delta          string                                      `json:"delta,required"`
-	ItemID         string                                      `json:"item_id,required"`
-	OutputIndex    int64                                       `json:"output_index,required"`
-	SequenceNumber int64                                       `json:"sequence_number,required"`
-	Type           constant.ResponseFunctionCallArgumentsDelta `json:"type,required"`
+	// Incremental function call arguments being added
+	Delta string `json:"delta,required"`
+	// Unique identifier of the function call being updated
+	ItemID string `json:"item_id,required"`
+	// Index position of the item in the output list
+	OutputIndex int64 `json:"output_index,required"`
+	// Sequential number for ordering streaming events
+	SequenceNumber int64 `json:"sequence_number,required"`
+	// Event type identifier, always "response.function_call_arguments.delta"
+	Type constant.ResponseFunctionCallArgumentsDelta `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Delta          respjson.Field
@@ -3429,12 +3642,18 @@ func (r *ResponseObjectStreamResponseFunctionCallArgumentsDelta) UnmarshalJSON(d
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Streaming event for when function call arguments are completed.
 type ResponseObjectStreamResponseFunctionCallArgumentsDone struct {
-	Arguments      string                                     `json:"arguments,required"`
-	ItemID         string                                     `json:"item_id,required"`
-	OutputIndex    int64                                      `json:"output_index,required"`
-	SequenceNumber int64                                      `json:"sequence_number,required"`
-	Type           constant.ResponseFunctionCallArgumentsDone `json:"type,required"`
+	// Final complete arguments JSON string for the function call
+	Arguments string `json:"arguments,required"`
+	// Unique identifier of the completed function call
+	ItemID string `json:"item_id,required"`
+	// Index position of the item in the output list
+	OutputIndex int64 `json:"output_index,required"`
+	// Sequential number for ordering streaming events
+	SequenceNumber int64 `json:"sequence_number,required"`
+	// Event type identifier, always "response.function_call_arguments.done"
+	Type constant.ResponseFunctionCallArgumentsDone `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments      respjson.Field
@@ -3453,11 +3672,16 @@ func (r *ResponseObjectStreamResponseFunctionCallArgumentsDone) UnmarshalJSON(da
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Streaming event for web search calls in progress.
 type ResponseObjectStreamResponseWebSearchCallInProgress struct {
-	ItemID         string                                   `json:"item_id,required"`
-	OutputIndex    int64                                    `json:"output_index,required"`
-	SequenceNumber int64                                    `json:"sequence_number,required"`
-	Type           constant.ResponseWebSearchCallInProgress `json:"type,required"`
+	// Unique identifier of the web search call
+	ItemID string `json:"item_id,required"`
+	// Index position of the item in the output list
+	OutputIndex int64 `json:"output_index,required"`
+	// Sequential number for ordering streaming events
+	SequenceNumber int64 `json:"sequence_number,required"`
+	// Event type identifier, always "response.web_search_call.in_progress"
+	Type constant.ResponseWebSearchCallInProgress `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ItemID         respjson.Field
@@ -3497,11 +3721,16 @@ func (r *ResponseObjectStreamResponseWebSearchCallSearching) UnmarshalJSON(data 
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Streaming event for completed web search calls.
 type ResponseObjectStreamResponseWebSearchCallCompleted struct {
-	ItemID         string                                  `json:"item_id,required"`
-	OutputIndex    int64                                   `json:"output_index,required"`
-	SequenceNumber int64                                   `json:"sequence_number,required"`
-	Type           constant.ResponseWebSearchCallCompleted `json:"type,required"`
+	// Unique identifier of the completed web search call
+	ItemID string `json:"item_id,required"`
+	// Index position of the item in the output list
+	OutputIndex int64 `json:"output_index,required"`
+	// Sequential number for ordering streaming events
+	SequenceNumber int64 `json:"sequence_number,required"`
+	// Event type identifier, always "response.web_search_call.completed"
+	Type constant.ResponseWebSearchCallCompleted `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ItemID         respjson.Field
@@ -3621,11 +3850,16 @@ func (r *ResponseObjectStreamResponseMcpCallArgumentsDone) UnmarshalJSON(data []
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Streaming event for MCP calls in progress.
 type ResponseObjectStreamResponseMcpCallInProgress struct {
-	ItemID         string                             `json:"item_id,required"`
-	OutputIndex    int64                              `json:"output_index,required"`
-	SequenceNumber int64                              `json:"sequence_number,required"`
-	Type           constant.ResponseMcpCallInProgress `json:"type,required"`
+	// Unique identifier of the MCP call
+	ItemID string `json:"item_id,required"`
+	// Index position of the item in the output list
+	OutputIndex int64 `json:"output_index,required"`
+	// Sequential number for ordering streaming events
+	SequenceNumber int64 `json:"sequence_number,required"`
+	// Event type identifier, always "response.mcp_call.in_progress"
+	Type constant.ResponseMcpCallInProgress `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ItemID         respjson.Field
@@ -3643,9 +3877,12 @@ func (r *ResponseObjectStreamResponseMcpCallInProgress) UnmarshalJSON(data []byt
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Streaming event for failed MCP calls.
 type ResponseObjectStreamResponseMcpCallFailed struct {
-	SequenceNumber int64                          `json:"sequence_number,required"`
-	Type           constant.ResponseMcpCallFailed `json:"type,required"`
+	// Sequential number for ordering streaming events
+	SequenceNumber int64 `json:"sequence_number,required"`
+	// Event type identifier, always "response.mcp_call.failed"
+	Type constant.ResponseMcpCallFailed `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		SequenceNumber respjson.Field
@@ -3661,9 +3898,12 @@ func (r *ResponseObjectStreamResponseMcpCallFailed) UnmarshalJSON(data []byte) e
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Streaming event for completed MCP calls.
 type ResponseObjectStreamResponseMcpCallCompleted struct {
-	SequenceNumber int64                             `json:"sequence_number,required"`
-	Type           constant.ResponseMcpCallCompleted `json:"type,required"`
+	// Sequential number for ordering streaming events
+	SequenceNumber int64 `json:"sequence_number,required"`
+	// Event type identifier, always "response.mcp_call.completed"
+	Type constant.ResponseMcpCallCompleted `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		SequenceNumber respjson.Field
@@ -3679,9 +3919,12 @@ func (r *ResponseObjectStreamResponseMcpCallCompleted) UnmarshalJSON(data []byte
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Streaming event indicating a response has been completed.
 type ResponseObjectStreamResponseCompleted struct {
-	Response ResponseObject             `json:"response,required"`
-	Type     constant.ResponseCompleted `json:"type,required"`
+	// The completed response object
+	Response ResponseObject `json:"response,required"`
+	// Event type identifier, always "response.completed"
+	Type constant.ResponseCompleted `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Response    respjson.Field
@@ -3697,12 +3940,18 @@ func (r *ResponseObjectStreamResponseCompleted) UnmarshalJSON(data []byte) error
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Paginated list of OpenAI response objects with navigation metadata.
 type ResponseListResponse struct {
-	Data    []ResponseListResponseData `json:"data,required"`
-	FirstID string                     `json:"first_id,required"`
-	HasMore bool                       `json:"has_more,required"`
-	LastID  string                     `json:"last_id,required"`
-	Object  constant.List              `json:"object,required"`
+	// List of response objects with their input context
+	Data []ResponseListResponseData `json:"data,required"`
+	// Identifier of the first item in this page
+	FirstID string `json:"first_id,required"`
+	// Whether there are more results available beyond this page
+	HasMore bool `json:"has_more,required"`
+	// Identifier of the last item in this page
+	LastID string `json:"last_id,required"`
+	// Object type identifier, always "list"
+	Object constant.List `json:"object,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -3721,22 +3970,38 @@ func (r *ResponseListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// OpenAI response object extended with input context information.
 type ResponseListResponseData struct {
-	ID                 string                                `json:"id,required"`
-	CreatedAt          int64                                 `json:"created_at,required"`
-	Input              []ResponseListResponseDataInputUnion  `json:"input,required"`
-	Model              string                                `json:"model,required"`
-	Object             constant.Response                     `json:"object,required"`
-	Output             []ResponseListResponseDataOutputUnion `json:"output,required"`
-	ParallelToolCalls  bool                                  `json:"parallel_tool_calls,required"`
-	Status             string                                `json:"status,required"`
-	Text               ResponseListResponseDataText          `json:"text,required"`
-	Error              ResponseListResponseDataError         `json:"error"`
-	PreviousResponseID string                                `json:"previous_response_id"`
-	Temperature        float64                               `json:"temperature"`
-	TopP               float64                               `json:"top_p"`
-	Truncation         string                                `json:"truncation"`
-	User               string                                `json:"user"`
+	// Unique identifier for this response
+	ID string `json:"id,required"`
+	// Unix timestamp when the response was created
+	CreatedAt int64 `json:"created_at,required"`
+	// List of input items that led to this response
+	Input []ResponseListResponseDataInputUnion `json:"input,required"`
+	// Model identifier used for generation
+	Model string `json:"model,required"`
+	// Object type identifier, always "response"
+	Object constant.Response `json:"object,required"`
+	// List of generated output items (messages, tool calls, etc.)
+	Output []ResponseListResponseDataOutputUnion `json:"output,required"`
+	// Whether tool calls can be executed in parallel
+	ParallelToolCalls bool `json:"parallel_tool_calls,required"`
+	// Current status of the response generation
+	Status string `json:"status,required"`
+	// Text formatting configuration for the response
+	Text ResponseListResponseDataText `json:"text,required"`
+	// (Optional) Error details if the response generation failed
+	Error ResponseListResponseDataError `json:"error"`
+	// (Optional) ID of the previous response in a conversation
+	PreviousResponseID string `json:"previous_response_id"`
+	// (Optional) Sampling temperature used for generation
+	Temperature float64 `json:"temperature"`
+	// (Optional) Nucleus sampling parameter used for generation
+	TopP float64 `json:"top_p"`
+	// (Optional) Truncation strategy applied to the response
+	Truncation string `json:"truncation"`
+	// (Optional) User identifier associated with the request
+	User string `json:"user"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                 respjson.Field
@@ -3846,10 +4111,14 @@ func (r *ResponseListResponseDataInputUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Web search tool call output message for OpenAI responses.
 type ResponseListResponseDataInputOpenAIResponseOutputMessageWebSearchToolCall struct {
-	ID     string                 `json:"id,required"`
-	Status string                 `json:"status,required"`
-	Type   constant.WebSearchCall `json:"type,required"`
+	// Unique identifier for this tool call
+	ID string `json:"id,required"`
+	// Current status of the web search operation
+	Status string `json:"status,required"`
+	// Tool call type identifier, always "web_search_call"
+	Type constant.WebSearchCall `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -3868,11 +4137,17 @@ func (r *ResponseListResponseDataInputOpenAIResponseOutputMessageWebSearchToolCa
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// File search tool call output message for OpenAI responses.
 type ResponseListResponseDataInputOpenAIResponseOutputMessageFileSearchToolCall struct {
-	ID      string                                                                                             `json:"id,required"`
-	Queries []string                                                                                           `json:"queries,required"`
-	Status  string                                                                                             `json:"status,required"`
-	Type    constant.FileSearchCall                                                                            `json:"type,required"`
+	// Unique identifier for this tool call
+	ID string `json:"id,required"`
+	// List of search queries executed
+	Queries []string `json:"queries,required"`
+	// Current status of the file search operation
+	Status string `json:"status,required"`
+	// Tool call type identifier, always "file_search_call"
+	Type constant.FileSearchCall `json:"type,required"`
+	// (Optional) Search results returned by the file search operation
 	Results []map[string]ResponseListResponseDataInputOpenAIResponseOutputMessageFileSearchToolCallResultUnion `json:"results"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -3949,13 +4224,20 @@ func (r *ResponseListResponseDataInputOpenAIResponseOutputMessageFileSearchToolC
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Function tool call output message for OpenAI responses.
 type ResponseListResponseDataInputOpenAIResponseOutputMessageFunctionToolCall struct {
-	Arguments string                `json:"arguments,required"`
-	CallID    string                `json:"call_id,required"`
-	Name      string                `json:"name,required"`
-	Type      constant.FunctionCall `json:"type,required"`
-	ID        string                `json:"id"`
-	Status    string                `json:"status"`
+	// JSON string containing the function arguments
+	Arguments string `json:"arguments,required"`
+	// Unique identifier for the function call
+	CallID string `json:"call_id,required"`
+	// Name of the function being called
+	Name string `json:"name,required"`
+	// Tool call type identifier, always "function_call"
+	Type constant.FunctionCall `json:"type,required"`
+	// (Optional) Additional identifier for the tool call
+	ID string `json:"id"`
+	// (Optional) Current status of the function call execution
+	Status string `json:"status"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments   respjson.Field
@@ -4168,8 +4450,11 @@ func (r *ResponseListResponseDataInputOpenAIResponseMessageContentArrayItemUnion
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content for input messages in OpenAI response format.
 type ResponseListResponseDataInputOpenAIResponseMessageContentArrayItemInputText struct {
-	Text string             `json:"text,required"`
+	// The text content of the input message
+	Text string `json:"text,required"`
+	// Content type identifier, always "input_text"
 	Type constant.InputText `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -4188,11 +4473,16 @@ func (r *ResponseListResponseDataInputOpenAIResponseMessageContentArrayItemInput
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Image content for input messages in OpenAI response format.
 type ResponseListResponseDataInputOpenAIResponseMessageContentArrayItemInputImage struct {
+	// Level of detail for image processing, can be "low", "high", or "auto"
+	//
 	// Any of "low", "high", "auto".
-	Detail   ResponseListResponseDataInputOpenAIResponseMessageContentArrayItemInputImageDetail `json:"detail,required"`
-	Type     constant.InputImage                                                                `json:"type,required"`
-	ImageURL string                                                                             `json:"image_url"`
+	Detail ResponseListResponseDataInputOpenAIResponseMessageContentArrayItemInputImageDetail `json:"detail,required"`
+	// Content type identifier, always "input_image"
+	Type constant.InputImage `json:"type,required"`
+	// (Optional) URL of the image content
+	ImageURL string `json:"image_url"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Detail      respjson.Field
@@ -4211,6 +4501,7 @@ func (r *ResponseListResponseDataInputOpenAIResponseMessageContentArrayItemInput
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Level of detail for image processing, can be "low", "high", or "auto"
 type ResponseListResponseDataInputOpenAIResponseMessageContentArrayItemInputImageDetail string
 
 const (
@@ -4219,6 +4510,7 @@ const (
 	ResponseListResponseDataInputOpenAIResponseMessageContentArrayItemInputImageDetailAuto ResponseListResponseDataInputOpenAIResponseMessageContentArrayItemInputImageDetail = "auto"
 )
 
+// Level of detail for image processing, can be "low", "high", or "auto"
 type ResponseListResponseDataInputOpenAIResponseMessageContentArrayItemDetail string
 
 const (
@@ -4363,11 +4655,16 @@ func (r *ResponseListResponseDataInputOpenAIResponseMessageContentArrayItemAnnot
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// File citation annotation for referencing specific files in response content.
 type ResponseListResponseDataInputOpenAIResponseMessageContentArrayItemAnnotationFileCitation struct {
-	FileID   string                `json:"file_id,required"`
-	Filename string                `json:"filename,required"`
-	Index    int64                 `json:"index,required"`
-	Type     constant.FileCitation `json:"type,required"`
+	// Unique identifier of the referenced file
+	FileID string `json:"file_id,required"`
+	// Name of the referenced file
+	Filename string `json:"filename,required"`
+	// Position index of the citation within the content
+	Index int64 `json:"index,required"`
+	// Annotation type identifier, always "file_citation"
+	Type constant.FileCitation `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		FileID      respjson.Field
@@ -4387,12 +4684,18 @@ func (r *ResponseListResponseDataInputOpenAIResponseMessageContentArrayItemAnnot
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// URL citation annotation for referencing external web resources.
 type ResponseListResponseDataInputOpenAIResponseMessageContentArrayItemAnnotationURLCitation struct {
-	EndIndex   int64                `json:"end_index,required"`
-	StartIndex int64                `json:"start_index,required"`
-	Title      string               `json:"title,required"`
-	Type       constant.URLCitation `json:"type,required"`
-	URL        string               `json:"url,required"`
+	// End position of the citation span in the content
+	EndIndex int64 `json:"end_index,required"`
+	// Start position of the citation span in the content
+	StartIndex int64 `json:"start_index,required"`
+	// Title of the referenced web resource
+	Title string `json:"title,required"`
+	// Annotation type identifier, always "url_citation"
+	Type constant.URLCitation `json:"type,required"`
+	// URL of the referenced web resource
+	URL string `json:"url,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		EndIndex    respjson.Field
@@ -4776,8 +5079,11 @@ func (r *ResponseListResponseDataOutputMessageContentArrayItemUnion) UnmarshalJS
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content for input messages in OpenAI response format.
 type ResponseListResponseDataOutputMessageContentArrayItemInputText struct {
-	Text string             `json:"text,required"`
+	// The text content of the input message
+	Text string `json:"text,required"`
+	// Content type identifier, always "input_text"
 	Type constant.InputText `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -4796,11 +5102,16 @@ func (r *ResponseListResponseDataOutputMessageContentArrayItemInputText) Unmarsh
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Image content for input messages in OpenAI response format.
 type ResponseListResponseDataOutputMessageContentArrayItemInputImage struct {
+	// Level of detail for image processing, can be "low", "high", or "auto"
+	//
 	// Any of "low", "high", "auto".
-	Detail   ResponseListResponseDataOutputMessageContentArrayItemInputImageDetail `json:"detail,required"`
-	Type     constant.InputImage                                                   `json:"type,required"`
-	ImageURL string                                                                `json:"image_url"`
+	Detail ResponseListResponseDataOutputMessageContentArrayItemInputImageDetail `json:"detail,required"`
+	// Content type identifier, always "input_image"
+	Type constant.InputImage `json:"type,required"`
+	// (Optional) URL of the image content
+	ImageURL string `json:"image_url"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Detail      respjson.Field
@@ -4819,6 +5130,7 @@ func (r *ResponseListResponseDataOutputMessageContentArrayItemInputImage) Unmars
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Level of detail for image processing, can be "low", "high", or "auto"
 type ResponseListResponseDataOutputMessageContentArrayItemInputImageDetail string
 
 const (
@@ -4827,6 +5139,7 @@ const (
 	ResponseListResponseDataOutputMessageContentArrayItemInputImageDetailAuto ResponseListResponseDataOutputMessageContentArrayItemInputImageDetail = "auto"
 )
 
+// Level of detail for image processing, can be "low", "high", or "auto"
 type ResponseListResponseDataOutputMessageContentArrayItemDetail string
 
 const (
@@ -4969,11 +5282,16 @@ func (r *ResponseListResponseDataOutputMessageContentArrayItemAnnotationUnion) U
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// File citation annotation for referencing specific files in response content.
 type ResponseListResponseDataOutputMessageContentArrayItemAnnotationFileCitation struct {
-	FileID   string                `json:"file_id,required"`
-	Filename string                `json:"filename,required"`
-	Index    int64                 `json:"index,required"`
-	Type     constant.FileCitation `json:"type,required"`
+	// Unique identifier of the referenced file
+	FileID string `json:"file_id,required"`
+	// Name of the referenced file
+	Filename string `json:"filename,required"`
+	// Position index of the citation within the content
+	Index int64 `json:"index,required"`
+	// Annotation type identifier, always "file_citation"
+	Type constant.FileCitation `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		FileID      respjson.Field
@@ -4993,12 +5311,18 @@ func (r *ResponseListResponseDataOutputMessageContentArrayItemAnnotationFileCita
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// URL citation annotation for referencing external web resources.
 type ResponseListResponseDataOutputMessageContentArrayItemAnnotationURLCitation struct {
-	EndIndex   int64                `json:"end_index,required"`
-	StartIndex int64                `json:"start_index,required"`
-	Title      string               `json:"title,required"`
-	Type       constant.URLCitation `json:"type,required"`
-	URL        string               `json:"url,required"`
+	// End position of the citation span in the content
+	EndIndex int64 `json:"end_index,required"`
+	// Start position of the citation span in the content
+	StartIndex int64 `json:"start_index,required"`
+	// Title of the referenced web resource
+	Title string `json:"title,required"`
+	// Annotation type identifier, always "url_citation"
+	Type constant.URLCitation `json:"type,required"`
+	// URL of the referenced web resource
+	URL string `json:"url,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		EndIndex    respjson.Field
@@ -5078,10 +5402,14 @@ const (
 	ResponseListResponseDataOutputMessageRoleAssistant ResponseListResponseDataOutputMessageRole = "assistant"
 )
 
+// Web search tool call output message for OpenAI responses.
 type ResponseListResponseDataOutputWebSearchCall struct {
-	ID     string                 `json:"id,required"`
-	Status string                 `json:"status,required"`
-	Type   constant.WebSearchCall `json:"type,required"`
+	// Unique identifier for this tool call
+	ID string `json:"id,required"`
+	// Current status of the web search operation
+	Status string `json:"status,required"`
+	// Tool call type identifier, always "web_search_call"
+	Type constant.WebSearchCall `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -5098,11 +5426,17 @@ func (r *ResponseListResponseDataOutputWebSearchCall) UnmarshalJSON(data []byte)
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// File search tool call output message for OpenAI responses.
 type ResponseListResponseDataOutputFileSearchCall struct {
-	ID      string                                                               `json:"id,required"`
-	Queries []string                                                             `json:"queries,required"`
-	Status  string                                                               `json:"status,required"`
-	Type    constant.FileSearchCall                                              `json:"type,required"`
+	// Unique identifier for this tool call
+	ID string `json:"id,required"`
+	// List of search queries executed
+	Queries []string `json:"queries,required"`
+	// Current status of the file search operation
+	Status string `json:"status,required"`
+	// Tool call type identifier, always "file_search_call"
+	Type constant.FileSearchCall `json:"type,required"`
+	// (Optional) Search results returned by the file search operation
 	Results []map[string]ResponseListResponseDataOutputFileSearchCallResultUnion `json:"results"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -5174,13 +5508,20 @@ func (r *ResponseListResponseDataOutputFileSearchCallResultUnion) UnmarshalJSON(
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Function tool call output message for OpenAI responses.
 type ResponseListResponseDataOutputFunctionCall struct {
-	Arguments string                `json:"arguments,required"`
-	CallID    string                `json:"call_id,required"`
-	Name      string                `json:"name,required"`
-	Type      constant.FunctionCall `json:"type,required"`
-	ID        string                `json:"id"`
-	Status    string                `json:"status"`
+	// JSON string containing the function arguments
+	Arguments string `json:"arguments,required"`
+	// Unique identifier for the function call
+	CallID string `json:"call_id,required"`
+	// Name of the function being called
+	Name string `json:"name,required"`
+	// Tool call type identifier, always "function_call"
+	Type constant.FunctionCall `json:"type,required"`
+	// (Optional) Additional identifier for the tool call
+	ID string `json:"id"`
+	// (Optional) Current status of the function call execution
+	Status string `json:"status"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments   respjson.Field
@@ -5200,14 +5541,22 @@ func (r *ResponseListResponseDataOutputFunctionCall) UnmarshalJSON(data []byte) 
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Model Context Protocol (MCP) call output message for OpenAI responses.
 type ResponseListResponseDataOutputMcpCall struct {
-	ID          string           `json:"id,required"`
-	Arguments   string           `json:"arguments,required"`
-	Name        string           `json:"name,required"`
-	ServerLabel string           `json:"server_label,required"`
-	Type        constant.McpCall `json:"type,required"`
-	Error       string           `json:"error"`
-	Output      string           `json:"output"`
+	// Unique identifier for this MCP call
+	ID string `json:"id,required"`
+	// JSON string containing the MCP call arguments
+	Arguments string `json:"arguments,required"`
+	// Name of the MCP method being called
+	Name string `json:"name,required"`
+	// Label identifying the MCP server handling the call
+	ServerLabel string `json:"server_label,required"`
+	// Tool call type identifier, always "mcp_call"
+	Type constant.McpCall `json:"type,required"`
+	// (Optional) Error message if the MCP call failed
+	Error string `json:"error"`
+	// (Optional) Output result from the successful MCP call
+	Output string `json:"output"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -5228,11 +5577,16 @@ func (r *ResponseListResponseDataOutputMcpCall) UnmarshalJSON(data []byte) error
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// MCP list tools output message containing available tools from an MCP server.
 type ResponseListResponseDataOutputMcpListTools struct {
-	ID          string                                           `json:"id,required"`
-	ServerLabel string                                           `json:"server_label,required"`
-	Tools       []ResponseListResponseDataOutputMcpListToolsTool `json:"tools,required"`
-	Type        constant.McpListTools                            `json:"type,required"`
+	// Unique identifier for this MCP list tools operation
+	ID string `json:"id,required"`
+	// Label identifying the MCP server providing the tools
+	ServerLabel string `json:"server_label,required"`
+	// List of available tools provided by the MCP server
+	Tools []ResponseListResponseDataOutputMcpListToolsTool `json:"tools,required"`
+	// Tool call type identifier, always "mcp_list_tools"
+	Type constant.McpListTools `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -5250,10 +5604,14 @@ func (r *ResponseListResponseDataOutputMcpListTools) UnmarshalJSON(data []byte) 
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Tool definition returned by MCP list tools operation.
 type ResponseListResponseDataOutputMcpListToolsTool struct {
+	// JSON schema defining the tool's input parameters
 	InputSchema map[string]ResponseListResponseDataOutputMcpListToolsToolInputSchemaUnion `json:"input_schema,required"`
-	Name        string                                                                    `json:"name,required"`
-	Description string                                                                    `json:"description"`
+	// Name of the tool
+	Name string `json:"name,required"`
+	// (Optional) Description of what the tool does
+	Description string `json:"description"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		InputSchema respjson.Field
@@ -5333,8 +5691,9 @@ const (
 	ResponseListResponseDataOutputRoleAssistant ResponseListResponseDataOutputRole = "assistant"
 )
 
+// Text formatting configuration for the response
 type ResponseListResponseDataText struct {
-	// Configuration for Responses API text format.
+	// (Optional) Text format configuration specifying output format requirements
 	Format ResponseListResponseDataTextFormat `json:"format"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -5350,7 +5709,7 @@ func (r *ResponseListResponseDataText) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Configuration for Responses API text format.
+// (Optional) Text format configuration specifying output format requirements
 type ResponseListResponseDataTextFormat struct {
 	// Must be "text", "json_schema", or "json_object" to identify the format type
 	//
@@ -5445,8 +5804,11 @@ func (r *ResponseListResponseDataTextFormatSchemaUnion) UnmarshalJSON(data []byt
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// (Optional) Error details if the response generation failed
 type ResponseListResponseDataError struct {
-	Code    string `json:"code,required"`
+	// Error code identifying the type of failure
+	Code string `json:"code,required"`
+	// Human-readable error message describing the failure
 	Message string `json:"message,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -5473,11 +5835,12 @@ type ResponseNewParams struct {
 	// (Optional) if specified, the new response will be a continuation of the previous
 	// response. This can be used to easily fork-off new responses from existing
 	// responses.
-	PreviousResponseID param.Opt[string]            `json:"previous_response_id,omitzero"`
-	Store              param.Opt[bool]              `json:"store,omitzero"`
-	Temperature        param.Opt[float64]           `json:"temperature,omitzero"`
-	Text               ResponseNewParamsText        `json:"text,omitzero"`
-	Tools              []ResponseNewParamsToolUnion `json:"tools,omitzero"`
+	PreviousResponseID param.Opt[string]  `json:"previous_response_id,omitzero"`
+	Store              param.Opt[bool]    `json:"store,omitzero"`
+	Temperature        param.Opt[float64] `json:"temperature,omitzero"`
+	// Text response configuration for OpenAI responses.
+	Text  ResponseNewParamsText        `json:"text,omitzero"`
+	Tools []ResponseNewParamsToolUnion `json:"tools,omitzero"`
 	paramObj
 }
 
@@ -5666,10 +6029,16 @@ func (u ResponseNewParamsInputArrayItemUnion) GetCallID() *string {
 	return nil
 }
 
+// Web search tool call output message for OpenAI responses.
+//
 // The properties ID, Status, Type are required.
 type ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageWebSearchToolCall struct {
-	ID     string `json:"id,required"`
+	// Unique identifier for this tool call
+	ID string `json:"id,required"`
+	// Current status of the web search operation
 	Status string `json:"status,required"`
+	// Tool call type identifier, always "web_search_call"
+	//
 	// This field can be elided, and will marshal its zero value as "web_search_call".
 	Type constant.WebSearchCall `json:"type,required"`
 	paramObj
@@ -5683,12 +6052,20 @@ func (r *ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageWebSearchTool
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// File search tool call output message for OpenAI responses.
+//
 // The properties ID, Queries, Status, Type are required.
 type ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageFileSearchToolCall struct {
-	ID      string                                                                                               `json:"id,required"`
-	Queries []string                                                                                             `json:"queries,omitzero,required"`
-	Status  string                                                                                               `json:"status,required"`
+	// Unique identifier for this tool call
+	ID string `json:"id,required"`
+	// List of search queries executed
+	Queries []string `json:"queries,omitzero,required"`
+	// Current status of the file search operation
+	Status string `json:"status,required"`
+	// (Optional) Search results returned by the file search operation
 	Results []map[string]ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageFileSearchToolCallResultUnion `json:"results,omitzero"`
+	// Tool call type identifier, always "file_search_call"
+	//
 	// This field can be elided, and will marshal its zero value as "file_search_call".
 	Type constant.FileSearchCall `json:"type,required"`
 	paramObj
@@ -5733,13 +6110,22 @@ func (u *ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageFileSearchToo
 	return nil
 }
 
+// Function tool call output message for OpenAI responses.
+//
 // The properties Arguments, CallID, Name, Type are required.
 type ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageFunctionToolCall struct {
-	Arguments string            `json:"arguments,required"`
-	CallID    string            `json:"call_id,required"`
-	Name      string            `json:"name,required"`
-	ID        param.Opt[string] `json:"id,omitzero"`
-	Status    param.Opt[string] `json:"status,omitzero"`
+	// JSON string containing the function arguments
+	Arguments string `json:"arguments,required"`
+	// Unique identifier for the function call
+	CallID string `json:"call_id,required"`
+	// Name of the function being called
+	Name string `json:"name,required"`
+	// (Optional) Additional identifier for the tool call
+	ID param.Opt[string] `json:"id,omitzero"`
+	// (Optional) Current status of the function call execution
+	Status param.Opt[string] `json:"status,omitzero"`
+	// Tool call type identifier, always "function_call"
+	//
 	// This field can be elided, and will marshal its zero value as "function_call".
 	Type constant.FunctionCall `json:"type,required"`
 	paramObj
@@ -5895,9 +6281,14 @@ func init() {
 	)
 }
 
+// Text content for input messages in OpenAI response format.
+//
 // The properties Text, Type are required.
 type ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemInputText struct {
+	// The text content of the input message
 	Text string `json:"text,required"`
+	// Content type identifier, always "input_text"
+	//
 	// This field can be elided, and will marshal its zero value as "input_text".
 	Type constant.InputText `json:"type,required"`
 	paramObj
@@ -5911,11 +6302,18 @@ func (r *ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemInp
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Image content for input messages in OpenAI response format.
+//
 // The properties Detail, Type are required.
 type ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemInputImage struct {
+	// Level of detail for image processing, can be "low", "high", or "auto"
+	//
 	// Any of "low", "high", "auto".
-	Detail   ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemInputImageDetail `json:"detail,omitzero,required"`
-	ImageURL param.Opt[string]                                                                    `json:"image_url,omitzero"`
+	Detail ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemInputImageDetail `json:"detail,omitzero,required"`
+	// (Optional) URL of the image content
+	ImageURL param.Opt[string] `json:"image_url,omitzero"`
+	// Content type identifier, always "input_image"
+	//
 	// This field can be elided, and will marshal its zero value as "input_image".
 	Type constant.InputImage `json:"type,required"`
 	paramObj
@@ -5929,6 +6327,7 @@ func (r *ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemInp
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Level of detail for image processing, can be "low", "high", or "auto"
 type ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemInputImageDetail string
 
 const (
@@ -6085,11 +6484,18 @@ func init() {
 	)
 }
 
+// File citation annotation for referencing specific files in response content.
+//
 // The properties FileID, Filename, Index, Type are required.
 type ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemAnnotationFileCitation struct {
-	FileID   string `json:"file_id,required"`
+	// Unique identifier of the referenced file
+	FileID string `json:"file_id,required"`
+	// Name of the referenced file
 	Filename string `json:"filename,required"`
-	Index    int64  `json:"index,required"`
+	// Position index of the citation within the content
+	Index int64 `json:"index,required"`
+	// Annotation type identifier, always "file_citation"
+	//
 	// This field can be elided, and will marshal its zero value as "file_citation".
 	Type constant.FileCitation `json:"type,required"`
 	paramObj
@@ -6103,12 +6509,20 @@ func (r *ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemAnn
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// URL citation annotation for referencing external web resources.
+//
 // The properties EndIndex, StartIndex, Title, Type, URL are required.
 type ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemAnnotationURLCitation struct {
-	EndIndex   int64  `json:"end_index,required"`
-	StartIndex int64  `json:"start_index,required"`
-	Title      string `json:"title,required"`
-	URL        string `json:"url,required"`
+	// End position of the citation span in the content
+	EndIndex int64 `json:"end_index,required"`
+	// Start position of the citation span in the content
+	StartIndex int64 `json:"start_index,required"`
+	// Title of the referenced web resource
+	Title string `json:"title,required"`
+	// URL of the referenced web resource
+	URL string `json:"url,required"`
+	// Annotation type identifier, always "url_citation"
+	//
 	// This field can be elided, and will marshal its zero value as "url_citation".
 	Type constant.URLCitation `json:"type,required"`
 	paramObj
@@ -6170,8 +6584,9 @@ const (
 	ResponseNewParamsInputArrayItemOpenAIResponseMessageRoleAssistant ResponseNewParamsInputArrayItemOpenAIResponseMessageRole = "assistant"
 )
 
+// Text response configuration for OpenAI responses.
 type ResponseNewParamsText struct {
-	// Configuration for Responses API text format.
+	// (Optional) Text format configuration specifying output format requirements
 	Format ResponseNewParamsTextFormat `json:"format,omitzero"`
 	paramObj
 }
@@ -6184,7 +6599,7 @@ func (r *ResponseNewParamsText) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Configuration for Responses API text format.
+// (Optional) Text format configuration specifying output format requirements
 //
 // The property Type is required.
 type ResponseNewParamsTextFormat struct {
@@ -6422,11 +6837,16 @@ func init() {
 	)
 }
 
+// Web search tool configuration for OpenAI response inputs.
+//
 // The property Type is required.
 type ResponseNewParamsToolOpenAIResponseInputToolWebSearch struct {
+	// Web search tool type variant to use
+	//
 	// Any of "web_search", "web_search_preview", "web_search_preview_2025_03_11".
-	Type              ResponseNewParamsToolOpenAIResponseInputToolWebSearchType `json:"type,omitzero,required"`
-	SearchContextSize param.Opt[string]                                         `json:"search_context_size,omitzero"`
+	Type ResponseNewParamsToolOpenAIResponseInputToolWebSearchType `json:"type,omitzero,required"`
+	// (Optional) Size of search context, must be "low", "medium", or "high"
+	SearchContextSize param.Opt[string] `json:"search_context_size,omitzero"`
 	paramObj
 }
 
@@ -6438,6 +6858,7 @@ func (r *ResponseNewParamsToolOpenAIResponseInputToolWebSearch) UnmarshalJSON(da
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Web search tool type variant to use
 type ResponseNewParamsToolOpenAIResponseInputToolWebSearchType string
 
 const (
@@ -6446,12 +6867,20 @@ const (
 	ResponseNewParamsToolOpenAIResponseInputToolWebSearchTypeWebSearchPreview2025_03_11 ResponseNewParamsToolOpenAIResponseInputToolWebSearchType = "web_search_preview_2025_03_11"
 )
 
+// File search tool configuration for OpenAI response inputs.
+//
 // The properties Type, VectorStoreIDs are required.
 type ResponseNewParamsToolFileSearch struct {
-	VectorStoreIDs []string                                              `json:"vector_store_ids,omitzero,required"`
-	MaxNumResults  param.Opt[int64]                                      `json:"max_num_results,omitzero"`
-	Filters        map[string]ResponseNewParamsToolFileSearchFilterUnion `json:"filters,omitzero"`
-	RankingOptions ResponseNewParamsToolFileSearchRankingOptions         `json:"ranking_options,omitzero"`
+	// List of vector store identifiers to search within
+	VectorStoreIDs []string `json:"vector_store_ids,omitzero,required"`
+	// (Optional) Maximum number of search results to return (1-50)
+	MaxNumResults param.Opt[int64] `json:"max_num_results,omitzero"`
+	// (Optional) Additional filters to apply to the search
+	Filters map[string]ResponseNewParamsToolFileSearchFilterUnion `json:"filters,omitzero"`
+	// (Optional) Options for ranking and scoring search results
+	RankingOptions ResponseNewParamsToolFileSearchRankingOptions `json:"ranking_options,omitzero"`
+	// Tool type identifier, always "file_search"
+	//
 	// This field can be elided, and will marshal its zero value as "file_search".
 	Type constant.FileSearch `json:"type,required"`
 	paramObj
@@ -6496,8 +6925,11 @@ func (u *ResponseNewParamsToolFileSearchFilterUnion) asAny() any {
 	return nil
 }
 
+// (Optional) Options for ranking and scoring search results
 type ResponseNewParamsToolFileSearchRankingOptions struct {
-	Ranker         param.Opt[string]  `json:"ranker,omitzero"`
+	// (Optional) Name of the ranking algorithm to use
+	Ranker param.Opt[string] `json:"ranker,omitzero"`
+	// (Optional) Minimum relevance score threshold for results
 	ScoreThreshold param.Opt[float64] `json:"score_threshold,omitzero"`
 	paramObj
 }
@@ -6510,12 +6942,20 @@ func (r *ResponseNewParamsToolFileSearchRankingOptions) UnmarshalJSON(data []byt
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Function tool configuration for OpenAI response inputs.
+//
 // The properties Name, Type are required.
 type ResponseNewParamsToolFunction struct {
-	Name        string                                                 `json:"name,required"`
-	Description param.Opt[string]                                      `json:"description,omitzero"`
-	Strict      param.Opt[bool]                                        `json:"strict,omitzero"`
-	Parameters  map[string]ResponseNewParamsToolFunctionParameterUnion `json:"parameters,omitzero"`
+	// Name of the function that can be called
+	Name string `json:"name,required"`
+	// (Optional) Description of what the function does
+	Description param.Opt[string] `json:"description,omitzero"`
+	// (Optional) Whether to enforce strict parameter validation
+	Strict param.Opt[bool] `json:"strict,omitzero"`
+	// (Optional) JSON schema defining the function's parameters
+	Parameters map[string]ResponseNewParamsToolFunctionParameterUnion `json:"parameters,omitzero"`
+	// Tool type identifier, always "function"
+	//
 	// This field can be elided, and will marshal its zero value as "function".
 	Type constant.Function `json:"type,required"`
 	paramObj
@@ -6560,13 +7000,22 @@ func (u *ResponseNewParamsToolFunctionParameterUnion) asAny() any {
 	return nil
 }
 
+// Model Context Protocol (MCP) tool configuration for OpenAI response inputs.
+//
 // The properties RequireApproval, ServerLabel, ServerURL, Type are required.
 type ResponseNewParamsToolMcp struct {
-	RequireApproval ResponseNewParamsToolMcpRequireApprovalUnion   `json:"require_approval,omitzero,required"`
-	ServerLabel     string                                         `json:"server_label,required"`
-	ServerURL       string                                         `json:"server_url,required"`
-	AllowedTools    ResponseNewParamsToolMcpAllowedToolsUnion      `json:"allowed_tools,omitzero"`
-	Headers         map[string]ResponseNewParamsToolMcpHeaderUnion `json:"headers,omitzero"`
+	// Approval requirement for tool calls ("always", "never", or filter)
+	RequireApproval ResponseNewParamsToolMcpRequireApprovalUnion `json:"require_approval,omitzero,required"`
+	// Label to identify this MCP server
+	ServerLabel string `json:"server_label,required"`
+	// URL endpoint of the MCP server
+	ServerURL string `json:"server_url,required"`
+	// (Optional) Restriction on which tools can be used from this server
+	AllowedTools ResponseNewParamsToolMcpAllowedToolsUnion `json:"allowed_tools,omitzero"`
+	// (Optional) HTTP headers to include when connecting to the server
+	Headers map[string]ResponseNewParamsToolMcpHeaderUnion `json:"headers,omitzero"`
+	// Tool type identifier, always "mcp"
+	//
 	// This field can be elided, and will marshal its zero value as "mcp".
 	Type constant.Mcp `json:"type,required"`
 	paramObj
@@ -6614,9 +7063,12 @@ const (
 	ResponseNewParamsToolMcpRequireApprovalStringNever  ResponseNewParamsToolMcpRequireApprovalString = "never"
 )
 
+// Filter configuration for MCP tool approval requirements.
 type ResponseNewParamsToolMcpRequireApprovalApprovalFilter struct {
+	// (Optional) List of tool names that always require approval
 	Always []string `json:"always,omitzero"`
-	Never  []string `json:"never,omitzero"`
+	// (Optional) List of tool names that never require approval
+	Never []string `json:"never,omitzero"`
 	paramObj
 }
 
@@ -6653,7 +7105,9 @@ func (u *ResponseNewParamsToolMcpAllowedToolsUnion) asAny() any {
 	return nil
 }
 
+// Filter configuration for restricting which MCP tools can be used.
 type ResponseNewParamsToolMcpAllowedToolsAllowedToolsFilter struct {
+	// (Optional) List of specific tool names that are allowed
 	ToolNames []string `json:"tool_names,omitzero"`
 	paramObj
 }

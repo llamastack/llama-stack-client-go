@@ -290,15 +290,26 @@ func init() {
 	)
 }
 
+// An unstructured log event containing a simple text message.
+//
 // The properties Message, Severity, SpanID, Timestamp, TraceID, Type are required.
 type EventUnstructuredLogParam struct {
+	// The log message text
 	Message string `json:"message,required"`
+	// The severity level of the log message
+	//
 	// Any of "verbose", "debug", "info", "warn", "error", "critical".
-	Severity   string                                             `json:"severity,omitzero,required"`
-	SpanID     string                                             `json:"span_id,required"`
-	Timestamp  time.Time                                          `json:"timestamp,required" format:"date-time"`
-	TraceID    string                                             `json:"trace_id,required"`
+	Severity string `json:"severity,omitzero,required"`
+	// Unique identifier for the span this event belongs to
+	SpanID string `json:"span_id,required"`
+	// Timestamp when the event occurred
+	Timestamp time.Time `json:"timestamp,required" format:"date-time"`
+	// Unique identifier for the trace this event belongs to
+	TraceID string `json:"trace_id,required"`
+	// (Optional) Key-value pairs containing additional metadata about the event
 	Attributes map[string]EventUnstructuredLogAttributeUnionParam `json:"attributes,omitzero"`
+	// Event type identifier set to UNSTRUCTURED_LOG
+	//
 	// This field can be elided, and will marshal its zero value as "unstructured_log".
 	Type constant.UnstructuredLog `json:"type,required"`
 	paramObj
@@ -346,16 +357,27 @@ func (u *EventUnstructuredLogAttributeUnionParam) asAny() any {
 	return nil
 }
 
+// A metric event containing a measured value.
+//
 // The properties Metric, SpanID, Timestamp, TraceID, Type, Unit, Value are
 // required.
 type EventMetricParam struct {
-	Metric     string                                    `json:"metric,required"`
-	SpanID     string                                    `json:"span_id,required"`
-	Timestamp  time.Time                                 `json:"timestamp,required" format:"date-time"`
-	TraceID    string                                    `json:"trace_id,required"`
-	Unit       string                                    `json:"unit,required"`
-	Value      float64                                   `json:"value,required"`
+	// The name of the metric being measured
+	Metric string `json:"metric,required"`
+	// Unique identifier for the span this event belongs to
+	SpanID string `json:"span_id,required"`
+	// Timestamp when the event occurred
+	Timestamp time.Time `json:"timestamp,required" format:"date-time"`
+	// Unique identifier for the trace this event belongs to
+	TraceID string `json:"trace_id,required"`
+	// The unit of measurement for the metric value
+	Unit string `json:"unit,required"`
+	// The numeric value of the metric measurement
+	Value float64 `json:"value,required"`
+	// (Optional) Key-value pairs containing additional metadata about the event
 	Attributes map[string]EventMetricAttributeUnionParam `json:"attributes,omitzero"`
+	// Event type identifier set to METRIC
+	//
 	// This field can be elided, and will marshal its zero value as "metric".
 	Type constant.Metric `json:"type,required"`
 	paramObj
@@ -397,13 +419,22 @@ func (u *EventMetricAttributeUnionParam) asAny() any {
 	return nil
 }
 
+// A structured log event containing typed payload data.
+//
 // The properties Payload, SpanID, Timestamp, TraceID, Type are required.
 type EventStructuredLogParam struct {
-	Payload    EventStructuredLogPayloadUnionParam              `json:"payload,omitzero,required"`
-	SpanID     string                                           `json:"span_id,required"`
-	Timestamp  time.Time                                        `json:"timestamp,required" format:"date-time"`
-	TraceID    string                                           `json:"trace_id,required"`
+	// The structured payload data for the log event
+	Payload EventStructuredLogPayloadUnionParam `json:"payload,omitzero,required"`
+	// Unique identifier for the span this event belongs to
+	SpanID string `json:"span_id,required"`
+	// Timestamp when the event occurred
+	Timestamp time.Time `json:"timestamp,required" format:"date-time"`
+	// Unique identifier for the trace this event belongs to
+	TraceID string `json:"trace_id,required"`
+	// (Optional) Key-value pairs containing additional metadata about the event
 	Attributes map[string]EventStructuredLogAttributeUnionParam `json:"attributes,omitzero"`
+	// Event type identifier set to STRUCTURED_LOG
+	//
 	// This field can be elided, and will marshal its zero value as "structured_log".
 	Type constant.StructuredLog `json:"type,required"`
 	paramObj
@@ -484,10 +515,16 @@ func init() {
 	)
 }
 
+// Payload for a span start event.
+//
 // The properties Name, Type are required.
 type EventStructuredLogPayloadSpanStartParam struct {
-	Name         string            `json:"name,required"`
+	// Human-readable name describing the operation this span represents
+	Name string `json:"name,required"`
+	// (Optional) Unique identifier for the parent span, if this is a child span
 	ParentSpanID param.Opt[string] `json:"parent_span_id,omitzero"`
+	// Payload type identifier set to SPAN_START
+	//
 	// This field can be elided, and will marshal its zero value as "span_start".
 	Type constant.SpanStart `json:"type,required"`
 	paramObj
@@ -501,10 +538,16 @@ func (r *EventStructuredLogPayloadSpanStartParam) UnmarshalJSON(data []byte) err
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Payload for a span end event.
+//
 // The properties Status, Type are required.
 type EventStructuredLogPayloadSpanEndParam struct {
+	// The final status of the span indicating success or failure
+	//
 	// Any of "ok", "error".
 	Status string `json:"status,omitzero,required"`
+	// Payload type identifier set to SPAN_END
+	//
 	// This field can be elided, and will marshal its zero value as "span_end".
 	Type constant.SpanEnd `json:"type,required"`
 	paramObj
@@ -552,10 +595,16 @@ func (u *EventStructuredLogAttributeUnionParam) asAny() any {
 	return nil
 }
 
+// A condition for filtering query results.
+//
 // The properties Key, Op, Value are required.
 type QueryConditionParam struct {
+	// The value to compare against
 	Value QueryConditionValueUnionParam `json:"value,omitzero,required"`
-	Key   string                        `json:"key,required"`
+	// The attribute key to filter on
+	Key string `json:"key,required"`
+	// The comparison operator to apply
+	//
 	// Any of "eq", "ne", "gt", "lt".
 	Op QueryConditionOp `json:"op,omitzero,required"`
 	paramObj
@@ -569,6 +618,7 @@ func (r *QueryConditionParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// The comparison operator to apply
 type QueryConditionOp string
 
 const (
@@ -609,7 +659,9 @@ func (u *QueryConditionValueUnionParam) asAny() any {
 	return nil
 }
 
+// Response containing a list of spans.
 type QuerySpansResponse struct {
+	// List of spans matching the query criteria
 	Data []QuerySpansResponseData `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -625,14 +677,22 @@ func (r *QuerySpansResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A span representing a single operation within a trace.
 type QuerySpansResponseData struct {
-	Name         string                                          `json:"name,required"`
-	SpanID       string                                          `json:"span_id,required"`
-	StartTime    time.Time                                       `json:"start_time,required" format:"date-time"`
-	TraceID      string                                          `json:"trace_id,required"`
-	Attributes   map[string]QuerySpansResponseDataAttributeUnion `json:"attributes"`
-	EndTime      time.Time                                       `json:"end_time" format:"date-time"`
-	ParentSpanID string                                          `json:"parent_span_id"`
+	// Human-readable name describing the operation this span represents
+	Name string `json:"name,required"`
+	// Unique identifier for the span
+	SpanID string `json:"span_id,required"`
+	// Timestamp when the operation began
+	StartTime time.Time `json:"start_time,required" format:"date-time"`
+	// Unique identifier for the trace this span belongs to
+	TraceID string `json:"trace_id,required"`
+	// (Optional) Key-value pairs containing additional metadata about the span
+	Attributes map[string]QuerySpansResponseDataAttributeUnion `json:"attributes"`
+	// (Optional) Timestamp when the operation finished, if completed
+	EndTime time.Time `json:"end_time" format:"date-time"`
+	// (Optional) Unique identifier for the parent span, if this is a child span
+	ParentSpanID string `json:"parent_span_id"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Name         respjson.Field
@@ -705,14 +765,24 @@ func (r *QuerySpansResponseDataAttributeUnion) UnmarshalJSON(data []byte) error 
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A span that includes status information.
 type SpanWithStatus struct {
-	Name         string                                  `json:"name,required"`
-	SpanID       string                                  `json:"span_id,required"`
-	StartTime    time.Time                               `json:"start_time,required" format:"date-time"`
-	TraceID      string                                  `json:"trace_id,required"`
-	Attributes   map[string]SpanWithStatusAttributeUnion `json:"attributes"`
-	EndTime      time.Time                               `json:"end_time" format:"date-time"`
-	ParentSpanID string                                  `json:"parent_span_id"`
+	// Human-readable name describing the operation this span represents
+	Name string `json:"name,required"`
+	// Unique identifier for the span
+	SpanID string `json:"span_id,required"`
+	// Timestamp when the operation began
+	StartTime time.Time `json:"start_time,required" format:"date-time"`
+	// Unique identifier for the trace this span belongs to
+	TraceID string `json:"trace_id,required"`
+	// (Optional) Key-value pairs containing additional metadata about the span
+	Attributes map[string]SpanWithStatusAttributeUnion `json:"attributes"`
+	// (Optional) Timestamp when the operation finished, if completed
+	EndTime time.Time `json:"end_time" format:"date-time"`
+	// (Optional) Unique identifier for the parent span, if this is a child span
+	ParentSpanID string `json:"parent_span_id"`
+	// (Optional) The current status of the span
+	//
 	// Any of "ok", "error".
 	Status SpanWithStatusStatus `json:"status"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -788,6 +858,7 @@ func (r *SpanWithStatusAttributeUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// (Optional) The current status of the span
 type SpanWithStatusStatus string
 
 const (
@@ -795,11 +866,17 @@ const (
 	SpanWithStatusStatusError SpanWithStatusStatus = "error"
 )
 
+// A trace representing the complete execution path of a request across multiple
+// operations.
 type Trace struct {
-	RootSpanID string    `json:"root_span_id,required"`
-	StartTime  time.Time `json:"start_time,required" format:"date-time"`
-	TraceID    string    `json:"trace_id,required"`
-	EndTime    time.Time `json:"end_time" format:"date-time"`
+	// Unique identifier for the root span that started this trace
+	RootSpanID string `json:"root_span_id,required"`
+	// Timestamp when the trace began
+	StartTime time.Time `json:"start_time,required" format:"date-time"`
+	// Unique identifier for the trace
+	TraceID string `json:"trace_id,required"`
+	// (Optional) Timestamp when the trace finished, if completed
+	EndTime time.Time `json:"end_time" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		RootSpanID  respjson.Field
@@ -817,14 +894,22 @@ func (r *Trace) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A span representing a single operation within a trace.
 type TelemetryGetSpanResponse struct {
-	Name         string                                            `json:"name,required"`
-	SpanID       string                                            `json:"span_id,required"`
-	StartTime    time.Time                                         `json:"start_time,required" format:"date-time"`
-	TraceID      string                                            `json:"trace_id,required"`
-	Attributes   map[string]TelemetryGetSpanResponseAttributeUnion `json:"attributes"`
-	EndTime      time.Time                                         `json:"end_time" format:"date-time"`
-	ParentSpanID string                                            `json:"parent_span_id"`
+	// Human-readable name describing the operation this span represents
+	Name string `json:"name,required"`
+	// Unique identifier for the span
+	SpanID string `json:"span_id,required"`
+	// Timestamp when the operation began
+	StartTime time.Time `json:"start_time,required" format:"date-time"`
+	// Unique identifier for the trace this span belongs to
+	TraceID string `json:"trace_id,required"`
+	// (Optional) Key-value pairs containing additional metadata about the span
+	Attributes map[string]TelemetryGetSpanResponseAttributeUnion `json:"attributes"`
+	// (Optional) Timestamp when the operation finished, if completed
+	EndTime time.Time `json:"end_time" format:"date-time"`
+	// (Optional) Unique identifier for the parent span, if this is a child span
+	ParentSpanID string `json:"parent_span_id"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Name         respjson.Field
@@ -920,7 +1005,9 @@ func (r *TelemetryGetSpanTreeParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Response containing a tree structure of spans.
 type TelemetryGetSpanTreeResponseEnvelope struct {
+	// Dictionary mapping span IDs to spans with status information
 	Data TelemetryGetSpanTreeResponse `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -990,7 +1077,9 @@ func (r *TelemetryQueryTracesParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Response containing a list of traces.
 type TelemetryQueryTracesResponseEnvelope struct {
+	// List of traces matching the query criteria
 	Data []Trace `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {

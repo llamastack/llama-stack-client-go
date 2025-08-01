@@ -70,14 +70,19 @@ func (r *BenchmarkService) Register(ctx context.Context, body BenchmarkRegisterP
 	return
 }
 
+// A benchmark resource for evaluating model performance.
 type Benchmark struct {
-	DatasetID          string                            `json:"dataset_id,required"`
-	Identifier         string                            `json:"identifier,required"`
-	Metadata           map[string]BenchmarkMetadataUnion `json:"metadata,required"`
-	ProviderID         string                            `json:"provider_id,required"`
-	ScoringFunctions   []string                          `json:"scoring_functions,required"`
-	Type               constant.Benchmark                `json:"type,required"`
-	ProviderResourceID string                            `json:"provider_resource_id"`
+	// Identifier of the dataset to use for the benchmark evaluation
+	DatasetID  string `json:"dataset_id,required"`
+	Identifier string `json:"identifier,required"`
+	// Metadata for this evaluation task
+	Metadata   map[string]BenchmarkMetadataUnion `json:"metadata,required"`
+	ProviderID string                            `json:"provider_id,required"`
+	// List of scoring function identifiers to apply during evaluation
+	ScoringFunctions []string `json:"scoring_functions,required"`
+	// The resource type, always benchmark
+	Type               constant.Benchmark `json:"type,required"`
+	ProviderResourceID string             `json:"provider_resource_id"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		DatasetID          respjson.Field

@@ -85,11 +85,13 @@ func (r *ListShieldsResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// A safety shield resource that can be used to check content
+// A safety shield resource that can be used to check content.
 type Shield struct {
-	Identifier         string                      `json:"identifier,required"`
-	ProviderID         string                      `json:"provider_id,required"`
-	Type               constant.Shield             `json:"type,required"`
+	Identifier string `json:"identifier,required"`
+	ProviderID string `json:"provider_id,required"`
+	// The resource type, always shield
+	Type constant.Shield `json:"type,required"`
+	// (Optional) Configuration parameters for the shield
 	Params             map[string]ShieldParamUnion `json:"params"`
 	ProviderResourceID string                      `json:"provider_resource_id"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].

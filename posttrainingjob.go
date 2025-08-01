@@ -76,8 +76,10 @@ func (r *PostTrainingJobService) Status(ctx context.Context, query PostTrainingJ
 
 // Artifacts of a finetuning job.
 type PostTrainingJobArtifactsResponse struct {
+	// List of model checkpoints created during training
 	Checkpoints []PostTrainingJobArtifactsResponseCheckpoint `json:"checkpoints,required"`
-	JobUuid     string                                       `json:"job_uuid,required"`
+	// Unique identifier for the training job
+	JobUuid string `json:"job_uuid,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Checkpoints respjson.Field
@@ -93,14 +95,20 @@ func (r *PostTrainingJobArtifactsResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Checkpoint created during training runs
+// Checkpoint created during training runs.
 type PostTrainingJobArtifactsResponseCheckpoint struct {
-	CreatedAt         time.Time                                                 `json:"created_at,required" format:"date-time"`
-	Epoch             int64                                                     `json:"epoch,required"`
-	Identifier        string                                                    `json:"identifier,required"`
-	Path              string                                                    `json:"path,required"`
-	PostTrainingJobID string                                                    `json:"post_training_job_id,required"`
-	TrainingMetrics   PostTrainingJobArtifactsResponseCheckpointTrainingMetrics `json:"training_metrics"`
+	// Timestamp when the checkpoint was created
+	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	// Training epoch when the checkpoint was saved
+	Epoch int64 `json:"epoch,required"`
+	// Unique identifier for the checkpoint
+	Identifier string `json:"identifier,required"`
+	// File system path where the checkpoint is stored
+	Path string `json:"path,required"`
+	// Identifier of the training job that created this checkpoint
+	PostTrainingJobID string `json:"post_training_job_id,required"`
+	// (Optional) Training metrics associated with this checkpoint
+	TrainingMetrics PostTrainingJobArtifactsResponseCheckpointTrainingMetrics `json:"training_metrics"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CreatedAt         respjson.Field
@@ -120,10 +128,15 @@ func (r *PostTrainingJobArtifactsResponseCheckpoint) UnmarshalJSON(data []byte) 
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// (Optional) Training metrics associated with this checkpoint
 type PostTrainingJobArtifactsResponseCheckpointTrainingMetrics struct {
-	Epoch          int64   `json:"epoch,required"`
-	Perplexity     float64 `json:"perplexity,required"`
-	TrainLoss      float64 `json:"train_loss,required"`
+	// Training epoch number
+	Epoch int64 `json:"epoch,required"`
+	// Perplexity metric indicating model confidence
+	Perplexity float64 `json:"perplexity,required"`
+	// Loss value on the training dataset
+	TrainLoss float64 `json:"train_loss,required"`
+	// Loss value on the validation dataset
 	ValidationLoss float64 `json:"validation_loss,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -146,14 +159,22 @@ func (r *PostTrainingJobArtifactsResponseCheckpointTrainingMetrics) UnmarshalJSO
 
 // Status of a finetuning job.
 type PostTrainingJobStatusResponse struct {
+	// List of model checkpoints created during training
 	Checkpoints []PostTrainingJobStatusResponseCheckpoint `json:"checkpoints,required"`
-	JobUuid     string                                    `json:"job_uuid,required"`
+	// Unique identifier for the training job
+	JobUuid string `json:"job_uuid,required"`
+	// Current status of the training job
+	//
 	// Any of "completed", "in_progress", "failed", "scheduled", "cancelled".
-	Status             PostTrainingJobStatusResponseStatus                             `json:"status,required"`
-	CompletedAt        time.Time                                                       `json:"completed_at" format:"date-time"`
+	Status PostTrainingJobStatusResponseStatus `json:"status,required"`
+	// (Optional) Timestamp when the job finished, if completed
+	CompletedAt time.Time `json:"completed_at" format:"date-time"`
+	// (Optional) Information about computational resources allocated to the job
 	ResourcesAllocated map[string]PostTrainingJobStatusResponseResourcesAllocatedUnion `json:"resources_allocated"`
-	ScheduledAt        time.Time                                                       `json:"scheduled_at" format:"date-time"`
-	StartedAt          time.Time                                                       `json:"started_at" format:"date-time"`
+	// (Optional) Timestamp when the job was scheduled
+	ScheduledAt time.Time `json:"scheduled_at" format:"date-time"`
+	// (Optional) Timestamp when the job execution began
+	StartedAt time.Time `json:"started_at" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Checkpoints        respjson.Field
@@ -174,14 +195,20 @@ func (r *PostTrainingJobStatusResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Checkpoint created during training runs
+// Checkpoint created during training runs.
 type PostTrainingJobStatusResponseCheckpoint struct {
-	CreatedAt         time.Time                                              `json:"created_at,required" format:"date-time"`
-	Epoch             int64                                                  `json:"epoch,required"`
-	Identifier        string                                                 `json:"identifier,required"`
-	Path              string                                                 `json:"path,required"`
-	PostTrainingJobID string                                                 `json:"post_training_job_id,required"`
-	TrainingMetrics   PostTrainingJobStatusResponseCheckpointTrainingMetrics `json:"training_metrics"`
+	// Timestamp when the checkpoint was created
+	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
+	// Training epoch when the checkpoint was saved
+	Epoch int64 `json:"epoch,required"`
+	// Unique identifier for the checkpoint
+	Identifier string `json:"identifier,required"`
+	// File system path where the checkpoint is stored
+	Path string `json:"path,required"`
+	// Identifier of the training job that created this checkpoint
+	PostTrainingJobID string `json:"post_training_job_id,required"`
+	// (Optional) Training metrics associated with this checkpoint
+	TrainingMetrics PostTrainingJobStatusResponseCheckpointTrainingMetrics `json:"training_metrics"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CreatedAt         respjson.Field
@@ -201,10 +228,15 @@ func (r *PostTrainingJobStatusResponseCheckpoint) UnmarshalJSON(data []byte) err
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// (Optional) Training metrics associated with this checkpoint
 type PostTrainingJobStatusResponseCheckpointTrainingMetrics struct {
-	Epoch          int64   `json:"epoch,required"`
-	Perplexity     float64 `json:"perplexity,required"`
-	TrainLoss      float64 `json:"train_loss,required"`
+	// Training epoch number
+	Epoch int64 `json:"epoch,required"`
+	// Perplexity metric indicating model confidence
+	Perplexity float64 `json:"perplexity,required"`
+	// Loss value on the training dataset
+	TrainLoss float64 `json:"train_loss,required"`
+	// Loss value on the validation dataset
 	ValidationLoss float64 `json:"validation_loss,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -223,6 +255,7 @@ func (r *PostTrainingJobStatusResponseCheckpointTrainingMetrics) UnmarshalJSON(d
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Current status of the training job
 type PostTrainingJobStatusResponseStatus string
 
 const (

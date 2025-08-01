@@ -225,11 +225,15 @@ func (r *ToolExecutionStep) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Response from a tool invocation.
 type ToolResponse struct {
+	// Unique identifier for the tool call this response is for
 	CallID string `json:"call_id,required"`
-	// A image content item
-	Content  shared.InterleavedContentUnion       `json:"content,required"`
-	ToolName ToolResponseToolName                 `json:"tool_name,required"`
+	// The response content from the tool
+	Content shared.InterleavedContentUnion `json:"content,required"`
+	// Name of the tool that was invoked
+	ToolName ToolResponseToolName `json:"tool_name,required"`
+	// (Optional) Additional metadata about the tool response
 	Metadata map[string]ToolResponseMetadataUnion `json:"metadata"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -257,6 +261,7 @@ func (r ToolResponse) ToParam() ToolResponseParam {
 	return param.Override[ToolResponseParam](json.RawMessage(r.RawJSON()))
 }
 
+// Name of the tool that was invoked
 type ToolResponseToolName string
 
 const (
@@ -318,12 +323,17 @@ func (r *ToolResponseMetadataUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Response from a tool invocation.
+//
 // The properties CallID, Content, ToolName are required.
 type ToolResponseParam struct {
+	// Unique identifier for the tool call this response is for
 	CallID string `json:"call_id,required"`
-	// A image content item
-	Content  shared.InterleavedContentUnionParam       `json:"content,omitzero,required"`
-	ToolName ToolResponseToolName                      `json:"tool_name,omitzero,required"`
+	// The response content from the tool
+	Content shared.InterleavedContentUnionParam `json:"content,omitzero,required"`
+	// Name of the tool that was invoked
+	ToolName ToolResponseToolName `json:"tool_name,omitzero,required"`
+	// (Optional) Additional metadata about the tool response
 	Metadata map[string]ToolResponseMetadataUnionParam `json:"metadata,omitzero"`
 	paramObj
 }
@@ -367,7 +377,9 @@ func (u *ToolResponseMetadataUnionParam) asAny() any {
 	return nil
 }
 
+// Response returned when creating a new agent.
 type AgentNewResponse struct {
+	// Unique identifier for the created agent
 	AgentID string `json:"agent_id,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -383,11 +395,14 @@ func (r *AgentNewResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// An agent instance with configuration and metadata.
 type AgentGetResponse struct {
-	// Configuration for an agent.
+	// Configuration settings for the agent
 	AgentConfig shared.AgentConfig `json:"agent_config,required"`
-	AgentID     string             `json:"agent_id,required"`
-	CreatedAt   time.Time          `json:"created_at,required" format:"date-time"`
+	// Unique identifier for the agent
+	AgentID string `json:"agent_id,required"`
+	// Timestamp when the agent was created
+	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AgentConfig respjson.Field

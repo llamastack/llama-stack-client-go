@@ -83,7 +83,9 @@ func (r *ToolgroupService) Unregister(ctx context.Context, toolgroupID string, o
 	return
 }
 
+// Response containing a list of tool groups.
 type ListToolGroupsResponse struct {
+	// List of tool groups
 	Data []ToolGroup `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -99,13 +101,17 @@ func (r *ListToolGroupsResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A group of related tools managed together.
 type ToolGroup struct {
-	Identifier         string                       `json:"identifier,required"`
-	ProviderID         string                       `json:"provider_id,required"`
-	Type               constant.ToolGroup           `json:"type,required"`
-	Args               map[string]ToolGroupArgUnion `json:"args"`
-	McpEndpoint        ToolGroupMcpEndpoint         `json:"mcp_endpoint"`
-	ProviderResourceID string                       `json:"provider_resource_id"`
+	Identifier string `json:"identifier,required"`
+	ProviderID string `json:"provider_id,required"`
+	// Type of resource, always 'tool_group'
+	Type constant.ToolGroup `json:"type,required"`
+	// (Optional) Additional arguments for the tool group
+	Args map[string]ToolGroupArgUnion `json:"args"`
+	// (Optional) Model Context Protocol endpoint for remote tools
+	McpEndpoint        ToolGroupMcpEndpoint `json:"mcp_endpoint"`
+	ProviderResourceID string               `json:"provider_resource_id"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Identifier         respjson.Field
@@ -177,7 +183,9 @@ func (r *ToolGroupArgUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// (Optional) Model Context Protocol endpoint for remote tools
 type ToolGroupMcpEndpoint struct {
+	// The URL string pointing to the resource
 	Uri string `json:"uri,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -248,6 +256,7 @@ func (u *ToolgroupRegisterParamsArgUnion) asAny() any {
 //
 // The property Uri is required.
 type ToolgroupRegisterParamsMcpEndpoint struct {
+	// The URL string pointing to the resource
 	Uri string `json:"uri,required"`
 	paramObj
 }

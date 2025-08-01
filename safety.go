@@ -157,7 +157,9 @@ func (r *CreateResponseResultMetadataUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Response from running a safety shield.
 type RunShieldResponse struct {
+	// (Optional) Safety violation detected by the shield, if any
 	Violation shared.SafetyViolation `json:"violation"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {

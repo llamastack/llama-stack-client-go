@@ -87,15 +87,18 @@ func (r *ListScoringFunctionsResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A scoring function resource for evaluating model outputs.
 type ScoringFn struct {
-	Identifier         string                            `json:"identifier,required"`
-	Metadata           map[string]ScoringFnMetadataUnion `json:"metadata,required"`
-	ProviderID         string                            `json:"provider_id,required"`
-	ReturnType         shared.ReturnType                 `json:"return_type,required"`
-	Type               constant.ScoringFunction          `json:"type,required"`
-	Description        string                            `json:"description"`
-	Params             ScoringFnParamsUnionResp          `json:"params"`
-	ProviderResourceID string                            `json:"provider_resource_id"`
+	Identifier string                            `json:"identifier,required"`
+	Metadata   map[string]ScoringFnMetadataUnion `json:"metadata,required"`
+	ProviderID string                            `json:"provider_id,required"`
+	ReturnType shared.ReturnType                 `json:"return_type,required"`
+	// The resource type, always scoring_function
+	Type        constant.ScoringFunction `json:"type,required"`
+	Description string                   `json:"description"`
+	// Parameters for LLM-as-judge scoring function configuration.
+	Params             ScoringFnParamsUnionResp `json:"params"`
+	ProviderResourceID string                   `json:"provider_resource_id"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Identifier         respjson.Field
@@ -262,13 +265,20 @@ func (r ScoringFnParamsUnionResp) ToParam() ScoringFnParamsUnion {
 	return param.Override[ScoringFnParamsUnion](json.RawMessage(r.RawJSON()))
 }
 
+// Parameters for LLM-as-judge scoring function configuration.
 type ScoringFnParamsLlmAsJudgeResp struct {
+	// Aggregation functions to apply to the scores of each row
+	//
 	// Any of "average", "weighted_average", "median", "categorical_count", "accuracy".
-	AggregationFunctions []string            `json:"aggregation_functions,required"`
-	JudgeModel           string              `json:"judge_model,required"`
-	JudgeScoreRegexes    []string            `json:"judge_score_regexes,required"`
-	Type                 constant.LlmAsJudge `json:"type,required"`
-	PromptTemplate       string              `json:"prompt_template"`
+	AggregationFunctions []string `json:"aggregation_functions,required"`
+	// Identifier of the LLM model to use as a judge for scoring
+	JudgeModel string `json:"judge_model,required"`
+	// Regexes to extract the answer from generated response
+	JudgeScoreRegexes []string `json:"judge_score_regexes,required"`
+	// The type of scoring function parameters, always llm_as_judge
+	Type constant.LlmAsJudge `json:"type,required"`
+	// (Optional) Custom prompt template for the judge model
+	PromptTemplate string `json:"prompt_template"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AggregationFunctions respjson.Field
@@ -287,11 +297,16 @@ func (r *ScoringFnParamsLlmAsJudgeResp) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Parameters for regex parser scoring function configuration.
 type ScoringFnParamsRegexParserResp struct {
+	// Aggregation functions to apply to the scores of each row
+	//
 	// Any of "average", "weighted_average", "median", "categorical_count", "accuracy".
-	AggregationFunctions []string             `json:"aggregation_functions,required"`
-	ParsingRegexes       []string             `json:"parsing_regexes,required"`
-	Type                 constant.RegexParser `json:"type,required"`
+	AggregationFunctions []string `json:"aggregation_functions,required"`
+	// Regex to extract the answer from generated response
+	ParsingRegexes []string `json:"parsing_regexes,required"`
+	// The type of scoring function parameters, always regex_parser
+	Type constant.RegexParser `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AggregationFunctions respjson.Field
@@ -308,10 +323,14 @@ func (r *ScoringFnParamsRegexParserResp) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Parameters for basic scoring function configuration.
 type ScoringFnParamsBasicResp struct {
+	// Aggregation functions to apply to the scores of each row
+	//
 	// Any of "average", "weighted_average", "median", "categorical_count", "accuracy".
-	AggregationFunctions []string       `json:"aggregation_functions,required"`
-	Type                 constant.Basic `json:"type,required"`
+	AggregationFunctions []string `json:"aggregation_functions,required"`
+	// The type of scoring function parameters, always basic
+	Type constant.Basic `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AggregationFunctions respjson.Field
@@ -442,14 +461,23 @@ func init() {
 	)
 }
 
+// Parameters for LLM-as-judge scoring function configuration.
+//
 // The properties AggregationFunctions, JudgeModel, JudgeScoreRegexes, Type are
 // required.
 type ScoringFnParamsLlmAsJudge struct {
+	// Aggregation functions to apply to the scores of each row
+	//
 	// Any of "average", "weighted_average", "median", "categorical_count", "accuracy".
-	AggregationFunctions []string          `json:"aggregation_functions,omitzero,required"`
-	JudgeModel           string            `json:"judge_model,required"`
-	JudgeScoreRegexes    []string          `json:"judge_score_regexes,omitzero,required"`
-	PromptTemplate       param.Opt[string] `json:"prompt_template,omitzero"`
+	AggregationFunctions []string `json:"aggregation_functions,omitzero,required"`
+	// Identifier of the LLM model to use as a judge for scoring
+	JudgeModel string `json:"judge_model,required"`
+	// Regexes to extract the answer from generated response
+	JudgeScoreRegexes []string `json:"judge_score_regexes,omitzero,required"`
+	// (Optional) Custom prompt template for the judge model
+	PromptTemplate param.Opt[string] `json:"prompt_template,omitzero"`
+	// The type of scoring function parameters, always llm_as_judge
+	//
 	// This field can be elided, and will marshal its zero value as "llm_as_judge".
 	Type constant.LlmAsJudge `json:"type,required"`
 	paramObj
@@ -463,11 +491,18 @@ func (r *ScoringFnParamsLlmAsJudge) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Parameters for regex parser scoring function configuration.
+//
 // The properties AggregationFunctions, ParsingRegexes, Type are required.
 type ScoringFnParamsRegexParser struct {
+	// Aggregation functions to apply to the scores of each row
+	//
 	// Any of "average", "weighted_average", "median", "categorical_count", "accuracy".
 	AggregationFunctions []string `json:"aggregation_functions,omitzero,required"`
-	ParsingRegexes       []string `json:"parsing_regexes,omitzero,required"`
+	// Regex to extract the answer from generated response
+	ParsingRegexes []string `json:"parsing_regexes,omitzero,required"`
+	// The type of scoring function parameters, always regex_parser
+	//
 	// This field can be elided, and will marshal its zero value as "regex_parser".
 	Type constant.RegexParser `json:"type,required"`
 	paramObj
@@ -481,10 +516,16 @@ func (r *ScoringFnParamsRegexParser) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Parameters for basic scoring function configuration.
+//
 // The properties AggregationFunctions, Type are required.
 type ScoringFnParamsBasic struct {
+	// Aggregation functions to apply to the scores of each row
+	//
 	// Any of "average", "weighted_average", "median", "categorical_count", "accuracy".
 	AggregationFunctions []string `json:"aggregation_functions,omitzero,required"`
+	// The type of scoring function parameters, always basic
+	//
 	// This field can be elided, and will marshal its zero value as "basic".
 	Type constant.Basic `json:"type,required"`
 	paramObj

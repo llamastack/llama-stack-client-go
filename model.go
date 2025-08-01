@@ -98,14 +98,22 @@ func (r *ListModelsResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A model resource representing an AI model registered in Llama Stack.
 type Model struct {
-	Identifier string                        `json:"identifier,required"`
-	Metadata   map[string]ModelMetadataUnion `json:"metadata,required"`
+	// Unique identifier for this resource in llama stack
+	Identifier string `json:"identifier,required"`
+	// Any additional metadata for this model
+	Metadata map[string]ModelMetadataUnion `json:"metadata,required"`
+	// The type of model (LLM or embedding model)
+	//
 	// Any of "llm", "embedding".
-	ModelType          ModelModelType `json:"model_type,required"`
-	ProviderID         string         `json:"provider_id,required"`
-	Type               constant.Model `json:"type,required"`
-	ProviderResourceID string         `json:"provider_resource_id"`
+	ModelType ModelModelType `json:"model_type,required"`
+	// ID of the provider that owns this resource
+	ProviderID string `json:"provider_id,required"`
+	// The resource type, always 'model' for model resources
+	Type constant.Model `json:"type,required"`
+	// Unique identifier for this resource in the provider
+	ProviderResourceID string `json:"provider_resource_id"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Identifier         respjson.Field
@@ -177,6 +185,7 @@ func (r *ModelMetadataUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// The type of model (LLM or embedding model)
 type ModelModelType string
 
 const (

@@ -97,10 +97,14 @@ func (r *AgentSessionService) Delete(ctx context.Context, sessionID string, body
 
 // A single session of an interaction with an Agentic System.
 type Session struct {
-	SessionID   string    `json:"session_id,required"`
-	SessionName string    `json:"session_name,required"`
-	StartedAt   time.Time `json:"started_at,required" format:"date-time"`
-	Turns       []Turn    `json:"turns,required"`
+	// Unique identifier for the conversation session
+	SessionID string `json:"session_id,required"`
+	// Human-readable name for the session
+	SessionName string `json:"session_name,required"`
+	// Timestamp when the session was created
+	StartedAt time.Time `json:"started_at,required" format:"date-time"`
+	// List of all turns that have occurred in this session
+	Turns []Turn `json:"turns,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		SessionID   respjson.Field
@@ -118,7 +122,9 @@ func (r *Session) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Response returned when creating a new agent session.
 type AgentSessionNewResponse struct {
+	// Unique identifier for the created session
 	SessionID string `json:"session_id,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {

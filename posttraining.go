@@ -173,16 +173,27 @@ func init() {
 	)
 }
 
+// Configuration for Low-Rank Adaptation (LoRA) fine-tuning.
+//
 // The properties Alpha, ApplyLoraToMlp, ApplyLoraToOutput, LoraAttnModules, Rank,
 // Type are required.
 type AlgorithmConfigLoRaParam struct {
-	Alpha             int64           `json:"alpha,required"`
-	ApplyLoraToMlp    bool            `json:"apply_lora_to_mlp,required"`
-	ApplyLoraToOutput bool            `json:"apply_lora_to_output,required"`
-	LoraAttnModules   []string        `json:"lora_attn_modules,omitzero,required"`
-	Rank              int64           `json:"rank,required"`
-	QuantizeBase      param.Opt[bool] `json:"quantize_base,omitzero"`
-	UseDora           param.Opt[bool] `json:"use_dora,omitzero"`
+	// LoRA scaling parameter that controls adaptation strength
+	Alpha int64 `json:"alpha,required"`
+	// Whether to apply LoRA to MLP layers
+	ApplyLoraToMlp bool `json:"apply_lora_to_mlp,required"`
+	// Whether to apply LoRA to output projection layers
+	ApplyLoraToOutput bool `json:"apply_lora_to_output,required"`
+	// List of attention module names to apply LoRA to
+	LoraAttnModules []string `json:"lora_attn_modules,omitzero,required"`
+	// Rank of the LoRA adaptation (lower rank = fewer parameters)
+	Rank int64 `json:"rank,required"`
+	// (Optional) Whether to quantize the base model weights
+	QuantizeBase param.Opt[bool] `json:"quantize_base,omitzero"`
+	// (Optional) Whether to use DoRA (Weight-Decomposed Low-Rank Adaptation)
+	UseDora param.Opt[bool] `json:"use_dora,omitzero"`
+	// Algorithm type identifier, always "LoRA"
+	//
 	// This field can be elided, and will marshal its zero value as "LoRA".
 	Type constant.LoRa `json:"type,required"`
 	paramObj
@@ -196,10 +207,16 @@ func (r *AlgorithmConfigLoRaParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Configuration for Quantization-Aware Training (QAT) fine-tuning.
+//
 // The properties GroupSize, QuantizerName, Type are required.
 type AlgorithmConfigQatParam struct {
-	GroupSize     int64  `json:"group_size,required"`
+	// Size of groups for grouped quantization
+	GroupSize int64 `json:"group_size,required"`
+	// Name of the quantization algorithm to use
 	QuantizerName string `json:"quantizer_name,required"`
+	// Algorithm type identifier, always "QAT"
+	//
 	// This field can be elided, and will marshal its zero value as "QAT".
 	Type constant.Qat `json:"type,required"`
 	paramObj
@@ -289,7 +306,10 @@ func (r *PostTrainingPreferenceOptimizeParams) UnmarshalJSON(data []byte) error 
 //
 // The properties Beta, LossType are required.
 type PostTrainingPreferenceOptimizeParamsAlgorithmConfig struct {
+	// Temperature parameter for the DPO loss
 	Beta float64 `json:"beta,required"`
+	// The type of loss function to use for DPO
+	//
 	// Any of "sigmoid", "hinge", "ipo", "kto_pair".
 	LossType string `json:"loss_type,omitzero,required"`
 	paramObj
@@ -376,14 +396,22 @@ func (u *PostTrainingPreferenceOptimizeParamsLoggerConfigUnion) asAny() any {
 // The properties GradientAccumulationSteps, MaxStepsPerEpoch, NEpochs are
 // required.
 type PostTrainingPreferenceOptimizeParamsTrainingConfig struct {
-	GradientAccumulationSteps int64                                                              `json:"gradient_accumulation_steps,required"`
-	MaxStepsPerEpoch          int64                                                              `json:"max_steps_per_epoch,required"`
-	NEpochs                   int64                                                              `json:"n_epochs,required"`
-	Dtype                     param.Opt[string]                                                  `json:"dtype,omitzero"`
-	MaxValidationSteps        param.Opt[int64]                                                   `json:"max_validation_steps,omitzero"`
-	DataConfig                PostTrainingPreferenceOptimizeParamsTrainingConfigDataConfig       `json:"data_config,omitzero"`
-	EfficiencyConfig          PostTrainingPreferenceOptimizeParamsTrainingConfigEfficiencyConfig `json:"efficiency_config,omitzero"`
-	OptimizerConfig           PostTrainingPreferenceOptimizeParamsTrainingConfigOptimizerConfig  `json:"optimizer_config,omitzero"`
+	// Number of steps to accumulate gradients before updating
+	GradientAccumulationSteps int64 `json:"gradient_accumulation_steps,required"`
+	// Maximum number of steps to run per epoch
+	MaxStepsPerEpoch int64 `json:"max_steps_per_epoch,required"`
+	// Number of training epochs to run
+	NEpochs int64 `json:"n_epochs,required"`
+	// (Optional) Data type for model parameters (bf16, fp16, fp32)
+	Dtype param.Opt[string] `json:"dtype,omitzero"`
+	// (Optional) Maximum number of validation steps per epoch
+	MaxValidationSteps param.Opt[int64] `json:"max_validation_steps,omitzero"`
+	// (Optional) Configuration for data loading and formatting
+	DataConfig PostTrainingPreferenceOptimizeParamsTrainingConfigDataConfig `json:"data_config,omitzero"`
+	// (Optional) Configuration for memory and compute optimizations
+	EfficiencyConfig PostTrainingPreferenceOptimizeParamsTrainingConfigEfficiencyConfig `json:"efficiency_config,omitzero"`
+	// (Optional) Configuration for the optimization algorithm
+	OptimizerConfig PostTrainingPreferenceOptimizeParamsTrainingConfigOptimizerConfig `json:"optimizer_config,omitzero"`
 	paramObj
 }
 
@@ -395,15 +423,26 @@ func (r *PostTrainingPreferenceOptimizeParamsTrainingConfig) UnmarshalJSON(data 
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// (Optional) Configuration for data loading and formatting
+//
 // The properties BatchSize, DataFormat, DatasetID, Shuffle are required.
 type PostTrainingPreferenceOptimizeParamsTrainingConfigDataConfig struct {
+	// Number of samples per training batch
 	BatchSize int64 `json:"batch_size,required"`
+	// Format of the dataset (instruct or dialog)
+	//
 	// Any of "instruct", "dialog".
-	DataFormat          string            `json:"data_format,omitzero,required"`
-	DatasetID           string            `json:"dataset_id,required"`
-	Shuffle             bool              `json:"shuffle,required"`
-	Packed              param.Opt[bool]   `json:"packed,omitzero"`
-	TrainOnInput        param.Opt[bool]   `json:"train_on_input,omitzero"`
+	DataFormat string `json:"data_format,omitzero,required"`
+	// Unique identifier for the training dataset
+	DatasetID string `json:"dataset_id,required"`
+	// Whether to shuffle the dataset during training
+	Shuffle bool `json:"shuffle,required"`
+	// (Optional) Whether to pack multiple samples into a single sequence for
+	// efficiency
+	Packed param.Opt[bool] `json:"packed,omitzero"`
+	// (Optional) Whether to compute loss on input tokens as well as output tokens
+	TrainOnInput param.Opt[bool] `json:"train_on_input,omitzero"`
+	// (Optional) Unique identifier for the validation dataset
 	ValidationDatasetID param.Opt[string] `json:"validation_dataset_id,omitzero"`
 	paramObj
 }
@@ -422,11 +461,16 @@ func init() {
 	)
 }
 
+// (Optional) Configuration for memory and compute optimizations
 type PostTrainingPreferenceOptimizeParamsTrainingConfigEfficiencyConfig struct {
+	// (Optional) Whether to use activation checkpointing to reduce memory usage
 	EnableActivationCheckpointing param.Opt[bool] `json:"enable_activation_checkpointing,omitzero"`
-	EnableActivationOffloading    param.Opt[bool] `json:"enable_activation_offloading,omitzero"`
-	FsdpCPUOffload                param.Opt[bool] `json:"fsdp_cpu_offload,omitzero"`
-	MemoryEfficientFsdpWrap       param.Opt[bool] `json:"memory_efficient_fsdp_wrap,omitzero"`
+	// (Optional) Whether to offload activations to CPU to save GPU memory
+	EnableActivationOffloading param.Opt[bool] `json:"enable_activation_offloading,omitzero"`
+	// (Optional) Whether to offload FSDP parameters to CPU
+	FsdpCPUOffload param.Opt[bool] `json:"fsdp_cpu_offload,omitzero"`
+	// (Optional) Whether to use memory-efficient FSDP wrapping
+	MemoryEfficientFsdpWrap param.Opt[bool] `json:"memory_efficient_fsdp_wrap,omitzero"`
 	paramObj
 }
 
@@ -438,13 +482,20 @@ func (r *PostTrainingPreferenceOptimizeParamsTrainingConfigEfficiencyConfig) Unm
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// (Optional) Configuration for the optimization algorithm
+//
 // The properties Lr, NumWarmupSteps, OptimizerType, WeightDecay are required.
 type PostTrainingPreferenceOptimizeParamsTrainingConfigOptimizerConfig struct {
-	Lr             float64 `json:"lr,required"`
-	NumWarmupSteps int64   `json:"num_warmup_steps,required"`
+	// Learning rate for the optimizer
+	Lr float64 `json:"lr,required"`
+	// Number of steps for learning rate warmup
+	NumWarmupSteps int64 `json:"num_warmup_steps,required"`
+	// Type of optimizer to use (adam, adamw, or sgd)
+	//
 	// Any of "adam", "adamw", "sgd".
-	OptimizerType string  `json:"optimizer_type,omitzero,required"`
-	WeightDecay   float64 `json:"weight_decay,required"`
+	OptimizerType string `json:"optimizer_type,omitzero,required"`
+	// Weight decay coefficient for regularization
+	WeightDecay float64 `json:"weight_decay,required"`
 	paramObj
 }
 
@@ -555,14 +606,22 @@ func (u *PostTrainingSupervisedFineTuneParamsLoggerConfigUnion) asAny() any {
 // The properties GradientAccumulationSteps, MaxStepsPerEpoch, NEpochs are
 // required.
 type PostTrainingSupervisedFineTuneParamsTrainingConfig struct {
-	GradientAccumulationSteps int64                                                              `json:"gradient_accumulation_steps,required"`
-	MaxStepsPerEpoch          int64                                                              `json:"max_steps_per_epoch,required"`
-	NEpochs                   int64                                                              `json:"n_epochs,required"`
-	Dtype                     param.Opt[string]                                                  `json:"dtype,omitzero"`
-	MaxValidationSteps        param.Opt[int64]                                                   `json:"max_validation_steps,omitzero"`
-	DataConfig                PostTrainingSupervisedFineTuneParamsTrainingConfigDataConfig       `json:"data_config,omitzero"`
-	EfficiencyConfig          PostTrainingSupervisedFineTuneParamsTrainingConfigEfficiencyConfig `json:"efficiency_config,omitzero"`
-	OptimizerConfig           PostTrainingSupervisedFineTuneParamsTrainingConfigOptimizerConfig  `json:"optimizer_config,omitzero"`
+	// Number of steps to accumulate gradients before updating
+	GradientAccumulationSteps int64 `json:"gradient_accumulation_steps,required"`
+	// Maximum number of steps to run per epoch
+	MaxStepsPerEpoch int64 `json:"max_steps_per_epoch,required"`
+	// Number of training epochs to run
+	NEpochs int64 `json:"n_epochs,required"`
+	// (Optional) Data type for model parameters (bf16, fp16, fp32)
+	Dtype param.Opt[string] `json:"dtype,omitzero"`
+	// (Optional) Maximum number of validation steps per epoch
+	MaxValidationSteps param.Opt[int64] `json:"max_validation_steps,omitzero"`
+	// (Optional) Configuration for data loading and formatting
+	DataConfig PostTrainingSupervisedFineTuneParamsTrainingConfigDataConfig `json:"data_config,omitzero"`
+	// (Optional) Configuration for memory and compute optimizations
+	EfficiencyConfig PostTrainingSupervisedFineTuneParamsTrainingConfigEfficiencyConfig `json:"efficiency_config,omitzero"`
+	// (Optional) Configuration for the optimization algorithm
+	OptimizerConfig PostTrainingSupervisedFineTuneParamsTrainingConfigOptimizerConfig `json:"optimizer_config,omitzero"`
 	paramObj
 }
 
@@ -574,15 +633,26 @@ func (r *PostTrainingSupervisedFineTuneParamsTrainingConfig) UnmarshalJSON(data 
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// (Optional) Configuration for data loading and formatting
+//
 // The properties BatchSize, DataFormat, DatasetID, Shuffle are required.
 type PostTrainingSupervisedFineTuneParamsTrainingConfigDataConfig struct {
+	// Number of samples per training batch
 	BatchSize int64 `json:"batch_size,required"`
+	// Format of the dataset (instruct or dialog)
+	//
 	// Any of "instruct", "dialog".
-	DataFormat          string            `json:"data_format,omitzero,required"`
-	DatasetID           string            `json:"dataset_id,required"`
-	Shuffle             bool              `json:"shuffle,required"`
-	Packed              param.Opt[bool]   `json:"packed,omitzero"`
-	TrainOnInput        param.Opt[bool]   `json:"train_on_input,omitzero"`
+	DataFormat string `json:"data_format,omitzero,required"`
+	// Unique identifier for the training dataset
+	DatasetID string `json:"dataset_id,required"`
+	// Whether to shuffle the dataset during training
+	Shuffle bool `json:"shuffle,required"`
+	// (Optional) Whether to pack multiple samples into a single sequence for
+	// efficiency
+	Packed param.Opt[bool] `json:"packed,omitzero"`
+	// (Optional) Whether to compute loss on input tokens as well as output tokens
+	TrainOnInput param.Opt[bool] `json:"train_on_input,omitzero"`
+	// (Optional) Unique identifier for the validation dataset
 	ValidationDatasetID param.Opt[string] `json:"validation_dataset_id,omitzero"`
 	paramObj
 }
@@ -601,11 +671,16 @@ func init() {
 	)
 }
 
+// (Optional) Configuration for memory and compute optimizations
 type PostTrainingSupervisedFineTuneParamsTrainingConfigEfficiencyConfig struct {
+	// (Optional) Whether to use activation checkpointing to reduce memory usage
 	EnableActivationCheckpointing param.Opt[bool] `json:"enable_activation_checkpointing,omitzero"`
-	EnableActivationOffloading    param.Opt[bool] `json:"enable_activation_offloading,omitzero"`
-	FsdpCPUOffload                param.Opt[bool] `json:"fsdp_cpu_offload,omitzero"`
-	MemoryEfficientFsdpWrap       param.Opt[bool] `json:"memory_efficient_fsdp_wrap,omitzero"`
+	// (Optional) Whether to offload activations to CPU to save GPU memory
+	EnableActivationOffloading param.Opt[bool] `json:"enable_activation_offloading,omitzero"`
+	// (Optional) Whether to offload FSDP parameters to CPU
+	FsdpCPUOffload param.Opt[bool] `json:"fsdp_cpu_offload,omitzero"`
+	// (Optional) Whether to use memory-efficient FSDP wrapping
+	MemoryEfficientFsdpWrap param.Opt[bool] `json:"memory_efficient_fsdp_wrap,omitzero"`
 	paramObj
 }
 
@@ -617,13 +692,20 @@ func (r *PostTrainingSupervisedFineTuneParamsTrainingConfigEfficiencyConfig) Unm
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// (Optional) Configuration for the optimization algorithm
+//
 // The properties Lr, NumWarmupSteps, OptimizerType, WeightDecay are required.
 type PostTrainingSupervisedFineTuneParamsTrainingConfigOptimizerConfig struct {
-	Lr             float64 `json:"lr,required"`
-	NumWarmupSteps int64   `json:"num_warmup_steps,required"`
+	// Learning rate for the optimizer
+	Lr float64 `json:"lr,required"`
+	// Number of steps for learning rate warmup
+	NumWarmupSteps int64 `json:"num_warmup_steps,required"`
+	// Type of optimizer to use (adam, adamw, or sgd)
+	//
 	// Any of "adam", "adamw", "sgd".
-	OptimizerType string  `json:"optimizer_type,omitzero,required"`
-	WeightDecay   float64 `json:"weight_decay,required"`
+	OptimizerType string `json:"optimizer_type,omitzero,required"`
+	// Weight decay coefficient for regularization
+	WeightDecay float64 `json:"weight_decay,required"`
 	paramObj
 }
 
