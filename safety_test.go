@@ -14,7 +14,7 @@ import (
 	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
-func TestSafetyOpenAIModerationsWithOptionalParams(t *testing.T) {
+func TestSafetyNew(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -25,11 +25,11 @@ func TestSafetyOpenAIModerationsWithOptionalParams(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Safety.OpenAIModerations(context.TODO(), llamastackclient.SafetyOpenAIModerationsParams{
-		Input: llamastackclient.SafetyOpenAIModerationsParamsInputUnion{
+	_, err := client.Safety.New(context.TODO(), llamastackclient.SafetyNewParams{
+		Input: llamastackclient.SafetyNewParamsInputUnion{
 			OfString: llamastackclient.String("string"),
 		},
-		Model: llamastackclient.String("model"),
+		Model: "model",
 	})
 	if err != nil {
 		var apierr *llamastackclient.Error
