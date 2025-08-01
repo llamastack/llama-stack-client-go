@@ -452,7 +452,8 @@ func (r *ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentUn
 // ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemUnion
 // contains all possible properties and values from
 // [ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemText],
-// [ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemImageURL].
+// [ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemImageURL],
+// [ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemFile].
 //
 // Use the
 // [ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemUnion.AsAny]
@@ -463,15 +464,19 @@ type ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayI
 	// This field is from variant
 	// [ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemText].
 	Text string `json:"text"`
-	// Any of "text", "image_url".
+	// Any of "text", "image_url", "file".
 	Type string `json:"type"`
 	// This field is from variant
 	// [ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemImageURL].
 	ImageURL ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemImageURLImageURL `json:"image_url"`
-	JSON     struct {
+	// This field is from variant
+	// [ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemFile].
+	File ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemFileFile `json:"file"`
+	JSON struct {
 		Text     respjson.Field
 		Type     respjson.Field
 		ImageURL respjson.Field
+		File     respjson.Field
 		raw      string
 	} `json:"-"`
 }
@@ -489,12 +494,15 @@ func (ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArray
 }
 func (ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemImageURL) implChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemUnion() {
 }
+func (ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemFile) implChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemUnion() {
+}
 
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemUnion.AsAny().(type) {
 //	case llamastackclient.ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemText:
 //	case llamastackclient.ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemImageURL:
+//	case llamastackclient.ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemFile:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -504,6 +512,8 @@ func (u ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArr
 		return u.AsText()
 	case "image_url":
 		return u.AsImageURL()
+	case "file":
+		return u.AsFile()
 	}
 	return nil
 }
@@ -514,6 +524,11 @@ func (u ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArr
 }
 
 func (u ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemUnion) AsImageURL() (v ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemImageURL) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemUnion) AsFile() (v ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemFile) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -584,6 +599,48 @@ func (r ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArr
 	return r.JSON.raw
 }
 func (r *ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemImageURLImageURL) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemFile struct {
+	File ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemFileFile `json:"file,required"`
+	Type constant.File                                                                          `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		File        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemFile) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemFile) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemFileFile struct {
+	FileData string `json:"file_data"`
+	FileID   string `json:"file_id"`
+	Filename string `json:"filename"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		FileData    respjson.Field
+		FileID      respjson.Field
+		Filename    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemFileFile) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemFileFile) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1401,7 +1458,8 @@ func (r *ChatCompletionGetResponseChoiceMessageUserContentUnion) UnmarshalJSON(d
 // ChatCompletionGetResponseChoiceMessageUserContentArrayItemUnion contains all
 // possible properties and values from
 // [ChatCompletionGetResponseChoiceMessageUserContentArrayItemText],
-// [ChatCompletionGetResponseChoiceMessageUserContentArrayItemImageURL].
+// [ChatCompletionGetResponseChoiceMessageUserContentArrayItemImageURL],
+// [ChatCompletionGetResponseChoiceMessageUserContentArrayItemFile].
 //
 // Use the [ChatCompletionGetResponseChoiceMessageUserContentArrayItemUnion.AsAny]
 // method to switch on the variant.
@@ -1411,15 +1469,19 @@ type ChatCompletionGetResponseChoiceMessageUserContentArrayItemUnion struct {
 	// This field is from variant
 	// [ChatCompletionGetResponseChoiceMessageUserContentArrayItemText].
 	Text string `json:"text"`
-	// Any of "text", "image_url".
+	// Any of "text", "image_url", "file".
 	Type string `json:"type"`
 	// This field is from variant
 	// [ChatCompletionGetResponseChoiceMessageUserContentArrayItemImageURL].
 	ImageURL ChatCompletionGetResponseChoiceMessageUserContentArrayItemImageURLImageURL `json:"image_url"`
-	JSON     struct {
+	// This field is from variant
+	// [ChatCompletionGetResponseChoiceMessageUserContentArrayItemFile].
+	File ChatCompletionGetResponseChoiceMessageUserContentArrayItemFileFile `json:"file"`
+	JSON struct {
 		Text     respjson.Field
 		Type     respjson.Field
 		ImageURL respjson.Field
+		File     respjson.Field
 		raw      string
 	} `json:"-"`
 }
@@ -1437,12 +1499,15 @@ func (ChatCompletionGetResponseChoiceMessageUserContentArrayItemText) implChatCo
 }
 func (ChatCompletionGetResponseChoiceMessageUserContentArrayItemImageURL) implChatCompletionGetResponseChoiceMessageUserContentArrayItemUnion() {
 }
+func (ChatCompletionGetResponseChoiceMessageUserContentArrayItemFile) implChatCompletionGetResponseChoiceMessageUserContentArrayItemUnion() {
+}
 
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ChatCompletionGetResponseChoiceMessageUserContentArrayItemUnion.AsAny().(type) {
 //	case llamastackclient.ChatCompletionGetResponseChoiceMessageUserContentArrayItemText:
 //	case llamastackclient.ChatCompletionGetResponseChoiceMessageUserContentArrayItemImageURL:
+//	case llamastackclient.ChatCompletionGetResponseChoiceMessageUserContentArrayItemFile:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -1452,6 +1517,8 @@ func (u ChatCompletionGetResponseChoiceMessageUserContentArrayItemUnion) AsAny()
 		return u.AsText()
 	case "image_url":
 		return u.AsImageURL()
+	case "file":
+		return u.AsFile()
 	}
 	return nil
 }
@@ -1462,6 +1529,11 @@ func (u ChatCompletionGetResponseChoiceMessageUserContentArrayItemUnion) AsText(
 }
 
 func (u ChatCompletionGetResponseChoiceMessageUserContentArrayItemUnion) AsImageURL() (v ChatCompletionGetResponseChoiceMessageUserContentArrayItemImageURL) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ChatCompletionGetResponseChoiceMessageUserContentArrayItemUnion) AsFile() (v ChatCompletionGetResponseChoiceMessageUserContentArrayItemFile) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -1532,6 +1604,48 @@ func (r ChatCompletionGetResponseChoiceMessageUserContentArrayItemImageURLImageU
 	return r.JSON.raw
 }
 func (r *ChatCompletionGetResponseChoiceMessageUserContentArrayItemImageURLImageURL) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ChatCompletionGetResponseChoiceMessageUserContentArrayItemFile struct {
+	File ChatCompletionGetResponseChoiceMessageUserContentArrayItemFileFile `json:"file,required"`
+	Type constant.File                                                      `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		File        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionGetResponseChoiceMessageUserContentArrayItemFile) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ChatCompletionGetResponseChoiceMessageUserContentArrayItemFile) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ChatCompletionGetResponseChoiceMessageUserContentArrayItemFileFile struct {
+	FileData string `json:"file_data"`
+	FileID   string `json:"file_id"`
+	Filename string `json:"filename"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		FileData    respjson.Field
+		FileID      respjson.Field
+		Filename    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionGetResponseChoiceMessageUserContentArrayItemFileFile) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ChatCompletionGetResponseChoiceMessageUserContentArrayItemFileFile) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -2265,7 +2379,8 @@ func (r *ChatCompletionGetResponseInputMessageUserContentUnion) UnmarshalJSON(da
 // ChatCompletionGetResponseInputMessageUserContentArrayItemUnion contains all
 // possible properties and values from
 // [ChatCompletionGetResponseInputMessageUserContentArrayItemText],
-// [ChatCompletionGetResponseInputMessageUserContentArrayItemImageURL].
+// [ChatCompletionGetResponseInputMessageUserContentArrayItemImageURL],
+// [ChatCompletionGetResponseInputMessageUserContentArrayItemFile].
 //
 // Use the [ChatCompletionGetResponseInputMessageUserContentArrayItemUnion.AsAny]
 // method to switch on the variant.
@@ -2275,15 +2390,19 @@ type ChatCompletionGetResponseInputMessageUserContentArrayItemUnion struct {
 	// This field is from variant
 	// [ChatCompletionGetResponseInputMessageUserContentArrayItemText].
 	Text string `json:"text"`
-	// Any of "text", "image_url".
+	// Any of "text", "image_url", "file".
 	Type string `json:"type"`
 	// This field is from variant
 	// [ChatCompletionGetResponseInputMessageUserContentArrayItemImageURL].
 	ImageURL ChatCompletionGetResponseInputMessageUserContentArrayItemImageURLImageURL `json:"image_url"`
-	JSON     struct {
+	// This field is from variant
+	// [ChatCompletionGetResponseInputMessageUserContentArrayItemFile].
+	File ChatCompletionGetResponseInputMessageUserContentArrayItemFileFile `json:"file"`
+	JSON struct {
 		Text     respjson.Field
 		Type     respjson.Field
 		ImageURL respjson.Field
+		File     respjson.Field
 		raw      string
 	} `json:"-"`
 }
@@ -2300,12 +2419,15 @@ func (ChatCompletionGetResponseInputMessageUserContentArrayItemText) implChatCom
 }
 func (ChatCompletionGetResponseInputMessageUserContentArrayItemImageURL) implChatCompletionGetResponseInputMessageUserContentArrayItemUnion() {
 }
+func (ChatCompletionGetResponseInputMessageUserContentArrayItemFile) implChatCompletionGetResponseInputMessageUserContentArrayItemUnion() {
+}
 
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ChatCompletionGetResponseInputMessageUserContentArrayItemUnion.AsAny().(type) {
 //	case llamastackclient.ChatCompletionGetResponseInputMessageUserContentArrayItemText:
 //	case llamastackclient.ChatCompletionGetResponseInputMessageUserContentArrayItemImageURL:
+//	case llamastackclient.ChatCompletionGetResponseInputMessageUserContentArrayItemFile:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -2315,6 +2437,8 @@ func (u ChatCompletionGetResponseInputMessageUserContentArrayItemUnion) AsAny() 
 		return u.AsText()
 	case "image_url":
 		return u.AsImageURL()
+	case "file":
+		return u.AsFile()
 	}
 	return nil
 }
@@ -2325,6 +2449,11 @@ func (u ChatCompletionGetResponseInputMessageUserContentArrayItemUnion) AsText()
 }
 
 func (u ChatCompletionGetResponseInputMessageUserContentArrayItemUnion) AsImageURL() (v ChatCompletionGetResponseInputMessageUserContentArrayItemImageURL) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ChatCompletionGetResponseInputMessageUserContentArrayItemUnion) AsFile() (v ChatCompletionGetResponseInputMessageUserContentArrayItemFile) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -2395,6 +2524,48 @@ func (r ChatCompletionGetResponseInputMessageUserContentArrayItemImageURLImageUR
 	return r.JSON.raw
 }
 func (r *ChatCompletionGetResponseInputMessageUserContentArrayItemImageURLImageURL) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ChatCompletionGetResponseInputMessageUserContentArrayItemFile struct {
+	File ChatCompletionGetResponseInputMessageUserContentArrayItemFileFile `json:"file,required"`
+	Type constant.File                                                     `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		File        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionGetResponseInputMessageUserContentArrayItemFile) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ChatCompletionGetResponseInputMessageUserContentArrayItemFile) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ChatCompletionGetResponseInputMessageUserContentArrayItemFileFile struct {
+	FileData string `json:"file_data"`
+	FileID   string `json:"file_id"`
+	Filename string `json:"filename"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		FileData    respjson.Field
+		FileID      respjson.Field
+		Filename    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionGetResponseInputMessageUserContentArrayItemFileFile) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ChatCompletionGetResponseInputMessageUserContentArrayItemFileFile) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -3104,7 +3275,8 @@ func (r *ChatCompletionListResponseDataChoiceMessageUserContentUnion) UnmarshalJ
 // ChatCompletionListResponseDataChoiceMessageUserContentArrayItemUnion contains
 // all possible properties and values from
 // [ChatCompletionListResponseDataChoiceMessageUserContentArrayItemText],
-// [ChatCompletionListResponseDataChoiceMessageUserContentArrayItemImageURL].
+// [ChatCompletionListResponseDataChoiceMessageUserContentArrayItemImageURL],
+// [ChatCompletionListResponseDataChoiceMessageUserContentArrayItemFile].
 //
 // Use the
 // [ChatCompletionListResponseDataChoiceMessageUserContentArrayItemUnion.AsAny]
@@ -3115,15 +3287,19 @@ type ChatCompletionListResponseDataChoiceMessageUserContentArrayItemUnion struct
 	// This field is from variant
 	// [ChatCompletionListResponseDataChoiceMessageUserContentArrayItemText].
 	Text string `json:"text"`
-	// Any of "text", "image_url".
+	// Any of "text", "image_url", "file".
 	Type string `json:"type"`
 	// This field is from variant
 	// [ChatCompletionListResponseDataChoiceMessageUserContentArrayItemImageURL].
 	ImageURL ChatCompletionListResponseDataChoiceMessageUserContentArrayItemImageURLImageURL `json:"image_url"`
-	JSON     struct {
+	// This field is from variant
+	// [ChatCompletionListResponseDataChoiceMessageUserContentArrayItemFile].
+	File ChatCompletionListResponseDataChoiceMessageUserContentArrayItemFileFile `json:"file"`
+	JSON struct {
 		Text     respjson.Field
 		Type     respjson.Field
 		ImageURL respjson.Field
+		File     respjson.Field
 		raw      string
 	} `json:"-"`
 }
@@ -3141,12 +3317,15 @@ func (ChatCompletionListResponseDataChoiceMessageUserContentArrayItemText) implC
 }
 func (ChatCompletionListResponseDataChoiceMessageUserContentArrayItemImageURL) implChatCompletionListResponseDataChoiceMessageUserContentArrayItemUnion() {
 }
+func (ChatCompletionListResponseDataChoiceMessageUserContentArrayItemFile) implChatCompletionListResponseDataChoiceMessageUserContentArrayItemUnion() {
+}
 
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ChatCompletionListResponseDataChoiceMessageUserContentArrayItemUnion.AsAny().(type) {
 //	case llamastackclient.ChatCompletionListResponseDataChoiceMessageUserContentArrayItemText:
 //	case llamastackclient.ChatCompletionListResponseDataChoiceMessageUserContentArrayItemImageURL:
+//	case llamastackclient.ChatCompletionListResponseDataChoiceMessageUserContentArrayItemFile:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -3156,6 +3335,8 @@ func (u ChatCompletionListResponseDataChoiceMessageUserContentArrayItemUnion) As
 		return u.AsText()
 	case "image_url":
 		return u.AsImageURL()
+	case "file":
+		return u.AsFile()
 	}
 	return nil
 }
@@ -3166,6 +3347,11 @@ func (u ChatCompletionListResponseDataChoiceMessageUserContentArrayItemUnion) As
 }
 
 func (u ChatCompletionListResponseDataChoiceMessageUserContentArrayItemUnion) AsImageURL() (v ChatCompletionListResponseDataChoiceMessageUserContentArrayItemImageURL) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ChatCompletionListResponseDataChoiceMessageUserContentArrayItemUnion) AsFile() (v ChatCompletionListResponseDataChoiceMessageUserContentArrayItemFile) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -3236,6 +3422,48 @@ func (r ChatCompletionListResponseDataChoiceMessageUserContentArrayItemImageURLI
 	return r.JSON.raw
 }
 func (r *ChatCompletionListResponseDataChoiceMessageUserContentArrayItemImageURLImageURL) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ChatCompletionListResponseDataChoiceMessageUserContentArrayItemFile struct {
+	File ChatCompletionListResponseDataChoiceMessageUserContentArrayItemFileFile `json:"file,required"`
+	Type constant.File                                                           `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		File        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionListResponseDataChoiceMessageUserContentArrayItemFile) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ChatCompletionListResponseDataChoiceMessageUserContentArrayItemFile) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ChatCompletionListResponseDataChoiceMessageUserContentArrayItemFileFile struct {
+	FileData string `json:"file_data"`
+	FileID   string `json:"file_id"`
+	Filename string `json:"filename"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		FileData    respjson.Field
+		FileID      respjson.Field
+		Filename    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionListResponseDataChoiceMessageUserContentArrayItemFileFile) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ChatCompletionListResponseDataChoiceMessageUserContentArrayItemFileFile) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -3987,7 +4215,8 @@ func (r *ChatCompletionListResponseDataInputMessageUserContentUnion) UnmarshalJS
 // ChatCompletionListResponseDataInputMessageUserContentArrayItemUnion contains all
 // possible properties and values from
 // [ChatCompletionListResponseDataInputMessageUserContentArrayItemText],
-// [ChatCompletionListResponseDataInputMessageUserContentArrayItemImageURL].
+// [ChatCompletionListResponseDataInputMessageUserContentArrayItemImageURL],
+// [ChatCompletionListResponseDataInputMessageUserContentArrayItemFile].
 //
 // Use the
 // [ChatCompletionListResponseDataInputMessageUserContentArrayItemUnion.AsAny]
@@ -3998,15 +4227,19 @@ type ChatCompletionListResponseDataInputMessageUserContentArrayItemUnion struct 
 	// This field is from variant
 	// [ChatCompletionListResponseDataInputMessageUserContentArrayItemText].
 	Text string `json:"text"`
-	// Any of "text", "image_url".
+	// Any of "text", "image_url", "file".
 	Type string `json:"type"`
 	// This field is from variant
 	// [ChatCompletionListResponseDataInputMessageUserContentArrayItemImageURL].
 	ImageURL ChatCompletionListResponseDataInputMessageUserContentArrayItemImageURLImageURL `json:"image_url"`
-	JSON     struct {
+	// This field is from variant
+	// [ChatCompletionListResponseDataInputMessageUserContentArrayItemFile].
+	File ChatCompletionListResponseDataInputMessageUserContentArrayItemFileFile `json:"file"`
+	JSON struct {
 		Text     respjson.Field
 		Type     respjson.Field
 		ImageURL respjson.Field
+		File     respjson.Field
 		raw      string
 	} `json:"-"`
 }
@@ -4024,12 +4257,15 @@ func (ChatCompletionListResponseDataInputMessageUserContentArrayItemText) implCh
 }
 func (ChatCompletionListResponseDataInputMessageUserContentArrayItemImageURL) implChatCompletionListResponseDataInputMessageUserContentArrayItemUnion() {
 }
+func (ChatCompletionListResponseDataInputMessageUserContentArrayItemFile) implChatCompletionListResponseDataInputMessageUserContentArrayItemUnion() {
+}
 
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ChatCompletionListResponseDataInputMessageUserContentArrayItemUnion.AsAny().(type) {
 //	case llamastackclient.ChatCompletionListResponseDataInputMessageUserContentArrayItemText:
 //	case llamastackclient.ChatCompletionListResponseDataInputMessageUserContentArrayItemImageURL:
+//	case llamastackclient.ChatCompletionListResponseDataInputMessageUserContentArrayItemFile:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -4039,6 +4275,8 @@ func (u ChatCompletionListResponseDataInputMessageUserContentArrayItemUnion) AsA
 		return u.AsText()
 	case "image_url":
 		return u.AsImageURL()
+	case "file":
+		return u.AsFile()
 	}
 	return nil
 }
@@ -4049,6 +4287,11 @@ func (u ChatCompletionListResponseDataInputMessageUserContentArrayItemUnion) AsT
 }
 
 func (u ChatCompletionListResponseDataInputMessageUserContentArrayItemUnion) AsImageURL() (v ChatCompletionListResponseDataInputMessageUserContentArrayItemImageURL) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ChatCompletionListResponseDataInputMessageUserContentArrayItemUnion) AsFile() (v ChatCompletionListResponseDataInputMessageUserContentArrayItemFile) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -4119,6 +4362,48 @@ func (r ChatCompletionListResponseDataInputMessageUserContentArrayItemImageURLIm
 	return r.JSON.raw
 }
 func (r *ChatCompletionListResponseDataInputMessageUserContentArrayItemImageURLImageURL) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ChatCompletionListResponseDataInputMessageUserContentArrayItemFile struct {
+	File ChatCompletionListResponseDataInputMessageUserContentArrayItemFileFile `json:"file,required"`
+	Type constant.File                                                          `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		File        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionListResponseDataInputMessageUserContentArrayItemFile) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ChatCompletionListResponseDataInputMessageUserContentArrayItemFile) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ChatCompletionListResponseDataInputMessageUserContentArrayItemFileFile struct {
+	FileData string `json:"file_data"`
+	FileID   string `json:"file_id"`
+	Filename string `json:"filename"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		FileData    respjson.Field
+		FileID      respjson.Field
+		Filename    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionListResponseDataInputMessageUserContentArrayItemFileFile) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ChatCompletionListResponseDataInputMessageUserContentArrayItemFileFile) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -4763,11 +5048,12 @@ func (u *ChatCompletionNewParamsMessageUserContentUnion) asAny() any {
 type ChatCompletionNewParamsMessageUserContentArrayItemUnion struct {
 	OfText     *ChatCompletionNewParamsMessageUserContentArrayItemText     `json:",omitzero,inline"`
 	OfImageURL *ChatCompletionNewParamsMessageUserContentArrayItemImageURL `json:",omitzero,inline"`
+	OfFile     *ChatCompletionNewParamsMessageUserContentArrayItemFile     `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u ChatCompletionNewParamsMessageUserContentArrayItemUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfText, u.OfImageURL)
+	return param.MarshalUnion(u, u.OfText, u.OfImageURL, u.OfFile)
 }
 func (u *ChatCompletionNewParamsMessageUserContentArrayItemUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -4778,6 +5064,8 @@ func (u *ChatCompletionNewParamsMessageUserContentArrayItemUnion) asAny() any {
 		return u.OfText
 	} else if !param.IsOmitted(u.OfImageURL) {
 		return u.OfImageURL
+	} else if !param.IsOmitted(u.OfFile) {
+		return u.OfFile
 	}
 	return nil
 }
@@ -4799,10 +5087,20 @@ func (u ChatCompletionNewParamsMessageUserContentArrayItemUnion) GetImageURL() *
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u ChatCompletionNewParamsMessageUserContentArrayItemUnion) GetFile() *ChatCompletionNewParamsMessageUserContentArrayItemFileFile {
+	if vt := u.OfFile; vt != nil {
+		return &vt.File
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u ChatCompletionNewParamsMessageUserContentArrayItemUnion) GetType() *string {
 	if vt := u.OfText; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfImageURL; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfFile; vt != nil {
 		return (*string)(&vt.Type)
 	}
 	return nil
@@ -4813,6 +5111,7 @@ func init() {
 		"type",
 		apijson.Discriminator[ChatCompletionNewParamsMessageUserContentArrayItemText]("text"),
 		apijson.Discriminator[ChatCompletionNewParamsMessageUserContentArrayItemImageURL]("image_url"),
+		apijson.Discriminator[ChatCompletionNewParamsMessageUserContentArrayItemFile]("file"),
 	)
 }
 
@@ -4860,6 +5159,37 @@ func (r ChatCompletionNewParamsMessageUserContentArrayItemImageURLImageURL) Mars
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *ChatCompletionNewParamsMessageUserContentArrayItemImageURLImageURL) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The properties File, Type are required.
+type ChatCompletionNewParamsMessageUserContentArrayItemFile struct {
+	File ChatCompletionNewParamsMessageUserContentArrayItemFileFile `json:"file,omitzero,required"`
+	// This field can be elided, and will marshal its zero value as "file".
+	Type constant.File `json:"type,required"`
+	paramObj
+}
+
+func (r ChatCompletionNewParamsMessageUserContentArrayItemFile) MarshalJSON() (data []byte, err error) {
+	type shadow ChatCompletionNewParamsMessageUserContentArrayItemFile
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ChatCompletionNewParamsMessageUserContentArrayItemFile) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ChatCompletionNewParamsMessageUserContentArrayItemFileFile struct {
+	FileData param.Opt[string] `json:"file_data,omitzero"`
+	FileID   param.Opt[string] `json:"file_id,omitzero"`
+	Filename param.Opt[string] `json:"filename,omitzero"`
+	paramObj
+}
+
+func (r ChatCompletionNewParamsMessageUserContentArrayItemFileFile) MarshalJSON() (data []byte, err error) {
+	type shadow ChatCompletionNewParamsMessageUserContentArrayItemFileFile
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ChatCompletionNewParamsMessageUserContentArrayItemFileFile) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
