@@ -34,6 +34,7 @@ func NewSyntheticDataGenerationService(opts ...option.RequestOption) (r Syntheti
 	return
 }
 
+// Generate synthetic data based on input dialogs and apply filtering.
 func (r *SyntheticDataGenerationService) Generate(ctx context.Context, body SyntheticDataGenerationGenerateParams, opts ...option.RequestOption) (res *SyntheticDataGenerationResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "v1/synthetic-data-generation/generate"
@@ -44,8 +45,11 @@ func (r *SyntheticDataGenerationService) Generate(ctx context.Context, body Synt
 // Response from the synthetic data generation. Batch of (prompt, response, score)
 // tuples that pass the threshold.
 type SyntheticDataGenerationResponse struct {
+	// List of generated synthetic data samples that passed the filtering criteria
 	SyntheticData []map[string]SyntheticDataGenerationResponseSyntheticDataUnion `json:"synthetic_data,required"`
-	Statistics    map[string]SyntheticDataGenerationResponseStatisticUnion       `json:"statistics"`
+	// (Optional) Statistical information about the generation process and filtering
+	// results
+	Statistics map[string]SyntheticDataGenerationResponseStatisticUnion `json:"statistics"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		SyntheticData respjson.Field
@@ -166,12 +170,15 @@ func (r *SyntheticDataGenerationResponseStatisticUnion) UnmarshalJSON(data []byt
 }
 
 type SyntheticDataGenerationGenerateParams struct {
+	// List of conversation messages to use as input for synthetic data generation
 	Dialogs []shared.MessageUnionParam `json:"dialogs,omitzero,required"`
-	// The type of filtering function.
+	// Type of filtering to apply to generated synthetic data samples
 	//
 	// Any of "none", "random", "top_k", "top_p", "top_k_top_p", "sigmoid".
 	FilteringFunction SyntheticDataGenerationGenerateParamsFilteringFunction `json:"filtering_function,omitzero,required"`
-	Model             param.Opt[string]                                      `json:"model,omitzero"`
+	// (Optional) The identifier of the model to use. The model must be registered with
+	// Llama Stack and available via the /models endpoint
+	Model param.Opt[string] `json:"model,omitzero"`
 	paramObj
 }
 
@@ -183,7 +190,7 @@ func (r *SyntheticDataGenerationGenerateParams) UnmarshalJSON(data []byte) error
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The type of filtering function.
+// Type of filtering to apply to generated synthetic data samples
 type SyntheticDataGenerationGenerateParamsFilteringFunction string
 
 const (

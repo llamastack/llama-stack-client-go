@@ -419,7 +419,9 @@ func (u *AgentConfigToolgroupAgentToolGroupWithArgsArgUnionParam) asAny() any {
 	return nil
 }
 
+// Response from a batch completion request.
 type BatchCompletion struct {
+	// List of completion responses, one for each input in the batch
 	Batch []llamastackclient.CompletionResponse `json:"batch,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -441,7 +443,8 @@ type ChatCompletionResponse struct {
 	CompletionMessage CompletionMessage `json:"completion_message,required"`
 	// Optional log probabilities for generated tokens
 	Logprobs []llamastackclient.TokenLogProbs `json:"logprobs"`
-	Metrics  []ChatCompletionResponseMetric   `json:"metrics"`
+	// (Optional) List of metrics associated with the API response
+	Metrics []ChatCompletionResponseMetric `json:"metrics"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CompletionMessage respjson.Field
@@ -458,10 +461,14 @@ func (r *ChatCompletionResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A metric value included in API responses.
 type ChatCompletionResponseMetric struct {
-	Metric string  `json:"metric,required"`
-	Value  float64 `json:"value,required"`
-	Unit   string  `json:"unit"`
+	// The name of the metric
+	Metric string `json:"metric,required"`
+	// The numeric value of the metric
+	Value float64 `json:"value,required"`
+	// (Optional) The unit of measurement for the metric value
+	Unit string `json:"unit"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Metric      respjson.Field
@@ -643,8 +650,11 @@ func (r *ContentDeltaUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A text content delta for streaming responses.
 type ContentDeltaText struct {
-	Text string        `json:"text,required"`
+	// The incremental text content
+	Text string `json:"text,required"`
+	// Discriminator type of the delta. Always "text"
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -663,9 +673,12 @@ func (r *ContentDeltaText) UnmarshalJSON(data []byte) error {
 
 func (ContentDeltaText) implContentDeltaUnion() {}
 
+// An image content delta for streaming responses.
 type ContentDeltaImage struct {
-	Image string         `json:"image,required"`
-	Type  constant.Image `json:"type,required"`
+	// The incremental image data as bytes
+	Image string `json:"image,required"`
+	// Discriminator type of the delta. Always "image"
+	Type constant.Image `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Image       respjson.Field
@@ -683,11 +696,16 @@ func (r *ContentDeltaImage) UnmarshalJSON(data []byte) error {
 
 func (ContentDeltaImage) implContentDeltaUnion() {}
 
+// A tool call content delta for streaming responses.
 type ContentDeltaToolCall struct {
+	// Current parsing status of the tool call
+	//
 	// Any of "started", "in_progress", "failed", "succeeded".
-	ParseStatus string                `json:"parse_status,required"`
-	ToolCall    ToolCallOrStringUnion `json:"tool_call,required"`
-	Type        constant.ToolCall     `json:"type,required"`
+	ParseStatus string `json:"parse_status,required"`
+	// Either an in-progress tool call string or the final parsed tool call
+	ToolCall ToolCallOrStringUnion `json:"tool_call,required"`
+	// Discriminator type of the delta. Always "tool_call"
+	Type constant.ToolCall `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ParseStatus respjson.Field
@@ -845,6 +863,7 @@ func (r *DocumentContentImageContentItemImageParam) UnmarshalJSON(data []byte) e
 //
 // The property Uri is required.
 type DocumentContentImageContentItemImageURLParam struct {
+	// The URL string pointing to the resource
 	Uri string `json:"uri,required"`
 	paramObj
 }
@@ -878,8 +897,11 @@ func (r *DocumentContentTextContentItemParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A URL reference to external content.
+//
 // The property Uri is required.
 type DocumentContentURLParam struct {
+	// The URL string pointing to the resource
 	Uri string `json:"uri,required"`
 	paramObj
 }
@@ -1034,6 +1056,7 @@ func (r *InterleavedContentImageContentItemImage) UnmarshalJSON(data []byte) err
 // A URL of the image or data URL in the format of data:image/{type};base64,{data}.
 // Note that URL could have length limits.
 type InterleavedContentImageContentItemImageURL struct {
+	// The URL string pointing to the resource
 	Uri string `json:"uri,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1183,6 +1206,7 @@ func (r *InterleavedContentImageContentItemImageParam) UnmarshalJSON(data []byte
 //
 // The property Uri is required.
 type InterleavedContentImageContentItemImageURLParam struct {
+	// The URL string pointing to the resource
 	Uri string `json:"uri,required"`
 	paramObj
 }
@@ -1337,6 +1361,7 @@ func (r *InterleavedContentItemImageImage) UnmarshalJSON(data []byte) error {
 // A URL of the image or data URL in the format of data:image/{type};base64,{data}.
 // Note that URL could have length limits.
 type InterleavedContentItemImageImageURL struct {
+	// The URL string pointing to the resource
 	Uri string `json:"uri,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1490,6 +1515,7 @@ func (r *InterleavedContentItemImageImageParam) UnmarshalJSON(data []byte) error
 //
 // The property Uri is required.
 type InterleavedContentItemImageImageURLParam struct {
+	// The URL string pointing to the resource
 	Uri string `json:"uri,required"`
 	paramObj
 }
@@ -1802,8 +1828,7 @@ func init() {
 // The properties ImpactFactor, Type are required.
 type QueryConfigRankerRrfParam struct {
 	// The impact factor for RRF scoring. Higher values give more weight to
-	// higher-ranked results. Must be greater than 0. Default of 60 is from the
-	// original RRF paper (Cormack et al., 2009).
+	// higher-ranked results. Must be greater than 0
 	ImpactFactor float64 `json:"impact_factor,required"`
 	// The type of ranker, always "rrf"
 	//
@@ -1922,9 +1947,14 @@ func init() {
 	)
 }
 
+// Configuration for the default RAG query generator.
+//
 // The properties Separator, Type are required.
 type QueryGeneratorConfigDefaultParam struct {
+	// String separator used to join query terms
 	Separator string `json:"separator,required"`
+	// Type of query generator, always 'default'
+	//
 	// This field can be elided, and will marshal its zero value as "default".
 	Type constant.Default `json:"type,required"`
 	paramObj
@@ -1938,10 +1968,16 @@ func (r *QueryGeneratorConfigDefaultParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Configuration for the LLM-based RAG query generator.
+//
 // The properties Model, Template, Type are required.
 type QueryGeneratorConfigLlmParam struct {
-	Model    string `json:"model,required"`
+	// Name of the language model to use for query generation
+	Model string `json:"model,required"`
+	// Template string for formatting the query generation prompt
 	Template string `json:"template,required"`
+	// Type of query generator, always 'llm'
+	//
 	// This field can be elided, and will marshal its zero value as "llm".
 	Type constant.Llm `json:"type,required"`
 	paramObj
@@ -1955,9 +1991,11 @@ func (r *QueryGeneratorConfigLlmParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Result of a RAG query containing retrieved content and metadata.
 type QueryResult struct {
+	// Additional metadata about the query result
 	Metadata map[string]QueryResultMetadataUnion `json:"metadata,required"`
-	// A image content item
+	// (Optional) The retrieved content from the query
 	Content InterleavedContentUnion `json:"content"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -2482,11 +2520,17 @@ func (r *ReturnTypeParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Details of a safety violation detected by content moderation.
 type SafetyViolation struct {
+	// Additional metadata including specific violation codes for debugging and
+	// telemetry
 	Metadata map[string]SafetyViolationMetadataUnion `json:"metadata,required"`
+	// Severity level of the violation
+	//
 	// Any of "info", "warn", "error".
 	ViolationLevel SafetyViolationViolationLevel `json:"violation_level,required"`
-	UserMessage    string                        `json:"user_message"`
+	// (Optional) Message to convey to the user about the violation
+	UserMessage string `json:"user_message"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Metadata       respjson.Field
@@ -2555,6 +2599,7 @@ func (r *SafetyViolationMetadataUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Severity level of the violation
 type SafetyViolationViolationLevel string
 
 const (
@@ -2678,7 +2723,10 @@ func (r *SamplingParamsStrategyUnionResp) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Greedy sampling strategy that selects the highest probability token at each
+// step.
 type SamplingParamsStrategyGreedyResp struct {
+	// Must be "greedy" to identify this sampling strategy
 	Type constant.Greedy `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -2696,10 +2744,15 @@ func (r *SamplingParamsStrategyGreedyResp) UnmarshalJSON(data []byte) error {
 
 func (SamplingParamsStrategyGreedyResp) implSamplingParamsStrategyUnionResp() {}
 
+// Top-p (nucleus) sampling strategy that samples from the smallest set of tokens
+// with cumulative probability >= p.
 type SamplingParamsStrategyTopPResp struct {
-	Type        constant.TopP `json:"type,required"`
-	Temperature float64       `json:"temperature"`
-	TopP        float64       `json:"top_p"`
+	// Must be "top_p" to identify this sampling strategy
+	Type constant.TopP `json:"type,required"`
+	// Controls randomness in sampling. Higher values increase randomness
+	Temperature float64 `json:"temperature"`
+	// Cumulative probability threshold for nucleus sampling. Defaults to 0.95
+	TopP float64 `json:"top_p"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Type        respjson.Field
@@ -2718,8 +2771,11 @@ func (r *SamplingParamsStrategyTopPResp) UnmarshalJSON(data []byte) error {
 
 func (SamplingParamsStrategyTopPResp) implSamplingParamsStrategyUnionResp() {}
 
+// Top-k sampling strategy that restricts sampling to the k most likely tokens.
 type SamplingParamsStrategyTopKResp struct {
-	TopK int64         `json:"top_k,required"`
+	// Number of top tokens to consider for sampling. Must be at least 1
+	TopK int64 `json:"top_k,required"`
+	// Must be "top_k" to identify this sampling strategy
 	Type constant.TopK `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -2844,9 +2900,13 @@ func NewSamplingParamsStrategyGreedy() SamplingParamsStrategyGreedy {
 	}
 }
 
+// Greedy sampling strategy that selects the highest probability token at each
+// step.
+//
 // This struct has a constant value, construct it with
 // [NewSamplingParamsStrategyGreedy].
 type SamplingParamsStrategyGreedy struct {
+	// Must be "greedy" to identify this sampling strategy
 	Type constant.Greedy `json:"type,required"`
 	paramObj
 }
@@ -2859,10 +2919,17 @@ func (r *SamplingParamsStrategyGreedy) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Top-p (nucleus) sampling strategy that samples from the smallest set of tokens
+// with cumulative probability >= p.
+//
 // The property Type is required.
 type SamplingParamsStrategyTopP struct {
+	// Controls randomness in sampling. Higher values increase randomness
 	Temperature param.Opt[float64] `json:"temperature,omitzero"`
-	TopP        param.Opt[float64] `json:"top_p,omitzero"`
+	// Cumulative probability threshold for nucleus sampling. Defaults to 0.95
+	TopP param.Opt[float64] `json:"top_p,omitzero"`
+	// Must be "top_p" to identify this sampling strategy
+	//
 	// This field can be elided, and will marshal its zero value as "top_p".
 	Type constant.TopP `json:"type,required"`
 	paramObj
@@ -2876,9 +2943,14 @@ func (r *SamplingParamsStrategyTopP) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Top-k sampling strategy that restricts sampling to the k most likely tokens.
+//
 // The properties TopK, Type are required.
 type SamplingParamsStrategyTopK struct {
+	// Number of top tokens to consider for sampling. Must be at least 1
 	TopK int64 `json:"top_k,required"`
+	// Must be "top_k" to identify this sampling strategy
+	//
 	// This field can be elided, and will marshal its zero value as "top_k".
 	Type constant.TopK `json:"type,required"`
 	paramObj

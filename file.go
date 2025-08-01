@@ -169,10 +169,13 @@ const (
 // Response for listing files in OpenAI Files API.
 type ListFilesResponse struct {
 	// List of file objects
-	Data    []File `json:"data,required"`
+	Data []File `json:"data,required"`
+	// ID of the first file in the list for pagination
 	FirstID string `json:"first_id,required"`
-	HasMore bool   `json:"has_more,required"`
-	LastID  string `json:"last_id,required"`
+	// Whether there are more files available beyond this page
+	HasMore bool `json:"has_more,required"`
+	// ID of the last file in the list for pagination
+	LastID string `json:"last_id,required"`
 	// The object type, which is always "list"
 	Object constant.List `json:"object,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].

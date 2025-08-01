@@ -542,8 +542,11 @@ func (r *ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentAr
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemText struct {
-	Text string        `json:"text,required"`
+	// The text content of the message
+	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -562,9 +565,12 @@ func (r *ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentAr
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Image content part for OpenAI-compatible chat completion messages.
 type ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemImageURL struct {
+	// Image URL specification and processing details
 	ImageURL ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemImageURLImageURL `json:"image_url,required"`
-	Type     constant.ImageURL                                                                              `json:"type,required"`
+	// Must be "image_url" to identify this as image content
+	Type constant.ImageURL `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ImageURL    respjson.Field
@@ -582,8 +588,11 @@ func (r *ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentAr
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Image URL specification and processing details
 type ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageUserContentArrayItemImageURLImageURL struct {
-	URL    string `json:"url,required"`
+	// URL of the image to include in the message
+	URL string `json:"url,required"`
+	// (Optional) Level of detail for image processing. Can be "low", "high", or "auto"
 	Detail string `json:"detail"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -714,8 +723,11 @@ func (r *ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageSystemContent
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageSystemContentArrayItem struct {
-	Text string        `json:"text,required"`
+	// The text content of the message
+	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -806,8 +818,11 @@ func (r *ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageAssistantCont
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageAssistantContentArrayItem struct {
-	Text string        `json:"text,required"`
+	// The text content of the message
+	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -826,11 +841,16 @@ func (r *ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageAssistantCont
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Tool call specification for OpenAI-compatible chat completion responses.
 type ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageAssistantToolCall struct {
-	Type     constant.Function                                                                   `json:"type,required"`
-	ID       string                                                                              `json:"id"`
+	// Must be "function" to identify this as a function call
+	Type constant.Function `json:"type,required"`
+	// (Optional) Unique identifier for the tool call
+	ID string `json:"id"`
+	// (Optional) Function call details
 	Function ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageAssistantToolCallFunction `json:"function"`
-	Index    int64                                                                               `json:"index"`
+	// (Optional) Index of the tool call in the list
+	Index int64 `json:"index"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Type        respjson.Field
@@ -850,9 +870,12 @@ func (r *ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageAssistantTool
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// (Optional) Function call details
 type ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageAssistantToolCallFunction struct {
+	// (Optional) Arguments to pass to the function as a JSON string
 	Arguments string `json:"arguments"`
-	Name      string `json:"name"`
+	// (Optional) Name of the function to call
+	Name string `json:"name"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments   respjson.Field
@@ -939,8 +962,11 @@ func (r *ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageToolContentUn
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageToolContentArrayItem struct {
-	Text string        `json:"text,required"`
+	// The text content of the message
+	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1027,8 +1053,11 @@ func (r *ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageDeveloperCont
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionNewResponseOpenAIChatCompletionChoiceMessageDeveloperContentArrayItem struct {
-	Text string        `json:"text,required"`
+	// The text content of the message
+	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1547,8 +1576,11 @@ func (r *ChatCompletionGetResponseChoiceMessageUserContentArrayItemUnion) Unmars
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionGetResponseChoiceMessageUserContentArrayItemText struct {
-	Text string        `json:"text,required"`
+	// The text content of the message
+	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1567,9 +1599,12 @@ func (r *ChatCompletionGetResponseChoiceMessageUserContentArrayItemText) Unmarsh
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Image content part for OpenAI-compatible chat completion messages.
 type ChatCompletionGetResponseChoiceMessageUserContentArrayItemImageURL struct {
+	// Image URL specification and processing details
 	ImageURL ChatCompletionGetResponseChoiceMessageUserContentArrayItemImageURLImageURL `json:"image_url,required"`
-	Type     constant.ImageURL                                                          `json:"type,required"`
+	// Must be "image_url" to identify this as image content
+	Type constant.ImageURL `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ImageURL    respjson.Field
@@ -1587,8 +1622,11 @@ func (r *ChatCompletionGetResponseChoiceMessageUserContentArrayItemImageURL) Unm
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Image URL specification and processing details
 type ChatCompletionGetResponseChoiceMessageUserContentArrayItemImageURLImageURL struct {
-	URL    string `json:"url,required"`
+	// URL of the image to include in the message
+	URL string `json:"url,required"`
+	// (Optional) Level of detail for image processing. Can be "low", "high", or "auto"
 	Detail string `json:"detail"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1715,8 +1753,11 @@ func (r *ChatCompletionGetResponseChoiceMessageSystemContentUnion) UnmarshalJSON
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionGetResponseChoiceMessageSystemContentArrayItem struct {
-	Text string        `json:"text,required"`
+	// The text content of the message
+	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1805,8 +1846,11 @@ func (r *ChatCompletionGetResponseChoiceMessageAssistantContentUnion) UnmarshalJ
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionGetResponseChoiceMessageAssistantContentArrayItem struct {
-	Text string        `json:"text,required"`
+	// The text content of the message
+	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1825,11 +1869,16 @@ func (r *ChatCompletionGetResponseChoiceMessageAssistantContentArrayItem) Unmars
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Tool call specification for OpenAI-compatible chat completion responses.
 type ChatCompletionGetResponseChoiceMessageAssistantToolCall struct {
-	Type     constant.Function                                               `json:"type,required"`
-	ID       string                                                          `json:"id"`
+	// Must be "function" to identify this as a function call
+	Type constant.Function `json:"type,required"`
+	// (Optional) Unique identifier for the tool call
+	ID string `json:"id"`
+	// (Optional) Function call details
 	Function ChatCompletionGetResponseChoiceMessageAssistantToolCallFunction `json:"function"`
-	Index    int64                                                           `json:"index"`
+	// (Optional) Index of the tool call in the list
+	Index int64 `json:"index"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Type        respjson.Field
@@ -1847,9 +1896,12 @@ func (r *ChatCompletionGetResponseChoiceMessageAssistantToolCall) UnmarshalJSON(
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// (Optional) Function call details
 type ChatCompletionGetResponseChoiceMessageAssistantToolCallFunction struct {
+	// (Optional) Arguments to pass to the function as a JSON string
 	Arguments string `json:"arguments"`
-	Name      string `json:"name"`
+	// (Optional) Name of the function to call
+	Name string `json:"name"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments   respjson.Field
@@ -1932,8 +1984,11 @@ func (r *ChatCompletionGetResponseChoiceMessageToolContentUnion) UnmarshalJSON(d
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionGetResponseChoiceMessageToolContentArrayItem struct {
-	Text string        `json:"text,required"`
+	// The text content of the message
+	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -2018,8 +2073,11 @@ func (r *ChatCompletionGetResponseChoiceMessageDeveloperContentUnion) UnmarshalJ
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionGetResponseChoiceMessageDeveloperContentArrayItem struct {
-	Text string        `json:"text,required"`
+	// The text content of the message
+	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -2467,8 +2525,11 @@ func (r *ChatCompletionGetResponseInputMessageUserContentArrayItemUnion) Unmarsh
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionGetResponseInputMessageUserContentArrayItemText struct {
-	Text string        `json:"text,required"`
+	// The text content of the message
+	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -2487,9 +2548,12 @@ func (r *ChatCompletionGetResponseInputMessageUserContentArrayItemText) Unmarsha
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Image content part for OpenAI-compatible chat completion messages.
 type ChatCompletionGetResponseInputMessageUserContentArrayItemImageURL struct {
+	// Image URL specification and processing details
 	ImageURL ChatCompletionGetResponseInputMessageUserContentArrayItemImageURLImageURL `json:"image_url,required"`
-	Type     constant.ImageURL                                                         `json:"type,required"`
+	// Must be "image_url" to identify this as image content
+	Type constant.ImageURL `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ImageURL    respjson.Field
@@ -2507,8 +2571,11 @@ func (r *ChatCompletionGetResponseInputMessageUserContentArrayItemImageURL) Unma
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Image URL specification and processing details
 type ChatCompletionGetResponseInputMessageUserContentArrayItemImageURLImageURL struct {
-	URL    string `json:"url,required"`
+	// URL of the image to include in the message
+	URL string `json:"url,required"`
+	// (Optional) Level of detail for image processing. Can be "low", "high", or "auto"
 	Detail string `json:"detail"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -2635,8 +2702,11 @@ func (r *ChatCompletionGetResponseInputMessageSystemContentUnion) UnmarshalJSON(
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionGetResponseInputMessageSystemContentArrayItem struct {
-	Text string        `json:"text,required"`
+	// The text content of the message
+	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -2725,8 +2795,11 @@ func (r *ChatCompletionGetResponseInputMessageAssistantContentUnion) UnmarshalJS
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionGetResponseInputMessageAssistantContentArrayItem struct {
-	Text string        `json:"text,required"`
+	// The text content of the message
+	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -2745,11 +2818,16 @@ func (r *ChatCompletionGetResponseInputMessageAssistantContentArrayItem) Unmarsh
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Tool call specification for OpenAI-compatible chat completion responses.
 type ChatCompletionGetResponseInputMessageAssistantToolCall struct {
-	Type     constant.Function                                              `json:"type,required"`
-	ID       string                                                         `json:"id"`
+	// Must be "function" to identify this as a function call
+	Type constant.Function `json:"type,required"`
+	// (Optional) Unique identifier for the tool call
+	ID string `json:"id"`
+	// (Optional) Function call details
 	Function ChatCompletionGetResponseInputMessageAssistantToolCallFunction `json:"function"`
-	Index    int64                                                          `json:"index"`
+	// (Optional) Index of the tool call in the list
+	Index int64 `json:"index"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Type        respjson.Field
@@ -2767,9 +2845,12 @@ func (r *ChatCompletionGetResponseInputMessageAssistantToolCall) UnmarshalJSON(d
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// (Optional) Function call details
 type ChatCompletionGetResponseInputMessageAssistantToolCallFunction struct {
+	// (Optional) Arguments to pass to the function as a JSON string
 	Arguments string `json:"arguments"`
-	Name      string `json:"name"`
+	// (Optional) Name of the function to call
+	Name string `json:"name"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments   respjson.Field
@@ -2851,8 +2932,11 @@ func (r *ChatCompletionGetResponseInputMessageToolContentUnion) UnmarshalJSON(da
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionGetResponseInputMessageToolContentArrayItem struct {
-	Text string        `json:"text,required"`
+	// The text content of the message
+	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -2937,8 +3021,11 @@ func (r *ChatCompletionGetResponseInputMessageDeveloperContentUnion) UnmarshalJS
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionGetResponseInputMessageDeveloperContentArrayItem struct {
-	Text string        `json:"text,required"`
+	// The text content of the message
+	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -2957,12 +3044,18 @@ func (r *ChatCompletionGetResponseInputMessageDeveloperContentArrayItem) Unmarsh
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Response from listing OpenAI-compatible chat completions.
 type ChatCompletionListResponse struct {
-	Data    []ChatCompletionListResponseData `json:"data,required"`
-	FirstID string                           `json:"first_id,required"`
-	HasMore bool                             `json:"has_more,required"`
-	LastID  string                           `json:"last_id,required"`
-	Object  constant.List                    `json:"object,required"`
+	// List of chat completion objects with their input messages
+	Data []ChatCompletionListResponseData `json:"data,required"`
+	// ID of the first completion in this list
+	FirstID string `json:"first_id,required"`
+	// Whether there are more completions available beyond this list
+	HasMore bool `json:"has_more,required"`
+	// ID of the last completion in this list
+	LastID string `json:"last_id,required"`
+	// Must be "list" to identify this as a list response
+	Object constant.List `json:"object,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -3365,8 +3458,11 @@ func (r *ChatCompletionListResponseDataChoiceMessageUserContentArrayItemUnion) U
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionListResponseDataChoiceMessageUserContentArrayItemText struct {
-	Text string        `json:"text,required"`
+	// The text content of the message
+	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -3385,9 +3481,12 @@ func (r *ChatCompletionListResponseDataChoiceMessageUserContentArrayItemText) Un
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Image content part for OpenAI-compatible chat completion messages.
 type ChatCompletionListResponseDataChoiceMessageUserContentArrayItemImageURL struct {
+	// Image URL specification and processing details
 	ImageURL ChatCompletionListResponseDataChoiceMessageUserContentArrayItemImageURLImageURL `json:"image_url,required"`
-	Type     constant.ImageURL                                                               `json:"type,required"`
+	// Must be "image_url" to identify this as image content
+	Type constant.ImageURL `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ImageURL    respjson.Field
@@ -3405,8 +3504,11 @@ func (r *ChatCompletionListResponseDataChoiceMessageUserContentArrayItemImageURL
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Image URL specification and processing details
 type ChatCompletionListResponseDataChoiceMessageUserContentArrayItemImageURLImageURL struct {
-	URL    string `json:"url,required"`
+	// URL of the image to include in the message
+	URL string `json:"url,required"`
+	// (Optional) Level of detail for image processing. Can be "low", "high", or "auto"
 	Detail string `json:"detail"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -3535,8 +3637,11 @@ func (r *ChatCompletionListResponseDataChoiceMessageSystemContentUnion) Unmarsha
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionListResponseDataChoiceMessageSystemContentArrayItem struct {
-	Text string        `json:"text,required"`
+	// The text content of the message
+	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -3625,8 +3730,11 @@ func (r *ChatCompletionListResponseDataChoiceMessageAssistantContentUnion) Unmar
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionListResponseDataChoiceMessageAssistantContentArrayItem struct {
-	Text string        `json:"text,required"`
+	// The text content of the message
+	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -3645,11 +3753,16 @@ func (r *ChatCompletionListResponseDataChoiceMessageAssistantContentArrayItem) U
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Tool call specification for OpenAI-compatible chat completion responses.
 type ChatCompletionListResponseDataChoiceMessageAssistantToolCall struct {
-	Type     constant.Function                                                    `json:"type,required"`
-	ID       string                                                               `json:"id"`
+	// Must be "function" to identify this as a function call
+	Type constant.Function `json:"type,required"`
+	// (Optional) Unique identifier for the tool call
+	ID string `json:"id"`
+	// (Optional) Function call details
 	Function ChatCompletionListResponseDataChoiceMessageAssistantToolCallFunction `json:"function"`
-	Index    int64                                                                `json:"index"`
+	// (Optional) Index of the tool call in the list
+	Index int64 `json:"index"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Type        respjson.Field
@@ -3669,9 +3782,12 @@ func (r *ChatCompletionListResponseDataChoiceMessageAssistantToolCall) Unmarshal
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// (Optional) Function call details
 type ChatCompletionListResponseDataChoiceMessageAssistantToolCallFunction struct {
+	// (Optional) Arguments to pass to the function as a JSON string
 	Arguments string `json:"arguments"`
-	Name      string `json:"name"`
+	// (Optional) Name of the function to call
+	Name string `json:"name"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments   respjson.Field
@@ -3756,8 +3872,11 @@ func (r *ChatCompletionListResponseDataChoiceMessageToolContentUnion) UnmarshalJ
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionListResponseDataChoiceMessageToolContentArrayItem struct {
-	Text string        `json:"text,required"`
+	// The text content of the message
+	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -3842,8 +3961,11 @@ func (r *ChatCompletionListResponseDataChoiceMessageDeveloperContentUnion) Unmar
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionListResponseDataChoiceMessageDeveloperContentArrayItem struct {
-	Text string        `json:"text,required"`
+	// The text content of the message
+	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -4305,8 +4427,11 @@ func (r *ChatCompletionListResponseDataInputMessageUserContentArrayItemUnion) Un
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionListResponseDataInputMessageUserContentArrayItemText struct {
-	Text string        `json:"text,required"`
+	// The text content of the message
+	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -4325,9 +4450,12 @@ func (r *ChatCompletionListResponseDataInputMessageUserContentArrayItemText) Unm
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Image content part for OpenAI-compatible chat completion messages.
 type ChatCompletionListResponseDataInputMessageUserContentArrayItemImageURL struct {
+	// Image URL specification and processing details
 	ImageURL ChatCompletionListResponseDataInputMessageUserContentArrayItemImageURLImageURL `json:"image_url,required"`
-	Type     constant.ImageURL                                                              `json:"type,required"`
+	// Must be "image_url" to identify this as image content
+	Type constant.ImageURL `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ImageURL    respjson.Field
@@ -4345,8 +4473,11 @@ func (r *ChatCompletionListResponseDataInputMessageUserContentArrayItemImageURL)
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Image URL specification and processing details
 type ChatCompletionListResponseDataInputMessageUserContentArrayItemImageURLImageURL struct {
-	URL    string `json:"url,required"`
+	// URL of the image to include in the message
+	URL string `json:"url,required"`
+	// (Optional) Level of detail for image processing. Can be "low", "high", or "auto"
 	Detail string `json:"detail"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -4475,8 +4606,11 @@ func (r *ChatCompletionListResponseDataInputMessageSystemContentUnion) Unmarshal
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionListResponseDataInputMessageSystemContentArrayItem struct {
-	Text string        `json:"text,required"`
+	// The text content of the message
+	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -4565,8 +4699,11 @@ func (r *ChatCompletionListResponseDataInputMessageAssistantContentUnion) Unmars
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionListResponseDataInputMessageAssistantContentArrayItem struct {
-	Text string        `json:"text,required"`
+	// The text content of the message
+	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -4585,11 +4722,16 @@ func (r *ChatCompletionListResponseDataInputMessageAssistantContentArrayItem) Un
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Tool call specification for OpenAI-compatible chat completion responses.
 type ChatCompletionListResponseDataInputMessageAssistantToolCall struct {
-	Type     constant.Function                                                   `json:"type,required"`
-	ID       string                                                              `json:"id"`
+	// Must be "function" to identify this as a function call
+	Type constant.Function `json:"type,required"`
+	// (Optional) Unique identifier for the tool call
+	ID string `json:"id"`
+	// (Optional) Function call details
 	Function ChatCompletionListResponseDataInputMessageAssistantToolCallFunction `json:"function"`
-	Index    int64                                                               `json:"index"`
+	// (Optional) Index of the tool call in the list
+	Index int64 `json:"index"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Type        respjson.Field
@@ -4609,9 +4751,12 @@ func (r *ChatCompletionListResponseDataInputMessageAssistantToolCall) UnmarshalJ
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// (Optional) Function call details
 type ChatCompletionListResponseDataInputMessageAssistantToolCallFunction struct {
+	// (Optional) Arguments to pass to the function as a JSON string
 	Arguments string `json:"arguments"`
-	Name      string `json:"name"`
+	// (Optional) Name of the function to call
+	Name string `json:"name"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments   respjson.Field
@@ -4696,8 +4841,11 @@ func (r *ChatCompletionListResponseDataInputMessageToolContentUnion) UnmarshalJS
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionListResponseDataInputMessageToolContentArrayItem struct {
-	Text string        `json:"text,required"`
+	// The text content of the message
+	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -4782,8 +4930,11 @@ func (r *ChatCompletionListResponseDataInputMessageDeveloperContentUnion) Unmars
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionListResponseDataInputMessageDeveloperContentArrayItem struct {
-	Text string        `json:"text,required"`
+	// The text content of the message
+	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
 	Type constant.Text `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -5115,9 +5266,14 @@ func init() {
 	)
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
+//
 // The properties Text, Type are required.
 type ChatCompletionNewParamsMessageUserContentArrayItemText struct {
+	// The text content of the message
 	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
+	//
 	// This field can be elided, and will marshal its zero value as "text".
 	Type constant.Text `json:"type,required"`
 	paramObj
@@ -5131,9 +5287,14 @@ func (r *ChatCompletionNewParamsMessageUserContentArrayItemText) UnmarshalJSON(d
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Image content part for OpenAI-compatible chat completion messages.
+//
 // The properties ImageURL, Type are required.
 type ChatCompletionNewParamsMessageUserContentArrayItemImageURL struct {
+	// Image URL specification and processing details
 	ImageURL ChatCompletionNewParamsMessageUserContentArrayItemImageURLImageURL `json:"image_url,omitzero,required"`
+	// Must be "image_url" to identify this as image content
+	//
 	// This field can be elided, and will marshal its zero value as "image_url".
 	Type constant.ImageURL `json:"type,required"`
 	paramObj
@@ -5147,9 +5308,13 @@ func (r *ChatCompletionNewParamsMessageUserContentArrayItemImageURL) UnmarshalJS
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Image URL specification and processing details
+//
 // The property URL is required.
 type ChatCompletionNewParamsMessageUserContentArrayItemImageURLImageURL struct {
-	URL    string            `json:"url,required"`
+	// URL of the image to include in the message
+	URL string `json:"url,required"`
+	// (Optional) Level of detail for image processing. Can be "low", "high", or "auto"
 	Detail param.Opt[string] `json:"detail,omitzero"`
 	paramObj
 }
@@ -5243,9 +5408,14 @@ func (u *ChatCompletionNewParamsMessageSystemContentUnion) asAny() any {
 	return nil
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
+//
 // The properties Text, Type are required.
 type ChatCompletionNewParamsMessageSystemContentArrayItem struct {
+	// The text content of the message
 	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
+	//
 	// This field can be elided, and will marshal its zero value as "text".
 	Type constant.Text `json:"type,required"`
 	paramObj
@@ -5310,9 +5480,14 @@ func (u *ChatCompletionNewParamsMessageAssistantContentUnion) asAny() any {
 	return nil
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
+//
 // The properties Text, Type are required.
 type ChatCompletionNewParamsMessageAssistantContentArrayItem struct {
+	// The text content of the message
 	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
+	//
 	// This field can be elided, and will marshal its zero value as "text".
 	Type constant.Text `json:"type,required"`
 	paramObj
@@ -5326,11 +5501,18 @@ func (r *ChatCompletionNewParamsMessageAssistantContentArrayItem) UnmarshalJSON(
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Tool call specification for OpenAI-compatible chat completion responses.
+//
 // The property Type is required.
 type ChatCompletionNewParamsMessageAssistantToolCall struct {
-	ID       param.Opt[string]                                       `json:"id,omitzero"`
-	Index    param.Opt[int64]                                        `json:"index,omitzero"`
+	// (Optional) Unique identifier for the tool call
+	ID param.Opt[string] `json:"id,omitzero"`
+	// (Optional) Index of the tool call in the list
+	Index param.Opt[int64] `json:"index,omitzero"`
+	// (Optional) Function call details
 	Function ChatCompletionNewParamsMessageAssistantToolCallFunction `json:"function,omitzero"`
+	// Must be "function" to identify this as a function call
+	//
 	// This field can be elided, and will marshal its zero value as "function".
 	Type constant.Function `json:"type,required"`
 	paramObj
@@ -5344,9 +5526,12 @@ func (r *ChatCompletionNewParamsMessageAssistantToolCall) UnmarshalJSON(data []b
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// (Optional) Function call details
 type ChatCompletionNewParamsMessageAssistantToolCallFunction struct {
+	// (Optional) Arguments to pass to the function as a JSON string
 	Arguments param.Opt[string] `json:"arguments,omitzero"`
-	Name      param.Opt[string] `json:"name,omitzero"`
+	// (Optional) Name of the function to call
+	Name param.Opt[string] `json:"name,omitzero"`
 	paramObj
 }
 
@@ -5407,9 +5592,14 @@ func (u *ChatCompletionNewParamsMessageToolContentUnion) asAny() any {
 	return nil
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
+//
 // The properties Text, Type are required.
 type ChatCompletionNewParamsMessageToolContentArrayItem struct {
+	// The text content of the message
 	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
+	//
 	// This field can be elided, and will marshal its zero value as "text".
 	Type constant.Text `json:"type,required"`
 	paramObj
@@ -5471,9 +5661,14 @@ func (u *ChatCompletionNewParamsMessageDeveloperContentUnion) asAny() any {
 	return nil
 }
 
+// Text content part for OpenAI-compatible chat completion messages.
+//
 // The properties Text, Type are required.
 type ChatCompletionNewParamsMessageDeveloperContentArrayItem struct {
+	// The text content of the message
 	Text string `json:"text,required"`
+	// Must be "text" to identify this as text content
+	//
 	// This field can be elided, and will marshal its zero value as "text".
 	Type constant.Text `json:"type,required"`
 	paramObj
@@ -5637,9 +5832,12 @@ func NewChatCompletionNewParamsResponseFormatText() ChatCompletionNewParamsRespo
 	}
 }
 
+// Text response format for OpenAI-compatible chat completion requests.
+//
 // This struct has a constant value, construct it with
 // [NewChatCompletionNewParamsResponseFormatText].
 type ChatCompletionNewParamsResponseFormatText struct {
+	// Must be "text" to indicate plain text response format
 	Type constant.Text `json:"type,required"`
 	paramObj
 }
@@ -5652,9 +5850,14 @@ func (r *ChatCompletionNewParamsResponseFormatText) UnmarshalJSON(data []byte) e
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// JSON schema response format for OpenAI-compatible chat completion requests.
+//
 // The properties JsonSchema, Type are required.
 type ChatCompletionNewParamsResponseFormatJsonSchema struct {
+	// The JSON schema specification for the response
 	JsonSchema ChatCompletionNewParamsResponseFormatJsonSchemaJsonSchema `json:"json_schema,omitzero,required"`
+	// Must be "json_schema" to indicate structured JSON response format
+	//
 	// This field can be elided, and will marshal its zero value as "json_schema".
 	Type constant.JsonSchema `json:"type,required"`
 	paramObj
@@ -5668,12 +5871,18 @@ func (r *ChatCompletionNewParamsResponseFormatJsonSchema) UnmarshalJSON(data []b
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// The JSON schema specification for the response
+//
 // The property Name is required.
 type ChatCompletionNewParamsResponseFormatJsonSchemaJsonSchema struct {
-	Name        string                                                                          `json:"name,required"`
-	Description param.Opt[string]                                                               `json:"description,omitzero"`
-	Strict      param.Opt[bool]                                                                 `json:"strict,omitzero"`
-	Schema      map[string]ChatCompletionNewParamsResponseFormatJsonSchemaJsonSchemaSchemaUnion `json:"schema,omitzero"`
+	// Name of the schema
+	Name string `json:"name,required"`
+	// (Optional) Description of the schema
+	Description param.Opt[string] `json:"description,omitzero"`
+	// (Optional) Whether to enforce strict adherence to the schema
+	Strict param.Opt[bool] `json:"strict,omitzero"`
+	// (Optional) The JSON schema definition
+	Schema map[string]ChatCompletionNewParamsResponseFormatJsonSchemaJsonSchemaSchemaUnion `json:"schema,omitzero"`
 	paramObj
 }
 
@@ -5722,9 +5931,12 @@ func NewChatCompletionNewParamsResponseFormatJsonObject() ChatCompletionNewParam
 	}
 }
 
+// JSON object response format for OpenAI-compatible chat completion requests.
+//
 // This struct has a constant value, construct it with
 // [NewChatCompletionNewParamsResponseFormatJsonObject].
 type ChatCompletionNewParamsResponseFormatJsonObject struct {
+	// Must be "json_object" to indicate generic JSON object response format
 	Type constant.JsonObject `json:"type,required"`
 	paramObj
 }

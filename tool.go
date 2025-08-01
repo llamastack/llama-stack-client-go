@@ -63,7 +63,9 @@ func (r *ToolService) Get(ctx context.Context, toolName string, opts ...option.R
 	return
 }
 
+// Response containing a list of tools.
 type ListToolsResponse struct {
+	// List of tools
 	Data []Tool `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -79,13 +81,19 @@ func (r *ListToolsResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A tool that can be invoked by agents.
 type Tool struct {
-	Description        string                       `json:"description,required"`
-	Identifier         string                       `json:"identifier,required"`
-	Parameters         []ToolParameter              `json:"parameters,required"`
-	ProviderID         string                       `json:"provider_id,required"`
-	ToolgroupID        string                       `json:"toolgroup_id,required"`
-	Type               constant.Tool                `json:"type,required"`
+	// Human-readable description of what the tool does
+	Description string `json:"description,required"`
+	Identifier  string `json:"identifier,required"`
+	// List of parameters this tool accepts
+	Parameters []ToolParameter `json:"parameters,required"`
+	ProviderID string          `json:"provider_id,required"`
+	// ID of the tool group this tool belongs to
+	ToolgroupID string `json:"toolgroup_id,required"`
+	// Type of resource, always 'tool'
+	Type constant.Tool `json:"type,required"`
+	// (Optional) Additional metadata about the tool
 	Metadata           map[string]ToolMetadataUnion `json:"metadata"`
 	ProviderResourceID string                       `json:"provider_resource_id"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -109,12 +117,18 @@ func (r *Tool) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Parameter definition for a tool.
 type ToolParameter struct {
-	Description   string                    `json:"description,required"`
-	Name          string                    `json:"name,required"`
-	ParameterType string                    `json:"parameter_type,required"`
-	Required      bool                      `json:"required,required"`
-	Default       ToolParameterDefaultUnion `json:"default,nullable"`
+	// Human-readable description of what the parameter does
+	Description string `json:"description,required"`
+	// Name of the parameter
+	Name string `json:"name,required"`
+	// Type of the parameter (e.g., string, integer)
+	ParameterType string `json:"parameter_type,required"`
+	// Whether this parameter is required for tool invocation
+	Required bool `json:"required,required"`
+	// (Optional) Default value for the parameter if not provided
+	Default ToolParameterDefaultUnion `json:"default,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Description   respjson.Field

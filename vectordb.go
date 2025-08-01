@@ -81,7 +81,9 @@ func (r *VectorDBService) Unregister(ctx context.Context, vectorDBID string, opt
 	return
 }
 
+// Response from listing vector databases.
 type ListVectorDBsResponse struct {
+	// List of vector databases
 	Data []ListVectorDBsResponseData `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -97,11 +99,15 @@ func (r *ListVectorDBsResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Vector database resource for storing and querying vector embeddings.
 type ListVectorDBsResponseData struct {
-	EmbeddingDimension int64             `json:"embedding_dimension,required"`
-	EmbeddingModel     string            `json:"embedding_model,required"`
-	Identifier         string            `json:"identifier,required"`
-	ProviderID         string            `json:"provider_id,required"`
+	// Dimension of the embedding vectors
+	EmbeddingDimension int64 `json:"embedding_dimension,required"`
+	// Name of the embedding model to use for vector generation
+	EmbeddingModel string `json:"embedding_model,required"`
+	Identifier     string `json:"identifier,required"`
+	ProviderID     string `json:"provider_id,required"`
+	// Type of resource, always 'vector_db' for vector databases
 	Type               constant.VectorDB `json:"type,required"`
 	ProviderResourceID string            `json:"provider_resource_id"`
 	VectorDBName       string            `json:"vector_db_name"`
@@ -125,11 +131,15 @@ func (r *ListVectorDBsResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Vector database resource for storing and querying vector embeddings.
 type VectorDBGetResponse struct {
-	EmbeddingDimension int64             `json:"embedding_dimension,required"`
-	EmbeddingModel     string            `json:"embedding_model,required"`
-	Identifier         string            `json:"identifier,required"`
-	ProviderID         string            `json:"provider_id,required"`
+	// Dimension of the embedding vectors
+	EmbeddingDimension int64 `json:"embedding_dimension,required"`
+	// Name of the embedding model to use for vector generation
+	EmbeddingModel string `json:"embedding_model,required"`
+	Identifier     string `json:"identifier,required"`
+	ProviderID     string `json:"provider_id,required"`
+	// Type of resource, always 'vector_db' for vector databases
 	Type               constant.VectorDB `json:"type,required"`
 	ProviderResourceID string            `json:"provider_resource_id"`
 	VectorDBName       string            `json:"vector_db_name"`
@@ -153,11 +163,15 @@ func (r *VectorDBGetResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Vector database resource for storing and querying vector embeddings.
 type VectorDBRegisterResponse struct {
-	EmbeddingDimension int64             `json:"embedding_dimension,required"`
-	EmbeddingModel     string            `json:"embedding_model,required"`
-	Identifier         string            `json:"identifier,required"`
-	ProviderID         string            `json:"provider_id,required"`
+	// Dimension of the embedding vectors
+	EmbeddingDimension int64 `json:"embedding_dimension,required"`
+	// Name of the embedding model to use for vector generation
+	EmbeddingModel string `json:"embedding_model,required"`
+	Identifier     string `json:"identifier,required"`
+	ProviderID     string `json:"provider_id,required"`
+	// Type of resource, always 'vector_db' for vector databases
 	Type               constant.VectorDB `json:"type,required"`
 	ProviderResourceID string            `json:"provider_resource_id"`
 	VectorDBName       string            `json:"vector_db_name"`

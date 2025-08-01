@@ -117,7 +117,9 @@ func (r *DatasetService) Unregister(ctx context.Context, datasetID string, opts 
 	return
 }
 
+// Response from listing datasets.
 type ListDatasetsResponse struct {
+	// List of datasets
 	Data []ListDatasetsResponseData `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -133,18 +135,21 @@ func (r *ListDatasetsResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Dataset resource for storing and accessing training or evaluation data.
 type ListDatasetsResponseData struct {
-	Identifier string                                           `json:"identifier,required"`
+	Identifier string `json:"identifier,required"`
+	// Additional metadata for the dataset
 	Metadata   map[string]ListDatasetsResponseDataMetadataUnion `json:"metadata,required"`
 	ProviderID string                                           `json:"provider_id,required"`
-	// Purpose of the dataset. Each purpose has a required input data schema.
+	// Purpose of the dataset indicating its intended use
 	//
 	// Any of "post-training/messages", "eval/question-answer", "eval/messages-answer".
 	Purpose string `json:"purpose,required"`
-	// A dataset that can be obtained from a URI.
-	Source             ListDatasetsResponseDataSourceUnion `json:"source,required"`
-	Type               constant.Dataset                    `json:"type,required"`
-	ProviderResourceID string                              `json:"provider_resource_id"`
+	// Data source configuration for the dataset
+	Source ListDatasetsResponseDataSourceUnion `json:"source,required"`
+	// Type of resource, always 'dataset' for datasets
+	Type               constant.Dataset `json:"type,required"`
+	ProviderResourceID string           `json:"provider_resource_id"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Identifier         respjson.Field
@@ -380,18 +385,21 @@ func (r *ListDatasetsResponseDataSourceRowsRowUnion) UnmarshalJSON(data []byte) 
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Dataset resource for storing and accessing training or evaluation data.
 type DatasetGetResponse struct {
-	Identifier string                                     `json:"identifier,required"`
+	Identifier string `json:"identifier,required"`
+	// Additional metadata for the dataset
 	Metadata   map[string]DatasetGetResponseMetadataUnion `json:"metadata,required"`
 	ProviderID string                                     `json:"provider_id,required"`
-	// Purpose of the dataset. Each purpose has a required input data schema.
+	// Purpose of the dataset indicating its intended use
 	//
 	// Any of "post-training/messages", "eval/question-answer", "eval/messages-answer".
 	Purpose DatasetGetResponsePurpose `json:"purpose,required"`
-	// A dataset that can be obtained from a URI.
-	Source             DatasetGetResponseSourceUnion `json:"source,required"`
-	Type               constant.Dataset              `json:"type,required"`
-	ProviderResourceID string                        `json:"provider_resource_id"`
+	// Data source configuration for the dataset
+	Source DatasetGetResponseSourceUnion `json:"source,required"`
+	// Type of resource, always 'dataset' for datasets
+	Type               constant.Dataset `json:"type,required"`
+	ProviderResourceID string           `json:"provider_resource_id"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Identifier         respjson.Field
@@ -464,7 +472,7 @@ func (r *DatasetGetResponseMetadataUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Purpose of the dataset. Each purpose has a required input data schema.
+// Purpose of the dataset indicating its intended use
 type DatasetGetResponsePurpose string
 
 const (
@@ -711,18 +719,21 @@ func (r *DatasetIterrowsResponseDataUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Dataset resource for storing and accessing training or evaluation data.
 type DatasetRegisterResponse struct {
-	Identifier string                                          `json:"identifier,required"`
+	Identifier string `json:"identifier,required"`
+	// Additional metadata for the dataset
 	Metadata   map[string]DatasetRegisterResponseMetadataUnion `json:"metadata,required"`
 	ProviderID string                                          `json:"provider_id,required"`
-	// Purpose of the dataset. Each purpose has a required input data schema.
+	// Purpose of the dataset indicating its intended use
 	//
 	// Any of "post-training/messages", "eval/question-answer", "eval/messages-answer".
 	Purpose DatasetRegisterResponsePurpose `json:"purpose,required"`
-	// A dataset that can be obtained from a URI.
-	Source             DatasetRegisterResponseSourceUnion `json:"source,required"`
-	Type               constant.Dataset                   `json:"type,required"`
-	ProviderResourceID string                             `json:"provider_resource_id"`
+	// Data source configuration for the dataset
+	Source DatasetRegisterResponseSourceUnion `json:"source,required"`
+	// Type of resource, always 'dataset' for datasets
+	Type               constant.Dataset `json:"type,required"`
+	ProviderResourceID string           `json:"provider_resource_id"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Identifier         respjson.Field
@@ -795,7 +806,7 @@ func (r *DatasetRegisterResponseMetadataUnion) UnmarshalJSON(data []byte) error 
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Purpose of the dataset. Each purpose has a required input data schema.
+// Purpose of the dataset indicating its intended use
 type DatasetRegisterResponsePurpose string
 
 const (

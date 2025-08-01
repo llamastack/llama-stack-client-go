@@ -51,9 +51,12 @@ func (r *VectorIoService) Query(ctx context.Context, body VectorIoQueryParams, o
 	return
 }
 
+// Response from querying chunks in a vector database.
 type QueryChunksResponse struct {
+	// List of content chunks returned from the query
 	Chunks []QueryChunksResponseChunk `json:"chunks,required"`
-	Scores []float64                  `json:"scores,required"`
+	// Relevance scores corresponding to each returned chunk
+	Scores []float64 `json:"scores,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Chunks      respjson.Field

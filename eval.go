@@ -313,8 +313,12 @@ func (r *EvaluateResponseGenerationUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A job execution instance with status tracking.
 type Job struct {
+	// Unique identifier for the job
 	JobID string `json:"job_id,required"`
+	// Current execution status of the job
+	//
 	// Any of "completed", "in_progress", "failed", "scheduled", "cancelled".
 	Status JobStatus `json:"status,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -332,6 +336,7 @@ func (r *Job) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Current execution status of the job
 type JobStatus string
 
 const (
