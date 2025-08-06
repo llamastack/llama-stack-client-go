@@ -418,16 +418,24 @@ Methods:
 
 - <code title="get /v1/inspect/routes">client.Routes.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#RouteService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) ([]<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#RouteInfo">RouteInfo</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
-# Safety
+# Moderations
 
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#CreateResponse">CreateResponse</a>
+
+Methods:
+
+- <code title="post /v1/openai/v1/moderations">client.Moderations.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModerationService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModerationNewParams">ModerationNewParams</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#CreateResponse">CreateResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
+# Safety
+
+Response Types:
+
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#RunShieldResponse">RunShieldResponse</a>
 
 Methods:
 
-- <code title="post /v1/openai/v1/moderations">client.Safety.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#SafetyService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#SafetyNewParams">SafetyNewParams</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#CreateResponse">CreateResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="post /v1/safety/run-shield">client.Safety.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#SafetyService.RunShield">RunShield</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#SafetyRunShieldParams">SafetyRunShieldParams</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#RunShieldResponse">RunShieldResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Shields
