@@ -35,6 +35,7 @@ type Client struct {
 	PostTraining            PostTrainingService
 	Providers               ProviderService
 	Routes                  RouteService
+	Moderations             ModerationService
 	Safety                  SafetyService
 	Shields                 ShieldService
 	SyntheticDataGeneration SyntheticDataGenerationService
@@ -86,6 +87,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.PostTraining = NewPostTrainingService(opts...)
 	r.Providers = NewProviderService(opts...)
 	r.Routes = NewRouteService(opts...)
+	r.Moderations = NewModerationService(opts...)
 	r.Safety = NewSafetyService(opts...)
 	r.Shields = NewShieldService(opts...)
 	r.SyntheticDataGeneration = NewSyntheticDataGenerationService(opts...)
