@@ -7,12 +7,12 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/stainless-sdks/llama-stack-client-go/internal/apijson"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/requestconfig"
-	"github.com/stainless-sdks/llama-stack-client-go/option"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/param"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/respjson"
-	"github.com/stainless-sdks/llama-stack-client-go/shared"
+	"github.com/llamastack/llama-stack-client-go/internal/apijson"
+	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
+	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/llamastack/llama-stack-client-go/packages/param"
+	"github.com/llamastack/llama-stack-client-go/packages/respjson"
+	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
 // VectorIoService contains methods and other services that help with interacting
@@ -51,9 +51,12 @@ func (r *VectorIoService) Query(ctx context.Context, body VectorIoQueryParams, o
 	return
 }
 
+// Response from querying chunks in a vector database.
 type QueryChunksResponse struct {
+	// List of content chunks returned from the query
 	Chunks []QueryChunksResponseChunk `json:"chunks,required"`
-	Scores []float64                  `json:"scores,required"`
+	// Relevance scores corresponding to each returned chunk
+	Scores []float64 `json:"scores,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Chunks      respjson.Field

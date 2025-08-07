@@ -9,12 +9,12 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/stainless-sdks/llama-stack-client-go/internal/apijson"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/requestconfig"
-	"github.com/stainless-sdks/llama-stack-client-go/option"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/param"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/respjson"
-	"github.com/stainless-sdks/llama-stack-client-go/shared/constant"
+	"github.com/llamastack/llama-stack-client-go/internal/apijson"
+	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
+	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/llamastack/llama-stack-client-go/packages/param"
+	"github.com/llamastack/llama-stack-client-go/packages/respjson"
+	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
 // ShieldService contains methods and other services that help with interacting
@@ -85,11 +85,13 @@ func (r *ListShieldsResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// A safety shield resource that can be used to check content
+// A safety shield resource that can be used to check content.
 type Shield struct {
-	Identifier         string                      `json:"identifier,required"`
-	ProviderID         string                      `json:"provider_id,required"`
-	Type               constant.Shield             `json:"type,required"`
+	Identifier string `json:"identifier,required"`
+	ProviderID string `json:"provider_id,required"`
+	// The resource type, always shield
+	Type constant.Shield `json:"type,required"`
+	// (Optional) Configuration parameters for the shield
 	Params             map[string]ShieldParamUnion `json:"params"`
 	ProviderResourceID string                      `json:"provider_resource_id"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].

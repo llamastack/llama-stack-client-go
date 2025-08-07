@@ -8,10 +8,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/llama-stack-client-go"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/testutil"
-	"github.com/stainless-sdks/llama-stack-client-go/option"
-	"github.com/stainless-sdks/llama-stack-client-go/shared"
+	"github.com/llamastack/llama-stack-client-go"
+	"github.com/llamastack/llama-stack-client-go/internal/testutil"
+	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
 func TestToolRuntimeRagToolInsert(t *testing.T) {
@@ -75,7 +75,7 @@ func TestToolRuntimeRagToolQueryWithOptionalParams(t *testing.T) {
 					Separator: "separator",
 				},
 			},
-			Mode: llamastackclient.String("mode"),
+			Mode: shared.QueryConfigModeVector,
 			Ranker: shared.QueryConfigRankerUnionParam{
 				OfRrf: &shared.QueryConfigRankerRrfParam{
 					ImpactFactor: 0,

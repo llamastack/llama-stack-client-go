@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/stainless-sdks/llama-stack-client-go/internal/requestconfig"
-	"github.com/stainless-sdks/llama-stack-client-go/option"
+	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
+	"github.com/llamastack/llama-stack-client-go/option"
 )
 
 // Client creates a struct with services and top level methods that help with
@@ -35,6 +35,7 @@ type Client struct {
 	PostTraining            PostTrainingService
 	Providers               ProviderService
 	Routes                  RouteService
+	Moderations             ModerationService
 	Safety                  SafetyService
 	Shields                 ShieldService
 	SyntheticDataGeneration SyntheticDataGenerationService
@@ -86,6 +87,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.PostTraining = NewPostTrainingService(opts...)
 	r.Providers = NewProviderService(opts...)
 	r.Routes = NewRouteService(opts...)
+	r.Moderations = NewModerationService(opts...)
 	r.Safety = NewSafetyService(opts...)
 	r.Shields = NewShieldService(opts...)
 	r.SyntheticDataGeneration = NewSyntheticDataGenerationService(opts...)

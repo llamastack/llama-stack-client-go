@@ -11,10 +11,9 @@ import (
 	"github.com/llamastack/llama-stack-client-go"
 	"github.com/llamastack/llama-stack-client-go/internal/testutil"
 	"github.com/llamastack/llama-stack-client-go/option"
-	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
-func TestSafetyRunShield(t *testing.T) {
+func TestModerationNew(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -25,23 +24,11 @@ func TestSafetyRunShield(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Safety.RunShield(context.TODO(), llamastackclient.SafetyRunShieldParams{
-		Messages: []shared.MessageUnionParam{{
-			OfUser: &shared.UserMessageParam{
-				Content: shared.InterleavedContentUnionParam{
-					OfString: llamastackclient.String("string"),
-				},
-				Context: shared.InterleavedContentUnionParam{
-					OfString: llamastackclient.String("string"),
-				},
-			},
-		}},
-		Params: map[string]llamastackclient.SafetyRunShieldParamsParamUnion{
-			"foo": {
-				OfBool: llamastackclient.Bool(true),
-			},
+	_, err := client.Moderations.New(context.TODO(), llamastackclient.ModerationNewParams{
+		Input: llamastackclient.ModerationNewParamsInputUnion{
+			OfString: llamastackclient.String("string"),
 		},
-		ShieldID: "shield_id",
+		Model: "model",
 	})
 	if err != nil {
 		var apierr *llamastackclient.Error

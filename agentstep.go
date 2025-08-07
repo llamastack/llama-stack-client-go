@@ -10,11 +10,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/stainless-sdks/llama-stack-client-go/internal/apijson"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/requestconfig"
-	"github.com/stainless-sdks/llama-stack-client-go/option"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/respjson"
-	"github.com/stainless-sdks/llama-stack-client-go/shared"
+	"github.com/llamastack/llama-stack-client-go/internal/apijson"
+	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
+	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/llamastack/llama-stack-client-go/packages/respjson"
+	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
 // AgentStepService contains methods and other services that help with interacting
@@ -60,8 +60,9 @@ func (r *AgentStepService) Get(ctx context.Context, stepID string, query AgentSt
 	return
 }
 
+// Response containing details of a specific agent step.
 type AgentStepGetResponse struct {
-	// An inference step in an agent turn.
+	// The complete step data and execution details
 	Step AgentStepGetResponseStepUnion `json:"step,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {

@@ -18,10 +18,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/stainless-sdks/llama-stack-client-go/internal"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/apierror"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/apiform"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/apiquery"
+	"github.com/llamastack/llama-stack-client-go/internal"
+	"github.com/llamastack/llama-stack-client-go/internal/apierror"
+	"github.com/llamastack/llama-stack-client-go/internal/apiform"
+	"github.com/llamastack/llama-stack-client-go/internal/apiquery"
 )
 
 func getDefaultHeaders() map[string]string {
@@ -136,11 +136,13 @@ func NewRequestConfig(ctx context.Context, method string, u string, body any, ds
 	// Fallback to json serialization if none of the serialization functions that we expect
 	// to see is present.
 	if body != nil && !hasSerializationFunc {
-		content, err := json.Marshal(body)
-		if err != nil {
+		buf := new(bytes.Buffer)
+		enc := json.NewEncoder(buf)
+		enc.SetEscapeHTML(true)
+		if err := enc.Encode(body); err != nil {
 			return nil, err
 		}
-		reader = bytes.NewBuffer(content)
+		reader = buf
 	}
 
 	req, err := http.NewRequestWithContext(ctx, method, u, nil)
