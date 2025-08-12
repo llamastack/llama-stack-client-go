@@ -5816,6 +5816,8 @@ type ResponseNewParams struct {
 	PreviousResponseID param.Opt[string]  `json:"previous_response_id,omitzero"`
 	Store              param.Opt[bool]    `json:"store,omitzero"`
 	Temperature        param.Opt[float64] `json:"temperature,omitzero"`
+	// (Optional) Additional fields to include in the response.
+	Include []string `json:"include,omitzero"`
 	// Text response configuration for OpenAI responses.
 	Text  ResponseNewParamsText        `json:"text,omitzero"`
 	Tools []ResponseNewParamsToolUnion `json:"tools,omitzero"`

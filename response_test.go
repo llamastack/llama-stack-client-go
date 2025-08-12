@@ -29,6 +29,7 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 			OfString: llamastackclient.String("string"),
 		},
 		Model:              "model",
+		Include:            []string{"string"},
 		Instructions:       llamastackclient.String("instructions"),
 		MaxInferIters:      llamastackclient.Int(0),
 		PreviousResponseID: llamastackclient.String("previous_response_id"),
