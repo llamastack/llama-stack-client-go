@@ -67,7 +67,7 @@ func (r *FileService) Get(ctx context.Context, fileID string, opts ...option.Req
 }
 
 // Returns a list of files that belong to the user's organization.
-func (r *FileService) List(ctx context.Context, query FileListParams, opts ...option.RequestOption) (res *pagination.OpenAICursorPagination[File], err error) {
+func (r *FileService) List(ctx context.Context, query FileListParams, opts ...option.RequestOption) (res *pagination.OpenAICursorPage[File], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -85,8 +85,8 @@ func (r *FileService) List(ctx context.Context, query FileListParams, opts ...op
 }
 
 // Returns a list of files that belong to the user's organization.
-func (r *FileService) ListAutoPaging(ctx context.Context, query FileListParams, opts ...option.RequestOption) *pagination.OpenAICursorPaginationAutoPager[File] {
-	return pagination.NewOpenAICursorPaginationAutoPager(r.List(ctx, query, opts...))
+func (r *FileService) ListAutoPaging(ctx context.Context, query FileListParams, opts ...option.RequestOption) *pagination.OpenAICursorPageAutoPager[File] {
+	return pagination.NewOpenAICursorPageAutoPager(r.List(ctx, query, opts...))
 }
 
 // Delete a file.
