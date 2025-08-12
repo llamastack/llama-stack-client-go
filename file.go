@@ -17,6 +17,7 @@ import (
 	"github.com/llamastack/llama-stack-client-go/internal/apiquery"
 	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
 	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/llamastack/llama-stack-client-go/packages/pagination"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 	"github.com/llamastack/llama-stack-client-go/shared/constant"
@@ -66,11 +67,26 @@ func (r *FileService) Get(ctx context.Context, fileID string, opts ...option.Req
 }
 
 // Returns a list of files that belong to the user's organization.
-func (r *FileService) List(ctx context.Context, query FileListParams, opts ...option.RequestOption) (res *ListFilesResponse, err error) {
+func (r *FileService) List(ctx context.Context, query FileListParams, opts ...option.RequestOption) (res *pagination.OpenAICursorPagination[File], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "v1/openai/v1/files"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Returns a list of files that belong to the user's organization.
+func (r *FileService) ListAutoPaging(ctx context.Context, query FileListParams, opts ...option.RequestOption) *pagination.OpenAICursorPaginationAutoPager[File] {
+	return pagination.NewOpenAICursorPaginationAutoPager(r.List(ctx, query, opts...))
 }
 
 // Delete a file.

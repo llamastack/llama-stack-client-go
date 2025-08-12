@@ -14,6 +14,7 @@ import (
 	"github.com/llamastack/llama-stack-client-go/internal/apiquery"
 	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
 	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/llamastack/llama-stack-client-go/packages/pagination"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 	"github.com/llamastack/llama-stack-client-go/shared/constant"
@@ -83,15 +84,30 @@ func (r *VectorStoreFileService) Update(ctx context.Context, fileID string, para
 }
 
 // List files in a vector store.
-func (r *VectorStoreFileService) List(ctx context.Context, vectorStoreID string, query VectorStoreFileListParams, opts ...option.RequestOption) (res *VectorStoreFileListResponse, err error) {
+func (r *VectorStoreFileService) List(ctx context.Context, vectorStoreID string, query VectorStoreFileListParams, opts ...option.RequestOption) (res *pagination.OpenAICursorPagination[VectorStoreFile], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	if vectorStoreID == "" {
 		err = errors.New("missing required vector_store_id parameter")
 		return
 	}
 	path := fmt.Sprintf("v1/openai/v1/vector_stores/%s/files", vectorStoreID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// List files in a vector store.
+func (r *VectorStoreFileService) ListAutoPaging(ctx context.Context, vectorStoreID string, query VectorStoreFileListParams, opts ...option.RequestOption) *pagination.OpenAICursorPaginationAutoPager[VectorStoreFile] {
+	return pagination.NewOpenAICursorPaginationAutoPager(r.List(ctx, vectorStoreID, query, opts...))
 }
 
 // Delete a vector store file.
@@ -387,36 +403,6 @@ const (
 	VectorStoreFileLastErrorCodeServerError       VectorStoreFileLastErrorCode = "server_error"
 	VectorStoreFileLastErrorCodeRateLimitExceeded VectorStoreFileLastErrorCode = "rate_limit_exceeded"
 )
-
-// Response from listing files in a vector store.
-type VectorStoreFileListResponse struct {
-	// List of vector store file objects
-	Data []VectorStoreFile `json:"data,required"`
-	// Whether there are more files available beyond this page
-	HasMore bool `json:"has_more,required"`
-	// Object type identifier, always "list"
-	Object string `json:"object,required"`
-	// (Optional) ID of the first file in the list for pagination
-	FirstID string `json:"first_id"`
-	// (Optional) ID of the last file in the list for pagination
-	LastID string `json:"last_id"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		HasMore     respjson.Field
-		Object      respjson.Field
-		FirstID     respjson.Field
-		LastID      respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r VectorStoreFileListResponse) RawJSON() string { return r.JSON.raw }
-func (r *VectorStoreFileListResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
 
 // Response from deleting a vector store file.
 type VectorStoreFileDeleteResponse struct {
