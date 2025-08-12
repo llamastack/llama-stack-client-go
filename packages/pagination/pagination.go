@@ -118,7 +118,7 @@ func (r *DatasetsIterrowsAutoPager[T]) Index() int {
 	return r.run
 }
 
-type OpenAICursorPagination[T any] struct {
+type OpenAICursorPage[T any] struct {
 	Data    []T    `json:"data"`
 	HasMore bool   `json:"has_more"`
 	LastID  string `json:"last_id"`
@@ -135,15 +135,15 @@ type OpenAICursorPagination[T any] struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r OpenAICursorPagination[T]) RawJSON() string { return r.JSON.raw }
-func (r *OpenAICursorPagination[T]) UnmarshalJSON(data []byte) error {
+func (r OpenAICursorPage[T]) RawJSON() string { return r.JSON.raw }
+func (r *OpenAICursorPage[T]) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // GetNextPage returns the next page as defined by this pagination style. When
 // there is no next page, this function will return a 'nil' for the page value, but
 // will not return an error
-func (r *OpenAICursorPagination[T]) GetNextPage() (res *OpenAICursorPagination[T], err error) {
+func (r *OpenAICursorPage[T]) GetNextPage() (res *OpenAICursorPage[T], err error) {
 	if len(r.Data) == 0 {
 		return nil, nil
 	}
@@ -171,16 +171,16 @@ func (r *OpenAICursorPagination[T]) GetNextPage() (res *OpenAICursorPagination[T
 	return res, nil
 }
 
-func (r *OpenAICursorPagination[T]) SetPageConfig(cfg *requestconfig.RequestConfig, res *http.Response) {
+func (r *OpenAICursorPage[T]) SetPageConfig(cfg *requestconfig.RequestConfig, res *http.Response) {
 	if r == nil {
-		r = &OpenAICursorPagination[T]{}
+		r = &OpenAICursorPage[T]{}
 	}
 	r.cfg = cfg
 	r.res = res
 }
 
-type OpenAICursorPaginationAutoPager[T any] struct {
-	page *OpenAICursorPagination[T]
+type OpenAICursorPageAutoPager[T any] struct {
+	page *OpenAICursorPage[T]
 	cur  T
 	idx  int
 	run  int
@@ -188,14 +188,14 @@ type OpenAICursorPaginationAutoPager[T any] struct {
 	paramObj
 }
 
-func NewOpenAICursorPaginationAutoPager[T any](page *OpenAICursorPagination[T], err error) *OpenAICursorPaginationAutoPager[T] {
-	return &OpenAICursorPaginationAutoPager[T]{
+func NewOpenAICursorPageAutoPager[T any](page *OpenAICursorPage[T], err error) *OpenAICursorPageAutoPager[T] {
+	return &OpenAICursorPageAutoPager[T]{
 		page: page,
 		err:  err,
 	}
 }
 
-func (r *OpenAICursorPaginationAutoPager[T]) Next() bool {
+func (r *OpenAICursorPageAutoPager[T]) Next() bool {
 	if r.page == nil || len(r.page.Data) == 0 {
 		return false
 	}
@@ -212,14 +212,14 @@ func (r *OpenAICursorPaginationAutoPager[T]) Next() bool {
 	return true
 }
 
-func (r *OpenAICursorPaginationAutoPager[T]) Current() T {
+func (r *OpenAICursorPageAutoPager[T]) Current() T {
 	return r.cur
 }
 
-func (r *OpenAICursorPaginationAutoPager[T]) Err() error {
+func (r *OpenAICursorPageAutoPager[T]) Err() error {
 	return r.err
 }
 
-func (r *OpenAICursorPaginationAutoPager[T]) Index() int {
+func (r *OpenAICursorPageAutoPager[T]) Index() int {
 	return r.run
 }

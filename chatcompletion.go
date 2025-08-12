@@ -76,7 +76,7 @@ func (r *ChatCompletionService) Get(ctx context.Context, completionID string, op
 }
 
 // List all chat completions.
-func (r *ChatCompletionService) List(ctx context.Context, query ChatCompletionListParams, opts ...option.RequestOption) (res *pagination.OpenAICursorPagination[ChatCompletionListResponse], err error) {
+func (r *ChatCompletionService) List(ctx context.Context, query ChatCompletionListParams, opts ...option.RequestOption) (res *pagination.OpenAICursorPage[ChatCompletionListResponse], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -94,8 +94,8 @@ func (r *ChatCompletionService) List(ctx context.Context, query ChatCompletionLi
 }
 
 // List all chat completions.
-func (r *ChatCompletionService) ListAutoPaging(ctx context.Context, query ChatCompletionListParams, opts ...option.RequestOption) *pagination.OpenAICursorPaginationAutoPager[ChatCompletionListResponse] {
-	return pagination.NewOpenAICursorPaginationAutoPager(r.List(ctx, query, opts...))
+func (r *ChatCompletionService) ListAutoPaging(ctx context.Context, query ChatCompletionListParams, opts ...option.RequestOption) *pagination.OpenAICursorPageAutoPager[ChatCompletionListResponse] {
+	return pagination.NewOpenAICursorPageAutoPager(r.List(ctx, query, opts...))
 }
 
 // ChatCompletionNewResponseUnion contains all possible properties and values from

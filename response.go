@@ -76,7 +76,7 @@ func (r *ResponseService) Get(ctx context.Context, responseID string, opts ...op
 }
 
 // List all OpenAI responses.
-func (r *ResponseService) List(ctx context.Context, query ResponseListParams, opts ...option.RequestOption) (res *pagination.OpenAICursorPagination[ResponseListResponse], err error) {
+func (r *ResponseService) List(ctx context.Context, query ResponseListParams, opts ...option.RequestOption) (res *pagination.OpenAICursorPage[ResponseListResponse], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -94,8 +94,8 @@ func (r *ResponseService) List(ctx context.Context, query ResponseListParams, op
 }
 
 // List all OpenAI responses.
-func (r *ResponseService) ListAutoPaging(ctx context.Context, query ResponseListParams, opts ...option.RequestOption) *pagination.OpenAICursorPaginationAutoPager[ResponseListResponse] {
-	return pagination.NewOpenAICursorPaginationAutoPager(r.List(ctx, query, opts...))
+func (r *ResponseService) ListAutoPaging(ctx context.Context, query ResponseListParams, opts ...option.RequestOption) *pagination.OpenAICursorPageAutoPager[ResponseListResponse] {
+	return pagination.NewOpenAICursorPageAutoPager(r.List(ctx, query, opts...))
 }
 
 // Complete OpenAI response object containing generation results and metadata.
