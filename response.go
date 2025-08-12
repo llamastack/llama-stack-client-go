@@ -176,8 +176,8 @@ type ResponseObjectOutputUnion struct {
 	// This field is from variant [ResponseObjectOutputFileSearchCall].
 	Queries []string `json:"queries"`
 	// This field is from variant [ResponseObjectOutputFileSearchCall].
-	Results   []map[string]ResponseObjectOutputFileSearchCallResultUnion `json:"results"`
-	Arguments string                                                     `json:"arguments"`
+	Results   []ResponseObjectOutputFileSearchCallResult `json:"results"`
+	Arguments string                                     `json:"arguments"`
 	// This field is from variant [ResponseObjectOutputFunctionCall].
 	CallID      string `json:"call_id"`
 	Name        string `json:"name"`
@@ -792,7 +792,7 @@ type ResponseObjectOutputFileSearchCall struct {
 	// Tool call type identifier, always "file_search_call"
 	Type constant.FileSearchCall `json:"type,required"`
 	// (Optional) Search results returned by the file search operation
-	Results []map[string]ResponseObjectOutputFileSearchCallResultUnion `json:"results"`
+	Results []ResponseObjectOutputFileSearchCallResult `json:"results"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -811,14 +811,44 @@ func (r *ResponseObjectOutputFileSearchCall) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ResponseObjectOutputFileSearchCallResultUnion contains all possible properties
-// and values from [bool], [float64], [string], [[]any].
+// Search results returned by the file search operation.
+type ResponseObjectOutputFileSearchCallResult struct {
+	// (Optional) Key-value attributes associated with the file
+	Attributes map[string]ResponseObjectOutputFileSearchCallResultAttributeUnion `json:"attributes,required"`
+	// Unique identifier of the file containing the result
+	FileID string `json:"file_id,required"`
+	// Name of the file containing the result
+	Filename string `json:"filename,required"`
+	// Relevance score for this search result (between 0 and 1)
+	Score float64 `json:"score,required"`
+	// Text content of the search result
+	Text string `json:"text,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Attributes  respjson.Field
+		FileID      respjson.Field
+		Filename    respjson.Field
+		Score       respjson.Field
+		Text        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectOutputFileSearchCallResult) RawJSON() string { return r.JSON.raw }
+func (r *ResponseObjectOutputFileSearchCallResult) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ResponseObjectOutputFileSearchCallResultAttributeUnion contains all possible
+// properties and values from [bool], [float64], [string], [[]any].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 //
 // If the underlying value is not a json object, one of the following properties
 // will be valid: OfBool OfFloat OfString OfAnyArray]
-type ResponseObjectOutputFileSearchCallResultUnion struct {
+type ResponseObjectOutputFileSearchCallResultAttributeUnion struct {
 	// This field will be present if the value is a [bool] instead of an object.
 	OfBool bool `json:",inline"`
 	// This field will be present if the value is a [float64] instead of an object.
@@ -836,30 +866,30 @@ type ResponseObjectOutputFileSearchCallResultUnion struct {
 	} `json:"-"`
 }
 
-func (u ResponseObjectOutputFileSearchCallResultUnion) AsBool() (v bool) {
+func (u ResponseObjectOutputFileSearchCallResultAttributeUnion) AsBool() (v bool) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ResponseObjectOutputFileSearchCallResultUnion) AsFloat() (v float64) {
+func (u ResponseObjectOutputFileSearchCallResultAttributeUnion) AsFloat() (v float64) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ResponseObjectOutputFileSearchCallResultUnion) AsString() (v string) {
+func (u ResponseObjectOutputFileSearchCallResultAttributeUnion) AsString() (v string) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ResponseObjectOutputFileSearchCallResultUnion) AsAnyArray() (v []any) {
+func (u ResponseObjectOutputFileSearchCallResultAttributeUnion) AsAnyArray() (v []any) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
 // Returns the unmodified JSON received from the API
-func (u ResponseObjectOutputFileSearchCallResultUnion) RawJSON() string { return u.JSON.raw }
+func (u ResponseObjectOutputFileSearchCallResultAttributeUnion) RawJSON() string { return u.JSON.raw }
 
-func (r *ResponseObjectOutputFileSearchCallResultUnion) UnmarshalJSON(data []byte) error {
+func (r *ResponseObjectOutputFileSearchCallResultAttributeUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1458,8 +1488,8 @@ type ResponseObjectStreamUnionItem struct {
 	Status  string                               `json:"status"`
 	Queries []string                             `json:"queries"`
 	// This field is a union of
-	// [[]map[string]ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultUnion],
-	// [[]map[string]ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultUnion]
+	// [[]ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResult],
+	// [[]ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResult]
 	Results     ResponseObjectStreamUnionItemResults `json:"results"`
 	Arguments   string                               `json:"arguments"`
 	CallID      string                               `json:"call_id"`
@@ -1542,21 +1572,21 @@ func (r *ResponseObjectStreamUnionItemContent) UnmarshalJSON(data []byte) error 
 //
 // If the underlying value is not a json object, one of the following properties
 // will be valid:
-// OfMapOfResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultMap
-// OfMapOfResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultMap]
+// OfResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResults
+// OfResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResults]
 type ResponseObjectStreamUnionItemResults struct {
 	// This field will be present if the value is a
-	// [[]map[string]ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultUnion]
-	// instead of an object.
-	OfMapOfResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultMap []map[string]ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultUnion `json:",inline"`
+	// [[]ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResult] instead
+	// of an object.
+	OfResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResults []ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResult `json:",inline"`
 	// This field will be present if the value is a
-	// [[]map[string]ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultUnion]
-	// instead of an object.
-	OfMapOfResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultMap []map[string]ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultUnion `json:",inline"`
-	JSON                                                                         struct {
-		OfMapOfResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultMap respjson.Field
-		OfMapOfResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultMap  respjson.Field
-		raw                                                                           string
+	// [[]ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResult] instead
+	// of an object.
+	OfResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResults []ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResult `json:",inline"`
+	JSON                                                                  struct {
+		OfResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResults respjson.Field
+		OfResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResults  respjson.Field
+		raw                                                                    string
 	} `json:"-"`
 }
 
@@ -1676,8 +1706,8 @@ type ResponseObjectStreamResponseOutputItemAddedItemUnion struct {
 	Queries []string `json:"queries"`
 	// This field is from variant
 	// [ResponseObjectStreamResponseOutputItemAddedItemFileSearchCall].
-	Results   []map[string]ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultUnion `json:"results"`
-	Arguments string                                                                                `json:"arguments"`
+	Results   []ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResult `json:"results"`
+	Arguments string                                                                `json:"arguments"`
 	// This field is from variant
 	// [ResponseObjectStreamResponseOutputItemAddedItemFunctionCall].
 	CallID      string `json:"call_id"`
@@ -2324,7 +2354,7 @@ type ResponseObjectStreamResponseOutputItemAddedItemFileSearchCall struct {
 	// Tool call type identifier, always "file_search_call"
 	Type constant.FileSearchCall `json:"type,required"`
 	// (Optional) Search results returned by the file search operation
-	Results []map[string]ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultUnion `json:"results"`
+	Results []ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResult `json:"results"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -2345,7 +2375,39 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemFileSearchCall) Unmarsha
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultUnion
+// Search results returned by the file search operation.
+type ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResult struct {
+	// (Optional) Key-value attributes associated with the file
+	Attributes map[string]ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultAttributeUnion `json:"attributes,required"`
+	// Unique identifier of the file containing the result
+	FileID string `json:"file_id,required"`
+	// Name of the file containing the result
+	Filename string `json:"filename,required"`
+	// Relevance score for this search result (between 0 and 1)
+	Score float64 `json:"score,required"`
+	// Text content of the search result
+	Text string `json:"text,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Attributes  respjson.Field
+		FileID      respjson.Field
+		Filename    respjson.Field
+		Score       respjson.Field
+		Text        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResult) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResult) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultAttributeUnion
 // contains all possible properties and values from [bool], [float64], [string],
 // [[]any].
 //
@@ -2353,7 +2415,7 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemFileSearchCall) Unmarsha
 //
 // If the underlying value is not a json object, one of the following properties
 // will be valid: OfBool OfFloat OfString OfAnyArray]
-type ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultUnion struct {
+type ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultAttributeUnion struct {
 	// This field will be present if the value is a [bool] instead of an object.
 	OfBool bool `json:",inline"`
 	// This field will be present if the value is a [float64] instead of an object.
@@ -2371,32 +2433,32 @@ type ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultUnion st
 	} `json:"-"`
 }
 
-func (u ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultUnion) AsBool() (v bool) {
+func (u ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultAttributeUnion) AsBool() (v bool) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultUnion) AsFloat() (v float64) {
+func (u ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultAttributeUnion) AsFloat() (v float64) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultUnion) AsString() (v string) {
+func (u ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultAttributeUnion) AsString() (v string) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultUnion) AsAnyArray() (v []any) {
+func (u ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultAttributeUnion) AsAnyArray() (v []any) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
 // Returns the unmodified JSON received from the API
-func (u ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultUnion) RawJSON() string {
+func (u ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultAttributeUnion) RawJSON() string {
 	return u.JSON.raw
 }
 
-func (r *ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultUnion) UnmarshalJSON(data []byte) error {
+func (r *ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResultAttributeUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -2650,8 +2712,8 @@ type ResponseObjectStreamResponseOutputItemDoneItemUnion struct {
 	Queries []string `json:"queries"`
 	// This field is from variant
 	// [ResponseObjectStreamResponseOutputItemDoneItemFileSearchCall].
-	Results   []map[string]ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultUnion `json:"results"`
-	Arguments string                                                                               `json:"arguments"`
+	Results   []ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResult `json:"results"`
+	Arguments string                                                               `json:"arguments"`
 	// This field is from variant
 	// [ResponseObjectStreamResponseOutputItemDoneItemFunctionCall].
 	CallID      string `json:"call_id"`
@@ -3297,7 +3359,7 @@ type ResponseObjectStreamResponseOutputItemDoneItemFileSearchCall struct {
 	// Tool call type identifier, always "file_search_call"
 	Type constant.FileSearchCall `json:"type,required"`
 	// (Optional) Search results returned by the file search operation
-	Results []map[string]ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultUnion `json:"results"`
+	Results []ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResult `json:"results"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -3318,14 +3380,47 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemFileSearchCall) Unmarshal
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultUnion contains
-// all possible properties and values from [bool], [float64], [string], [[]any].
+// Search results returned by the file search operation.
+type ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResult struct {
+	// (Optional) Key-value attributes associated with the file
+	Attributes map[string]ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultAttributeUnion `json:"attributes,required"`
+	// Unique identifier of the file containing the result
+	FileID string `json:"file_id,required"`
+	// Name of the file containing the result
+	Filename string `json:"filename,required"`
+	// Relevance score for this search result (between 0 and 1)
+	Score float64 `json:"score,required"`
+	// Text content of the search result
+	Text string `json:"text,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Attributes  respjson.Field
+		FileID      respjson.Field
+		Filename    respjson.Field
+		Score       respjson.Field
+		Text        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResult) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResult) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultAttributeUnion
+// contains all possible properties and values from [bool], [float64], [string],
+// [[]any].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 //
 // If the underlying value is not a json object, one of the following properties
 // will be valid: OfBool OfFloat OfString OfAnyArray]
-type ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultUnion struct {
+type ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultAttributeUnion struct {
 	// This field will be present if the value is a [bool] instead of an object.
 	OfBool bool `json:",inline"`
 	// This field will be present if the value is a [float64] instead of an object.
@@ -3343,32 +3438,32 @@ type ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultUnion str
 	} `json:"-"`
 }
 
-func (u ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultUnion) AsBool() (v bool) {
+func (u ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultAttributeUnion) AsBool() (v bool) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultUnion) AsFloat() (v float64) {
+func (u ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultAttributeUnion) AsFloat() (v float64) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultUnion) AsString() (v string) {
+func (u ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultAttributeUnion) AsString() (v string) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultUnion) AsAnyArray() (v []any) {
+func (u ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultAttributeUnion) AsAnyArray() (v []any) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
 // Returns the unmodified JSON received from the API
-func (u ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultUnion) RawJSON() string {
+func (u ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultAttributeUnion) RawJSON() string {
 	return u.JSON.raw
 }
 
-func (r *ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultUnion) UnmarshalJSON(data []byte) error {
+func (r *ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResultAttributeUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -4033,7 +4128,7 @@ type ResponseListResponseInputUnion struct {
 	Queries []string `json:"queries"`
 	// This field is from variant
 	// [ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCall].
-	Results []map[string]ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResultUnion `json:"results"`
+	Results []ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResult `json:"results"`
 	// This field is from variant
 	// [ResponseListResponseInputOpenAIResponseOutputMessageFunctionToolCall].
 	Arguments string `json:"arguments"`
@@ -4133,7 +4228,7 @@ type ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCall stru
 	// Tool call type identifier, always "file_search_call"
 	Type constant.FileSearchCall `json:"type,required"`
 	// (Optional) Search results returned by the file search operation
-	Results []map[string]ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResultUnion `json:"results"`
+	Results []ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResult `json:"results"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -4154,7 +4249,39 @@ func (r *ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCall)
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResultUnion
+// Search results returned by the file search operation.
+type ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResult struct {
+	// (Optional) Key-value attributes associated with the file
+	Attributes map[string]ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResultAttributeUnion `json:"attributes,required"`
+	// Unique identifier of the file containing the result
+	FileID string `json:"file_id,required"`
+	// Name of the file containing the result
+	Filename string `json:"filename,required"`
+	// Relevance score for this search result (between 0 and 1)
+	Score float64 `json:"score,required"`
+	// Text content of the search result
+	Text string `json:"text,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Attributes  respjson.Field
+		FileID      respjson.Field
+		Filename    respjson.Field
+		Score       respjson.Field
+		Text        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResult) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResult) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResultAttributeUnion
 // contains all possible properties and values from [bool], [float64], [string],
 // [[]any].
 //
@@ -4162,7 +4289,7 @@ func (r *ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCall)
 //
 // If the underlying value is not a json object, one of the following properties
 // will be valid: OfBool OfFloat OfString OfAnyArray]
-type ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResultUnion struct {
+type ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResultAttributeUnion struct {
 	// This field will be present if the value is a [bool] instead of an object.
 	OfBool bool `json:",inline"`
 	// This field will be present if the value is a [float64] instead of an object.
@@ -4180,32 +4307,32 @@ type ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResul
 	} `json:"-"`
 }
 
-func (u ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResultUnion) AsBool() (v bool) {
+func (u ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResultAttributeUnion) AsBool() (v bool) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResultUnion) AsFloat() (v float64) {
+func (u ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResultAttributeUnion) AsFloat() (v float64) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResultUnion) AsString() (v string) {
+func (u ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResultAttributeUnion) AsString() (v string) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResultUnion) AsAnyArray() (v []any) {
+func (u ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResultAttributeUnion) AsAnyArray() (v []any) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
 // Returns the unmodified JSON received from the API
-func (u ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResultUnion) RawJSON() string {
+func (u ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResultAttributeUnion) RawJSON() string {
 	return u.JSON.raw
 }
 
-func (r *ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResultUnion) UnmarshalJSON(data []byte) error {
+func (r *ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResultAttributeUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -4791,8 +4918,8 @@ type ResponseListResponseOutputUnion struct {
 	// This field is from variant [ResponseListResponseOutputFileSearchCall].
 	Queries []string `json:"queries"`
 	// This field is from variant [ResponseListResponseOutputFileSearchCall].
-	Results   []map[string]ResponseListResponseOutputFileSearchCallResultUnion `json:"results"`
-	Arguments string                                                           `json:"arguments"`
+	Results   []ResponseListResponseOutputFileSearchCallResult `json:"results"`
+	Arguments string                                           `json:"arguments"`
 	// This field is from variant [ResponseListResponseOutputFunctionCall].
 	CallID      string `json:"call_id"`
 	Name        string `json:"name"`
@@ -5415,7 +5542,7 @@ type ResponseListResponseOutputFileSearchCall struct {
 	// Tool call type identifier, always "file_search_call"
 	Type constant.FileSearchCall `json:"type,required"`
 	// (Optional) Search results returned by the file search operation
-	Results []map[string]ResponseListResponseOutputFileSearchCallResultUnion `json:"results"`
+	Results []ResponseListResponseOutputFileSearchCallResult `json:"results"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -5434,14 +5561,44 @@ func (r *ResponseListResponseOutputFileSearchCall) UnmarshalJSON(data []byte) er
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ResponseListResponseOutputFileSearchCallResultUnion contains all possible
-// properties and values from [bool], [float64], [string], [[]any].
+// Search results returned by the file search operation.
+type ResponseListResponseOutputFileSearchCallResult struct {
+	// (Optional) Key-value attributes associated with the file
+	Attributes map[string]ResponseListResponseOutputFileSearchCallResultAttributeUnion `json:"attributes,required"`
+	// Unique identifier of the file containing the result
+	FileID string `json:"file_id,required"`
+	// Name of the file containing the result
+	Filename string `json:"filename,required"`
+	// Relevance score for this search result (between 0 and 1)
+	Score float64 `json:"score,required"`
+	// Text content of the search result
+	Text string `json:"text,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Attributes  respjson.Field
+		FileID      respjson.Field
+		Filename    respjson.Field
+		Score       respjson.Field
+		Text        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseListResponseOutputFileSearchCallResult) RawJSON() string { return r.JSON.raw }
+func (r *ResponseListResponseOutputFileSearchCallResult) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ResponseListResponseOutputFileSearchCallResultAttributeUnion contains all
+// possible properties and values from [bool], [float64], [string], [[]any].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 //
 // If the underlying value is not a json object, one of the following properties
 // will be valid: OfBool OfFloat OfString OfAnyArray]
-type ResponseListResponseOutputFileSearchCallResultUnion struct {
+type ResponseListResponseOutputFileSearchCallResultAttributeUnion struct {
 	// This field will be present if the value is a [bool] instead of an object.
 	OfBool bool `json:",inline"`
 	// This field will be present if the value is a [float64] instead of an object.
@@ -5459,30 +5616,32 @@ type ResponseListResponseOutputFileSearchCallResultUnion struct {
 	} `json:"-"`
 }
 
-func (u ResponseListResponseOutputFileSearchCallResultUnion) AsBool() (v bool) {
+func (u ResponseListResponseOutputFileSearchCallResultAttributeUnion) AsBool() (v bool) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ResponseListResponseOutputFileSearchCallResultUnion) AsFloat() (v float64) {
+func (u ResponseListResponseOutputFileSearchCallResultAttributeUnion) AsFloat() (v float64) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ResponseListResponseOutputFileSearchCallResultUnion) AsString() (v string) {
+func (u ResponseListResponseOutputFileSearchCallResultAttributeUnion) AsString() (v string) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ResponseListResponseOutputFileSearchCallResultUnion) AsAnyArray() (v []any) {
+func (u ResponseListResponseOutputFileSearchCallResultAttributeUnion) AsAnyArray() (v []any) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
 // Returns the unmodified JSON received from the API
-func (u ResponseListResponseOutputFileSearchCallResultUnion) RawJSON() string { return u.JSON.raw }
+func (u ResponseListResponseOutputFileSearchCallResultAttributeUnion) RawJSON() string {
+	return u.JSON.raw
+}
 
-func (r *ResponseListResponseOutputFileSearchCallResultUnion) UnmarshalJSON(data []byte) error {
+func (r *ResponseListResponseOutputFileSearchCallResultAttributeUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -5904,7 +6063,7 @@ func (u ResponseNewParamsInputArrayItemUnion) GetQueries() []string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputArrayItemUnion) GetResults() []map[string]ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageFileSearchToolCallResultUnion {
+func (u ResponseNewParamsInputArrayItemUnion) GetResults() []ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageFileSearchToolCallResult {
 	if vt := u.OfOpenAIResponseOutputMessageFileSearchToolCall; vt != nil {
 		return vt.Results
 	}
@@ -6043,7 +6202,7 @@ type ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageFileSearchToolCal
 	// Current status of the file search operation
 	Status string `json:"status,required"`
 	// (Optional) Search results returned by the file search operation
-	Results []map[string]ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageFileSearchToolCallResultUnion `json:"results,omitzero"`
+	Results []ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageFileSearchToolCallResult `json:"results,omitzero"`
 	// Tool call type identifier, always "file_search_call"
 	//
 	// This field can be elided, and will marshal its zero value as "file_search_call".
@@ -6059,10 +6218,35 @@ func (r *ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageFileSearchToo
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Search results returned by the file search operation.
+//
+// The properties Attributes, FileID, Filename, Score, Text are required.
+type ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageFileSearchToolCallResult struct {
+	// (Optional) Key-value attributes associated with the file
+	Attributes map[string]ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageFileSearchToolCallResultAttributeUnion `json:"attributes,omitzero,required"`
+	// Unique identifier of the file containing the result
+	FileID string `json:"file_id,required"`
+	// Name of the file containing the result
+	Filename string `json:"filename,required"`
+	// Relevance score for this search result (between 0 and 1)
+	Score float64 `json:"score,required"`
+	// Text content of the search result
+	Text string `json:"text,required"`
+	paramObj
+}
+
+func (r ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageFileSearchToolCallResult) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageFileSearchToolCallResult
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageFileSearchToolCallResult) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
-type ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageFileSearchToolCallResultUnion struct {
+type ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageFileSearchToolCallResultAttributeUnion struct {
 	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
 	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
 	OfString   param.Opt[string]  `json:",omitzero,inline"`
@@ -6070,14 +6254,14 @@ type ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageFileSearchToolCal
 	paramUnion
 }
 
-func (u ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageFileSearchToolCallResultUnion) MarshalJSON() ([]byte, error) {
+func (u ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageFileSearchToolCallResultAttributeUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
 }
-func (u *ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageFileSearchToolCallResultUnion) UnmarshalJSON(data []byte) error {
+func (u *ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageFileSearchToolCallResultAttributeUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
-func (u *ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageFileSearchToolCallResultUnion) asAny() any {
+func (u *ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageFileSearchToolCallResultAttributeUnion) asAny() any {
 	if !param.IsOmitted(u.OfBool) {
 		return &u.OfBool.Value
 	} else if !param.IsOmitted(u.OfFloat) {
