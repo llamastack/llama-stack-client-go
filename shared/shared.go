@@ -590,7 +590,7 @@ type ContentDeltaUnion struct {
 	// This field is from variant [ContentDeltaToolCall].
 	ParseStatus string `json:"parse_status"`
 	// This field is from variant [ContentDeltaToolCall].
-	ToolCall ContentDeltaToolCallToolCallUnion `json:"tool_call"`
+	ToolCall ToolCallOrStringUnion `json:"tool_call"`
 	JSON     struct {
 		Text        respjson.Field
 		Type        respjson.Field
@@ -703,7 +703,7 @@ type ContentDeltaToolCall struct {
 	// Any of "started", "in_progress", "failed", "succeeded".
 	ParseStatus string `json:"parse_status,required"`
 	// Either an in-progress tool call string or the final parsed tool call
-	ToolCall ContentDeltaToolCallToolCallUnion `json:"tool_call,required"`
+	ToolCall ToolCallOrStringUnion `json:"tool_call,required"`
 	// Discriminator type of the delta. Always "tool_call"
 	Type constant.ToolCall `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -723,51 +723,6 @@ func (r *ContentDeltaToolCall) UnmarshalJSON(data []byte) error {
 }
 
 func (ContentDeltaToolCall) implContentDeltaUnion() {}
-
-// ContentDeltaToolCallToolCallUnion contains all possible properties and values
-// from [string], [ToolCall].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString]
-type ContentDeltaToolCallToolCallUnion struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field is from variant [ToolCall].
-	Arguments ToolCallArgumentsUnion `json:"arguments"`
-	// This field is from variant [ToolCall].
-	CallID string `json:"call_id"`
-	// This field is from variant [ToolCall].
-	ToolName ToolCallToolName `json:"tool_name"`
-	// This field is from variant [ToolCall].
-	ArgumentsJson string `json:"arguments_json"`
-	JSON          struct {
-		OfString      respjson.Field
-		Arguments     respjson.Field
-		CallID        respjson.Field
-		ToolName      respjson.Field
-		ArgumentsJson respjson.Field
-		raw           string
-	} `json:"-"`
-}
-
-func (u ContentDeltaToolCallToolCallUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ContentDeltaToolCallToolCallUnion) AsToolCall() (v ToolCall) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ContentDeltaToolCallToolCallUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ContentDeltaToolCallToolCallUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
 
 // A document to be used for document ingestion in the RAG Tool.
 //
@@ -3521,6 +3476,51 @@ func (u *ToolCallArgumentsMapItemMapItemUnionParam) asAny() any {
 		return &u.OfBool.Value
 	}
 	return nil
+}
+
+// ToolCallOrStringUnion contains all possible properties and values from [string],
+// [ToolCall].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+//
+// If the underlying value is not a json object, one of the following properties
+// will be valid: OfString]
+type ToolCallOrStringUnion struct {
+	// This field will be present if the value is a [string] instead of an object.
+	OfString string `json:",inline"`
+	// This field is from variant [ToolCall].
+	Arguments ToolCallArgumentsUnion `json:"arguments"`
+	// This field is from variant [ToolCall].
+	CallID string `json:"call_id"`
+	// This field is from variant [ToolCall].
+	ToolName ToolCallToolName `json:"tool_name"`
+	// This field is from variant [ToolCall].
+	ArgumentsJson string `json:"arguments_json"`
+	JSON          struct {
+		OfString      respjson.Field
+		Arguments     respjson.Field
+		CallID        respjson.Field
+		ToolName      respjson.Field
+		ArgumentsJson respjson.Field
+		raw           string
+	} `json:"-"`
+}
+
+func (u ToolCallOrStringUnion) AsString() (v string) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ToolCallOrStringUnion) AsToolCall() (v ToolCall) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u ToolCallOrStringUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *ToolCallOrStringUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // The property ParamType is required.
