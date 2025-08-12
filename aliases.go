@@ -148,6 +148,11 @@ type ContentDeltaImage = shared.ContentDeltaImage
 // This is an alias to an internal type.
 type ContentDeltaToolCall = shared.ContentDeltaToolCall
 
+// Either an in-progress tool call string or the final parsed tool call
+//
+// This is an alias to an internal type.
+type ContentDeltaToolCallToolCallUnion = shared.ContentDeltaToolCallToolCallUnion
+
 // A document to be used for document ingestion in the RAG Tool.
 //
 // This is an alias to an internal type.
@@ -571,11 +576,6 @@ type ToolCallArgumentsMapItemArrayItemUnionParam = shared.ToolCallArgumentsMapIt
 
 // This is an alias to an internal type.
 type ToolCallArgumentsMapItemMapItemUnionParam = shared.ToolCallArgumentsMapItemMapItemUnionParam
-
-// Either an in-progress tool call string or the final parsed tool call
-//
-// This is an alias to an internal type.
-type ToolCallOrStringUnion = shared.ToolCallOrStringUnion
 
 // This is an alias to an internal type.
 type ToolParamDefinition = shared.ToolParamDefinition

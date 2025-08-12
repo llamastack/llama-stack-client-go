@@ -33,7 +33,6 @@
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#SamplingParamsResp">SamplingParamsResp</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#ScoringResult">ScoringResult</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#ToolCall">ToolCall</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#ToolCallOrStringUnion">ToolCallOrStringUnion</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#ToolResponseMessage">ToolResponseMessage</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#UserMessage">UserMessage</a>
 
