@@ -74,7 +74,7 @@ func (r *VectorStoreService) Update(ctx context.Context, vectorStoreID string, b
 }
 
 // Returns a list of vector stores.
-func (r *VectorStoreService) List(ctx context.Context, query VectorStoreListParams, opts ...option.RequestOption) (res *pagination.OpenAICursorPagination[VectorStore], err error) {
+func (r *VectorStoreService) List(ctx context.Context, query VectorStoreListParams, opts ...option.RequestOption) (res *pagination.OpenAICursorPage[VectorStore], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -92,8 +92,8 @@ func (r *VectorStoreService) List(ctx context.Context, query VectorStoreListPara
 }
 
 // Returns a list of vector stores.
-func (r *VectorStoreService) ListAutoPaging(ctx context.Context, query VectorStoreListParams, opts ...option.RequestOption) *pagination.OpenAICursorPaginationAutoPager[VectorStore] {
-	return pagination.NewOpenAICursorPaginationAutoPager(r.List(ctx, query, opts...))
+func (r *VectorStoreService) ListAutoPaging(ctx context.Context, query VectorStoreListParams, opts ...option.RequestOption) *pagination.OpenAICursorPageAutoPager[VectorStore] {
+	return pagination.NewOpenAICursorPageAutoPager(r.List(ctx, query, opts...))
 }
 
 // Delete a vector store.

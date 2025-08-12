@@ -84,7 +84,7 @@ func (r *VectorStoreFileService) Update(ctx context.Context, fileID string, para
 }
 
 // List files in a vector store.
-func (r *VectorStoreFileService) List(ctx context.Context, vectorStoreID string, query VectorStoreFileListParams, opts ...option.RequestOption) (res *pagination.OpenAICursorPagination[VectorStoreFile], err error) {
+func (r *VectorStoreFileService) List(ctx context.Context, vectorStoreID string, query VectorStoreFileListParams, opts ...option.RequestOption) (res *pagination.OpenAICursorPage[VectorStoreFile], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -106,8 +106,8 @@ func (r *VectorStoreFileService) List(ctx context.Context, vectorStoreID string,
 }
 
 // List files in a vector store.
-func (r *VectorStoreFileService) ListAutoPaging(ctx context.Context, vectorStoreID string, query VectorStoreFileListParams, opts ...option.RequestOption) *pagination.OpenAICursorPaginationAutoPager[VectorStoreFile] {
-	return pagination.NewOpenAICursorPaginationAutoPager(r.List(ctx, vectorStoreID, query, opts...))
+func (r *VectorStoreFileService) ListAutoPaging(ctx context.Context, vectorStoreID string, query VectorStoreFileListParams, opts ...option.RequestOption) *pagination.OpenAICursorPageAutoPager[VectorStoreFile] {
+	return pagination.NewOpenAICursorPageAutoPager(r.List(ctx, vectorStoreID, query, opts...))
 }
 
 // Delete a vector store file.
