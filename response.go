@@ -1227,6 +1227,8 @@ func (r *ResponseObjectError) UnmarshalJSON(data []byte) error {
 // [ResponseObjectStreamResponseMcpCallInProgress],
 // [ResponseObjectStreamResponseMcpCallFailed],
 // [ResponseObjectStreamResponseMcpCallCompleted],
+// [ResponseObjectStreamResponseContentPartAdded],
+// [ResponseObjectStreamResponseContentPartDone],
 // [ResponseObjectStreamResponseCompleted].
 //
 // Use the [ResponseObjectStreamUnion.AsAny] method to switch on the variant.
@@ -1243,7 +1245,9 @@ type ResponseObjectStreamUnion struct {
 	// "response.mcp_list_tools.in_progress", "response.mcp_list_tools.failed",
 	// "response.mcp_list_tools.completed", "response.mcp_call.arguments.delta",
 	// "response.mcp_call.arguments.done", "response.mcp_call.in_progress",
-	// "response.mcp_call.failed", "response.mcp_call.completed", "response.completed".
+	// "response.mcp_call.failed", "response.mcp_call.completed",
+	// "response.content_part.added", "response.content_part.done",
+	// "response.completed".
 	Type string `json:"type"`
 	// This field is a union of [ResponseObjectStreamResponseOutputItemAddedItemUnion],
 	// [ResponseObjectStreamResponseOutputItemDoneItemUnion]
@@ -1257,7 +1261,11 @@ type ResponseObjectStreamUnion struct {
 	// This field is from variant [ResponseObjectStreamResponseOutputTextDone].
 	Text      string `json:"text"`
 	Arguments string `json:"arguments"`
-	JSON      struct {
+	// This field is a union of
+	// [ResponseObjectStreamResponseContentPartAddedPartUnion],
+	// [ResponseObjectStreamResponseContentPartDonePartUnion]
+	Part ResponseObjectStreamUnionPart `json:"part"`
+	JSON struct {
 		Response       respjson.Field
 		Type           respjson.Field
 		Item           respjson.Field
@@ -1269,6 +1277,7 @@ type ResponseObjectStreamUnion struct {
 		ItemID         respjson.Field
 		Text           respjson.Field
 		Arguments      respjson.Field
+		Part           respjson.Field
 		raw            string
 	} `json:"-"`
 }
@@ -1298,6 +1307,8 @@ func (ResponseObjectStreamResponseMcpCallArgumentsDone) implResponseObjectStream
 func (ResponseObjectStreamResponseMcpCallInProgress) implResponseObjectStreamUnion()          {}
 func (ResponseObjectStreamResponseMcpCallFailed) implResponseObjectStreamUnion()              {}
 func (ResponseObjectStreamResponseMcpCallCompleted) implResponseObjectStreamUnion()           {}
+func (ResponseObjectStreamResponseContentPartAdded) implResponseObjectStreamUnion()           {}
+func (ResponseObjectStreamResponseContentPartDone) implResponseObjectStreamUnion()            {}
 func (ResponseObjectStreamResponseCompleted) implResponseObjectStreamUnion()                  {}
 
 // Use the following switch statement to find the correct variant
@@ -1321,6 +1332,8 @@ func (ResponseObjectStreamResponseCompleted) implResponseObjectStreamUnion()    
 //	case llamastackclient.ResponseObjectStreamResponseMcpCallInProgress:
 //	case llamastackclient.ResponseObjectStreamResponseMcpCallFailed:
 //	case llamastackclient.ResponseObjectStreamResponseMcpCallCompleted:
+//	case llamastackclient.ResponseObjectStreamResponseContentPartAdded:
+//	case llamastackclient.ResponseObjectStreamResponseContentPartDone:
 //	case llamastackclient.ResponseObjectStreamResponseCompleted:
 //	default:
 //	  fmt.Errorf("no variant present")
@@ -1363,6 +1376,10 @@ func (u ResponseObjectStreamUnion) AsAny() anyResponseObjectStream {
 		return u.AsResponseMcpCallFailed()
 	case "response.mcp_call.completed":
 		return u.AsResponseMcpCallCompleted()
+	case "response.content_part.added":
+		return u.AsResponseContentPartAdded()
+	case "response.content_part.done":
+		return u.AsResponseContentPartDone()
 	case "response.completed":
 		return u.AsResponseCompleted()
 	}
@@ -1455,6 +1472,16 @@ func (u ResponseObjectStreamUnion) AsResponseMcpCallFailed() (v ResponseObjectSt
 }
 
 func (u ResponseObjectStreamUnion) AsResponseMcpCallCompleted() (v ResponseObjectStreamResponseMcpCallCompleted) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectStreamUnion) AsResponseContentPartAdded() (v ResponseObjectStreamResponseContentPartAdded) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectStreamUnion) AsResponseContentPartDone() (v ResponseObjectStreamResponseContentPartDone) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -1622,6 +1649,28 @@ type ResponseObjectStreamUnionItemTools struct {
 }
 
 func (r *ResponseObjectStreamUnionItemTools) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ResponseObjectStreamUnionPart is an implicit subunion of
+// [ResponseObjectStreamUnion]. ResponseObjectStreamUnionPart provides convenient
+// access to the sub-properties of the union.
+//
+// For type safety it is recommended to directly use a variant of the
+// [ResponseObjectStreamUnion].
+type ResponseObjectStreamUnionPart struct {
+	Text    string `json:"text"`
+	Type    string `json:"type"`
+	Refusal string `json:"refusal"`
+	JSON    struct {
+		Text    respjson.Field
+		Type    respjson.Field
+		Refusal respjson.Field
+		raw     string
+	} `json:"-"`
+}
+
+func (r *ResponseObjectStreamUnionPart) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -4027,6 +4076,290 @@ type ResponseObjectStreamResponseMcpCallCompleted struct {
 // Returns the unmodified JSON received from the API
 func (r ResponseObjectStreamResponseMcpCallCompleted) RawJSON() string { return r.JSON.raw }
 func (r *ResponseObjectStreamResponseMcpCallCompleted) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Streaming event for when a new content part is added to a response item.
+type ResponseObjectStreamResponseContentPartAdded struct {
+	// Unique identifier of the output item containing this content part
+	ItemID string `json:"item_id,required"`
+	// The content part that was added
+	Part ResponseObjectStreamResponseContentPartAddedPartUnion `json:"part,required"`
+	// Unique identifier of the response containing this content
+	ResponseID string `json:"response_id,required"`
+	// Sequential number for ordering streaming events
+	SequenceNumber int64 `json:"sequence_number,required"`
+	// Event type identifier, always "response.content_part.added"
+	Type constant.ResponseContentPartAdded `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ItemID         respjson.Field
+		Part           respjson.Field
+		ResponseID     respjson.Field
+		SequenceNumber respjson.Field
+		Type           respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseContentPartAdded) RawJSON() string { return r.JSON.raw }
+func (r *ResponseObjectStreamResponseContentPartAdded) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ResponseObjectStreamResponseContentPartAddedPartUnion contains all possible
+// properties and values from
+// [ResponseObjectStreamResponseContentPartAddedPartOutputText],
+// [ResponseObjectStreamResponseContentPartAddedPartRefusal].
+//
+// Use the [ResponseObjectStreamResponseContentPartAddedPartUnion.AsAny] method to
+// switch on the variant.
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type ResponseObjectStreamResponseContentPartAddedPartUnion struct {
+	// This field is from variant
+	// [ResponseObjectStreamResponseContentPartAddedPartOutputText].
+	Text string `json:"text"`
+	// Any of "output_text", "refusal".
+	Type string `json:"type"`
+	// This field is from variant
+	// [ResponseObjectStreamResponseContentPartAddedPartRefusal].
+	Refusal string `json:"refusal"`
+	JSON    struct {
+		Text    respjson.Field
+		Type    respjson.Field
+		Refusal respjson.Field
+		raw     string
+	} `json:"-"`
+}
+
+// anyResponseObjectStreamResponseContentPartAddedPart is implemented by each
+// variant of [ResponseObjectStreamResponseContentPartAddedPartUnion] to add type
+// safety for the return type of
+// [ResponseObjectStreamResponseContentPartAddedPartUnion.AsAny]
+type anyResponseObjectStreamResponseContentPartAddedPart interface {
+	implResponseObjectStreamResponseContentPartAddedPartUnion()
+}
+
+func (ResponseObjectStreamResponseContentPartAddedPartOutputText) implResponseObjectStreamResponseContentPartAddedPartUnion() {
+}
+func (ResponseObjectStreamResponseContentPartAddedPartRefusal) implResponseObjectStreamResponseContentPartAddedPartUnion() {
+}
+
+// Use the following switch statement to find the correct variant
+//
+//	switch variant := ResponseObjectStreamResponseContentPartAddedPartUnion.AsAny().(type) {
+//	case llamastackclient.ResponseObjectStreamResponseContentPartAddedPartOutputText:
+//	case llamastackclient.ResponseObjectStreamResponseContentPartAddedPartRefusal:
+//	default:
+//	  fmt.Errorf("no variant present")
+//	}
+func (u ResponseObjectStreamResponseContentPartAddedPartUnion) AsAny() anyResponseObjectStreamResponseContentPartAddedPart {
+	switch u.Type {
+	case "output_text":
+		return u.AsOutputText()
+	case "refusal":
+		return u.AsRefusal()
+	}
+	return nil
+}
+
+func (u ResponseObjectStreamResponseContentPartAddedPartUnion) AsOutputText() (v ResponseObjectStreamResponseContentPartAddedPartOutputText) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectStreamResponseContentPartAddedPartUnion) AsRefusal() (v ResponseObjectStreamResponseContentPartAddedPartRefusal) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u ResponseObjectStreamResponseContentPartAddedPartUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *ResponseObjectStreamResponseContentPartAddedPartUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ResponseObjectStreamResponseContentPartAddedPartOutputText struct {
+	Text string              `json:"text,required"`
+	Type constant.OutputText `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Text        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseContentPartAddedPartOutputText) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseObjectStreamResponseContentPartAddedPartOutputText) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ResponseObjectStreamResponseContentPartAddedPartRefusal struct {
+	Refusal string           `json:"refusal,required"`
+	Type    constant.Refusal `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Refusal     respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseContentPartAddedPartRefusal) RawJSON() string { return r.JSON.raw }
+func (r *ResponseObjectStreamResponseContentPartAddedPartRefusal) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Streaming event for when a content part is completed.
+type ResponseObjectStreamResponseContentPartDone struct {
+	// Unique identifier of the output item containing this content part
+	ItemID string `json:"item_id,required"`
+	// The completed content part
+	Part ResponseObjectStreamResponseContentPartDonePartUnion `json:"part,required"`
+	// Unique identifier of the response containing this content
+	ResponseID string `json:"response_id,required"`
+	// Sequential number for ordering streaming events
+	SequenceNumber int64 `json:"sequence_number,required"`
+	// Event type identifier, always "response.content_part.done"
+	Type constant.ResponseContentPartDone `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ItemID         respjson.Field
+		Part           respjson.Field
+		ResponseID     respjson.Field
+		SequenceNumber respjson.Field
+		Type           respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseContentPartDone) RawJSON() string { return r.JSON.raw }
+func (r *ResponseObjectStreamResponseContentPartDone) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ResponseObjectStreamResponseContentPartDonePartUnion contains all possible
+// properties and values from
+// [ResponseObjectStreamResponseContentPartDonePartOutputText],
+// [ResponseObjectStreamResponseContentPartDonePartRefusal].
+//
+// Use the [ResponseObjectStreamResponseContentPartDonePartUnion.AsAny] method to
+// switch on the variant.
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type ResponseObjectStreamResponseContentPartDonePartUnion struct {
+	// This field is from variant
+	// [ResponseObjectStreamResponseContentPartDonePartOutputText].
+	Text string `json:"text"`
+	// Any of "output_text", "refusal".
+	Type string `json:"type"`
+	// This field is from variant
+	// [ResponseObjectStreamResponseContentPartDonePartRefusal].
+	Refusal string `json:"refusal"`
+	JSON    struct {
+		Text    respjson.Field
+		Type    respjson.Field
+		Refusal respjson.Field
+		raw     string
+	} `json:"-"`
+}
+
+// anyResponseObjectStreamResponseContentPartDonePart is implemented by each
+// variant of [ResponseObjectStreamResponseContentPartDonePartUnion] to add type
+// safety for the return type of
+// [ResponseObjectStreamResponseContentPartDonePartUnion.AsAny]
+type anyResponseObjectStreamResponseContentPartDonePart interface {
+	implResponseObjectStreamResponseContentPartDonePartUnion()
+}
+
+func (ResponseObjectStreamResponseContentPartDonePartOutputText) implResponseObjectStreamResponseContentPartDonePartUnion() {
+}
+func (ResponseObjectStreamResponseContentPartDonePartRefusal) implResponseObjectStreamResponseContentPartDonePartUnion() {
+}
+
+// Use the following switch statement to find the correct variant
+//
+//	switch variant := ResponseObjectStreamResponseContentPartDonePartUnion.AsAny().(type) {
+//	case llamastackclient.ResponseObjectStreamResponseContentPartDonePartOutputText:
+//	case llamastackclient.ResponseObjectStreamResponseContentPartDonePartRefusal:
+//	default:
+//	  fmt.Errorf("no variant present")
+//	}
+func (u ResponseObjectStreamResponseContentPartDonePartUnion) AsAny() anyResponseObjectStreamResponseContentPartDonePart {
+	switch u.Type {
+	case "output_text":
+		return u.AsOutputText()
+	case "refusal":
+		return u.AsRefusal()
+	}
+	return nil
+}
+
+func (u ResponseObjectStreamResponseContentPartDonePartUnion) AsOutputText() (v ResponseObjectStreamResponseContentPartDonePartOutputText) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectStreamResponseContentPartDonePartUnion) AsRefusal() (v ResponseObjectStreamResponseContentPartDonePartRefusal) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u ResponseObjectStreamResponseContentPartDonePartUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *ResponseObjectStreamResponseContentPartDonePartUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ResponseObjectStreamResponseContentPartDonePartOutputText struct {
+	Text string              `json:"text,required"`
+	Type constant.OutputText `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Text        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseContentPartDonePartOutputText) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseObjectStreamResponseContentPartDonePartOutputText) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ResponseObjectStreamResponseContentPartDonePartRefusal struct {
+	Refusal string           `json:"refusal,required"`
+	Type    constant.Refusal `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Refusal     respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseContentPartDonePartRefusal) RawJSON() string { return r.JSON.raw }
+func (r *ResponseObjectStreamResponseContentPartDonePartRefusal) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

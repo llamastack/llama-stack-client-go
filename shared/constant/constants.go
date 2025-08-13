@@ -68,9 +68,12 @@ type Number string                             // Always "number"
 type Object string                             // Always "object"
 type OutputText string                         // Always "output_text"
 type Qat string                                // Always "QAT"
+type Refusal string                            // Always "refusal"
 type RegexParser string                        // Always "regex_parser"
 type Response string                           // Always "response"
 type ResponseCompleted string                  // Always "response.completed"
+type ResponseContentPartAdded string           // Always "response.content_part.added"
+type ResponseContentPartDone string            // Always "response.content_part.done"
 type ResponseCreated string                    // Always "response.created"
 type ResponseFunctionCallArgumentsDelta string // Always "response.function_call_arguments.delta"
 type ResponseFunctionCallArgumentsDone string  // Always "response.function_call_arguments.done"
@@ -173,10 +176,17 @@ func (c Number) Default() Number                               { return "number"
 func (c Object) Default() Object                               { return "object" }
 func (c OutputText) Default() OutputText                       { return "output_text" }
 func (c Qat) Default() Qat                                     { return "QAT" }
+func (c Refusal) Default() Refusal                             { return "refusal" }
 func (c RegexParser) Default() RegexParser                     { return "regex_parser" }
 func (c Response) Default() Response                           { return "response" }
 func (c ResponseCompleted) Default() ResponseCompleted         { return "response.completed" }
-func (c ResponseCreated) Default() ResponseCreated             { return "response.created" }
+func (c ResponseContentPartAdded) Default() ResponseContentPartAdded {
+	return "response.content_part.added"
+}
+func (c ResponseContentPartDone) Default() ResponseContentPartDone {
+	return "response.content_part.done"
+}
+func (c ResponseCreated) Default() ResponseCreated { return "response.created" }
 func (c ResponseFunctionCallArgumentsDelta) Default() ResponseFunctionCallArgumentsDelta {
 	return "response.function_call_arguments.delta"
 }
@@ -306,9 +316,12 @@ func (c Number) MarshalJSON() ([]byte, error)                             { retu
 func (c Object) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
 func (c OutputText) MarshalJSON() ([]byte, error)                         { return marshalString(c) }
 func (c Qat) MarshalJSON() ([]byte, error)                                { return marshalString(c) }
+func (c Refusal) MarshalJSON() ([]byte, error)                            { return marshalString(c) }
 func (c RegexParser) MarshalJSON() ([]byte, error)                        { return marshalString(c) }
 func (c Response) MarshalJSON() ([]byte, error)                           { return marshalString(c) }
 func (c ResponseCompleted) MarshalJSON() ([]byte, error)                  { return marshalString(c) }
+func (c ResponseContentPartAdded) MarshalJSON() ([]byte, error)           { return marshalString(c) }
+func (c ResponseContentPartDone) MarshalJSON() ([]byte, error)            { return marshalString(c) }
 func (c ResponseCreated) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
 func (c ResponseFunctionCallArgumentsDelta) MarshalJSON() ([]byte, error) { return marshalString(c) }
 func (c ResponseFunctionCallArgumentsDone) MarshalJSON() ([]byte, error)  { return marshalString(c) }
