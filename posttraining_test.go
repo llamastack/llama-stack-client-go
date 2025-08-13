@@ -8,9 +8,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/llama-stack-client-go"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/testutil"
-	"github.com/stainless-sdks/llama-stack-client-go/option"
+	"github.com/llamastack/llama-stack-client-go"
+	"github.com/llamastack/llama-stack-client-go/internal/testutil"
+	"github.com/llamastack/llama-stack-client-go/option"
 )
 
 func TestPostTrainingPreferenceOptimizeWithOptionalParams(t *testing.T) {
@@ -26,10 +26,8 @@ func TestPostTrainingPreferenceOptimizeWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.PostTraining.PreferenceOptimize(context.TODO(), llamastackclient.PostTrainingPreferenceOptimizeParams{
 		AlgorithmConfig: llamastackclient.PostTrainingPreferenceOptimizeParamsAlgorithmConfig{
-			Epsilon:     0,
-			Gamma:       0,
-			RewardClip:  0,
-			RewardScale: 0,
+			Beta:     0,
+			LossType: "sigmoid",
 		},
 		FinetunedModel: "finetuned_model",
 		HyperparamSearchConfig: map[string]llamastackclient.PostTrainingPreferenceOptimizeParamsHyperparamSearchConfigUnion{

@@ -8,10 +8,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/stainless-sdks/llama-stack-client-go/internal/apijson"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/requestconfig"
-	"github.com/stainless-sdks/llama-stack-client-go/option"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/respjson"
+	"github.com/llamastack/llama-stack-client-go/internal/apijson"
+	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
+	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 )
 
 // ProviderService contains methods and other services that help with interacting
@@ -58,7 +58,9 @@ func (r *ProviderService) List(ctx context.Context, opts ...option.RequestOption
 	return
 }
 
+// Response containing a list of all available providers.
 type ListProvidersResponse struct {
+	// List of provider information objects
 	Data []ProviderInfo `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {

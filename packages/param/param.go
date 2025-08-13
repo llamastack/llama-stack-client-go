@@ -2,7 +2,7 @@ package param
 
 import (
 	"encoding/json"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/encoding/json/sentinel"
+	"github.com/llamastack/llama-stack-client-go/internal/encoding/json/sentinel"
 	"reflect"
 )
 

@@ -8,9 +8,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/llama-stack-client-go"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/testutil"
-	"github.com/stainless-sdks/llama-stack-client-go/option"
+	"github.com/llamastack/llama-stack-client-go"
+	"github.com/llamastack/llama-stack-client-go/internal/testutil"
+	"github.com/llamastack/llama-stack-client-go/option"
 )
 
 func TestResponseNewWithOptionalParams(t *testing.T) {
@@ -29,6 +29,7 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 			OfString: llamastackclient.String("string"),
 		},
 		Model:              "model",
+		Include:            []string{"string"},
 		Instructions:       llamastackclient.String("instructions"),
 		MaxInferIters:      llamastackclient.Int(0),
 		PreviousResponseID: llamastackclient.String("previous_response_id"),

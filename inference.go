@@ -6,13 +6,13 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/stainless-sdks/llama-stack-client-go/internal/apijson"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/requestconfig"
-	"github.com/stainless-sdks/llama-stack-client-go/option"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/param"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/respjson"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/ssestream"
-	"github.com/stainless-sdks/llama-stack-client-go/shared"
+	"github.com/llamastack/llama-stack-client-go/internal/apijson"
+	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
+	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/llamastack/llama-stack-client-go/packages/param"
+	"github.com/llamastack/llama-stack-client-go/packages/respjson"
+	"github.com/llamastack/llama-stack-client-go/packages/ssestream"
+	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
 // InferenceService contains methods and other services that help with interacting
@@ -51,6 +51,9 @@ func (r *InferenceService) BatchCompletion(ctx context.Context, body InferenceBa
 }
 
 // Generate a chat completion for the given messages using the specified model.
+//
+// Deprecated: /v1/inference/chat-completion is deprecated. Please use
+// /v1/openai/v1/chat/completions.
 func (r *InferenceService) ChatCompletion(ctx context.Context, body InferenceChatCompletionParams, opts ...option.RequestOption) (res *shared.ChatCompletionResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "v1/inference/chat-completion"
@@ -59,6 +62,9 @@ func (r *InferenceService) ChatCompletion(ctx context.Context, body InferenceCha
 }
 
 // Generate a chat completion for the given messages using the specified model.
+//
+// Deprecated: /v1/inference/chat-completion is deprecated. Please use
+// /v1/openai/v1/chat/completions.
 func (r *InferenceService) ChatCompletionStreaming(ctx context.Context, body InferenceChatCompletionParams, opts ...option.RequestOption) (stream *ssestream.Stream[ChatCompletionResponseStreamChunk]) {
 	var (
 		raw *http.Response
@@ -72,6 +78,9 @@ func (r *InferenceService) ChatCompletionStreaming(ctx context.Context, body Inf
 }
 
 // Generate a completion for the given content using the specified model.
+//
+// Deprecated: /v1/inference/completion is deprecated. Please use
+// /v1/openai/v1/completions.
 func (r *InferenceService) Completion(ctx context.Context, body InferenceCompletionParams, opts ...option.RequestOption) (res *CompletionResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "v1/inference/completion"
@@ -80,6 +89,9 @@ func (r *InferenceService) Completion(ctx context.Context, body InferenceComplet
 }
 
 // Generate a completion for the given content using the specified model.
+//
+// Deprecated: /v1/inference/completion is deprecated. Please use
+// /v1/openai/v1/completions.
 func (r *InferenceService) CompletionStreaming(ctx context.Context, body InferenceCompletionParams, opts ...option.RequestOption) (stream *ssestream.Stream[CompletionResponse]) {
 	var (
 		raw *http.Response
@@ -93,6 +105,9 @@ func (r *InferenceService) CompletionStreaming(ctx context.Context, body Inferen
 }
 
 // Generate embeddings for content pieces using the specified model.
+//
+// Deprecated: /v1/inference/embeddings is deprecated. Please use
+// /v1/openai/v1/embeddings.
 func (r *InferenceService) Embeddings(ctx context.Context, body InferenceEmbeddingsParams, opts ...option.RequestOption) (res *EmbeddingsResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "v1/inference/embeddings"
@@ -103,7 +118,8 @@ func (r *InferenceService) Embeddings(ctx context.Context, body InferenceEmbeddi
 // A chunk of a streamed chat completion response.
 type ChatCompletionResponseStreamChunk struct {
 	// The event containing the new content
-	Event   ChatCompletionResponseStreamChunkEvent    `json:"event,required"`
+	Event ChatCompletionResponseStreamChunkEvent `json:"event,required"`
+	// (Optional) List of metrics associated with the API response
 	Metrics []ChatCompletionResponseStreamChunkMetric `json:"metrics"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -152,10 +168,14 @@ func (r *ChatCompletionResponseStreamChunkEvent) UnmarshalJSON(data []byte) erro
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A metric value included in API responses.
 type ChatCompletionResponseStreamChunkMetric struct {
-	Metric string  `json:"metric,required"`
-	Value  float64 `json:"value,required"`
-	Unit   string  `json:"unit"`
+	// The name of the metric
+	Metric string `json:"metric,required"`
+	// The numeric value of the metric
+	Value float64 `json:"value,required"`
+	// (Optional) The unit of measurement for the metric value
+	Unit string `json:"unit"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Metric      respjson.Field
@@ -181,8 +201,9 @@ type CompletionResponse struct {
 	// Any of "end_of_turn", "end_of_message", "out_of_tokens".
 	StopReason CompletionResponseStopReason `json:"stop_reason,required"`
 	// Optional log probabilities for generated tokens
-	Logprobs []TokenLogProbs            `json:"logprobs"`
-	Metrics  []CompletionResponseMetric `json:"metrics"`
+	Logprobs []TokenLogProbs `json:"logprobs"`
+	// (Optional) List of metrics associated with the API response
+	Metrics []CompletionResponseMetric `json:"metrics"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Content     respjson.Field
@@ -209,10 +230,14 @@ const (
 	CompletionResponseStopReasonOutOfTokens  CompletionResponseStopReason = "out_of_tokens"
 )
 
+// A metric value included in API responses.
 type CompletionResponseMetric struct {
-	Metric string  `json:"metric,required"`
-	Value  float64 `json:"value,required"`
-	Unit   string  `json:"unit"`
+	// The name of the metric
+	Metric string `json:"metric,required"`
+	// The numeric value of the metric
+	Value float64 `json:"value,required"`
+	// (Optional) The unit of measurement for the metric value
+	Unit string `json:"unit"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Metric      respjson.Field
@@ -267,7 +292,9 @@ func (r *TokenLogProbs) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Response from a batch chat completion request.
 type InferenceBatchChatCompletionResponse struct {
+	// List of chat completion responses, one for each conversation in the batch
 	Batch []shared.ChatCompletionResponse `json:"batch,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {

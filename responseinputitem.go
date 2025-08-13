@@ -10,13 +10,13 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/stainless-sdks/llama-stack-client-go/internal/apijson"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/apiquery"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/requestconfig"
-	"github.com/stainless-sdks/llama-stack-client-go/option"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/param"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/respjson"
-	"github.com/stainless-sdks/llama-stack-client-go/shared/constant"
+	"github.com/llamastack/llama-stack-client-go/internal/apijson"
+	"github.com/llamastack/llama-stack-client-go/internal/apiquery"
+	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
+	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/llamastack/llama-stack-client-go/packages/param"
+	"github.com/llamastack/llama-stack-client-go/packages/respjson"
+	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
 // ResponseInputItemService contains methods and other services that help with
@@ -50,9 +50,12 @@ func (r *ResponseInputItemService) List(ctx context.Context, responseID string, 
 	return
 }
 
+// List container for OpenAI response input items.
 type ResponseInputItemListResponse struct {
-	Data   []ResponseInputItemListResponseDataUnion `json:"data,required"`
-	Object constant.List                            `json:"object,required"`
+	// List of input items
+	Data []ResponseInputItemListResponseDataUnion `json:"data,required"`
+	// Object type identifier, always "list"
+	Object constant.List `json:"object,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -86,7 +89,7 @@ type ResponseInputItemListResponseDataUnion struct {
 	Queries []string `json:"queries"`
 	// This field is from variant
 	// [ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCall].
-	Results []map[string]ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCallResultUnion `json:"results"`
+	Results []ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCallResult `json:"results"`
 	// This field is from variant
 	// [ResponseInputItemListResponseDataOpenAIResponseOutputMessageFunctionToolCall].
 	Arguments string `json:"arguments"`
@@ -151,10 +154,14 @@ func (r *ResponseInputItemListResponseDataUnion) UnmarshalJSON(data []byte) erro
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Web search tool call output message for OpenAI responses.
 type ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCall struct {
-	ID     string                 `json:"id,required"`
-	Status string                 `json:"status,required"`
-	Type   constant.WebSearchCall `json:"type,required"`
+	// Unique identifier for this tool call
+	ID string `json:"id,required"`
+	// Current status of the web search operation
+	Status string `json:"status,required"`
+	// Tool call type identifier, always "web_search_call"
+	Type constant.WebSearchCall `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -173,12 +180,18 @@ func (r *ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchTo
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// File search tool call output message for OpenAI responses.
 type ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCall struct {
-	ID      string                                                                                                 `json:"id,required"`
-	Queries []string                                                                                               `json:"queries,required"`
-	Status  string                                                                                                 `json:"status,required"`
-	Type    constant.FileSearchCall                                                                                `json:"type,required"`
-	Results []map[string]ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCallResultUnion `json:"results"`
+	// Unique identifier for this tool call
+	ID string `json:"id,required"`
+	// List of search queries executed
+	Queries []string `json:"queries,required"`
+	// Current status of the file search operation
+	Status string `json:"status,required"`
+	// Tool call type identifier, always "file_search_call"
+	Type constant.FileSearchCall `json:"type,required"`
+	// (Optional) Search results returned by the file search operation
+	Results []ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCallResult `json:"results"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -199,7 +212,39 @@ func (r *ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchT
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCallResultUnion
+// Search results returned by the file search operation.
+type ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCallResult struct {
+	// (Optional) Key-value attributes associated with the file
+	Attributes map[string]ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCallResultAttributeUnion `json:"attributes,required"`
+	// Unique identifier of the file containing the result
+	FileID string `json:"file_id,required"`
+	// Name of the file containing the result
+	Filename string `json:"filename,required"`
+	// Relevance score for this search result (between 0 and 1)
+	Score float64 `json:"score,required"`
+	// Text content of the search result
+	Text string `json:"text,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Attributes  respjson.Field
+		FileID      respjson.Field
+		Filename    respjson.Field
+		Score       respjson.Field
+		Text        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCallResult) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCallResult) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCallResultAttributeUnion
 // contains all possible properties and values from [bool], [float64], [string],
 // [[]any].
 //
@@ -207,7 +252,7 @@ func (r *ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchT
 //
 // If the underlying value is not a json object, one of the following properties
 // will be valid: OfBool OfFloat OfString OfAnyArray]
-type ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCallResultUnion struct {
+type ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCallResultAttributeUnion struct {
 	// This field will be present if the value is a [bool] instead of an object.
 	OfBool bool `json:",inline"`
 	// This field will be present if the value is a [float64] instead of an object.
@@ -225,42 +270,49 @@ type ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolC
 	} `json:"-"`
 }
 
-func (u ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCallResultUnion) AsBool() (v bool) {
+func (u ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCallResultAttributeUnion) AsBool() (v bool) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCallResultUnion) AsFloat() (v float64) {
+func (u ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCallResultAttributeUnion) AsFloat() (v float64) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCallResultUnion) AsString() (v string) {
+func (u ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCallResultAttributeUnion) AsString() (v string) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCallResultUnion) AsAnyArray() (v []any) {
+func (u ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCallResultAttributeUnion) AsAnyArray() (v []any) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
 // Returns the unmodified JSON received from the API
-func (u ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCallResultUnion) RawJSON() string {
+func (u ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCallResultAttributeUnion) RawJSON() string {
 	return u.JSON.raw
 }
 
-func (r *ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCallResultUnion) UnmarshalJSON(data []byte) error {
+func (r *ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCallResultAttributeUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Function tool call output message for OpenAI responses.
 type ResponseInputItemListResponseDataOpenAIResponseOutputMessageFunctionToolCall struct {
-	Arguments string                `json:"arguments,required"`
-	CallID    string                `json:"call_id,required"`
-	Name      string                `json:"name,required"`
-	Type      constant.FunctionCall `json:"type,required"`
-	ID        string                `json:"id"`
-	Status    string                `json:"status"`
+	// JSON string containing the function arguments
+	Arguments string `json:"arguments,required"`
+	// Unique identifier for the function call
+	CallID string `json:"call_id,required"`
+	// Name of the function being called
+	Name string `json:"name,required"`
+	// Tool call type identifier, always "function_call"
+	Type constant.FunctionCall `json:"type,required"`
+	// (Optional) Additional identifier for the tool call
+	ID string `json:"id"`
+	// (Optional) Current status of the function call execution
+	Status string `json:"status"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments   respjson.Field
@@ -473,8 +525,11 @@ func (r *ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemU
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content for input messages in OpenAI response format.
 type ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputText struct {
-	Text string             `json:"text,required"`
+	// The text content of the input message
+	Text string `json:"text,required"`
+	// Content type identifier, always "input_text"
 	Type constant.InputText `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -493,11 +548,16 @@ func (r *ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemI
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Image content for input messages in OpenAI response format.
 type ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputImage struct {
+	// Level of detail for image processing, can be "low", "high", or "auto"
+	//
 	// Any of "low", "high", "auto".
-	Detail   ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputImageDetail `json:"detail,required"`
-	Type     constant.InputImage                                                                    `json:"type,required"`
-	ImageURL string                                                                                 `json:"image_url"`
+	Detail ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputImageDetail `json:"detail,required"`
+	// Content type identifier, always "input_image"
+	Type constant.InputImage `json:"type,required"`
+	// (Optional) URL of the image content
+	ImageURL string `json:"image_url"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Detail      respjson.Field
@@ -516,6 +576,7 @@ func (r *ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemI
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Level of detail for image processing, can be "low", "high", or "auto"
 type ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputImageDetail string
 
 const (
@@ -524,6 +585,7 @@ const (
 	ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputImageDetailAuto ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputImageDetail = "auto"
 )
 
+// Level of detail for image processing, can be "low", "high", or "auto"
 type ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemDetail string
 
 const (
@@ -668,11 +730,16 @@ func (r *ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemA
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// File citation annotation for referencing specific files in response content.
 type ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemAnnotationFileCitation struct {
-	FileID   string                `json:"file_id,required"`
-	Filename string                `json:"filename,required"`
-	Index    int64                 `json:"index,required"`
-	Type     constant.FileCitation `json:"type,required"`
+	// Unique identifier of the referenced file
+	FileID string `json:"file_id,required"`
+	// Name of the referenced file
+	Filename string `json:"filename,required"`
+	// Position index of the citation within the content
+	Index int64 `json:"index,required"`
+	// Annotation type identifier, always "file_citation"
+	Type constant.FileCitation `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		FileID      respjson.Field
@@ -692,12 +759,18 @@ func (r *ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemA
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// URL citation annotation for referencing external web resources.
 type ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemAnnotationURLCitation struct {
-	EndIndex   int64                `json:"end_index,required"`
-	StartIndex int64                `json:"start_index,required"`
-	Title      string               `json:"title,required"`
-	Type       constant.URLCitation `json:"type,required"`
-	URL        string               `json:"url,required"`
+	// End position of the citation span in the content
+	EndIndex int64 `json:"end_index,required"`
+	// Start position of the citation span in the content
+	StartIndex int64 `json:"start_index,required"`
+	// Title of the referenced web resource
+	Title string `json:"title,required"`
+	// Annotation type identifier, always "url_citation"
+	Type constant.URLCitation `json:"type,required"`
+	// URL of the referenced web resource
+	URL string `json:"url,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		EndIndex    respjson.Field

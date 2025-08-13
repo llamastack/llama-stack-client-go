@@ -6,12 +6,12 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/stainless-sdks/llama-stack-client-go/internal/apijson"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/requestconfig"
-	"github.com/stainless-sdks/llama-stack-client-go/option"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/param"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/respjson"
-	"github.com/stainless-sdks/llama-stack-client-go/shared"
+	"github.com/llamastack/llama-stack-client-go/internal/apijson"
+	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
+	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/llamastack/llama-stack-client-go/packages/param"
+	"github.com/llamastack/llama-stack-client-go/packages/respjson"
+	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
 // SafetyService contains methods and other services that help with interacting
@@ -41,7 +41,9 @@ func (r *SafetyService) RunShield(ctx context.Context, body SafetyRunShieldParam
 	return
 }
 
+// Response from running a safety shield.
 type RunShieldResponse struct {
+	// (Optional) Safety violation detected by the shield, if any
 	Violation shared.SafetyViolation `json:"violation"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {

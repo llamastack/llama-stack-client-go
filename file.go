@@ -12,14 +12,15 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/stainless-sdks/llama-stack-client-go/internal/apiform"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/apijson"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/apiquery"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/requestconfig"
-	"github.com/stainless-sdks/llama-stack-client-go/option"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/param"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/respjson"
-	"github.com/stainless-sdks/llama-stack-client-go/shared/constant"
+	"github.com/llamastack/llama-stack-client-go/internal/apiform"
+	"github.com/llamastack/llama-stack-client-go/internal/apijson"
+	"github.com/llamastack/llama-stack-client-go/internal/apiquery"
+	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
+	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/llamastack/llama-stack-client-go/packages/pagination"
+	"github.com/llamastack/llama-stack-client-go/packages/param"
+	"github.com/llamastack/llama-stack-client-go/packages/respjson"
+	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
 // FileService contains methods and other services that help with interacting with
@@ -66,11 +67,26 @@ func (r *FileService) Get(ctx context.Context, fileID string, opts ...option.Req
 }
 
 // Returns a list of files that belong to the user's organization.
-func (r *FileService) List(ctx context.Context, query FileListParams, opts ...option.RequestOption) (res *ListFilesResponse, err error) {
+func (r *FileService) List(ctx context.Context, query FileListParams, opts ...option.RequestOption) (res *pagination.OpenAICursorPage[File], err error) {
+	var raw *http.Response
 	opts = append(r.Options[:], opts...)
+	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "v1/openai/v1/files"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
+	if err != nil {
+		return nil, err
+	}
+	err = cfg.Execute()
+	if err != nil {
+		return nil, err
+	}
+	res.SetPageConfig(cfg, raw)
+	return res, nil
+}
+
+// Returns a list of files that belong to the user's organization.
+func (r *FileService) ListAutoPaging(ctx context.Context, query FileListParams, opts ...option.RequestOption) *pagination.OpenAICursorPageAutoPager[File] {
+	return pagination.NewOpenAICursorPageAutoPager(r.List(ctx, query, opts...))
 }
 
 // Delete a file.
@@ -169,10 +185,13 @@ const (
 // Response for listing files in OpenAI Files API.
 type ListFilesResponse struct {
 	// List of file objects
-	Data    []File `json:"data,required"`
+	Data []File `json:"data,required"`
+	// ID of the first file in the list for pagination
 	FirstID string `json:"first_id,required"`
-	HasMore bool   `json:"has_more,required"`
-	LastID  string `json:"last_id,required"`
+	// Whether there are more files available beyond this page
+	HasMore bool `json:"has_more,required"`
+	// ID of the last file in the list for pagination
+	LastID string `json:"last_id,required"`
 	// The object type, which is always "list"
 	Object constant.List `json:"object,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].

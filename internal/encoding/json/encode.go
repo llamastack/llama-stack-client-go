@@ -19,8 +19,8 @@ import (
 	"encoding"
 	"encoding/base64"
 	"fmt"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/encoding/json/sentinel"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/encoding/json/shims"
+	"github.com/llamastack/llama-stack-client-go/internal/encoding/json/sentinel"
+	"github.com/llamastack/llama-stack-client-go/internal/encoding/json/shims"
 	"math"
 	"reflect"
 	"slices"
@@ -177,7 +177,11 @@ func Marshal(v any) ([]byte, error) {
 	e := newEncodeState()
 	defer encodeStatePool.Put(e)
 
-	err := e.marshal(v, encOpts{escapeHTML: true})
+	// SHIM(begin): don't escape HTML by default
+	err := e.marshal(v, encOpts{escapeHTML: shims.EscapeHTMLByDefault})
+	// ORIGINAL:
+	//  err := e.marshal(v, encOpts{escapeHTML: true})
+	// SHIM(end)
 	if err != nil {
 		return nil, err
 	}

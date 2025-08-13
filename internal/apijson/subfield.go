@@ -1,7 +1,7 @@
 package apijson
 
 import (
-	"github.com/stainless-sdks/llama-stack-client-go/packages/respjson"
+	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 	"reflect"
 )
 

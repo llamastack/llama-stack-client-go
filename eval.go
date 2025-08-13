@@ -9,13 +9,13 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/stainless-sdks/llama-stack-client-go/internal/apijson"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/requestconfig"
-	"github.com/stainless-sdks/llama-stack-client-go/option"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/param"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/respjson"
-	"github.com/stainless-sdks/llama-stack-client-go/shared"
-	"github.com/stainless-sdks/llama-stack-client-go/shared/constant"
+	"github.com/llamastack/llama-stack-client-go/internal/apijson"
+	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
+	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/llamastack/llama-stack-client-go/packages/param"
+	"github.com/llamastack/llama-stack-client-go/packages/respjson"
+	"github.com/llamastack/llama-stack-client-go/shared"
+	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
 // EvalService contains methods and other services that help with interacting with
@@ -313,8 +313,12 @@ func (r *EvaluateResponseGenerationUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A job execution instance with status tracking.
 type Job struct {
+	// Unique identifier for the job
 	JobID string `json:"job_id,required"`
+	// Current execution status of the job
+	//
 	// Any of "completed", "in_progress", "failed", "scheduled", "cancelled".
 	Status JobStatus `json:"status,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -332,6 +336,7 @@ func (r *Job) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Current execution status of the job
 type JobStatus string
 
 const (

@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/stainless-sdks/llama-stack-client-go/packages/param"
+	"github.com/llamastack/llama-stack-client-go/packages/param"
 )
 
 var encoders sync.Map // map[reflect.Type]encoderFunc

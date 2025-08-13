@@ -6,12 +6,12 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/stainless-sdks/llama-stack-client-go/internal/apijson"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/requestconfig"
-	"github.com/stainless-sdks/llama-stack-client-go/option"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/param"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/respjson"
-	"github.com/stainless-sdks/llama-stack-client-go/shared"
+	"github.com/llamastack/llama-stack-client-go/internal/apijson"
+	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
+	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/llamastack/llama-stack-client-go/packages/param"
+	"github.com/llamastack/llama-stack-client-go/packages/respjson"
+	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
 // ScoringService contains methods and other services that help with interacting
@@ -67,9 +67,12 @@ func (r *ScoringScoreResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Response from batch scoring operations on datasets.
 type ScoringScoreBatchResponse struct {
-	Results   map[string]shared.ScoringResult `json:"results,required"`
-	DatasetID string                          `json:"dataset_id"`
+	// A map of scoring function name to ScoringResult
+	Results map[string]shared.ScoringResult `json:"results,required"`
+	// (Optional) The identifier of the dataset that was scored
+	DatasetID string `json:"dataset_id"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Results     respjson.Field

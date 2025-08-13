@@ -8,9 +8,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stainless-sdks/llama-stack-client-go"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/testutil"
-	"github.com/stainless-sdks/llama-stack-client-go/option"
+	"github.com/llamastack/llama-stack-client-go"
+	"github.com/llamastack/llama-stack-client-go/internal/testutil"
+	"github.com/llamastack/llama-stack-client-go/option"
 )
 
 func TestVectorStoreNewWithOptionalParams(t *testing.T) {
@@ -25,7 +25,6 @@ func TestVectorStoreNewWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.VectorStores.New(context.TODO(), llamastackclient.VectorStoreNewParams{
-		Name: "name",
 		ChunkingStrategy: map[string]llamastackclient.VectorStoreNewParamsChunkingStrategyUnion{
 			"foo": {
 				OfBool: llamastackclient.Bool(true),
@@ -44,8 +43,8 @@ func TestVectorStoreNewWithOptionalParams(t *testing.T) {
 				OfBool: llamastackclient.Bool(true),
 			},
 		},
-		ProviderID:         llamastackclient.String("provider_id"),
-		ProviderVectorDBID: llamastackclient.String("provider_vector_db_id"),
+		Name:       llamastackclient.String("name"),
+		ProviderID: llamastackclient.String("provider_id"),
 	})
 	if err != nil {
 		var apierr *llamastackclient.Error

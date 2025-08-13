@@ -2,7 +2,7 @@
 package json
 
 import (
-	"github.com/stainless-sdks/llama-stack-client-go/internal/encoding/json/shims"
+	"github.com/llamastack/llama-stack-client-go/internal/encoding/json/shims"
 	"reflect"
 	"time"
 )
