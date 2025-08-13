@@ -74,7 +74,11 @@ type CreateResponseResult struct {
 	Categories map[string]bool `json:"categories"`
 	// A list of the categories along with the input type(s) that the score applies to.
 	CategoryAppliedInputTypes map[string][]string `json:"category_applied_input_types"`
-	// A list of the categories along with their scores as predicted by model.
+	// A list of the categories along with their scores as predicted by model. Required
+	// set of categories that need to be in response - violence - violence/graphic -
+	// harassment - harassment/threatening - hate - hate/threatening - illicit -
+	// illicit/violent - sexual - sexual/minors - self-harm - self-harm/intent -
+	// self-harm/instructions
 	CategoryScores map[string]float64 `json:"category_scores"`
 	UserMessage    string             `json:"user_message"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
