@@ -1,10 +1,11 @@
 package apiquery
 
 import (
-	"github.com/stainless-sdks/llama-stack-client-go/packages/param"
 	"net/url"
 	"testing"
 	"time"
+
+	"github.com/llamastack/llama-stack-client-go/packages/param"
 )
 
 func P[T any](v T) *T { return &v }

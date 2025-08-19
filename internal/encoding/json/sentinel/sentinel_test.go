@@ -1,11 +1,12 @@
 package sentinel_test
 
 import (
-	"github.com/stainless-sdks/llama-stack-client-go/internal/encoding/json/sentinel"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/param"
 	"reflect"
 	"slices"
 	"testing"
+
+	"github.com/llamastack/llama-stack-client-go/internal/encoding/json/sentinel"
+	"github.com/llamastack/llama-stack-client-go/packages/param"
 )
 
 type Pair struct {

@@ -1,9 +1,10 @@
 package apiform
 
 import (
-	"github.com/stainless-sdks/llama-stack-client-go/packages/param"
 	"mime/multipart"
 	"reflect"
+
+	"github.com/llamastack/llama-stack-client-go/packages/param"
 )
 
 func (e *encoder) newRichFieldTypeEncoder(t reflect.Type) encoderFunc {

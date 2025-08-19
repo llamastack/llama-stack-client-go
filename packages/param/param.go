@@ -2,8 +2,9 @@ package param
 
 import (
 	"encoding/json"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/encoding/json/sentinel"
 	"reflect"
+
+	"github.com/llamastack/llama-stack-client-go/internal/encoding/json/sentinel"
 )
 
 // NullStruct is used to set a struct to the JSON value null.

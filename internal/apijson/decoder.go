@@ -7,12 +7,13 @@ package apijson
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/param"
 	"reflect"
 	"strconv"
 	"sync"
 	"time"
 	"unsafe"
+
+	"github.com/llamastack/llama-stack-client-go/packages/param"
 
 	"github.com/tidwall/gjson"
 )

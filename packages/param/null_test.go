@@ -2,8 +2,9 @@ package param_test
 
 import (
 	"encoding/json"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/param"
 	"testing"
+
+	"github.com/llamastack/llama-stack-client-go/packages/param"
 )
 
 type Nullables struct {

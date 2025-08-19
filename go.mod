@@ -1,6 +1,6 @@
-module github.com/stainless-sdks/llama-stack-client-go
+module github.com/llamastack/llama-stack-client-go
 
-go 1.21
+go 1.24
 
 require (
 	github.com/tidwall/gjson v1.14.4

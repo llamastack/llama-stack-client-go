@@ -1,8 +1,9 @@
 package apiquery
 
 import (
-	"github.com/stainless-sdks/llama-stack-client-go/packages/param"
 	"reflect"
+
+	"github.com/llamastack/llama-stack-client-go/packages/param"
 )
 
 func (e *encoder) newRichFieldTypeEncoder(t reflect.Type) encoderFunc {

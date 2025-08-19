@@ -3,8 +3,9 @@ package param
 import (
 	"encoding/json"
 	"fmt"
-	shimjson "github.com/stainless-sdks/llama-stack-client-go/internal/encoding/json"
 	"time"
+
+	shimjson "github.com/llamastack/llama-stack-client-go/internal/encoding/json"
 )
 
 func NewOpt[T comparable](v T) Opt[T] {

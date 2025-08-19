@@ -2,12 +2,13 @@ package apiform
 
 import (
 	"bytes"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/param"
 	"io"
 	"mime/multipart"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/llamastack/llama-stack-client-go/packages/param"
 )
 
 func P[T any](v T) *T { return &v }

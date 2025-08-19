@@ -2,8 +2,9 @@ package apijson
 
 import (
 	"errors"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/param"
 	"reflect"
+
+	"github.com/llamastack/llama-stack-client-go/packages/param"
 
 	"github.com/tidwall/gjson"
 )

@@ -1,9 +1,10 @@
 package sentinel
 
 import (
-	"github.com/stainless-sdks/llama-stack-client-go/internal/encoding/json/shims"
 	"reflect"
 	"sync"
+
+	"github.com/llamastack/llama-stack-client-go/internal/encoding/json/shims"
 )
 
 type cacheEntry struct {

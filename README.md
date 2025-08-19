@@ -1,6 +1,6 @@
 # Llama Stack Client Go API Library
 
-<a href="https://pkg.go.dev/github.com/stainless-sdks/llama-stack-client-go"><img src="https://pkg.go.dev/badge/github.com/stainless-sdks/llama-stack-client-go.svg" alt="Go Reference"></a>
+<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go"><img src="https://pkg.go.dev/badge/github.com/llamastack/llama-stack-client-go.svg" alt="Go Reference"></a>
 
 The Llama Stack Client Go library provides convenient access to the [Llama Stack Client REST API](https://llama-stack.readthedocs.io/en/latest/)
 from applications written in Go.
@@ -11,14 +11,14 @@ It is generated with [Stainless](https://www.stainless.com/).
 
 ```go
 import (
-	"github.com/stainless-sdks/llama-stack-client-go" // imported as llamastackclient
+	"github.com/llamastack/llama-stack-client-go" // imported as llamastackclient
 )
 ```
 
 Or to pin the version:
 
 ```sh
-go get -u 'github.com/stainless-sdks/llama-stack-client-go@v0.0.1-alpha.0'
+go get -u 'github.com/llamastack/llama-stack-client-go@v0.0.1-alpha.0'
 ```
 
 ## Requirements
@@ -36,7 +36,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/stainless-sdks/llama-stack-client-go"
+	"github.com/llamastack/llama-stack-client-go"
 )
 
 func main() {
@@ -263,7 +263,7 @@ client.Inference.ChatCompletion(context.TODO(), ...,
 
 The request option `option.WithDebugLog(nil)` may be helpful while debugging.
 
-See the [full list of request options](https://pkg.go.dev/github.com/stainless-sdks/llama-stack-client-go/option).
+See the [full list of request options](https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/option).
 
 ### Pagination
 
@@ -526,7 +526,7 @@ This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) con
 
 We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
 
-We are keen for your feedback; please open an [issue](https://www.github.com/stainless-sdks/llama-stack-client-go/issues) with questions, bugs, or suggestions.
+We are keen for your feedback; please open an [issue](https://www.github.com/llamastack/llama-stack-client-go/issues) with questions, bugs, or suggestions.
 
 ## Contributing
 

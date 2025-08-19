@@ -4,12 +4,13 @@ package pagination
 
 import (
 	"net/http"
+	"strconv"
 
-	"github.com/stainless-sdks/llama-stack-client-go/internal/apijson"
-	"github.com/stainless-sdks/llama-stack-client-go/internal/requestconfig"
-	"github.com/stainless-sdks/llama-stack-client-go/option"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/param"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/respjson"
+	"github.com/llamastack/llama-stack-client-go/internal/apijson"
+	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
+	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/llamastack/llama-stack-client-go/packages/param"
+	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 )
 
 // aliased to make [param.APIUnion] private when embedding
@@ -46,11 +47,11 @@ func (r *DatasetsIterrows[T]) GetNextPage() (res *DatasetsIterrows[T], err error
 		return nil, nil
 	}
 	next := r.NextIndex
-	if len(next) == 0 {
+	if next == 0 {
 		return nil, nil
 	}
 	cfg := r.cfg.Clone(r.cfg.Context)
-	err = cfg.Apply(option.WithQuery("start_index", next))
+	err = cfg.Apply(option.WithQuery("start_index", strconv.FormatInt(next, 10)))
 	if err != nil {
 		return nil, err
 	}

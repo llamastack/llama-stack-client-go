@@ -2,8 +2,9 @@ package paramutil
 
 import (
 	"fmt"
-	"github.com/stainless-sdks/llama-stack-client-go/packages/param"
 	"reflect"
+
+	"github.com/llamastack/llama-stack-client-go/packages/param"
 )
 
 var paramUnionType = reflect.TypeOf(param.APIUnion{})

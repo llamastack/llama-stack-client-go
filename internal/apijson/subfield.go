@@ -1,8 +1,9 @@
 package apijson
 
 import (
-	"github.com/stainless-sdks/llama-stack-client-go/packages/respjson"
 	"reflect"
+
+	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 )
 
 func getSubField(root reflect.Value, index []int, name string) reflect.Value {
