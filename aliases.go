@@ -94,6 +94,11 @@ type BatchCompletion = shared.BatchCompletion
 // This is an alias to an internal type.
 type ChatCompletionResponse = shared.ChatCompletionResponse
 
+// Log probabilities for generated tokens.
+//
+// This is an alias to an internal type.
+type ChatCompletionResponseLogprob = shared.ChatCompletionResponseLogprob
+
 // A metric value included in API responses.
 //
 // This is an alias to an internal type.
@@ -521,6 +526,71 @@ type ScoringResultAggregatedResultUnion = shared.ScoringResultAggregatedResultUn
 
 // This is an alias to an internal type.
 type ScoringResultScoreRowUnion = shared.ScoringResultScoreRowUnion
+
+// Response from a completion request.
+//
+// This is an alias to an internal type.
+type SharedCompletionResponse = shared.SharedCompletionResponse
+
+// Reason why generation stopped
+//
+// This is an alias to an internal type.
+type SharedCompletionResponseStopReason = shared.SharedCompletionResponseStopReason
+
+// Equals "end_of_turn"
+const SharedCompletionResponseStopReasonEndOfTurn = shared.SharedCompletionResponseStopReasonEndOfTurn
+
+// Equals "end_of_message"
+const SharedCompletionResponseStopReasonEndOfMessage = shared.SharedCompletionResponseStopReasonEndOfMessage
+
+// Equals "out_of_tokens"
+const SharedCompletionResponseStopReasonOutOfTokens = shared.SharedCompletionResponseStopReasonOutOfTokens
+
+// Log probabilities for generated tokens.
+//
+// This is an alias to an internal type.
+type SharedCompletionResponseLogprob = shared.SharedCompletionResponseLogprob
+
+// A metric value included in API responses.
+//
+// This is an alias to an internal type.
+type SharedCompletionResponseMetric = shared.SharedCompletionResponseMetric
+
+// Tool definition used in runtime contexts.
+//
+// This is an alias to an internal type.
+type SharedToolDef = shared.SharedToolDef
+
+// This is an alias to an internal type.
+type SharedToolDefMetadataUnion = shared.SharedToolDefMetadataUnion
+
+// Parameter definition for a tool.
+//
+// This is an alias to an internal type.
+type SharedToolDefParameter = shared.SharedToolDefParameter
+
+// (Optional) Default value for the parameter if not provided
+//
+// This is an alias to an internal type.
+type SharedToolDefParameterDefaultUnion = shared.SharedToolDefParameterDefaultUnion
+
+// Tool definition used in runtime contexts.
+//
+// This is an alias to an internal type.
+type SharedToolDefParam = shared.SharedToolDefParam
+
+// This is an alias to an internal type.
+type SharedToolDefMetadataUnionParam = shared.SharedToolDefMetadataUnionParam
+
+// Parameter definition for a tool.
+//
+// This is an alias to an internal type.
+type SharedToolDefParameterParam = shared.SharedToolDefParameterParam
+
+// (Optional) Default value for the parameter if not provided
+//
+// This is an alias to an internal type.
+type SharedToolDefParameterDefaultUnionParam = shared.SharedToolDefParameterDefaultUnionParam
 
 // A system message providing instructions or context to the model.
 //
