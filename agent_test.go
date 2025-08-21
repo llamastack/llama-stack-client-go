@@ -29,20 +29,20 @@ func TestAgentNewWithOptionalParams(t *testing.T) {
 		AgentConfig: shared.AgentConfigParam{
 			Instructions: "instructions",
 			Model:        "model",
-			ClientTools: []llamastackclient.ToolDefParam{{
+			ClientTools: []shared.SharedToolDefParam{{
 				Name:        "name",
 				Description: llamastackclient.String("description"),
-				Metadata: map[string]llamastackclient.ToolDefMetadataUnionParam{
+				Metadata: map[string]shared.SharedToolDefMetadataUnionParam{
 					"foo": {
 						OfBool: llamastackclient.Bool(true),
 					},
 				},
-				Parameters: []llamastackclient.ToolDefParameterParam{{
+				Parameters: []shared.SharedToolDefParameterParam{{
 					Description:   "description",
 					Name:          "name",
 					ParameterType: "parameter_type",
 					Required:      true,
-					Default: llamastackclient.ToolDefParameterDefaultUnionParam{
+					Default: shared.SharedToolDefParameterDefaultUnionParam{
 						OfBool: llamastackclient.Bool(true),
 					},
 				}},
