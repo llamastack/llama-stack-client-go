@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.0-alpha.2 (2025-08-22)
+
+Full Changelog: [v0.1.0-alpha.1...v0.1.0-alpha.2](https://github.com/llamastack/llama-stack-client-go/compare/v0.1.0-alpha.1...v0.1.0-alpha.2)
+
+### Features
+
+* **api:** query_metrics, batches, changes ([06e03be](https://github.com/llamastack/llama-stack-client-go/commit/06e03be805d93736fcf4f848c5f9888e2871c911))
+* **api:** some updates to query metrics ([8243d43](https://github.com/llamastack/llama-stack-client-go/commit/8243d43dfa43bb9ec92d1edbed36f114240a265e))
+
 ## 0.1.0-alpha.1 (2025-08-21)
 
 Full Changelog: [v0.0.1-alpha.0...v0.1.0-alpha.1](https://github.com/llamastack/llama-stack-client-go/compare/v0.0.1-alpha.0...v0.1.0-alpha.1)
