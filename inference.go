@@ -120,7 +120,7 @@ type ChatCompletionResponseStreamChunk struct {
 	// The event containing the new content
 	Event ChatCompletionResponseStreamChunkEvent `json:"event,required"`
 	// (Optional) List of metrics associated with the API response
-	Metrics []Metric `json:"metrics"`
+	Metrics []shared.Metric `json:"metrics"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Event       respjson.Field

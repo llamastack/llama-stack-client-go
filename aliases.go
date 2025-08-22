@@ -148,6 +148,11 @@ type ContentDeltaImage = shared.ContentDeltaImage
 // This is an alias to an internal type.
 type ContentDeltaToolCall = shared.ContentDeltaToolCall
 
+// Either an in-progress tool call string or the final parsed tool call
+//
+// This is an alias to an internal type.
+type ContentDeltaToolCallToolCallUnion = shared.ContentDeltaToolCallToolCallUnion
+
 // A document to be used for document ingestion in the RAG Tool.
 //
 // This is an alias to an internal type.
@@ -296,6 +301,11 @@ type InterleavedContentItemTextParam = shared.InterleavedContentItemTextParam
 // This is an alias to an internal type.
 type MessageUnionParam = shared.MessageUnionParam
 
+// A metric value included in API responses.
+//
+// This is an alias to an internal type.
+type Metric = shared.Metric
+
 // Configuration for the RAG query generation.
 //
 // This is an alias to an internal type.
@@ -395,45 +405,6 @@ type ResponseFormatGrammarParam = shared.ResponseFormatGrammarParam
 
 // This is an alias to an internal type.
 type ResponseFormatGrammarBnfUnionParam = shared.ResponseFormatGrammarBnfUnionParam
-
-// This is an alias to an internal type.
-type ReturnType = shared.ReturnType
-
-// This is an alias to an internal type.
-type ReturnTypeType = shared.ReturnTypeType
-
-// Equals "string"
-const ReturnTypeTypeString = shared.ReturnTypeTypeString
-
-// Equals "number"
-const ReturnTypeTypeNumber = shared.ReturnTypeTypeNumber
-
-// Equals "boolean"
-const ReturnTypeTypeBoolean = shared.ReturnTypeTypeBoolean
-
-// Equals "array"
-const ReturnTypeTypeArray = shared.ReturnTypeTypeArray
-
-// Equals "object"
-const ReturnTypeTypeObject = shared.ReturnTypeTypeObject
-
-// Equals "json"
-const ReturnTypeTypeJson = shared.ReturnTypeTypeJson
-
-// Equals "union"
-const ReturnTypeTypeUnion = shared.ReturnTypeTypeUnion
-
-// Equals "chat_completion_input"
-const ReturnTypeTypeChatCompletionInput = shared.ReturnTypeTypeChatCompletionInput
-
-// Equals "completion_input"
-const ReturnTypeTypeCompletionInput = shared.ReturnTypeTypeCompletionInput
-
-// Equals "agent_turn_input"
-const ReturnTypeTypeAgentTurnInput = shared.ReturnTypeTypeAgentTurnInput
-
-// This is an alias to an internal type.
-type ReturnTypeParam = shared.ReturnTypeParam
 
 // Details of a safety violation detected by content moderation.
 //
@@ -631,11 +602,6 @@ type ToolCallArgumentsMapItemArrayItemUnionParam = shared.ToolCallArgumentsMapIt
 
 // This is an alias to an internal type.
 type ToolCallArgumentsMapItemMapItemUnionParam = shared.ToolCallArgumentsMapItemMapItemUnionParam
-
-// Either an in-progress tool call string or the final parsed tool call
-//
-// This is an alias to an internal type.
-type ToolCallOrStringUnion = shared.ToolCallOrStringUnion
 
 // This is an alias to an internal type.
 type ToolParamDefinition = shared.ToolParamDefinition
