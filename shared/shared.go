@@ -5,6 +5,7 @@ package shared
 import (
 	"encoding/json"
 
+	"github.com/llamastack/llama-stack-client-go"
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
@@ -443,7 +444,7 @@ type ChatCompletionResponse struct {
 	// Optional log probabilities for generated tokens
 	Logprobs []ChatCompletionResponseLogprob `json:"logprobs"`
 	// (Optional) List of metrics associated with the API response
-	Metrics []ChatCompletionResponseMetric `json:"metrics"`
+	Metrics []llamastackclient.Metric `json:"metrics"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CompletionMessage respjson.Field
@@ -475,30 +476,6 @@ type ChatCompletionResponseLogprob struct {
 // Returns the unmodified JSON received from the API
 func (r ChatCompletionResponseLogprob) RawJSON() string { return r.JSON.raw }
 func (r *ChatCompletionResponseLogprob) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A metric value included in API responses.
-type ChatCompletionResponseMetric struct {
-	// The name of the metric
-	Metric string `json:"metric,required"`
-	// The numeric value of the metric
-	Value float64 `json:"value,required"`
-	// (Optional) The unit of measurement for the metric value
-	Unit string `json:"unit"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Metric      respjson.Field
-		Value       respjson.Field
-		Unit        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionResponseMetric) RawJSON() string { return r.JSON.raw }
-func (r *ChatCompletionResponseMetric) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -3117,7 +3094,7 @@ type SharedCompletionResponse struct {
 	// Optional log probabilities for generated tokens
 	Logprobs []SharedCompletionResponseLogprob `json:"logprobs"`
 	// (Optional) List of metrics associated with the API response
-	Metrics []SharedCompletionResponseMetric `json:"metrics"`
+	Metrics []llamastackclient.Metric `json:"metrics"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Content     respjson.Field
@@ -3159,30 +3136,6 @@ type SharedCompletionResponseLogprob struct {
 // Returns the unmodified JSON received from the API
 func (r SharedCompletionResponseLogprob) RawJSON() string { return r.JSON.raw }
 func (r *SharedCompletionResponseLogprob) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A metric value included in API responses.
-type SharedCompletionResponseMetric struct {
-	// The name of the metric
-	Metric string `json:"metric,required"`
-	// The numeric value of the metric
-	Value float64 `json:"value,required"`
-	// (Optional) The unit of measurement for the metric value
-	Unit string `json:"unit"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Metric      respjson.Field
-		Value       respjson.Field
-		Unit        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r SharedCompletionResponseMetric) RawJSON() string { return r.JSON.raw }
-func (r *SharedCompletionResponseMetric) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

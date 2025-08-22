@@ -91,6 +91,23 @@ func (r *TelemetryService) LogEvent(ctx context.Context, body TelemetryLogEventP
 	return
 }
 
+// Query metrics.
+func (r *TelemetryService) QueryMetrics(ctx context.Context, metricName string, body TelemetryQueryMetricsParams, opts ...option.RequestOption) (res *[]TelemetryQueryMetricsResponse, err error) {
+	var env TelemetryQueryMetricsResponseEnvelope
+	opts = append(r.Options[:], opts...)
+	if metricName == "" {
+		err = errors.New("missing required metric_name parameter")
+		return
+	}
+	path := fmt.Sprintf("v1/telemetry/metrics/%s", metricName)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &env, opts...)
+	if err != nil {
+		return
+	}
+	res = &env.Data
+	return
+}
+
 // Query spans.
 func (r *TelemetryService) QuerySpans(ctx context.Context, body TelemetryQuerySpansParams, opts ...option.RequestOption) (res *[]QuerySpansResponseData, err error) {
 	var env QuerySpansResponse
@@ -595,6 +612,30 @@ func (u *EventStructuredLogAttributeUnionParam) asAny() any {
 	return nil
 }
 
+// A metric value included in API responses.
+type Metric struct {
+	// The name of the metric
+	Metric string `json:"metric,required"`
+	// The numeric value of the metric
+	Value float64 `json:"value,required"`
+	// (Optional) The unit of measurement for the metric value
+	Unit string `json:"unit"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Metric      respjson.Field
+		Value       respjson.Field
+		Unit        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r Metric) RawJSON() string { return r.JSON.raw }
+func (r *Metric) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // A condition for filtering query results.
 //
 // The properties Key, Op, Value are required.
@@ -984,6 +1025,74 @@ func (r *TelemetryGetSpanResponseAttributeUnion) UnmarshalJSON(data []byte) erro
 
 type TelemetryGetSpanTreeResponse map[string]SpanWithStatus
 
+// A time series of metric data points.
+type TelemetryQueryMetricsResponse struct {
+	// List of labels associated with this metric series
+	Labels []TelemetryQueryMetricsResponseLabel `json:"labels,required"`
+	// The name of the metric
+	Metric string `json:"metric,required"`
+	// List of data points in chronological order
+	Values []TelemetryQueryMetricsResponseValue `json:"values,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Labels      respjson.Field
+		Metric      respjson.Field
+		Values      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TelemetryQueryMetricsResponse) RawJSON() string { return r.JSON.raw }
+func (r *TelemetryQueryMetricsResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A label associated with a metric.
+type TelemetryQueryMetricsResponseLabel struct {
+	// The name of the label
+	Name string `json:"name,required"`
+	// The value of the label
+	Value string `json:"value,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Name        respjson.Field
+		Value       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TelemetryQueryMetricsResponseLabel) RawJSON() string { return r.JSON.raw }
+func (r *TelemetryQueryMetricsResponseLabel) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A single data point in a metric time series.
+type TelemetryQueryMetricsResponseValue struct {
+	// Unix timestamp when the metric value was recorded
+	Timestamp int64  `json:"timestamp,required"`
+	Unit      string `json:"unit,required"`
+	// The numeric value of the metric at this timestamp
+	Value float64 `json:"value,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Timestamp   respjson.Field
+		Unit        respjson.Field
+		Value       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TelemetryQueryMetricsResponseValue) RawJSON() string { return r.JSON.raw }
+func (r *TelemetryQueryMetricsResponseValue) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type TelemetryGetSpanParams struct {
 	TraceID string `path:"trace_id,required" json:"-"`
 	paramObj
@@ -1036,6 +1145,85 @@ func (r TelemetryLogEventParams) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *TelemetryLogEventParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type TelemetryQueryMetricsParams struct {
+	// The type of query to perform.
+	//
+	// Any of "range", "instant".
+	QueryType TelemetryQueryMetricsParamsQueryType `json:"query_type,omitzero,required"`
+	// The start time of the metric to query.
+	StartTime int64 `json:"start_time,required"`
+	// The end time of the metric to query.
+	EndTime param.Opt[int64] `json:"end_time,omitzero"`
+	// The granularity of the metric to query.
+	Granularity param.Opt[string] `json:"granularity,omitzero"`
+	// The label matchers to apply to the metric.
+	LabelMatchers []TelemetryQueryMetricsParamsLabelMatcher `json:"label_matchers,omitzero"`
+	paramObj
+}
+
+func (r TelemetryQueryMetricsParams) MarshalJSON() (data []byte, err error) {
+	type shadow TelemetryQueryMetricsParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *TelemetryQueryMetricsParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The type of query to perform.
+type TelemetryQueryMetricsParamsQueryType string
+
+const (
+	TelemetryQueryMetricsParamsQueryTypeRange   TelemetryQueryMetricsParamsQueryType = "range"
+	TelemetryQueryMetricsParamsQueryTypeInstant TelemetryQueryMetricsParamsQueryType = "instant"
+)
+
+// A matcher for filtering metrics by label values.
+//
+// The properties Name, Operator, Value are required.
+type TelemetryQueryMetricsParamsLabelMatcher struct {
+	// The name of the label to match
+	Name string `json:"name,required"`
+	// The comparison operator to use for matching
+	//
+	// Any of "=", "!=", "=~", "!~".
+	Operator string `json:"operator,omitzero,required"`
+	// The value to match against
+	Value string `json:"value,required"`
+	paramObj
+}
+
+func (r TelemetryQueryMetricsParamsLabelMatcher) MarshalJSON() (data []byte, err error) {
+	type shadow TelemetryQueryMetricsParamsLabelMatcher
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *TelemetryQueryMetricsParamsLabelMatcher) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[TelemetryQueryMetricsParamsLabelMatcher](
+		"operator", "=", "!=", "=~", "!~",
+	)
+}
+
+// Response containing metric time series data.
+type TelemetryQueryMetricsResponseEnvelope struct {
+	// List of metric series matching the query criteria
+	Data []TelemetryQueryMetricsResponse `json:"data,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Data        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TelemetryQueryMetricsResponseEnvelope) RawJSON() string { return r.JSON.raw }
+func (r *TelemetryQueryMetricsResponseEnvelope) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
