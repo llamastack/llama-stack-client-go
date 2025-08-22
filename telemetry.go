@@ -612,30 +612,6 @@ func (u *EventStructuredLogAttributeUnionParam) asAny() any {
 	return nil
 }
 
-// A metric value included in API responses.
-type Metric struct {
-	// The name of the metric
-	Metric string `json:"metric,required"`
-	// The numeric value of the metric
-	Value float64 `json:"value,required"`
-	// (Optional) The unit of measurement for the metric value
-	Unit string `json:"unit"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Metric      respjson.Field
-		Value       respjson.Field
-		Unit        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r Metric) RawJSON() string { return r.JSON.raw }
-func (r *Metric) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // A condition for filtering query results.
 //
 // The properties Key, Op, Value are required.
