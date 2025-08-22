@@ -5,7 +5,6 @@ package shared
 import (
 	"encoding/json"
 
-	"github.com/llamastack/llama-stack-client-go"
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
@@ -444,7 +443,7 @@ type ChatCompletionResponse struct {
 	// Optional log probabilities for generated tokens
 	Logprobs []ChatCompletionResponseLogprob `json:"logprobs"`
 	// (Optional) List of metrics associated with the API response
-	Metrics []llamastackclient.Metric `json:"metrics"`
+	Metrics []Metric `json:"metrics"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CompletionMessage respjson.Field
@@ -584,7 +583,7 @@ type ContentDeltaUnion struct {
 	// This field is from variant [ContentDeltaToolCall].
 	ParseStatus string `json:"parse_status"`
 	// This field is from variant [ContentDeltaToolCall].
-	ToolCall ToolCallOrStringUnion `json:"tool_call"`
+	ToolCall ContentDeltaToolCallToolCallUnion `json:"tool_call"`
 	JSON     struct {
 		Text        respjson.Field
 		Type        respjson.Field
@@ -697,7 +696,7 @@ type ContentDeltaToolCall struct {
 	// Any of "started", "in_progress", "failed", "succeeded".
 	ParseStatus string `json:"parse_status,required"`
 	// Either an in-progress tool call string or the final parsed tool call
-	ToolCall ToolCallOrStringUnion `json:"tool_call,required"`
+	ToolCall ContentDeltaToolCallToolCallUnion `json:"tool_call,required"`
 	// Discriminator type of the delta. Always "tool_call"
 	Type constant.ToolCall `json:"type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -717,6 +716,51 @@ func (r *ContentDeltaToolCall) UnmarshalJSON(data []byte) error {
 }
 
 func (ContentDeltaToolCall) implContentDeltaUnion() {}
+
+// ContentDeltaToolCallToolCallUnion contains all possible properties and values
+// from [string], [ToolCall].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+//
+// If the underlying value is not a json object, one of the following properties
+// will be valid: OfString]
+type ContentDeltaToolCallToolCallUnion struct {
+	// This field will be present if the value is a [string] instead of an object.
+	OfString string `json:",inline"`
+	// This field is from variant [ToolCall].
+	Arguments ToolCallArgumentsUnion `json:"arguments"`
+	// This field is from variant [ToolCall].
+	CallID string `json:"call_id"`
+	// This field is from variant [ToolCall].
+	ToolName ToolCallToolName `json:"tool_name"`
+	// This field is from variant [ToolCall].
+	ArgumentsJson string `json:"arguments_json"`
+	JSON          struct {
+		OfString      respjson.Field
+		Arguments     respjson.Field
+		CallID        respjson.Field
+		ToolName      respjson.Field
+		ArgumentsJson respjson.Field
+		raw           string
+	} `json:"-"`
+}
+
+func (u ContentDeltaToolCallToolCallUnion) AsString() (v string) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ContentDeltaToolCallToolCallUnion) AsToolCall() (v ToolCall) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u ContentDeltaToolCallToolCallUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *ContentDeltaToolCallToolCallUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // A document to be used for document ingestion in the RAG Tool.
 //
@@ -1714,6 +1758,30 @@ func init() {
 	)
 }
 
+// A metric value included in API responses.
+type Metric struct {
+	// The name of the metric
+	Metric string `json:"metric,required"`
+	// The numeric value of the metric
+	Value float64 `json:"value,required"`
+	// (Optional) The unit of measurement for the metric value
+	Unit string `json:"unit"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Metric      respjson.Field
+		Value       respjson.Field
+		Unit        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r Metric) RawJSON() string { return r.JSON.raw }
+func (r *Metric) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // Configuration for the RAG query generation.
 //
 // The properties ChunkTemplate, MaxChunks, MaxTokensInContext,
@@ -2456,64 +2524,6 @@ func (u *ResponseFormatGrammarBnfUnionParam) asAny() any {
 	return nil
 }
 
-type ReturnType struct {
-	// Any of "string", "number", "boolean", "array", "object", "json", "union",
-	// "chat_completion_input", "completion_input", "agent_turn_input".
-	Type ReturnTypeType `json:"type,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ReturnType) RawJSON() string { return r.JSON.raw }
-func (r *ReturnType) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this ReturnType to a ReturnTypeParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// ReturnTypeParam.Overrides()
-func (r ReturnType) ToParam() ReturnTypeParam {
-	return param.Override[ReturnTypeParam](json.RawMessage(r.RawJSON()))
-}
-
-type ReturnTypeType string
-
-const (
-	ReturnTypeTypeString              ReturnTypeType = "string"
-	ReturnTypeTypeNumber              ReturnTypeType = "number"
-	ReturnTypeTypeBoolean             ReturnTypeType = "boolean"
-	ReturnTypeTypeArray               ReturnTypeType = "array"
-	ReturnTypeTypeObject              ReturnTypeType = "object"
-	ReturnTypeTypeJson                ReturnTypeType = "json"
-	ReturnTypeTypeUnion               ReturnTypeType = "union"
-	ReturnTypeTypeChatCompletionInput ReturnTypeType = "chat_completion_input"
-	ReturnTypeTypeCompletionInput     ReturnTypeType = "completion_input"
-	ReturnTypeTypeAgentTurnInput      ReturnTypeType = "agent_turn_input"
-)
-
-// The property Type is required.
-type ReturnTypeParam struct {
-	// Any of "string", "number", "boolean", "array", "object", "json", "union",
-	// "chat_completion_input", "completion_input", "agent_turn_input".
-	Type ReturnTypeType `json:"type,omitzero,required"`
-	paramObj
-}
-
-func (r ReturnTypeParam) MarshalJSON() (data []byte, err error) {
-	type shadow ReturnTypeParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ReturnTypeParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // Details of a safety violation detected by content moderation.
 type SafetyViolation struct {
 	// Additional metadata including specific violation codes for debugging and
@@ -3094,7 +3104,7 @@ type SharedCompletionResponse struct {
 	// Optional log probabilities for generated tokens
 	Logprobs []SharedCompletionResponseLogprob `json:"logprobs"`
 	// (Optional) List of metrics associated with the API response
-	Metrics []llamastackclient.Metric `json:"metrics"`
+	Metrics []Metric `json:"metrics"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Content     respjson.Field
@@ -3806,51 +3816,6 @@ func (u *ToolCallArgumentsMapItemMapItemUnionParam) asAny() any {
 		return &u.OfBool.Value
 	}
 	return nil
-}
-
-// ToolCallOrStringUnion contains all possible properties and values from [string],
-// [ToolCall].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString]
-type ToolCallOrStringUnion struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field is from variant [ToolCall].
-	Arguments ToolCallArgumentsUnion `json:"arguments"`
-	// This field is from variant [ToolCall].
-	CallID string `json:"call_id"`
-	// This field is from variant [ToolCall].
-	ToolName ToolCallToolName `json:"tool_name"`
-	// This field is from variant [ToolCall].
-	ArgumentsJson string `json:"arguments_json"`
-	JSON          struct {
-		OfString      respjson.Field
-		Arguments     respjson.Field
-		CallID        respjson.Field
-		ToolName      respjson.Field
-		ArgumentsJson respjson.Field
-		raw           string
-	} `json:"-"`
-}
-
-func (u ToolCallOrStringUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ToolCallOrStringUnion) AsToolCall() (v ToolCall) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ToolCallOrStringUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ToolCallOrStringUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
 }
 
 // The property ParamType is required.

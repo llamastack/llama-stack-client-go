@@ -9,7 +9,6 @@
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#QueryConfigParam">QueryConfigParam</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#QueryGeneratorConfigUnionParam">QueryGeneratorConfigUnionParam</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#ResponseFormatUnionParam">ResponseFormatUnionParam</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#ReturnTypeParam">ReturnTypeParam</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#SamplingParams">SamplingParams</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#SharedToolDefParam">SharedToolDefParam</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#SystemMessageParam">SystemMessageParam</a>
@@ -27,16 +26,15 @@
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#ContentDeltaUnion">ContentDeltaUnion</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#InterleavedContentUnion">InterleavedContentUnion</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#InterleavedContentItemUnion">InterleavedContentItemUnion</a>
+- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#Metric">Metric</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#QueryResult">QueryResult</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#ResponseFormatUnion">ResponseFormatUnion</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#ReturnType">ReturnType</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#SafetyViolation">SafetyViolation</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#SamplingParamsResp">SamplingParamsResp</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#ScoringResult">ScoringResult</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#SharedCompletionResponse">SharedCompletionResponse</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#SharedToolDef">SharedToolDef</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#ToolCall">ToolCall</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#ToolCallOrStringUnion">ToolCallOrStringUnion</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#ToolResponseMessage">ToolResponseMessage</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared">shared</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/shared#UserMessage">UserMessage</a>
 
@@ -465,7 +463,6 @@ Params Types:
 
 Response Types:
 
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Metric">Metric</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#QuerySpansResponse">QuerySpansResponse</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#SpanWithStatus">SpanWithStatus</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Trace">Trace</a>
