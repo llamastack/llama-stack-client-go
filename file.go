@@ -153,7 +153,7 @@ type File struct {
 	Object constant.File `json:"object,required"`
 	// The intended purpose of the file
 	//
-	// Any of "assistants".
+	// Any of "assistants", "batch".
 	Purpose FilePurpose `json:"purpose,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -180,6 +180,7 @@ type FilePurpose string
 
 const (
 	FilePurposeAssistants FilePurpose = "assistants"
+	FilePurposeBatch      FilePurpose = "batch"
 )
 
 // Response for listing files in OpenAI Files API.
@@ -218,7 +219,7 @@ type FileNewParams struct {
 	File io.Reader `json:"file,omitzero,required" format:"binary"`
 	// Valid purpose values for OpenAI Files API.
 	//
-	// Any of "assistants".
+	// Any of "assistants", "batch".
 	Purpose FileNewParamsPurpose `json:"purpose,omitzero,required"`
 	paramObj
 }
@@ -246,6 +247,7 @@ type FileNewParamsPurpose string
 
 const (
 	FileNewParamsPurposeAssistants FileNewParamsPurpose = "assistants"
+	FileNewParamsPurposeBatch      FileNewParamsPurpose = "batch"
 )
 
 type FileListParams struct {
@@ -264,7 +266,7 @@ type FileListParams struct {
 	Order FileListParamsOrder `query:"order,omitzero" json:"-"`
 	// Only return files with the given purpose.
 	//
-	// Any of "assistants".
+	// Any of "assistants", "batch".
 	Purpose FileListParamsPurpose `query:"purpose,omitzero" json:"-"`
 	paramObj
 }
@@ -291,4 +293,5 @@ type FileListParamsPurpose string
 
 const (
 	FileListParamsPurposeAssistants FileListParamsPurpose = "assistants"
+	FileListParamsPurposeBatch      FileListParamsPurpose = "batch"
 )

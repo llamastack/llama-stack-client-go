@@ -11,7 +11,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go"
 	"github.com/llamastack/llama-stack-client-go/internal/testutil"
 	"github.com/llamastack/llama-stack-client-go/option"
-	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
 func TestScoringFunctionGet(t *testing.T) {
@@ -69,8 +68,8 @@ func TestScoringFunctionRegisterWithOptionalParams(t *testing.T) {
 	)
 	err := client.ScoringFunctions.Register(context.TODO(), llamastackclient.ScoringFunctionRegisterParams{
 		Description: "description",
-		ReturnType: shared.ReturnTypeParam{
-			Type: shared.ReturnTypeTypeString,
+		ReturnType: llamastackclient.ScoringFunctionRegisterParamsReturnType{
+			Type: "string",
 		},
 		ScoringFnID: "scoring_fn_id",
 		Params: llamastackclient.ScoringFnParamsUnion{

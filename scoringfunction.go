@@ -14,7 +14,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
-	"github.com/llamastack/llama-stack-client-go/shared"
 	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
@@ -92,7 +91,7 @@ type ScoringFn struct {
 	Identifier string                            `json:"identifier,required"`
 	Metadata   map[string]ScoringFnMetadataUnion `json:"metadata,required"`
 	ProviderID string                            `json:"provider_id,required"`
-	ReturnType shared.ReturnType                 `json:"return_type,required"`
+	ReturnType ScoringFnReturnType               `json:"return_type,required"`
 	// The resource type, always scoring_function
 	Type        constant.ScoringFunction `json:"type,required"`
 	Description string                   `json:"description"`
@@ -169,6 +168,24 @@ func (u ScoringFnMetadataUnion) AsAnyArray() (v []any) {
 func (u ScoringFnMetadataUnion) RawJSON() string { return u.JSON.raw }
 
 func (r *ScoringFnMetadataUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ScoringFnReturnType struct {
+	// Any of "string", "number", "boolean", "array", "object", "json", "union",
+	// "chat_completion_input", "completion_input", "agent_turn_input".
+	Type string `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ScoringFnReturnType) RawJSON() string { return r.JSON.raw }
+func (r *ScoringFnReturnType) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -541,8 +558,8 @@ func (r *ScoringFnParamsBasic) UnmarshalJSON(data []byte) error {
 
 type ScoringFunctionRegisterParams struct {
 	// The description of the scoring function.
-	Description string                 `json:"description,required"`
-	ReturnType  shared.ReturnTypeParam `json:"return_type,omitzero,required"`
+	Description string                                  `json:"description,required"`
+	ReturnType  ScoringFunctionRegisterParamsReturnType `json:"return_type,omitzero,required"`
 	// The ID of the scoring function to register.
 	ScoringFnID string `json:"scoring_fn_id,required"`
 	// The ID of the provider to use for the scoring function.
@@ -561,4 +578,26 @@ func (r ScoringFunctionRegisterParams) MarshalJSON() (data []byte, err error) {
 }
 func (r *ScoringFunctionRegisterParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+// The property Type is required.
+type ScoringFunctionRegisterParamsReturnType struct {
+	// Any of "string", "number", "boolean", "array", "object", "json", "union",
+	// "chat_completion_input", "completion_input", "agent_turn_input".
+	Type string `json:"type,omitzero,required"`
+	paramObj
+}
+
+func (r ScoringFunctionRegisterParamsReturnType) MarshalJSON() (data []byte, err error) {
+	type shadow ScoringFunctionRegisterParamsReturnType
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ScoringFunctionRegisterParamsReturnType) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ScoringFunctionRegisterParamsReturnType](
+		"type", "string", "number", "boolean", "array", "object", "json", "union", "chat_completion_input", "completion_input", "agent_turn_input",
+	)
 }
