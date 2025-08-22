@@ -99,11 +99,6 @@ type ChatCompletionResponse = shared.ChatCompletionResponse
 // This is an alias to an internal type.
 type ChatCompletionResponseLogprob = shared.ChatCompletionResponseLogprob
 
-// A metric value included in API responses.
-//
-// This is an alias to an internal type.
-type ChatCompletionResponseMetric = shared.ChatCompletionResponseMetric
-
 // A message containing the model's (assistant) response in a chat conversation.
 //
 // This is an alias to an internal type.
@@ -550,11 +545,6 @@ const SharedCompletionResponseStopReasonOutOfTokens = shared.SharedCompletionRes
 //
 // This is an alias to an internal type.
 type SharedCompletionResponseLogprob = shared.SharedCompletionResponseLogprob
-
-// A metric value included in API responses.
-//
-// This is an alias to an internal type.
-type SharedCompletionResponseMetric = shared.SharedCompletionResponseMetric
 
 // Tool definition used in runtime contexts.
 //
