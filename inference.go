@@ -81,7 +81,7 @@ func (r *InferenceService) ChatCompletionStreaming(ctx context.Context, body Inf
 //
 // Deprecated: /v1/inference/completion is deprecated. Please use
 // /v1/openai/v1/completions.
-func (r *InferenceService) Completion(ctx context.Context, body InferenceCompletionParams, opts ...option.RequestOption) (res *shared.SharedCompletionResponse, err error) {
+func (r *InferenceService) Completion(ctx context.Context, body InferenceCompletionParams, opts ...option.RequestOption) (res *CompletionResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "v1/inference/completion"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
@@ -92,7 +92,7 @@ func (r *InferenceService) Completion(ctx context.Context, body InferenceComplet
 //
 // Deprecated: /v1/inference/completion is deprecated. Please use
 // /v1/openai/v1/completions.
-func (r *InferenceService) CompletionStreaming(ctx context.Context, body InferenceCompletionParams, opts ...option.RequestOption) (stream *ssestream.Stream[shared.SharedCompletionResponse]) {
+func (r *InferenceService) CompletionStreaming(ctx context.Context, body InferenceCompletionParams, opts ...option.RequestOption) (stream *ssestream.Stream[CompletionResponse]) {
 	var (
 		raw *http.Response
 		err error
@@ -101,7 +101,7 @@ func (r *InferenceService) CompletionStreaming(ctx context.Context, body Inferen
 	opts = append([]option.RequestOption{option.WithJSONSet("stream", true)}, opts...)
 	path := "v1/inference/completion"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &raw, opts...)
-	return ssestream.NewStream[shared.SharedCompletionResponse](ssestream.NewDecoder(raw), err)
+	return ssestream.NewStream[CompletionResponse](ssestream.NewDecoder(raw), err)
 }
 
 // Generate embeddings for content pieces using the specified model.
@@ -146,7 +146,7 @@ type ChatCompletionResponseStreamChunkEvent struct {
 	// Any of "start", "complete", "progress".
 	EventType string `json:"event_type,required"`
 	// Optional log probabilities for generated tokens
-	Logprobs []ChatCompletionResponseStreamChunkEventLogprob `json:"logprobs"`
+	Logprobs []TokenLogProbs `json:"logprobs"`
 	// Optional reason why generation stopped, if complete
 	//
 	// Any of "end_of_turn", "end_of_message", "out_of_tokens".
@@ -168,23 +168,43 @@ func (r *ChatCompletionResponseStreamChunkEvent) UnmarshalJSON(data []byte) erro
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Log probabilities for generated tokens.
-type ChatCompletionResponseStreamChunkEventLogprob struct {
-	// Dictionary mapping tokens to their log probabilities
-	LogprobsByToken map[string]float64 `json:"logprobs_by_token,required"`
+// Response from a completion request.
+type CompletionResponse struct {
+	// The generated completion text
+	Content string `json:"content,required"`
+	// Reason why generation stopped
+	//
+	// Any of "end_of_turn", "end_of_message", "out_of_tokens".
+	StopReason CompletionResponseStopReason `json:"stop_reason,required"`
+	// Optional log probabilities for generated tokens
+	Logprobs []TokenLogProbs `json:"logprobs"`
+	// (Optional) List of metrics associated with the API response
+	Metrics []shared.Metric `json:"metrics"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		LogprobsByToken respjson.Field
-		ExtraFields     map[string]respjson.Field
-		raw             string
+		Content     respjson.Field
+		StopReason  respjson.Field
+		Logprobs    respjson.Field
+		Metrics     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
-func (r ChatCompletionResponseStreamChunkEventLogprob) RawJSON() string { return r.JSON.raw }
-func (r *ChatCompletionResponseStreamChunkEventLogprob) UnmarshalJSON(data []byte) error {
+func (r CompletionResponse) RawJSON() string { return r.JSON.raw }
+func (r *CompletionResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+// Reason why generation stopped
+type CompletionResponseStopReason string
+
+const (
+	CompletionResponseStopReasonEndOfTurn    CompletionResponseStopReason = "end_of_turn"
+	CompletionResponseStopReasonEndOfMessage CompletionResponseStopReason = "end_of_message"
+	CompletionResponseStopReasonOutOfTokens  CompletionResponseStopReason = "out_of_tokens"
+)
 
 // Response containing generated embeddings.
 type EmbeddingsResponse struct {
@@ -203,6 +223,24 @@ type EmbeddingsResponse struct {
 // Returns the unmodified JSON received from the API
 func (r EmbeddingsResponse) RawJSON() string { return r.JSON.raw }
 func (r *EmbeddingsResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Log probabilities for generated tokens.
+type TokenLogProbs struct {
+	// Dictionary mapping tokens to their log probabilities
+	LogprobsByToken map[string]float64 `json:"logprobs_by_token,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		LogprobsByToken respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TokenLogProbs) RawJSON() string { return r.JSON.raw }
+func (r *TokenLogProbs) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

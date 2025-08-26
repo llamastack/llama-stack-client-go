@@ -5,6 +5,7 @@ package shared
 import (
 	"encoding/json"
 
+	"github.com/llamastack/llama-stack-client-go"
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
@@ -22,8 +23,8 @@ type AgentConfig struct {
 	// The system instructions for the agent
 	Instructions string `json:"instructions,required"`
 	// The model identifier to use for the agent
-	Model       string          `json:"model,required"`
-	ClientTools []SharedToolDef `json:"client_tools"`
+	Model       string                     `json:"model,required"`
+	ClientTools []llamastackclient.ToolDef `json:"client_tools"`
 	// Optional flag indicating whether session data has to be persisted
 	EnableSessionPersistence bool     `json:"enable_session_persistence"`
 	InputShields             []string `json:"input_shields"`
@@ -268,10 +269,10 @@ type AgentConfigParam struct {
 	EnableSessionPersistence param.Opt[bool]  `json:"enable_session_persistence,omitzero"`
 	MaxInferIters            param.Opt[int64] `json:"max_infer_iters,omitzero"`
 	// Optional name for the agent, used in telemetry and identification
-	Name          param.Opt[string]    `json:"name,omitzero"`
-	ClientTools   []SharedToolDefParam `json:"client_tools,omitzero"`
-	InputShields  []string             `json:"input_shields,omitzero"`
-	OutputShields []string             `json:"output_shields,omitzero"`
+	Name          param.Opt[string]               `json:"name,omitzero"`
+	ClientTools   []llamastackclient.ToolDefParam `json:"client_tools,omitzero"`
+	InputShields  []string                        `json:"input_shields,omitzero"`
+	OutputShields []string                        `json:"output_shields,omitzero"`
 	// Optional response format configuration
 	ResponseFormat ResponseFormatUnionParam `json:"response_format,omitzero"`
 	// Sampling parameters.
@@ -421,7 +422,7 @@ func (u *AgentConfigToolgroupAgentToolGroupWithArgsArgUnionParam) asAny() any {
 // Response from a batch completion request.
 type BatchCompletion struct {
 	// List of completion responses, one for each input in the batch
-	Batch []SharedCompletionResponse `json:"batch,required"`
+	Batch []llamastackclient.CompletionResponse `json:"batch,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Batch       respjson.Field
@@ -441,7 +442,7 @@ type ChatCompletionResponse struct {
 	// The complete response message
 	CompletionMessage CompletionMessage `json:"completion_message,required"`
 	// Optional log probabilities for generated tokens
-	Logprobs []ChatCompletionResponseLogprob `json:"logprobs"`
+	Logprobs []llamastackclient.TokenLogProbs `json:"logprobs"`
 	// (Optional) List of metrics associated with the API response
 	Metrics []Metric `json:"metrics"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -457,24 +458,6 @@ type ChatCompletionResponse struct {
 // Returns the unmodified JSON received from the API
 func (r ChatCompletionResponse) RawJSON() string { return r.JSON.raw }
 func (r *ChatCompletionResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Log probabilities for generated tokens.
-type ChatCompletionResponseLogprob struct {
-	// Dictionary mapping tokens to their log probabilities
-	LogprobsByToken map[string]float64 `json:"logprobs_by_token,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		LogprobsByToken respjson.Field
-		ExtraFields     map[string]respjson.Field
-		raw             string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionResponseLogprob) RawJSON() string { return r.JSON.raw }
-func (r *ChatCompletionResponseLogprob) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -3091,342 +3074,6 @@ func (u ScoringResultScoreRowUnion) RawJSON() string { return u.JSON.raw }
 
 func (r *ScoringResultScoreRowUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-// Response from a completion request.
-type SharedCompletionResponse struct {
-	// The generated completion text
-	Content string `json:"content,required"`
-	// Reason why generation stopped
-	//
-	// Any of "end_of_turn", "end_of_message", "out_of_tokens".
-	StopReason SharedCompletionResponseStopReason `json:"stop_reason,required"`
-	// Optional log probabilities for generated tokens
-	Logprobs []SharedCompletionResponseLogprob `json:"logprobs"`
-	// (Optional) List of metrics associated with the API response
-	Metrics []Metric `json:"metrics"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Content     respjson.Field
-		StopReason  respjson.Field
-		Logprobs    respjson.Field
-		Metrics     respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r SharedCompletionResponse) RawJSON() string { return r.JSON.raw }
-func (r *SharedCompletionResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Reason why generation stopped
-type SharedCompletionResponseStopReason string
-
-const (
-	SharedCompletionResponseStopReasonEndOfTurn    SharedCompletionResponseStopReason = "end_of_turn"
-	SharedCompletionResponseStopReasonEndOfMessage SharedCompletionResponseStopReason = "end_of_message"
-	SharedCompletionResponseStopReasonOutOfTokens  SharedCompletionResponseStopReason = "out_of_tokens"
-)
-
-// Log probabilities for generated tokens.
-type SharedCompletionResponseLogprob struct {
-	// Dictionary mapping tokens to their log probabilities
-	LogprobsByToken map[string]float64 `json:"logprobs_by_token,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		LogprobsByToken respjson.Field
-		ExtraFields     map[string]respjson.Field
-		raw             string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r SharedCompletionResponseLogprob) RawJSON() string { return r.JSON.raw }
-func (r *SharedCompletionResponseLogprob) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Tool definition used in runtime contexts.
-type SharedToolDef struct {
-	// Name of the tool
-	Name string `json:"name,required"`
-	// (Optional) Human-readable description of what the tool does
-	Description string `json:"description"`
-	// (Optional) Additional metadata about the tool
-	Metadata map[string]SharedToolDefMetadataUnion `json:"metadata"`
-	// (Optional) List of parameters this tool accepts
-	Parameters []SharedToolDefParameter `json:"parameters"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Name        respjson.Field
-		Description respjson.Field
-		Metadata    respjson.Field
-		Parameters  respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r SharedToolDef) RawJSON() string { return r.JSON.raw }
-func (r *SharedToolDef) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToParam converts this SharedToolDef to a SharedToolDefParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// SharedToolDefParam.Overrides()
-func (r SharedToolDef) ToParam() SharedToolDefParam {
-	return param.Override[SharedToolDefParam](json.RawMessage(r.RawJSON()))
-}
-
-// SharedToolDefMetadataUnion contains all possible properties and values from
-// [bool], [float64], [string], [[]any].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type SharedToolDefMetadataUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
-	} `json:"-"`
-}
-
-func (u SharedToolDefMetadataUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u SharedToolDefMetadataUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u SharedToolDefMetadataUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u SharedToolDefMetadataUnion) AsAnyArray() (v []any) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u SharedToolDefMetadataUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *SharedToolDefMetadataUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Parameter definition for a tool.
-type SharedToolDefParameter struct {
-	// Human-readable description of what the parameter does
-	Description string `json:"description,required"`
-	// Name of the parameter
-	Name string `json:"name,required"`
-	// Type of the parameter (e.g., string, integer)
-	ParameterType string `json:"parameter_type,required"`
-	// Whether this parameter is required for tool invocation
-	Required bool `json:"required,required"`
-	// (Optional) Default value for the parameter if not provided
-	Default SharedToolDefParameterDefaultUnion `json:"default,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Description   respjson.Field
-		Name          respjson.Field
-		ParameterType respjson.Field
-		Required      respjson.Field
-		Default       respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r SharedToolDefParameter) RawJSON() string { return r.JSON.raw }
-func (r *SharedToolDefParameter) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// SharedToolDefParameterDefaultUnion contains all possible properties and values
-// from [bool], [float64], [string], [[]any].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type SharedToolDefParameterDefaultUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
-	} `json:"-"`
-}
-
-func (u SharedToolDefParameterDefaultUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u SharedToolDefParameterDefaultUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u SharedToolDefParameterDefaultUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u SharedToolDefParameterDefaultUnion) AsAnyArray() (v []any) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u SharedToolDefParameterDefaultUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *SharedToolDefParameterDefaultUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Tool definition used in runtime contexts.
-//
-// The property Name is required.
-type SharedToolDefParam struct {
-	// Name of the tool
-	Name string `json:"name,required"`
-	// (Optional) Human-readable description of what the tool does
-	Description param.Opt[string] `json:"description,omitzero"`
-	// (Optional) Additional metadata about the tool
-	Metadata map[string]SharedToolDefMetadataUnionParam `json:"metadata,omitzero"`
-	// (Optional) List of parameters this tool accepts
-	Parameters []SharedToolDefParameterParam `json:"parameters,omitzero"`
-	paramObj
-}
-
-func (r SharedToolDefParam) MarshalJSON() (data []byte, err error) {
-	type shadow SharedToolDefParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *SharedToolDefParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type SharedToolDefMetadataUnionParam struct {
-	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
-	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
-	OfString   param.Opt[string]  `json:",omitzero,inline"`
-	OfAnyArray []any              `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u SharedToolDefMetadataUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
-}
-func (u *SharedToolDefMetadataUnionParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *SharedToolDefMetadataUnionParam) asAny() any {
-	if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfAnyArray) {
-		return &u.OfAnyArray
-	}
-	return nil
-}
-
-// Parameter definition for a tool.
-//
-// The properties Description, Name, ParameterType, Required are required.
-type SharedToolDefParameterParam struct {
-	// Human-readable description of what the parameter does
-	Description string `json:"description,required"`
-	// Name of the parameter
-	Name string `json:"name,required"`
-	// Type of the parameter (e.g., string, integer)
-	ParameterType string `json:"parameter_type,required"`
-	// Whether this parameter is required for tool invocation
-	Required bool `json:"required,required"`
-	// (Optional) Default value for the parameter if not provided
-	Default SharedToolDefParameterDefaultUnionParam `json:"default,omitzero"`
-	paramObj
-}
-
-func (r SharedToolDefParameterParam) MarshalJSON() (data []byte, err error) {
-	type shadow SharedToolDefParameterParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *SharedToolDefParameterParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type SharedToolDefParameterDefaultUnionParam struct {
-	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
-	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
-	OfString   param.Opt[string]  `json:",omitzero,inline"`
-	OfAnyArray []any              `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u SharedToolDefParameterDefaultUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
-}
-func (u *SharedToolDefParameterDefaultUnionParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *SharedToolDefParameterDefaultUnionParam) asAny() any {
-	if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfAnyArray) {
-		return &u.OfAnyArray
-	}
-	return nil
 }
 
 // A system message providing instructions or context to the model.
