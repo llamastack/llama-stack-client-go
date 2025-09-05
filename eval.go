@@ -14,7 +14,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
-	"github.com/llamastack/llama-stack-client-go/shared"
 	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
@@ -110,14 +109,14 @@ func (r *BenchmarkConfigParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func EvalCandidateParamOfModel(model string, samplingParams shared.SamplingParams) EvalCandidateUnionParam {
+func EvalCandidateParamOfModel(model string, samplingParams SamplingParams) EvalCandidateUnionParam {
 	var variant EvalCandidateModelParam
 	variant.Model = model
 	variant.SamplingParams = samplingParams
 	return EvalCandidateUnionParam{OfModel: &variant}
 }
 
-func EvalCandidateParamOfAgent(config shared.AgentConfigParam) EvalCandidateUnionParam {
+func EvalCandidateParamOfAgent(config AgentConfigParam) EvalCandidateUnionParam {
 	var agent EvalCandidateAgentParam
 	agent.Config = config
 	return EvalCandidateUnionParam{OfAgent: &agent}
@@ -157,7 +156,7 @@ func (u EvalCandidateUnionParam) GetModel() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u EvalCandidateUnionParam) GetSamplingParams() *shared.SamplingParams {
+func (u EvalCandidateUnionParam) GetSamplingParams() *SamplingParams {
 	if vt := u.OfModel; vt != nil {
 		return &vt.SamplingParams
 	}
@@ -165,7 +164,7 @@ func (u EvalCandidateUnionParam) GetSamplingParams() *shared.SamplingParams {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u EvalCandidateUnionParam) GetSystemMessage() *shared.SystemMessageParam {
+func (u EvalCandidateUnionParam) GetSystemMessage() *SystemMessageParam {
 	if vt := u.OfModel; vt != nil {
 		return &vt.SystemMessage
 	}
@@ -173,7 +172,7 @@ func (u EvalCandidateUnionParam) GetSystemMessage() *shared.SystemMessageParam {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u EvalCandidateUnionParam) GetConfig() *shared.AgentConfigParam {
+func (u EvalCandidateUnionParam) GetConfig() *AgentConfigParam {
 	if vt := u.OfAgent; vt != nil {
 		return &vt.Config
 	}
@@ -205,9 +204,9 @@ type EvalCandidateModelParam struct {
 	// The model ID to evaluate.
 	Model string `json:"model,required"`
 	// The sampling parameters for the model.
-	SamplingParams shared.SamplingParams `json:"sampling_params,omitzero,required"`
+	SamplingParams SamplingParams `json:"sampling_params,omitzero,required"`
 	// (Optional) The system message providing instructions or context to the model.
-	SystemMessage shared.SystemMessageParam `json:"system_message,omitzero"`
+	SystemMessage SystemMessageParam `json:"system_message,omitzero"`
 	// This field can be elided, and will marshal its zero value as "model".
 	Type constant.Model `json:"type,required"`
 	paramObj
@@ -226,7 +225,7 @@ func (r *EvalCandidateModelParam) UnmarshalJSON(data []byte) error {
 // The properties Config, Type are required.
 type EvalCandidateAgentParam struct {
 	// The configuration for the agent candidate.
-	Config shared.AgentConfigParam `json:"config,omitzero,required"`
+	Config AgentConfigParam `json:"config,omitzero,required"`
 	// This field can be elided, and will marshal its zero value as "agent".
 	Type constant.Agent `json:"type,required"`
 	paramObj
@@ -245,7 +244,7 @@ type EvaluateResponse struct {
 	// The generations from the evaluation.
 	Generations []map[string]EvaluateResponseGenerationUnion `json:"generations,required"`
 	// The scores from the evaluation.
-	Scores map[string]shared.ScoringResult `json:"scores,required"`
+	Scores map[string]ScoringResult `json:"scores,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Generations respjson.Field

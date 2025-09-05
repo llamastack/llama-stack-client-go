@@ -11,7 +11,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go"
 	"github.com/llamastack/llama-stack-client-go/internal/testutil"
 	"github.com/llamastack/llama-stack-client-go/option"
-	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
 func TestAgentNewWithOptionalParams(t *testing.T) {
@@ -26,7 +25,7 @@ func TestAgentNewWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Agents.New(context.TODO(), llamastackclient.AgentNewParams{
-		AgentConfig: shared.AgentConfigParam{
+		AgentConfig: llamastackclient.AgentConfigParam{
 			Instructions: "instructions",
 			Model:        "model",
 			ClientTools: []llamastackclient.ToolDefParam{{
@@ -52,31 +51,31 @@ func TestAgentNewWithOptionalParams(t *testing.T) {
 			MaxInferIters:            llamastackclient.Int(0),
 			Name:                     llamastackclient.String("name"),
 			OutputShields:            []string{"string"},
-			ResponseFormat: shared.ResponseFormatUnionParam{
-				OfJsonSchema: &shared.ResponseFormatJsonSchemaParam{
-					JsonSchema: map[string]shared.ResponseFormatJsonSchemaJsonSchemaUnionParam{
+			ResponseFormat: llamastackclient.ResponseFormatUnionParam{
+				OfJsonSchema: &llamastackclient.ResponseFormatJsonSchemaParam{
+					JsonSchema: map[string]llamastackclient.ResponseFormatJsonSchemaJsonSchemaUnionParam{
 						"foo": {
 							OfBool: llamastackclient.Bool(true),
 						},
 					},
 				},
 			},
-			SamplingParams: shared.SamplingParams{
-				Strategy: shared.SamplingParamsStrategyUnion{
-					OfGreedy: &shared.SamplingParamsStrategyGreedy{},
+			SamplingParams: llamastackclient.SamplingParams{
+				Strategy: llamastackclient.SamplingParamsStrategyUnion{
+					OfGreedy: &llamastackclient.SamplingParamsStrategyGreedy{},
 				},
 				MaxTokens:         llamastackclient.Int(0),
 				RepetitionPenalty: llamastackclient.Float(0),
 				Stop:              []string{"string"},
 			},
-			ToolChoice: shared.AgentConfigToolChoiceAuto,
-			ToolConfig: shared.AgentConfigToolConfigParam{
+			ToolChoice: llamastackclient.AgentConfigToolChoiceAuto,
+			ToolConfig: llamastackclient.AgentConfigToolConfigParam{
 				SystemMessageBehavior: "append",
 				ToolChoice:            "auto",
 				ToolPromptFormat:      "json",
 			},
-			ToolPromptFormat: shared.AgentConfigToolPromptFormatJson,
-			Toolgroups: []shared.AgentConfigToolgroupUnionParam{{
+			ToolPromptFormat: llamastackclient.AgentConfigToolPromptFormatJson,
+			Toolgroups: []llamastackclient.AgentConfigToolgroupUnionParam{{
 				OfString: llamastackclient.String("string"),
 			}},
 		},

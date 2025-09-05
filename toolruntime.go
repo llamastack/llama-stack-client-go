@@ -14,7 +14,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
-	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
 // ToolRuntimeService contains methods and other services that help with
@@ -342,7 +341,7 @@ func (u *ToolDefParameterDefaultUnionParam) asAny() any {
 // Result of a tool invocation.
 type ToolInvocationResult struct {
 	// (Optional) The output content from the tool execution
-	Content shared.InterleavedContentUnion `json:"content"`
+	Content InterleavedContentUnion `json:"content"`
 	// (Optional) Numeric error code if the tool execution failed
 	ErrorCode int64 `json:"error_code"`
 	// (Optional) Error message if the tool execution failed

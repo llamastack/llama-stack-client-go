@@ -12,7 +12,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 	"github.com/llamastack/llama-stack-client-go/packages/ssestream"
-	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
 // InferenceService contains methods and other services that help with interacting
@@ -43,7 +42,7 @@ func (r *InferenceService) BatchChatCompletion(ctx context.Context, body Inferen
 }
 
 // Generate completions for a batch of content using the specified model.
-func (r *InferenceService) BatchCompletion(ctx context.Context, body InferenceBatchCompletionParams, opts ...option.RequestOption) (res *shared.BatchCompletion, err error) {
+func (r *InferenceService) BatchCompletion(ctx context.Context, body InferenceBatchCompletionParams, opts ...option.RequestOption) (res *BatchCompletion, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "v1/inference/batch-completion"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
@@ -54,7 +53,7 @@ func (r *InferenceService) BatchCompletion(ctx context.Context, body InferenceBa
 //
 // Deprecated: /v1/inference/chat-completion is deprecated. Please use
 // /v1/openai/v1/chat/completions.
-func (r *InferenceService) ChatCompletion(ctx context.Context, body InferenceChatCompletionParams, opts ...option.RequestOption) (res *shared.ChatCompletionResponse, err error) {
+func (r *InferenceService) ChatCompletion(ctx context.Context, body InferenceChatCompletionParams, opts ...option.RequestOption) (res *ChatCompletionResponse, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "v1/inference/chat-completion"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
@@ -120,7 +119,7 @@ type ChatCompletionResponseStreamChunk struct {
 	// The event containing the new content
 	Event ChatCompletionResponseStreamChunkEvent `json:"event,required"`
 	// (Optional) List of metrics associated with the API response
-	Metrics []shared.Metric `json:"metrics"`
+	Metrics []Metric `json:"metrics"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Event       respjson.Field
@@ -140,7 +139,7 @@ func (r *ChatCompletionResponseStreamChunk) UnmarshalJSON(data []byte) error {
 type ChatCompletionResponseStreamChunkEvent struct {
 	// Content generated since last event. This can be one or more tokens, or a tool
 	// call.
-	Delta shared.ContentDeltaUnion `json:"delta,required"`
+	Delta ContentDeltaUnion `json:"delta,required"`
 	// Type of the event
 	//
 	// Any of "start", "complete", "progress".
@@ -179,7 +178,7 @@ type CompletionResponse struct {
 	// Optional log probabilities for generated tokens
 	Logprobs []TokenLogProbs `json:"logprobs"`
 	// (Optional) List of metrics associated with the API response
-	Metrics []shared.Metric `json:"metrics"`
+	Metrics []Metric `json:"metrics"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Content     respjson.Field
@@ -247,7 +246,7 @@ func (r *TokenLogProbs) UnmarshalJSON(data []byte) error {
 // Response from a batch chat completion request.
 type InferenceBatchChatCompletionResponse struct {
 	// List of chat completion responses, one for each conversation in the batch
-	Batch []shared.ChatCompletionResponse `json:"batch,required"`
+	Batch []ChatCompletionResponse `json:"batch,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Batch       respjson.Field
@@ -264,7 +263,7 @@ func (r *InferenceBatchChatCompletionResponse) UnmarshalJSON(data []byte) error 
 
 type InferenceBatchChatCompletionParams struct {
 	// The messages to generate completions for.
-	MessagesBatch [][]shared.MessageUnionParam `json:"messages_batch,omitzero,required"`
+	MessagesBatch [][]MessageUnionParam `json:"messages_batch,omitzero,required"`
 	// The identifier of the model to use. The model must be registered with Llama
 	// Stack and available via the /models endpoint.
 	ModelID string `json:"model_id,required"`
@@ -272,9 +271,9 @@ type InferenceBatchChatCompletionParams struct {
 	// returned.
 	Logprobs InferenceBatchChatCompletionParamsLogprobs `json:"logprobs,omitzero"`
 	// (Optional) Grammar specification for guided (structured) decoding.
-	ResponseFormat shared.ResponseFormatUnionParam `json:"response_format,omitzero"`
+	ResponseFormat ResponseFormatUnionParam `json:"response_format,omitzero"`
 	// (Optional) Parameters to control the sampling strategy.
-	SamplingParams shared.SamplingParams `json:"sampling_params,omitzero"`
+	SamplingParams SamplingParams `json:"sampling_params,omitzero"`
 	// (Optional) Configuration for tool use.
 	ToolConfig InferenceBatchChatCompletionParamsToolConfig `json:"tool_config,omitzero"`
 	// (Optional) List of tool definitions available to the model.
@@ -351,9 +350,9 @@ func init() {
 
 // The property ToolName is required.
 type InferenceBatchChatCompletionParamsTool struct {
-	ToolName    string                                `json:"tool_name,omitzero,required"`
-	Description param.Opt[string]                     `json:"description,omitzero"`
-	Parameters  map[string]shared.ToolParamDefinition `json:"parameters,omitzero"`
+	ToolName    string                         `json:"tool_name,omitzero,required"`
+	Description param.Opt[string]              `json:"description,omitzero"`
+	Parameters  map[string]ToolParamDefinition `json:"parameters,omitzero"`
 	paramObj
 }
 
@@ -367,7 +366,7 @@ func (r *InferenceBatchChatCompletionParamsTool) UnmarshalJSON(data []byte) erro
 
 type InferenceBatchCompletionParams struct {
 	// The content to generate completions for.
-	ContentBatch []shared.InterleavedContentUnionParam `json:"content_batch,omitzero,required"`
+	ContentBatch []InterleavedContentUnionParam `json:"content_batch,omitzero,required"`
 	// The identifier of the model to use. The model must be registered with Llama
 	// Stack and available via the /models endpoint.
 	ModelID string `json:"model_id,required"`
@@ -375,9 +374,9 @@ type InferenceBatchCompletionParams struct {
 	// returned.
 	Logprobs InferenceBatchCompletionParamsLogprobs `json:"logprobs,omitzero"`
 	// (Optional) Grammar specification for guided (structured) decoding.
-	ResponseFormat shared.ResponseFormatUnionParam `json:"response_format,omitzero"`
+	ResponseFormat ResponseFormatUnionParam `json:"response_format,omitzero"`
 	// (Optional) Parameters to control the sampling strategy.
-	SamplingParams shared.SamplingParams `json:"sampling_params,omitzero"`
+	SamplingParams SamplingParams `json:"sampling_params,omitzero"`
 	paramObj
 }
 
@@ -407,7 +406,7 @@ func (r *InferenceBatchCompletionParamsLogprobs) UnmarshalJSON(data []byte) erro
 
 type InferenceChatCompletionParams struct {
 	// List of messages in the conversation.
-	Messages []shared.MessageUnionParam `json:"messages,omitzero,required"`
+	Messages []MessageUnionParam `json:"messages,omitzero,required"`
 	// The identifier of the model to use. The model must be registered with Llama
 	// Stack and available via the /models endpoint.
 	ModelID string `json:"model_id,required"`
@@ -418,9 +417,9 @@ type InferenceChatCompletionParams struct {
 	// options: - `ResponseFormat.json_schema`: The grammar is a JSON schema. Most
 	// providers support this format. - `ResponseFormat.grammar`: The grammar is a BNF
 	// grammar. This format is more flexible, but not all providers support it.
-	ResponseFormat shared.ResponseFormatUnionParam `json:"response_format,omitzero"`
+	ResponseFormat ResponseFormatUnionParam `json:"response_format,omitzero"`
 	// Parameters to control the sampling strategy.
-	SamplingParams shared.SamplingParams `json:"sampling_params,omitzero"`
+	SamplingParams SamplingParams `json:"sampling_params,omitzero"`
 	// (Optional) Whether tool use is required or automatic. Defaults to
 	// ToolChoice.auto. .. deprecated:: Use tool_config instead.
 	//
@@ -537,9 +536,9 @@ const (
 
 // The property ToolName is required.
 type InferenceChatCompletionParamsTool struct {
-	ToolName    string                                `json:"tool_name,omitzero,required"`
-	Description param.Opt[string]                     `json:"description,omitzero"`
-	Parameters  map[string]shared.ToolParamDefinition `json:"parameters,omitzero"`
+	ToolName    string                         `json:"tool_name,omitzero,required"`
+	Description param.Opt[string]              `json:"description,omitzero"`
+	Parameters  map[string]ToolParamDefinition `json:"parameters,omitzero"`
 	paramObj
 }
 
@@ -553,7 +552,7 @@ func (r *InferenceChatCompletionParamsTool) UnmarshalJSON(data []byte) error {
 
 type InferenceCompletionParams struct {
 	// The content to generate a completion for.
-	Content shared.InterleavedContentUnionParam `json:"content,omitzero,required"`
+	Content InterleavedContentUnionParam `json:"content,omitzero,required"`
 	// The identifier of the model to use. The model must be registered with Llama
 	// Stack and available via the /models endpoint.
 	ModelID string `json:"model_id,required"`
@@ -561,9 +560,9 @@ type InferenceCompletionParams struct {
 	// returned.
 	Logprobs InferenceCompletionParamsLogprobs `json:"logprobs,omitzero"`
 	// (Optional) Grammar specification for guided (structured) decoding.
-	ResponseFormat shared.ResponseFormatUnionParam `json:"response_format,omitzero"`
+	ResponseFormat ResponseFormatUnionParam `json:"response_format,omitzero"`
 	// (Optional) Parameters to control the sampling strategy.
-	SamplingParams shared.SamplingParams `json:"sampling_params,omitzero"`
+	SamplingParams SamplingParams `json:"sampling_params,omitzero"`
 	paramObj
 }
 
@@ -627,8 +626,8 @@ func (r *InferenceEmbeddingsParams) UnmarshalJSON(data []byte) error {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type InferenceEmbeddingsParamsContentsUnion struct {
-	OfStringArray                 []string                                  `json:",omitzero,inline"`
-	OfInterleavedContentItemArray []shared.InterleavedContentItemUnionParam `json:",omitzero,inline"`
+	OfStringArray                 []string                           `json:",omitzero,inline"`
+	OfInterleavedContentItemArray []InterleavedContentItemUnionParam `json:",omitzero,inline"`
 	paramUnion
 }
 

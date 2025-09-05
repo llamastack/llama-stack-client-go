@@ -1,11 +1,10 @@
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package shared
+package llamastackclient
 
 import (
 	"encoding/json"
 
-	"github.com/llamastack/llama-stack-client-go"
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
@@ -23,8 +22,8 @@ type AgentConfig struct {
 	// The system instructions for the agent
 	Instructions string `json:"instructions,required"`
 	// The model identifier to use for the agent
-	Model       string                     `json:"model,required"`
-	ClientTools []llamastackclient.ToolDef `json:"client_tools"`
+	Model       string    `json:"model,required"`
+	ClientTools []ToolDef `json:"client_tools"`
 	// Optional flag indicating whether session data has to be persisted
 	EnableSessionPersistence bool     `json:"enable_session_persistence"`
 	InputShields             []string `json:"input_shields"`
@@ -269,10 +268,10 @@ type AgentConfigParam struct {
 	EnableSessionPersistence param.Opt[bool]  `json:"enable_session_persistence,omitzero"`
 	MaxInferIters            param.Opt[int64] `json:"max_infer_iters,omitzero"`
 	// Optional name for the agent, used in telemetry and identification
-	Name          param.Opt[string]               `json:"name,omitzero"`
-	ClientTools   []llamastackclient.ToolDefParam `json:"client_tools,omitzero"`
-	InputShields  []string                        `json:"input_shields,omitzero"`
-	OutputShields []string                        `json:"output_shields,omitzero"`
+	Name          param.Opt[string] `json:"name,omitzero"`
+	ClientTools   []ToolDefParam    `json:"client_tools,omitzero"`
+	InputShields  []string          `json:"input_shields,omitzero"`
+	OutputShields []string          `json:"output_shields,omitzero"`
 	// Optional response format configuration
 	ResponseFormat ResponseFormatUnionParam `json:"response_format,omitzero"`
 	// Sampling parameters.
@@ -422,7 +421,7 @@ func (u *AgentConfigToolgroupAgentToolGroupWithArgsArgUnionParam) asAny() any {
 // Response from a batch completion request.
 type BatchCompletion struct {
 	// List of completion responses, one for each input in the batch
-	Batch []llamastackclient.CompletionResponse `json:"batch,required"`
+	Batch []CompletionResponse `json:"batch,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Batch       respjson.Field
@@ -442,7 +441,7 @@ type ChatCompletionResponse struct {
 	// The complete response message
 	CompletionMessage CompletionMessage `json:"completion_message,required"`
 	// Optional log probabilities for generated tokens
-	Logprobs []llamastackclient.TokenLogProbs `json:"logprobs"`
+	Logprobs []TokenLogProbs `json:"logprobs"`
 	// (Optional) List of metrics associated with the API response
 	Metrics []Metric `json:"metrics"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -586,9 +585,9 @@ type anyContentDelta interface {
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ContentDeltaUnion.AsAny().(type) {
-//	case shared.ContentDeltaText:
-//	case shared.ContentDeltaImage:
-//	case shared.ContentDeltaToolCall:
+//	case llamastackclient.ContentDeltaText:
+//	case llamastackclient.ContentDeltaImage:
+//	case llamastackclient.ContentDeltaToolCall:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -1292,8 +1291,8 @@ type anyInterleavedContentItem interface {
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := InterleavedContentItemUnion.AsAny().(type) {
-//	case shared.InterleavedContentItemImage:
-//	case shared.InterleavedContentItemText:
+//	case llamastackclient.InterleavedContentItemImage:
+//	case llamastackclient.InterleavedContentItemText:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -2139,8 +2138,8 @@ type anyResponseFormat interface {
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseFormatUnion.AsAny().(type) {
-//	case shared.ResponseFormatJsonSchema:
-//	case shared.ResponseFormatGrammar:
+//	case llamastackclient.ResponseFormatJsonSchema:
+//	case llamastackclient.ResponseFormatGrammar:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -2670,9 +2669,9 @@ type anySamplingParamsStrategyResp interface {
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := SamplingParamsStrategyUnionResp.AsAny().(type) {
-//	case shared.SamplingParamsStrategyGreedyResp:
-//	case shared.SamplingParamsStrategyTopPResp:
-//	case shared.SamplingParamsStrategyTopKResp:
+//	case llamastackclient.SamplingParamsStrategyGreedyResp:
+//	case llamastackclient.SamplingParamsStrategyTopPResp:
+//	case llamastackclient.SamplingParamsStrategyTopKResp:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}

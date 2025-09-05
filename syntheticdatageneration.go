@@ -12,7 +12,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
-	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
 // SyntheticDataGenerationService contains methods and other services that help
@@ -171,7 +170,7 @@ func (r *SyntheticDataGenerationResponseStatisticUnion) UnmarshalJSON(data []byt
 
 type SyntheticDataGenerationGenerateParams struct {
 	// List of conversation messages to use as input for synthetic data generation
-	Dialogs []shared.MessageUnionParam `json:"dialogs,omitzero,required"`
+	Dialogs []MessageUnionParam `json:"dialogs,omitzero,required"`
 	// Type of filtering to apply to generated synthetic data samples
 	//
 	// Any of "none", "random", "top_k", "top_p", "top_k_top_p", "sigmoid".

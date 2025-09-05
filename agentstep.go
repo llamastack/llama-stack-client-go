@@ -14,7 +14,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
 	"github.com/llamastack/llama-stack-client-go/option"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
-	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
 // AgentStepService contains methods and other services that help with interacting
@@ -86,21 +85,21 @@ func (r *AgentStepGetResponse) UnmarshalJSON(data []byte) error {
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type AgentStepGetResponseStepUnion struct {
 	// This field is from variant [InferenceStep].
-	ModelResponse shared.CompletionMessage `json:"model_response"`
-	StepID        string                   `json:"step_id"`
+	ModelResponse CompletionMessage `json:"model_response"`
+	StepID        string            `json:"step_id"`
 	// Any of "inference", "tool_execution", "shield_call", "memory_retrieval".
 	StepType    string    `json:"step_type"`
 	TurnID      string    `json:"turn_id"`
 	CompletedAt time.Time `json:"completed_at"`
 	StartedAt   time.Time `json:"started_at"`
 	// This field is from variant [ToolExecutionStep].
-	ToolCalls []shared.ToolCall `json:"tool_calls"`
+	ToolCalls []ToolCall `json:"tool_calls"`
 	// This field is from variant [ToolExecutionStep].
 	ToolResponses []ToolResponse `json:"tool_responses"`
 	// This field is from variant [ShieldCallStep].
-	Violation shared.SafetyViolation `json:"violation"`
+	Violation SafetyViolation `json:"violation"`
 	// This field is from variant [MemoryRetrievalStep].
-	InsertedContext shared.InterleavedContentUnion `json:"inserted_context"`
+	InsertedContext InterleavedContentUnion `json:"inserted_context"`
 	// This field is from variant [MemoryRetrievalStep].
 	VectorDBIDs string `json:"vector_db_ids"`
 	JSON        struct {
