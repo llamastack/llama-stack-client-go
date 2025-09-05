@@ -11,7 +11,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go"
 	"github.com/llamastack/llama-stack-client-go/internal/testutil"
 	"github.com/llamastack/llama-stack-client-go/option"
-	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
 func TestEvalEvaluateRowsWithOptionalParams(t *testing.T) {
@@ -33,16 +32,16 @@ func TestEvalEvaluateRowsWithOptionalParams(t *testing.T) {
 				EvalCandidate: llamastackclient.EvalCandidateUnionParam{
 					OfModel: &llamastackclient.EvalCandidateModelParam{
 						Model: "model",
-						SamplingParams: shared.SamplingParams{
-							Strategy: shared.SamplingParamsStrategyUnion{
-								OfGreedy: &shared.SamplingParamsStrategyGreedy{},
+						SamplingParams: llamastackclient.SamplingParams{
+							Strategy: llamastackclient.SamplingParamsStrategyUnion{
+								OfGreedy: &llamastackclient.SamplingParamsStrategyGreedy{},
 							},
 							MaxTokens:         llamastackclient.Int(0),
 							RepetitionPenalty: llamastackclient.Float(0),
 							Stop:              []string{"string"},
 						},
-						SystemMessage: shared.SystemMessageParam{
-							Content: shared.InterleavedContentUnionParam{
+						SystemMessage: llamastackclient.SystemMessageParam{
+							Content: llamastackclient.InterleavedContentUnionParam{
 								OfString: llamastackclient.String("string"),
 							},
 						},
@@ -96,16 +95,16 @@ func TestEvalEvaluateRowsAlphaWithOptionalParams(t *testing.T) {
 				EvalCandidate: llamastackclient.EvalCandidateUnionParam{
 					OfModel: &llamastackclient.EvalCandidateModelParam{
 						Model: "model",
-						SamplingParams: shared.SamplingParams{
-							Strategy: shared.SamplingParamsStrategyUnion{
-								OfGreedy: &shared.SamplingParamsStrategyGreedy{},
+						SamplingParams: llamastackclient.SamplingParams{
+							Strategy: llamastackclient.SamplingParamsStrategyUnion{
+								OfGreedy: &llamastackclient.SamplingParamsStrategyGreedy{},
 							},
 							MaxTokens:         llamastackclient.Int(0),
 							RepetitionPenalty: llamastackclient.Float(0),
 							Stop:              []string{"string"},
 						},
-						SystemMessage: shared.SystemMessageParam{
-							Content: shared.InterleavedContentUnionParam{
+						SystemMessage: llamastackclient.SystemMessageParam{
+							Content: llamastackclient.InterleavedContentUnionParam{
 								OfString: llamastackclient.String("string"),
 							},
 						},
@@ -159,16 +158,16 @@ func TestEvalRunEvalWithOptionalParams(t *testing.T) {
 				EvalCandidate: llamastackclient.EvalCandidateUnionParam{
 					OfModel: &llamastackclient.EvalCandidateModelParam{
 						Model: "model",
-						SamplingParams: shared.SamplingParams{
-							Strategy: shared.SamplingParamsStrategyUnion{
-								OfGreedy: &shared.SamplingParamsStrategyGreedy{},
+						SamplingParams: llamastackclient.SamplingParams{
+							Strategy: llamastackclient.SamplingParamsStrategyUnion{
+								OfGreedy: &llamastackclient.SamplingParamsStrategyGreedy{},
 							},
 							MaxTokens:         llamastackclient.Int(0),
 							RepetitionPenalty: llamastackclient.Float(0),
 							Stop:              []string{"string"},
 						},
-						SystemMessage: shared.SystemMessageParam{
-							Content: shared.InterleavedContentUnionParam{
+						SystemMessage: llamastackclient.SystemMessageParam{
+							Content: llamastackclient.InterleavedContentUnionParam{
 								OfString: llamastackclient.String("string"),
 							},
 						},
@@ -216,16 +215,16 @@ func TestEvalRunEvalAlphaWithOptionalParams(t *testing.T) {
 				EvalCandidate: llamastackclient.EvalCandidateUnionParam{
 					OfModel: &llamastackclient.EvalCandidateModelParam{
 						Model: "model",
-						SamplingParams: shared.SamplingParams{
-							Strategy: shared.SamplingParamsStrategyUnion{
-								OfGreedy: &shared.SamplingParamsStrategyGreedy{},
+						SamplingParams: llamastackclient.SamplingParams{
+							Strategy: llamastackclient.SamplingParamsStrategyUnion{
+								OfGreedy: &llamastackclient.SamplingParamsStrategyGreedy{},
 							},
 							MaxTokens:         llamastackclient.Int(0),
 							RepetitionPenalty: llamastackclient.Float(0),
 							Stop:              []string{"string"},
 						},
-						SystemMessage: shared.SystemMessageParam{
-							Content: shared.InterleavedContentUnionParam{
+						SystemMessage: llamastackclient.SystemMessageParam{
+							Content: llamastackclient.InterleavedContentUnionParam{
 								OfString: llamastackclient.String("string"),
 							},
 						},

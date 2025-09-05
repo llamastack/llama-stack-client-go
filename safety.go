@@ -11,7 +11,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
-	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
 // SafetyService contains methods and other services that help with interacting
@@ -44,7 +43,7 @@ func (r *SafetyService) RunShield(ctx context.Context, body SafetyRunShieldParam
 // Response from running a safety shield.
 type RunShieldResponse struct {
 	// (Optional) Safety violation detected by the shield, if any
-	Violation shared.SafetyViolation `json:"violation"`
+	Violation SafetyViolation `json:"violation"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Violation   respjson.Field
@@ -61,7 +60,7 @@ func (r *RunShieldResponse) UnmarshalJSON(data []byte) error {
 
 type SafetyRunShieldParams struct {
 	// The messages to run the shield on.
-	Messages []shared.MessageUnionParam `json:"messages,omitzero,required"`
+	Messages []MessageUnionParam `json:"messages,omitzero,required"`
 	// The parameters of the shield.
 	Params map[string]SafetyRunShieldParamsParamUnion `json:"params,omitzero,required"`
 	// The identifier of the shield to run.

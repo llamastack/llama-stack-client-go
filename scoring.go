@@ -11,7 +11,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
-	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
 // ScoringService contains methods and other services that help with interacting
@@ -52,7 +51,7 @@ func (r *ScoringService) ScoreBatch(ctx context.Context, body ScoringScoreBatchP
 // The response from scoring.
 type ScoringScoreResponse struct {
 	// A map of scoring function name to ScoringResult.
-	Results map[string]shared.ScoringResult `json:"results,required"`
+	Results map[string]ScoringResult `json:"results,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Results     respjson.Field
@@ -70,7 +69,7 @@ func (r *ScoringScoreResponse) UnmarshalJSON(data []byte) error {
 // Response from batch scoring operations on datasets.
 type ScoringScoreBatchResponse struct {
 	// A map of scoring function name to ScoringResult
-	Results map[string]shared.ScoringResult `json:"results,required"`
+	Results map[string]ScoringResult `json:"results,required"`
 	// (Optional) The identifier of the dataset that was scored
 	DatasetID string `json:"dataset_id"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].

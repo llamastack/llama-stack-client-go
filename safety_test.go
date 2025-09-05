@@ -11,7 +11,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go"
 	"github.com/llamastack/llama-stack-client-go/internal/testutil"
 	"github.com/llamastack/llama-stack-client-go/option"
-	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
 func TestSafetyRunShield(t *testing.T) {
@@ -26,12 +25,12 @@ func TestSafetyRunShield(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Safety.RunShield(context.TODO(), llamastackclient.SafetyRunShieldParams{
-		Messages: []shared.MessageUnionParam{{
-			OfUser: &shared.UserMessageParam{
-				Content: shared.InterleavedContentUnionParam{
+		Messages: []llamastackclient.MessageUnionParam{{
+			OfUser: &llamastackclient.UserMessageParam{
+				Content: llamastackclient.InterleavedContentUnionParam{
 					OfString: llamastackclient.String("string"),
 				},
-				Context: shared.InterleavedContentUnionParam{
+				Context: llamastackclient.InterleavedContentUnionParam{
 					OfString: llamastackclient.String("string"),
 				},
 			},

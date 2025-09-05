@@ -297,9 +297,9 @@ To handle errors, we recommend that you use the `errors.As` pattern:
 
 ```go
 _, err := client.Inference.ChatCompletion(context.TODO(), llamastackclient.InferenceChatCompletionParams{
-	Messages: []shared.MessageUnionParam{{
-		OfUser: &shared.UserMessageParam{
-			Content: shared.InterleavedContentUnionParam{
+	Messages: []llamastackclient.MessageUnionParam{{
+		OfUser: &llamastackclient.UserMessageParam{
+			Content: llamastackclient.InterleavedContentUnionParam{
 				OfString: llamastackclient.String("string"),
 			},
 		},
@@ -333,9 +333,9 @@ defer cancel()
 client.Inference.ChatCompletion(
 	ctx,
 	llamastackclient.InferenceChatCompletionParams{
-		Messages: []shared.MessageUnionParam{{
-			OfUser: &shared.UserMessageParam{
-				Content: shared.InterleavedContentUnionParam{
+		Messages: []llamastackclient.MessageUnionParam{{
+			OfUser: &llamastackclient.UserMessageParam{
+				Content: llamastackclient.InterleavedContentUnionParam{
 					OfString: llamastackclient.String("string"),
 				},
 			},
@@ -399,9 +399,9 @@ client := llamastackclient.NewClient(
 client.Inference.ChatCompletion(
 	context.TODO(),
 	llamastackclient.InferenceChatCompletionParams{
-		Messages: []shared.MessageUnionParam{{
-			OfUser: &shared.UserMessageParam{
-				Content: shared.InterleavedContentUnionParam{
+		Messages: []llamastackclient.MessageUnionParam{{
+			OfUser: &llamastackclient.UserMessageParam{
+				Content: llamastackclient.InterleavedContentUnionParam{
 					OfString: llamastackclient.String("string"),
 				},
 			},
@@ -423,9 +423,9 @@ var response *http.Response
 chatCompletionResponse, err := client.Inference.ChatCompletion(
 	context.TODO(),
 	llamastackclient.InferenceChatCompletionParams{
-		Messages: []shared.MessageUnionParam{{
-			OfUser: &shared.UserMessageParam{
-				Content: shared.InterleavedContentUnionParam{
+		Messages: []llamastackclient.MessageUnionParam{{
+			OfUser: &llamastackclient.UserMessageParam{
+				Content: llamastackclient.InterleavedContentUnionParam{
 					OfString: llamastackclient.String("string"),
 				},
 			},

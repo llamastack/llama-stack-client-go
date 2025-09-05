@@ -4,6 +4,7 @@ package pagination
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
 	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
@@ -45,14 +46,18 @@ func (r *DatasetsIterrows[T]) GetNextPage() (res *DatasetsIterrows[T], err error
 	if len(r.Data) == 0 {
 		return nil, nil
 	}
-	next := r.NextIndex
-	if len(next) == 0 {
-		return nil, nil
-	}
 	cfg := r.cfg.Clone(r.cfg.Context)
-	err = cfg.Apply(option.WithQuery("start_index", next))
-	if err != nil {
-		return nil, err
+
+	next := r.NextIndex
+	length := int64(len(r.Data))
+
+	if length > 0 && next != 0 {
+		err = cfg.Apply(option.WithQuery("start_index", strconv.FormatInt(next, 10)))
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		return nil, nil
 	}
 	var raw *http.Response
 	cfg.ResponseInto = &raw

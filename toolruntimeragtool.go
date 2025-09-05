@@ -10,7 +10,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
 	"github.com/llamastack/llama-stack-client-go/option"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
-	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
 // ToolRuntimeRagToolService contains methods and other services that help with
@@ -42,7 +41,7 @@ func (r *ToolRuntimeRagToolService) Insert(ctx context.Context, body ToolRuntime
 }
 
 // Query the RAG system for context; typically invoked by the agent.
-func (r *ToolRuntimeRagToolService) Query(ctx context.Context, body ToolRuntimeRagToolQueryParams, opts ...option.RequestOption) (res *shared.QueryResult, err error) {
+func (r *ToolRuntimeRagToolService) Query(ctx context.Context, body ToolRuntimeRagToolQueryParams, opts ...option.RequestOption) (res *QueryResult, err error) {
 	opts = append(r.Options[:], opts...)
 	path := "v1/tool-runtime/rag-tool/query"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
@@ -53,7 +52,7 @@ type ToolRuntimeRagToolInsertParams struct {
 	// (Optional) Size in tokens for document chunking during indexing
 	ChunkSizeInTokens int64 `json:"chunk_size_in_tokens,required"`
 	// List of documents to index in the RAG system
-	Documents []shared.DocumentParam `json:"documents,omitzero,required"`
+	Documents []DocumentParam `json:"documents,omitzero,required"`
 	// ID of the vector database to store the document embeddings
 	VectorDBID string `json:"vector_db_id,required"`
 	paramObj
@@ -69,11 +68,11 @@ func (r *ToolRuntimeRagToolInsertParams) UnmarshalJSON(data []byte) error {
 
 type ToolRuntimeRagToolQueryParams struct {
 	// The query content to search for in the indexed documents
-	Content shared.InterleavedContentUnionParam `json:"content,omitzero,required"`
+	Content InterleavedContentUnionParam `json:"content,omitzero,required"`
 	// List of vector database IDs to search within
 	VectorDBIDs []string `json:"vector_db_ids,omitzero,required"`
 	// (Optional) Configuration parameters for the query operation
-	QueryConfig shared.QueryConfigParam `json:"query_config,omitzero"`
+	QueryConfig QueryConfigParam `json:"query_config,omitzero"`
 	paramObj
 }
 

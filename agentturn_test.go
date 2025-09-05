@@ -11,7 +11,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go"
 	"github.com/llamastack/llama-stack-client-go/internal/testutil"
 	"github.com/llamastack/llama-stack-client-go/option"
-	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
 func TestAgentTurnNewWithOptionalParams(t *testing.T) {
@@ -31,11 +30,11 @@ func TestAgentTurnNewWithOptionalParams(t *testing.T) {
 		llamastackclient.AgentTurnNewParams{
 			AgentID: "agent_id",
 			Messages: []llamastackclient.AgentTurnNewParamsMessageUnion{{
-				OfUserMessage: &shared.UserMessageParam{
-					Content: shared.InterleavedContentUnionParam{
+				OfUserMessage: &llamastackclient.UserMessageParam{
+					Content: llamastackclient.InterleavedContentUnionParam{
 						OfString: llamastackclient.String("string"),
 					},
-					Context: shared.InterleavedContentUnionParam{
+					Context: llamastackclient.InterleavedContentUnionParam{
 						OfString: llamastackclient.String("string"),
 					},
 				},
@@ -112,7 +111,7 @@ func TestAgentTurnResumeWithOptionalParams(t *testing.T) {
 			SessionID: "session_id",
 			ToolResponses: []llamastackclient.ToolResponseParam{{
 				CallID: "call_id",
-				Content: shared.InterleavedContentUnionParam{
+				Content: llamastackclient.InterleavedContentUnionParam{
 					OfString: llamastackclient.String("string"),
 				},
 				ToolName: llamastackclient.ToolResponseToolNameBraveSearch,
