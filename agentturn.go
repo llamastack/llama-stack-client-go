@@ -16,7 +16,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 	"github.com/llamastack/llama-stack-client-go/packages/ssestream"
-	"github.com/llamastack/llama-stack-client-go/shared"
 	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
@@ -170,7 +169,7 @@ type Turn struct {
 	// List of messages that initiated this turn
 	InputMessages []TurnInputMessageUnion `json:"input_messages,required"`
 	// The model's generated response containing content and metadata
-	OutputMessage shared.CompletionMessage `json:"output_message,required"`
+	OutputMessage CompletionMessage `json:"output_message,required"`
 	// Unique identifier for the conversation session
 	SessionID string `json:"session_id,required"`
 	// Timestamp when the turn began
@@ -205,16 +204,16 @@ func (r *Turn) UnmarshalJSON(data []byte) error {
 }
 
 // TurnInputMessageUnion contains all possible properties and values from
-// [shared.UserMessage], [shared.ToolResponseMessage].
+// [UserMessage], [ToolResponseMessage].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type TurnInputMessageUnion struct {
-	// This field is from variant [shared.UserMessage].
-	Content shared.InterleavedContentUnion `json:"content"`
-	Role    string                         `json:"role"`
-	// This field is from variant [shared.UserMessage].
-	Context shared.InterleavedContentUnion `json:"context"`
-	// This field is from variant [shared.ToolResponseMessage].
+	// This field is from variant [UserMessage].
+	Content InterleavedContentUnion `json:"content"`
+	Role    string                  `json:"role"`
+	// This field is from variant [UserMessage].
+	Context InterleavedContentUnion `json:"context"`
+	// This field is from variant [ToolResponseMessage].
 	CallID string `json:"call_id"`
 	JSON   struct {
 		Content respjson.Field
@@ -225,12 +224,12 @@ type TurnInputMessageUnion struct {
 	} `json:"-"`
 }
 
-func (u TurnInputMessageUnion) AsUserMessage() (v shared.UserMessage) {
+func (u TurnInputMessageUnion) AsUserMessage() (v UserMessage) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u TurnInputMessageUnion) AsToolResponseMessage() (v shared.ToolResponseMessage) {
+func (u TurnInputMessageUnion) AsToolResponseMessage() (v ToolResponseMessage) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -250,21 +249,21 @@ func (r *TurnInputMessageUnion) UnmarshalJSON(data []byte) error {
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type TurnStepUnion struct {
 	// This field is from variant [InferenceStep].
-	ModelResponse shared.CompletionMessage `json:"model_response"`
-	StepID        string                   `json:"step_id"`
+	ModelResponse CompletionMessage `json:"model_response"`
+	StepID        string            `json:"step_id"`
 	// Any of "inference", "tool_execution", "shield_call", "memory_retrieval".
 	StepType    string    `json:"step_type"`
 	TurnID      string    `json:"turn_id"`
 	CompletedAt time.Time `json:"completed_at"`
 	StartedAt   time.Time `json:"started_at"`
 	// This field is from variant [ToolExecutionStep].
-	ToolCalls []shared.ToolCall `json:"tool_calls"`
+	ToolCalls []ToolCall `json:"tool_calls"`
 	// This field is from variant [ToolExecutionStep].
 	ToolResponses []ToolResponse `json:"tool_responses"`
 	// This field is from variant [ShieldCallStep].
-	Violation shared.SafetyViolation `json:"violation"`
+	Violation SafetyViolation `json:"violation"`
 	// This field is from variant [MemoryRetrievalStep].
-	InsertedContext shared.InterleavedContentUnion `json:"inserted_context"`
+	InsertedContext InterleavedContentUnion `json:"inserted_context"`
 	// This field is from variant [MemoryRetrievalStep].
 	VectorDBIDs string `json:"vector_db_ids"`
 	JSON        struct {
@@ -368,8 +367,8 @@ func (r *TurnOutputAttachment) UnmarshalJSON(data []byte) error {
 
 // TurnOutputAttachmentContentUnion contains all possible properties and values
 // from [string], [TurnOutputAttachmentContentImageContentItem],
-// [TurnOutputAttachmentContentTextContentItem],
-// [[]shared.InterleavedContentItemUnion], [TurnOutputAttachmentContentURL].
+// [TurnOutputAttachmentContentTextContentItem], [[]InterleavedContentItemUnion],
+// [TurnOutputAttachmentContentURL].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 //
@@ -378,9 +377,9 @@ func (r *TurnOutputAttachment) UnmarshalJSON(data []byte) error {
 type TurnOutputAttachmentContentUnion struct {
 	// This field will be present if the value is a [string] instead of an object.
 	OfString string `json:",inline"`
-	// This field will be present if the value is a
-	// [[]shared.InterleavedContentItemUnion] instead of an object.
-	OfInterleavedContentItemArray []shared.InterleavedContentItemUnion `json:",inline"`
+	// This field will be present if the value is a [[]InterleavedContentItemUnion]
+	// instead of an object.
+	OfInterleavedContentItemArray []InterleavedContentItemUnion `json:",inline"`
 	// This field is from variant [TurnOutputAttachmentContentImageContentItem].
 	Image TurnOutputAttachmentContentImageContentItemImage `json:"image"`
 	Type  string                                           `json:"type"`
@@ -414,7 +413,7 @@ func (u TurnOutputAttachmentContentUnion) AsTextContentItem() (v TurnOutputAttac
 	return
 }
 
-func (u TurnOutputAttachmentContentUnion) AsInterleavedContentItemArray() (v []shared.InterleavedContentItemUnion) {
+func (u TurnOutputAttachmentContentUnion) AsInterleavedContentItemArray() (v []InterleavedContentItemUnion) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -568,7 +567,7 @@ type TurnResponseEventPayloadUnion struct {
 	// This field is from variant [TurnResponseEventPayloadStepStart].
 	Metadata map[string]TurnResponseEventPayloadStepStartMetadataUnion `json:"metadata"`
 	// This field is from variant [TurnResponseEventPayloadStepProgress].
-	Delta shared.ContentDeltaUnion `json:"delta"`
+	Delta ContentDeltaUnion `json:"delta"`
 	// This field is from variant [TurnResponseEventPayloadStepComplete].
 	StepDetails TurnResponseEventPayloadStepCompleteStepDetailsUnion `json:"step_details"`
 	// This field is from variant [TurnResponseEventPayloadTurnStart].
@@ -753,7 +752,7 @@ func (r *TurnResponseEventPayloadStepStartMetadataUnion) UnmarshalJSON(data []by
 // Payload for step progress events in agent turn responses.
 type TurnResponseEventPayloadStepProgress struct {
 	// Incremental content changes during step execution
-	Delta shared.ContentDeltaUnion `json:"delta,required"`
+	Delta ContentDeltaUnion `json:"delta,required"`
 	// Type of event being reported
 	EventType constant.StepProgress `json:"event_type,required"`
 	// Unique identifier for the step within a turn
@@ -818,21 +817,21 @@ func (r *TurnResponseEventPayloadStepComplete) UnmarshalJSON(data []byte) error 
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type TurnResponseEventPayloadStepCompleteStepDetailsUnion struct {
 	// This field is from variant [InferenceStep].
-	ModelResponse shared.CompletionMessage `json:"model_response"`
-	StepID        string                   `json:"step_id"`
+	ModelResponse CompletionMessage `json:"model_response"`
+	StepID        string            `json:"step_id"`
 	// Any of "inference", "tool_execution", "shield_call", "memory_retrieval".
 	StepType    string    `json:"step_type"`
 	TurnID      string    `json:"turn_id"`
 	CompletedAt time.Time `json:"completed_at"`
 	StartedAt   time.Time `json:"started_at"`
 	// This field is from variant [ToolExecutionStep].
-	ToolCalls []shared.ToolCall `json:"tool_calls"`
+	ToolCalls []ToolCall `json:"tool_calls"`
 	// This field is from variant [ToolExecutionStep].
 	ToolResponses []ToolResponse `json:"tool_responses"`
 	// This field is from variant [ShieldCallStep].
-	Violation shared.SafetyViolation `json:"violation"`
+	Violation SafetyViolation `json:"violation"`
 	// This field is from variant [MemoryRetrievalStep].
-	InsertedContext shared.InterleavedContentUnion `json:"inserted_context"`
+	InsertedContext InterleavedContentUnion `json:"inserted_context"`
 	// This field is from variant [MemoryRetrievalStep].
 	VectorDBIDs string `json:"vector_db_ids"`
 	JSON        struct {
@@ -1005,8 +1004,8 @@ func (r *AgentTurnNewParams) UnmarshalJSON(data []byte) error {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type AgentTurnNewParamsMessageUnion struct {
-	OfUserMessage         *shared.UserMessageParam         `json:",omitzero,inline"`
-	OfToolResponseMessage *shared.ToolResponseMessageParam `json:",omitzero,inline"`
+	OfUserMessage         *UserMessageParam         `json:",omitzero,inline"`
+	OfToolResponseMessage *ToolResponseMessageParam `json:",omitzero,inline"`
 	paramUnion
 }
 
@@ -1027,7 +1026,7 @@ func (u *AgentTurnNewParamsMessageUnion) asAny() any {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u AgentTurnNewParamsMessageUnion) GetContext() *shared.InterleavedContentUnionParam {
+func (u AgentTurnNewParamsMessageUnion) GetContext() *InterleavedContentUnionParam {
 	if vt := u.OfUserMessage; vt != nil {
 		return &vt.Context
 	}
@@ -1053,7 +1052,7 @@ func (u AgentTurnNewParamsMessageUnion) GetRole() *string {
 }
 
 // Returns a pointer to the underlying variant's Content property, if present.
-func (u AgentTurnNewParamsMessageUnion) GetContent() *shared.InterleavedContentUnionParam {
+func (u AgentTurnNewParamsMessageUnion) GetContent() *InterleavedContentUnionParam {
 	if vt := u.OfUserMessage; vt != nil {
 		return &vt.Content
 	} else if vt := u.OfToolResponseMessage; vt != nil {
@@ -1088,7 +1087,7 @@ type AgentTurnNewParamsDocumentContentUnion struct {
 	OfString                      param.Opt[string]                                  `json:",omitzero,inline"`
 	OfImageContentItem            *AgentTurnNewParamsDocumentContentImageContentItem `json:",omitzero,inline"`
 	OfTextContentItem             *AgentTurnNewParamsDocumentContentTextContentItem  `json:",omitzero,inline"`
-	OfInterleavedContentItemArray []shared.InterleavedContentItemUnionParam          `json:",omitzero,inline"`
+	OfInterleavedContentItemArray []InterleavedContentItemUnionParam                 `json:",omitzero,inline"`
 	OfURL                         *AgentTurnNewParamsDocumentContentURL              `json:",omitzero,inline"`
 	paramUnion
 }

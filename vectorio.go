@@ -12,7 +12,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
-	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
 // VectorIoService contains methods and other services that help with interacting
@@ -75,7 +74,7 @@ func (r *QueryChunksResponse) UnmarshalJSON(data []byte) error {
 // A chunk of content that can be inserted into a vector database.
 type QueryChunksResponseChunk struct {
 	// The content of the chunk, which can be interleaved text, images, or other types.
-	Content shared.InterleavedContentUnion `json:"content,required"`
+	Content InterleavedContentUnion `json:"content,required"`
 	// Metadata associated with the chunk that will be used in the model context during
 	// inference.
 	Metadata map[string]QueryChunksResponseChunkMetadataUnion `json:"metadata,required"`
@@ -234,7 +233,7 @@ func (r *VectorIoInsertParams) UnmarshalJSON(data []byte) error {
 // The properties Content, Metadata are required.
 type VectorIoInsertParamsChunk struct {
 	// The content of the chunk, which can be interleaved text, images, or other types.
-	Content shared.InterleavedContentUnionParam `json:"content,omitzero,required"`
+	Content InterleavedContentUnionParam `json:"content,omitzero,required"`
 	// Metadata associated with the chunk that will be used in the model context during
 	// inference.
 	Metadata map[string]VectorIoInsertParamsChunkMetadataUnion `json:"metadata,omitzero,required"`
@@ -327,7 +326,7 @@ func (r *VectorIoInsertParamsChunkChunkMetadata) UnmarshalJSON(data []byte) erro
 
 type VectorIoQueryParams struct {
 	// The query to search for.
-	Query shared.InterleavedContentUnionParam `json:"query,omitzero,required"`
+	Query InterleavedContentUnionParam `json:"query,omitzero,required"`
 	// The identifier of the vector database to query.
 	VectorDBID string `json:"vector_db_id,required"`
 	// The parameters of the query.

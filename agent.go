@@ -17,7 +17,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
-	"github.com/llamastack/llama-stack-client-go/shared"
 	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
@@ -90,7 +89,7 @@ func (r *AgentService) Delete(ctx context.Context, agentID string, opts ...optio
 // An inference step in an agent turn.
 type InferenceStep struct {
 	// The response from the LLM.
-	ModelResponse shared.CompletionMessage `json:"model_response,required"`
+	ModelResponse CompletionMessage `json:"model_response,required"`
 	// The ID of the step.
 	StepID string `json:"step_id,required"`
 	// Type of the step in an agent turn.
@@ -123,7 +122,7 @@ func (r *InferenceStep) UnmarshalJSON(data []byte) error {
 // A memory retrieval step in an agent turn.
 type MemoryRetrievalStep struct {
 	// The context retrieved from the vector databases.
-	InsertedContext shared.InterleavedContentUnion `json:"inserted_context,required"`
+	InsertedContext InterleavedContentUnion `json:"inserted_context,required"`
 	// The ID of the step.
 	StepID string `json:"step_id,required"`
 	// Type of the step in an agent turn.
@@ -169,7 +168,7 @@ type ShieldCallStep struct {
 	// The time the step started.
 	StartedAt time.Time `json:"started_at" format:"date-time"`
 	// The violation from the shield call.
-	Violation shared.SafetyViolation `json:"violation"`
+	Violation SafetyViolation `json:"violation"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		StepID      respjson.Field
@@ -196,7 +195,7 @@ type ToolExecutionStep struct {
 	// Type of the step in an agent turn.
 	StepType constant.ToolExecution `json:"step_type,required"`
 	// The tool calls to execute.
-	ToolCalls []shared.ToolCall `json:"tool_calls,required"`
+	ToolCalls []ToolCall `json:"tool_calls,required"`
 	// The tool responses from the tool calls.
 	ToolResponses []ToolResponse `json:"tool_responses,required"`
 	// The ID of the turn.
@@ -230,7 +229,7 @@ type ToolResponse struct {
 	// Unique identifier for the tool call this response is for
 	CallID string `json:"call_id,required"`
 	// The response content from the tool
-	Content shared.InterleavedContentUnion `json:"content,required"`
+	Content InterleavedContentUnion `json:"content,required"`
 	// Name of the tool that was invoked
 	ToolName ToolResponseToolName `json:"tool_name,required"`
 	// (Optional) Additional metadata about the tool response
@@ -330,7 +329,7 @@ type ToolResponseParam struct {
 	// Unique identifier for the tool call this response is for
 	CallID string `json:"call_id,required"`
 	// The response content from the tool
-	Content shared.InterleavedContentUnionParam `json:"content,omitzero,required"`
+	Content InterleavedContentUnionParam `json:"content,omitzero,required"`
 	// Name of the tool that was invoked
 	ToolName ToolResponseToolName `json:"tool_name,omitzero,required"`
 	// (Optional) Additional metadata about the tool response
@@ -398,7 +397,7 @@ func (r *AgentNewResponse) UnmarshalJSON(data []byte) error {
 // An agent instance with configuration and metadata.
 type AgentGetResponse struct {
 	// Configuration settings for the agent
-	AgentConfig shared.AgentConfig `json:"agent_config,required"`
+	AgentConfig AgentConfig `json:"agent_config,required"`
 	// Unique identifier for the agent
 	AgentID string `json:"agent_id,required"`
 	// Timestamp when the agent was created
@@ -497,7 +496,7 @@ func (r *AgentListResponseDataUnion) UnmarshalJSON(data []byte) error {
 
 type AgentNewParams struct {
 	// The configuration for the agent.
-	AgentConfig shared.AgentConfigParam `json:"agent_config,omitzero,required"`
+	AgentConfig AgentConfigParam `json:"agent_config,omitzero,required"`
 	paramObj
 }
 

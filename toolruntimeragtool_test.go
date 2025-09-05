@@ -11,7 +11,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go"
 	"github.com/llamastack/llama-stack-client-go/internal/testutil"
 	"github.com/llamastack/llama-stack-client-go/option"
-	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
 func TestToolRuntimeRagToolInsert(t *testing.T) {
@@ -27,12 +26,12 @@ func TestToolRuntimeRagToolInsert(t *testing.T) {
 	)
 	err := client.ToolRuntime.RagTool.Insert(context.TODO(), llamastackclient.ToolRuntimeRagToolInsertParams{
 		ChunkSizeInTokens: 0,
-		Documents: []shared.DocumentParam{{
-			Content: shared.DocumentContentUnionParam{
+		Documents: []llamastackclient.DocumentParam{{
+			Content: llamastackclient.DocumentContentUnionParam{
 				OfString: llamastackclient.String("string"),
 			},
 			DocumentID: "document_id",
-			Metadata: map[string]shared.DocumentMetadataUnionParam{
+			Metadata: map[string]llamastackclient.DocumentMetadataUnionParam{
 				"foo": {
 					OfBool: llamastackclient.Bool(true),
 				},
@@ -62,22 +61,22 @@ func TestToolRuntimeRagToolQueryWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.ToolRuntime.RagTool.Query(context.TODO(), llamastackclient.ToolRuntimeRagToolQueryParams{
-		Content: shared.InterleavedContentUnionParam{
+		Content: llamastackclient.InterleavedContentUnionParam{
 			OfString: llamastackclient.String("string"),
 		},
 		VectorDBIDs: []string{"string"},
-		QueryConfig: shared.QueryConfigParam{
+		QueryConfig: llamastackclient.QueryConfigParam{
 			ChunkTemplate:      "chunk_template",
 			MaxChunks:          0,
 			MaxTokensInContext: 0,
-			QueryGeneratorConfig: shared.QueryGeneratorConfigUnionParam{
-				OfDefault: &shared.QueryGeneratorConfigDefaultParam{
+			QueryGeneratorConfig: llamastackclient.QueryGeneratorConfigUnionParam{
+				OfDefault: &llamastackclient.QueryGeneratorConfigDefaultParam{
 					Separator: "separator",
 				},
 			},
-			Mode: shared.QueryConfigModeVector,
-			Ranker: shared.QueryConfigRankerUnionParam{
-				OfRrf: &shared.QueryConfigRankerRrfParam{
+			Mode: llamastackclient.QueryConfigModeVector,
+			Ranker: llamastackclient.QueryConfigRankerUnionParam{
+				OfRrf: &llamastackclient.QueryConfigRankerRrfParam{
 					ImpactFactor: 0,
 				},
 			},

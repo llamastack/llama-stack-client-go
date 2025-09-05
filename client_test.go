@@ -14,7 +14,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go"
 	"github.com/llamastack/llama-stack-client-go/internal"
 	"github.com/llamastack/llama-stack-client-go/option"
-	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
 type closureTransport struct {
@@ -40,9 +39,9 @@ func TestUserAgentHeader(t *testing.T) {
 		}),
 	)
 	client.Inference.ChatCompletion(context.Background(), llamastackclient.InferenceChatCompletionParams{
-		Messages: []shared.MessageUnionParam{{
-			OfUser: &shared.UserMessageParam{
-				Content: shared.InterleavedContentUnionParam{
+		Messages: []llamastackclient.MessageUnionParam{{
+			OfUser: &llamastackclient.UserMessageParam{
+				Content: llamastackclient.InterleavedContentUnionParam{
 					OfString: llamastackclient.String("string"),
 				},
 			},
@@ -72,9 +71,9 @@ func TestRetryAfter(t *testing.T) {
 		}),
 	)
 	_, err := client.Inference.ChatCompletion(context.Background(), llamastackclient.InferenceChatCompletionParams{
-		Messages: []shared.MessageUnionParam{{
-			OfUser: &shared.UserMessageParam{
-				Content: shared.InterleavedContentUnionParam{
+		Messages: []llamastackclient.MessageUnionParam{{
+			OfUser: &llamastackclient.UserMessageParam{
+				Content: llamastackclient.InterleavedContentUnionParam{
 					OfString: llamastackclient.String("string"),
 				},
 			},
@@ -115,9 +114,9 @@ func TestDeleteRetryCountHeader(t *testing.T) {
 		option.WithHeaderDel("X-Stainless-Retry-Count"),
 	)
 	_, err := client.Inference.ChatCompletion(context.Background(), llamastackclient.InferenceChatCompletionParams{
-		Messages: []shared.MessageUnionParam{{
-			OfUser: &shared.UserMessageParam{
-				Content: shared.InterleavedContentUnionParam{
+		Messages: []llamastackclient.MessageUnionParam{{
+			OfUser: &llamastackclient.UserMessageParam{
+				Content: llamastackclient.InterleavedContentUnionParam{
 					OfString: llamastackclient.String("string"),
 				},
 			},
@@ -153,9 +152,9 @@ func TestOverwriteRetryCountHeader(t *testing.T) {
 		option.WithHeader("X-Stainless-Retry-Count", "42"),
 	)
 	_, err := client.Inference.ChatCompletion(context.Background(), llamastackclient.InferenceChatCompletionParams{
-		Messages: []shared.MessageUnionParam{{
-			OfUser: &shared.UserMessageParam{
-				Content: shared.InterleavedContentUnionParam{
+		Messages: []llamastackclient.MessageUnionParam{{
+			OfUser: &llamastackclient.UserMessageParam{
+				Content: llamastackclient.InterleavedContentUnionParam{
 					OfString: llamastackclient.String("string"),
 				},
 			},
@@ -190,9 +189,9 @@ func TestRetryAfterMs(t *testing.T) {
 		}),
 	)
 	_, err := client.Inference.ChatCompletion(context.Background(), llamastackclient.InferenceChatCompletionParams{
-		Messages: []shared.MessageUnionParam{{
-			OfUser: &shared.UserMessageParam{
-				Content: shared.InterleavedContentUnionParam{
+		Messages: []llamastackclient.MessageUnionParam{{
+			OfUser: &llamastackclient.UserMessageParam{
+				Content: llamastackclient.InterleavedContentUnionParam{
 					OfString: llamastackclient.String("string"),
 				},
 			},
@@ -221,9 +220,9 @@ func TestContextCancel(t *testing.T) {
 	cancelCtx, cancel := context.WithCancel(context.Background())
 	cancel()
 	_, err := client.Inference.ChatCompletion(cancelCtx, llamastackclient.InferenceChatCompletionParams{
-		Messages: []shared.MessageUnionParam{{
-			OfUser: &shared.UserMessageParam{
-				Content: shared.InterleavedContentUnionParam{
+		Messages: []llamastackclient.MessageUnionParam{{
+			OfUser: &llamastackclient.UserMessageParam{
+				Content: llamastackclient.InterleavedContentUnionParam{
 					OfString: llamastackclient.String("string"),
 				},
 			},
@@ -249,9 +248,9 @@ func TestContextCancelDelay(t *testing.T) {
 	cancelCtx, cancel := context.WithTimeout(context.Background(), 2*time.Millisecond)
 	defer cancel()
 	_, err := client.Inference.ChatCompletion(cancelCtx, llamastackclient.InferenceChatCompletionParams{
-		Messages: []shared.MessageUnionParam{{
-			OfUser: &shared.UserMessageParam{
-				Content: shared.InterleavedContentUnionParam{
+		Messages: []llamastackclient.MessageUnionParam{{
+			OfUser: &llamastackclient.UserMessageParam{
+				Content: llamastackclient.InterleavedContentUnionParam{
 					OfString: llamastackclient.String("string"),
 				},
 			},
@@ -283,9 +282,9 @@ func TestContextDeadline(t *testing.T) {
 			}),
 		)
 		_, err := client.Inference.ChatCompletion(deadlineCtx, llamastackclient.InferenceChatCompletionParams{
-			Messages: []shared.MessageUnionParam{{
-				OfUser: &shared.UserMessageParam{
-					Content: shared.InterleavedContentUnionParam{
+			Messages: []llamastackclient.MessageUnionParam{{
+				OfUser: &llamastackclient.UserMessageParam{
+					Content: llamastackclient.InterleavedContentUnionParam{
 						OfString: llamastackclient.String("string"),
 					},
 				},
@@ -336,9 +335,9 @@ func TestContextDeadlineStreaming(t *testing.T) {
 			}),
 		)
 		stream := client.Inference.ChatCompletionStreaming(deadlineCtx, llamastackclient.InferenceChatCompletionParams{
-			Messages: []shared.MessageUnionParam{{
-				OfUser: &shared.UserMessageParam{
-					Content: shared.InterleavedContentUnionParam{
+			Messages: []llamastackclient.MessageUnionParam{{
+				OfUser: &llamastackclient.UserMessageParam{
+					Content: llamastackclient.InterleavedContentUnionParam{
 						OfString: llamastackclient.String("string"),
 					},
 				},
@@ -391,9 +390,9 @@ func TestContextDeadlineStreamingWithRequestTimeout(t *testing.T) {
 		stream := client.Inference.ChatCompletionStreaming(
 			context.Background(),
 			llamastackclient.InferenceChatCompletionParams{
-				Messages: []shared.MessageUnionParam{{
-					OfUser: &shared.UserMessageParam{
-						Content: shared.InterleavedContentUnionParam{
+				Messages: []llamastackclient.MessageUnionParam{{
+					OfUser: &llamastackclient.UserMessageParam{
+						Content: llamastackclient.InterleavedContentUnionParam{
 							OfString: llamastackclient.String("string"),
 						},
 					},

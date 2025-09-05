@@ -11,7 +11,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go"
 	"github.com/llamastack/llama-stack-client-go/internal/testutil"
 	"github.com/llamastack/llama-stack-client-go/option"
-	"github.com/llamastack/llama-stack-client-go/shared"
 )
 
 func TestVectorIoInsertWithOptionalParams(t *testing.T) {
@@ -27,7 +26,7 @@ func TestVectorIoInsertWithOptionalParams(t *testing.T) {
 	)
 	err := client.VectorIo.Insert(context.TODO(), llamastackclient.VectorIoInsertParams{
 		Chunks: []llamastackclient.VectorIoInsertParamsChunk{{
-			Content: shared.InterleavedContentUnionParam{
+			Content: llamastackclient.InterleavedContentUnionParam{
 				OfString: llamastackclient.String("string"),
 			},
 			Metadata: map[string]llamastackclient.VectorIoInsertParamsChunkMetadataUnion{
@@ -75,7 +74,7 @@ func TestVectorIoQueryWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.VectorIo.Query(context.TODO(), llamastackclient.VectorIoQueryParams{
-		Query: shared.InterleavedContentUnionParam{
+		Query: llamastackclient.InterleavedContentUnionParam{
 			OfString: llamastackclient.String("string"),
 		},
 		VectorDBID: "vector_db_id",
