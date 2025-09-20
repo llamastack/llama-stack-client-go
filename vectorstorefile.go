@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
 	"github.com/llamastack/llama-stack-client-go/internal/apiquery"
@@ -41,7 +42,7 @@ func NewVectorStoreFileService(opts ...option.RequestOption) (r VectorStoreFileS
 
 // Attach a file to a vector store.
 func (r *VectorStoreFileService) New(ctx context.Context, vectorStoreID string, body VectorStoreFileNewParams, opts ...option.RequestOption) (res *VectorStoreFile, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if vectorStoreID == "" {
 		err = errors.New("missing required vector_store_id parameter")
 		return
@@ -53,7 +54,7 @@ func (r *VectorStoreFileService) New(ctx context.Context, vectorStoreID string, 
 
 // Retrieves a vector store file.
 func (r *VectorStoreFileService) Get(ctx context.Context, fileID string, query VectorStoreFileGetParams, opts ...option.RequestOption) (res *VectorStoreFile, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if query.VectorStoreID == "" {
 		err = errors.New("missing required vector_store_id parameter")
 		return
@@ -69,7 +70,7 @@ func (r *VectorStoreFileService) Get(ctx context.Context, fileID string, query V
 
 // Updates a vector store file.
 func (r *VectorStoreFileService) Update(ctx context.Context, fileID string, params VectorStoreFileUpdateParams, opts ...option.RequestOption) (res *VectorStoreFile, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if params.VectorStoreID == "" {
 		err = errors.New("missing required vector_store_id parameter")
 		return
@@ -86,7 +87,7 @@ func (r *VectorStoreFileService) Update(ctx context.Context, fileID string, para
 // List files in a vector store.
 func (r *VectorStoreFileService) List(ctx context.Context, vectorStoreID string, query VectorStoreFileListParams, opts ...option.RequestOption) (res *pagination.OpenAICursorPage[VectorStoreFile], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	if vectorStoreID == "" {
 		err = errors.New("missing required vector_store_id parameter")
@@ -112,7 +113,7 @@ func (r *VectorStoreFileService) ListAutoPaging(ctx context.Context, vectorStore
 
 // Delete a vector store file.
 func (r *VectorStoreFileService) Delete(ctx context.Context, fileID string, body VectorStoreFileDeleteParams, opts ...option.RequestOption) (res *VectorStoreFileDeleteResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if body.VectorStoreID == "" {
 		err = errors.New("missing required vector_store_id parameter")
 		return
@@ -128,7 +129,7 @@ func (r *VectorStoreFileService) Delete(ctx context.Context, fileID string, body
 
 // Retrieves the contents of a vector store file.
 func (r *VectorStoreFileService) Content(ctx context.Context, fileID string, query VectorStoreFileContentParams, opts ...option.RequestOption) (res *VectorStoreFileContentResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if query.VectorStoreID == "" {
 		err = errors.New("missing required vector_store_id parameter")
 		return

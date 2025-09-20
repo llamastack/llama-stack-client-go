@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"slices"
 
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
 	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
@@ -38,7 +39,7 @@ func NewBenchmarkService(opts ...option.RequestOption) (r BenchmarkService) {
 
 // Get a benchmark by its ID.
 func (r *BenchmarkService) Get(ctx context.Context, benchmarkID string, opts ...option.RequestOption) (res *Benchmark, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if benchmarkID == "" {
 		err = errors.New("missing required benchmark_id parameter")
 		return
@@ -51,7 +52,7 @@ func (r *BenchmarkService) Get(ctx context.Context, benchmarkID string, opts ...
 // List all benchmarks.
 func (r *BenchmarkService) List(ctx context.Context, opts ...option.RequestOption) (res *[]Benchmark, err error) {
 	var env ListBenchmarksResponse
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "v1/eval/benchmarks"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
 	if err != nil {
@@ -63,7 +64,7 @@ func (r *BenchmarkService) List(ctx context.Context, opts ...option.RequestOptio
 
 // Register a benchmark.
 func (r *BenchmarkService) Register(ctx context.Context, body BenchmarkRegisterParams, opts ...option.RequestOption) (err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
 	path := "v1/eval/benchmarks"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)

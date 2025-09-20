@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"slices"
 
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
 	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
@@ -38,7 +39,7 @@ func NewShieldService(opts ...option.RequestOption) (r ShieldService) {
 
 // Get a shield by its identifier.
 func (r *ShieldService) Get(ctx context.Context, identifier string, opts ...option.RequestOption) (res *Shield, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if identifier == "" {
 		err = errors.New("missing required identifier parameter")
 		return
@@ -51,7 +52,7 @@ func (r *ShieldService) Get(ctx context.Context, identifier string, opts ...opti
 // List all shields.
 func (r *ShieldService) List(ctx context.Context, opts ...option.RequestOption) (res *[]Shield, err error) {
 	var env ListShieldsResponse
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "v1/shields"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
 	if err != nil {
@@ -63,7 +64,7 @@ func (r *ShieldService) List(ctx context.Context, opts ...option.RequestOption) 
 
 // Register a shield.
 func (r *ShieldService) Register(ctx context.Context, body ShieldRegisterParams, opts ...option.RequestOption) (res *Shield, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "v1/shields"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return

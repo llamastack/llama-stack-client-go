@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"slices"
 
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
 	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
@@ -35,7 +36,7 @@ func NewProviderService(opts ...option.RequestOption) (r ProviderService) {
 
 // Get detailed information about a specific provider.
 func (r *ProviderService) Get(ctx context.Context, providerID string, opts ...option.RequestOption) (res *ProviderInfo, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if providerID == "" {
 		err = errors.New("missing required provider_id parameter")
 		return
@@ -48,7 +49,7 @@ func (r *ProviderService) Get(ctx context.Context, providerID string, opts ...op
 // List all available providers.
 func (r *ProviderService) List(ctx context.Context, opts ...option.RequestOption) (res *[]ProviderInfo, err error) {
 	var env ListProvidersResponse
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "v1/providers"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
 	if err != nil {

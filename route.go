@@ -5,6 +5,7 @@ package llamastackclient
 import (
 	"context"
 	"net/http"
+	"slices"
 
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
 	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
@@ -34,7 +35,7 @@ func NewRouteService(opts ...option.RequestOption) (r RouteService) {
 // List all available API routes with their methods and implementing providers.
 func (r *RouteService) List(ctx context.Context, opts ...option.RequestOption) (res *[]RouteInfo, err error) {
 	var env ListRoutesResponse
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "v1/inspect/routes"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
 	if err != nil {

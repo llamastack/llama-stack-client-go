@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"slices"
 	"time"
 
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
@@ -40,7 +41,7 @@ func NewAgentTurnService(opts ...option.RequestOption) (r AgentTurnService) {
 
 // Create a new turn for an agent.
 func (r *AgentTurnService) New(ctx context.Context, sessionID string, params AgentTurnNewParams, opts ...option.RequestOption) (res *Turn, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if params.AgentID == "" {
 		err = errors.New("missing required agent_id parameter")
 		return
@@ -60,7 +61,7 @@ func (r *AgentTurnService) NewStreaming(ctx context.Context, sessionID string, p
 		raw *http.Response
 		err error
 	)
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithJSONSet("stream", true)}, opts...)
 	if params.AgentID == "" {
 		err = errors.New("missing required agent_id parameter")
@@ -77,7 +78,7 @@ func (r *AgentTurnService) NewStreaming(ctx context.Context, sessionID string, p
 
 // Retrieve an agent turn by its ID.
 func (r *AgentTurnService) Get(ctx context.Context, turnID string, query AgentTurnGetParams, opts ...option.RequestOption) (res *Turn, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if query.AgentID == "" {
 		err = errors.New("missing required agent_id parameter")
 		return
@@ -100,7 +101,7 @@ func (r *AgentTurnService) Get(ctx context.Context, turnID string, query AgentTu
 // endpoint can be used to submit the outputs from the tool calls once they are
 // ready.
 func (r *AgentTurnService) Resume(ctx context.Context, turnID string, params AgentTurnResumeParams, opts ...option.RequestOption) (res *Turn, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if params.AgentID == "" {
 		err = errors.New("missing required agent_id parameter")
 		return
@@ -127,7 +128,7 @@ func (r *AgentTurnService) ResumeStreaming(ctx context.Context, turnID string, p
 		raw *http.Response
 		err error
 	)
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithJSONSet("stream", true)}, opts...)
 	if params.AgentID == "" {
 		err = errors.New("missing required agent_id parameter")
