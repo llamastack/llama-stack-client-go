@@ -5,6 +5,7 @@ package llamastackclient
 import (
 	"context"
 	"net/http"
+	"slices"
 
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
 	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
@@ -37,7 +38,7 @@ func NewPostTrainingService(opts ...option.RequestOption) (r PostTrainingService
 
 // Run preference optimization of a model.
 func (r *PostTrainingService) PreferenceOptimize(ctx context.Context, body PostTrainingPreferenceOptimizeParams, opts ...option.RequestOption) (res *PostTrainingJob, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "v1/post-training/preference-optimize"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -45,7 +46,7 @@ func (r *PostTrainingService) PreferenceOptimize(ctx context.Context, body PostT
 
 // Run supervised fine-tuning of a model.
 func (r *PostTrainingService) SupervisedFineTune(ctx context.Context, body PostTrainingSupervisedFineTuneParams, opts ...option.RequestOption) (res *PostTrainingJob, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "v1/post-training/supervised-fine-tune"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return

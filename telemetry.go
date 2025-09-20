@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"slices"
 	"time"
 
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
@@ -39,7 +40,7 @@ func NewTelemetryService(opts ...option.RequestOption) (r TelemetryService) {
 
 // Get a span by its ID.
 func (r *TelemetryService) GetSpan(ctx context.Context, spanID string, query TelemetryGetSpanParams, opts ...option.RequestOption) (res *TelemetryGetSpanResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if query.TraceID == "" {
 		err = errors.New("missing required trace_id parameter")
 		return
@@ -56,7 +57,7 @@ func (r *TelemetryService) GetSpan(ctx context.Context, spanID string, query Tel
 // Get a span tree by its ID.
 func (r *TelemetryService) GetSpanTree(ctx context.Context, spanID string, body TelemetryGetSpanTreeParams, opts ...option.RequestOption) (res *TelemetryGetSpanTreeResponse, err error) {
 	var env TelemetryGetSpanTreeResponseEnvelope
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if spanID == "" {
 		err = errors.New("missing required span_id parameter")
 		return
@@ -72,7 +73,7 @@ func (r *TelemetryService) GetSpanTree(ctx context.Context, spanID string, body 
 
 // Get a trace by its ID.
 func (r *TelemetryService) GetTrace(ctx context.Context, traceID string, opts ...option.RequestOption) (res *Trace, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if traceID == "" {
 		err = errors.New("missing required trace_id parameter")
 		return
@@ -84,7 +85,7 @@ func (r *TelemetryService) GetTrace(ctx context.Context, traceID string, opts ..
 
 // Log an event.
 func (r *TelemetryService) LogEvent(ctx context.Context, body TelemetryLogEventParams, opts ...option.RequestOption) (err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
 	path := "v1/telemetry/events"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
@@ -94,7 +95,7 @@ func (r *TelemetryService) LogEvent(ctx context.Context, body TelemetryLogEventP
 // Query metrics.
 func (r *TelemetryService) QueryMetrics(ctx context.Context, metricName string, body TelemetryQueryMetricsParams, opts ...option.RequestOption) (res *[]TelemetryQueryMetricsResponse, err error) {
 	var env TelemetryQueryMetricsResponseEnvelope
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if metricName == "" {
 		err = errors.New("missing required metric_name parameter")
 		return
@@ -111,7 +112,7 @@ func (r *TelemetryService) QueryMetrics(ctx context.Context, metricName string, 
 // Query spans.
 func (r *TelemetryService) QuerySpans(ctx context.Context, body TelemetryQuerySpansParams, opts ...option.RequestOption) (res *[]QuerySpansResponseData, err error) {
 	var env QuerySpansResponse
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "v1/telemetry/spans"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &env, opts...)
 	if err != nil {
@@ -124,7 +125,7 @@ func (r *TelemetryService) QuerySpans(ctx context.Context, body TelemetryQuerySp
 // Query traces.
 func (r *TelemetryService) QueryTraces(ctx context.Context, body TelemetryQueryTracesParams, opts ...option.RequestOption) (res *[]Trace, err error) {
 	var env TelemetryQueryTracesResponseEnvelope
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "v1/telemetry/traces"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &env, opts...)
 	if err != nil {
@@ -136,7 +137,7 @@ func (r *TelemetryService) QueryTraces(ctx context.Context, body TelemetryQueryT
 
 // Save spans to a dataset.
 func (r *TelemetryService) SaveSpansToDataset(ctx context.Context, body TelemetrySaveSpansToDatasetParams, opts ...option.RequestOption) (err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
 	path := "v1/telemetry/spans/export"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)

@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"slices"
 
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
 	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
@@ -38,7 +39,7 @@ func NewModelService(opts ...option.RequestOption) (r ModelService) {
 
 // Get a model by its identifier.
 func (r *ModelService) Get(ctx context.Context, modelID string, opts ...option.RequestOption) (res *Model, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if modelID == "" {
 		err = errors.New("missing required model_id parameter")
 		return
@@ -51,7 +52,7 @@ func (r *ModelService) Get(ctx context.Context, modelID string, opts ...option.R
 // List all models.
 func (r *ModelService) List(ctx context.Context, opts ...option.RequestOption) (res *[]Model, err error) {
 	var env ListModelsResponse
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "v1/models"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
 	if err != nil {
@@ -63,7 +64,7 @@ func (r *ModelService) List(ctx context.Context, opts ...option.RequestOption) (
 
 // Register a model.
 func (r *ModelService) Register(ctx context.Context, body ModelRegisterParams, opts ...option.RequestOption) (res *Model, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "v1/models"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -71,7 +72,7 @@ func (r *ModelService) Register(ctx context.Context, body ModelRegisterParams, o
 
 // Unregister a model.
 func (r *ModelService) Unregister(ctx context.Context, modelID string, opts ...option.RequestOption) (err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
 	if modelID == "" {
 		err = errors.New("missing required model_id parameter")

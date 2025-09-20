@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
 	"github.com/llamastack/llama-stack-client-go/internal/apiquery"
@@ -44,7 +45,7 @@ func NewResponseService(opts ...option.RequestOption) (r ResponseService) {
 
 // Create a new OpenAI response.
 func (r *ResponseService) New(ctx context.Context, body ResponseNewParams, opts ...option.RequestOption) (res *ResponseObject, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "v1/openai/v1/responses"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -56,7 +57,7 @@ func (r *ResponseService) NewStreaming(ctx context.Context, body ResponseNewPara
 		raw *http.Response
 		err error
 	)
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithJSONSet("stream", true)}, opts...)
 	path := "v1/openai/v1/responses"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &raw, opts...)
@@ -65,7 +66,7 @@ func (r *ResponseService) NewStreaming(ctx context.Context, body ResponseNewPara
 
 // Retrieve an OpenAI response by its ID.
 func (r *ResponseService) Get(ctx context.Context, responseID string, opts ...option.RequestOption) (res *ResponseObject, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if responseID == "" {
 		err = errors.New("missing required response_id parameter")
 		return
@@ -78,7 +79,7 @@ func (r *ResponseService) Get(ctx context.Context, responseID string, opts ...op
 // List all OpenAI responses.
 func (r *ResponseService) List(ctx context.Context, query ResponseListParams, opts ...option.RequestOption) (res *pagination.OpenAICursorPage[ResponseListResponse], err error) {
 	var raw *http.Response
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	path := "v1/openai/v1/responses"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)

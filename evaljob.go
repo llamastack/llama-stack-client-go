@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"slices"
 
 	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
 	"github.com/llamastack/llama-stack-client-go/option"
@@ -33,7 +34,7 @@ func NewEvalJobService(opts ...option.RequestOption) (r EvalJobService) {
 
 // Get the result of a job.
 func (r *EvalJobService) Get(ctx context.Context, jobID string, query EvalJobGetParams, opts ...option.RequestOption) (res *EvaluateResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if query.BenchmarkID == "" {
 		err = errors.New("missing required benchmark_id parameter")
 		return
@@ -49,7 +50,7 @@ func (r *EvalJobService) Get(ctx context.Context, jobID string, query EvalJobGet
 
 // Cancel a job.
 func (r *EvalJobService) Cancel(ctx context.Context, jobID string, body EvalJobCancelParams, opts ...option.RequestOption) (err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
 	if body.BenchmarkID == "" {
 		err = errors.New("missing required benchmark_id parameter")
@@ -66,7 +67,7 @@ func (r *EvalJobService) Cancel(ctx context.Context, jobID string, body EvalJobC
 
 // Get the status of a job.
 func (r *EvalJobService) Status(ctx context.Context, jobID string, query EvalJobStatusParams, opts ...option.RequestOption) (res *Job, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if query.BenchmarkID == "" {
 		err = errors.New("missing required benchmark_id parameter")
 		return

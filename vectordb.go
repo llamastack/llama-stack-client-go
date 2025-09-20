@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"slices"
 
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
 	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
@@ -37,7 +38,7 @@ func NewVectorDBService(opts ...option.RequestOption) (r VectorDBService) {
 
 // Get a vector database by its identifier.
 func (r *VectorDBService) Get(ctx context.Context, vectorDBID string, opts ...option.RequestOption) (res *VectorDBGetResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if vectorDBID == "" {
 		err = errors.New("missing required vector_db_id parameter")
 		return
@@ -50,7 +51,7 @@ func (r *VectorDBService) Get(ctx context.Context, vectorDBID string, opts ...op
 // List all vector databases.
 func (r *VectorDBService) List(ctx context.Context, opts ...option.RequestOption) (res *[]ListVectorDBsResponseData, err error) {
 	var env ListVectorDBsResponse
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "v1/vector-dbs"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
 	if err != nil {
@@ -62,7 +63,7 @@ func (r *VectorDBService) List(ctx context.Context, opts ...option.RequestOption
 
 // Register a vector database.
 func (r *VectorDBService) Register(ctx context.Context, body VectorDBRegisterParams, opts ...option.RequestOption) (res *VectorDBRegisterResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "v1/vector-dbs"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -70,7 +71,7 @@ func (r *VectorDBService) Register(ctx context.Context, body VectorDBRegisterPar
 
 // Unregister a vector database.
 func (r *VectorDBService) Unregister(ctx context.Context, vectorDBID string, opts ...option.RequestOption) (err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
 	if vectorDBID == "" {
 		err = errors.New("missing required vector_db_id parameter")

@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"slices"
 
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
 	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
@@ -38,7 +39,7 @@ func NewScoringFunctionService(opts ...option.RequestOption) (r ScoringFunctionS
 
 // Get a scoring function by its ID.
 func (r *ScoringFunctionService) Get(ctx context.Context, scoringFnID string, opts ...option.RequestOption) (res *ScoringFn, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if scoringFnID == "" {
 		err = errors.New("missing required scoring_fn_id parameter")
 		return
@@ -51,7 +52,7 @@ func (r *ScoringFunctionService) Get(ctx context.Context, scoringFnID string, op
 // List all scoring functions.
 func (r *ScoringFunctionService) List(ctx context.Context, opts ...option.RequestOption) (res *[]ScoringFn, err error) {
 	var env ListScoringFunctionsResponse
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "v1/scoring-functions"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
 	if err != nil {
@@ -63,7 +64,7 @@ func (r *ScoringFunctionService) List(ctx context.Context, opts ...option.Reques
 
 // Register a scoring function.
 func (r *ScoringFunctionService) Register(ctx context.Context, body ScoringFunctionRegisterParams, opts ...option.RequestOption) (err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
 	path := "v1/scoring-functions"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)

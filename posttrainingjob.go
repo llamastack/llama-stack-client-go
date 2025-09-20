@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
@@ -39,7 +40,7 @@ func NewPostTrainingJobService(opts ...option.RequestOption) (r PostTrainingJobS
 // Get all training jobs.
 func (r *PostTrainingJobService) List(ctx context.Context, opts ...option.RequestOption) (res *[]ListPostTrainingJobsResponseData, err error) {
 	var env ListPostTrainingJobsResponse
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "v1/post-training/jobs"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
 	if err != nil {
@@ -51,7 +52,7 @@ func (r *PostTrainingJobService) List(ctx context.Context, opts ...option.Reques
 
 // Get the artifacts of a training job.
 func (r *PostTrainingJobService) Artifacts(ctx context.Context, query PostTrainingJobArtifactsParams, opts ...option.RequestOption) (res *PostTrainingJobArtifactsResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "v1/post-training/job/artifacts"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
 	return
@@ -59,7 +60,7 @@ func (r *PostTrainingJobService) Artifacts(ctx context.Context, query PostTraini
 
 // Cancel a training job.
 func (r *PostTrainingJobService) Cancel(ctx context.Context, body PostTrainingJobCancelParams, opts ...option.RequestOption) (err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
 	path := "v1/post-training/job/cancel"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
@@ -68,7 +69,7 @@ func (r *PostTrainingJobService) Cancel(ctx context.Context, body PostTrainingJo
 
 // Get the status of a training job.
 func (r *PostTrainingJobService) Status(ctx context.Context, query PostTrainingJobStatusParams, opts ...option.RequestOption) (res *PostTrainingJobStatusResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "v1/post-training/job/status"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
 	return

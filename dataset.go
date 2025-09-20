@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
 	"github.com/llamastack/llama-stack-client-go/internal/apiquery"
@@ -40,7 +41,7 @@ func NewDatasetService(opts ...option.RequestOption) (r DatasetService) {
 
 // Get a dataset by its ID.
 func (r *DatasetService) Get(ctx context.Context, datasetID string, opts ...option.RequestOption) (res *DatasetGetResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if datasetID == "" {
 		err = errors.New("missing required dataset_id parameter")
 		return
@@ -53,7 +54,7 @@ func (r *DatasetService) Get(ctx context.Context, datasetID string, opts ...opti
 // List all datasets.
 func (r *DatasetService) List(ctx context.Context, opts ...option.RequestOption) (res *[]ListDatasetsResponseData, err error) {
 	var env ListDatasetsResponse
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "v1/datasets"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
 	if err != nil {
@@ -65,7 +66,7 @@ func (r *DatasetService) List(ctx context.Context, opts ...option.RequestOption)
 
 // Append rows to a dataset.
 func (r *DatasetService) Appendrows(ctx context.Context, datasetID string, body DatasetAppendrowsParams, opts ...option.RequestOption) (err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
 	if datasetID == "" {
 		err = errors.New("missing required dataset_id parameter")
@@ -86,7 +87,7 @@ func (r *DatasetService) Appendrows(ctx context.Context, datasetID string, body 
 // - data: List of items for the current page.
 // - has_more: Whether there are more items available after this set.
 func (r *DatasetService) Iterrows(ctx context.Context, datasetID string, query DatasetIterrowsParams, opts ...option.RequestOption) (res *DatasetIterrowsResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if datasetID == "" {
 		err = errors.New("missing required dataset_id parameter")
 		return
@@ -98,7 +99,7 @@ func (r *DatasetService) Iterrows(ctx context.Context, datasetID string, query D
 
 // Register a new dataset.
 func (r *DatasetService) Register(ctx context.Context, body DatasetRegisterParams, opts ...option.RequestOption) (res *DatasetRegisterResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "v1/datasets"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
@@ -106,7 +107,7 @@ func (r *DatasetService) Register(ctx context.Context, body DatasetRegisterParam
 
 // Unregister a dataset by its ID.
 func (r *DatasetService) Unregister(ctx context.Context, datasetID string, opts ...option.RequestOption) (err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
 	if datasetID == "" {
 		err = errors.New("missing required dataset_id parameter")

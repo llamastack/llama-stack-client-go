@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"slices"
 	"time"
 
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
@@ -37,7 +38,7 @@ func NewAgentStepService(opts ...option.RequestOption) (r AgentStepService) {
 
 // Retrieve an agent step by its ID.
 func (r *AgentStepService) Get(ctx context.Context, stepID string, query AgentStepGetParams, opts ...option.RequestOption) (res *AgentStepGetResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if query.AgentID == "" {
 		err = errors.New("missing required agent_id parameter")
 		return
