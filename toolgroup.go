@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"slices"
 
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
 	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
@@ -39,7 +40,7 @@ func NewToolgroupService(opts ...option.RequestOption) (r ToolgroupService) {
 // List tool groups with optional provider.
 func (r *ToolgroupService) List(ctx context.Context, opts ...option.RequestOption) (res *[]ToolGroup, err error) {
 	var env ListToolGroupsResponse
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "v1/toolgroups"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
 	if err != nil {
@@ -51,7 +52,7 @@ func (r *ToolgroupService) List(ctx context.Context, opts ...option.RequestOptio
 
 // Get a tool group by its ID.
 func (r *ToolgroupService) Get(ctx context.Context, toolgroupID string, opts ...option.RequestOption) (res *ToolGroup, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if toolgroupID == "" {
 		err = errors.New("missing required toolgroup_id parameter")
 		return
@@ -63,7 +64,7 @@ func (r *ToolgroupService) Get(ctx context.Context, toolgroupID string, opts ...
 
 // Register a tool group.
 func (r *ToolgroupService) Register(ctx context.Context, body ToolgroupRegisterParams, opts ...option.RequestOption) (err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
 	path := "v1/toolgroups"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
@@ -72,7 +73,7 @@ func (r *ToolgroupService) Register(ctx context.Context, body ToolgroupRegisterP
 
 // Unregister a tool group.
 func (r *ToolgroupService) Unregister(ctx context.Context, toolgroupID string, opts ...option.RequestOption) (err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
 	if toolgroupID == "" {
 		err = errors.New("missing required toolgroup_id parameter")

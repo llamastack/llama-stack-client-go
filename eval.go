@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"slices"
 
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
 	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
@@ -40,7 +41,7 @@ func NewEvalService(opts ...option.RequestOption) (r EvalService) {
 
 // Evaluate a list of rows on a benchmark.
 func (r *EvalService) EvaluateRows(ctx context.Context, benchmarkID string, body EvalEvaluateRowsParams, opts ...option.RequestOption) (res *EvaluateResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if benchmarkID == "" {
 		err = errors.New("missing required benchmark_id parameter")
 		return
@@ -52,7 +53,7 @@ func (r *EvalService) EvaluateRows(ctx context.Context, benchmarkID string, body
 
 // Evaluate a list of rows on a benchmark.
 func (r *EvalService) EvaluateRowsAlpha(ctx context.Context, benchmarkID string, body EvalEvaluateRowsAlphaParams, opts ...option.RequestOption) (res *EvaluateResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if benchmarkID == "" {
 		err = errors.New("missing required benchmark_id parameter")
 		return
@@ -64,7 +65,7 @@ func (r *EvalService) EvaluateRowsAlpha(ctx context.Context, benchmarkID string,
 
 // Run an evaluation on a benchmark.
 func (r *EvalService) RunEval(ctx context.Context, benchmarkID string, body EvalRunEvalParams, opts ...option.RequestOption) (res *Job, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if benchmarkID == "" {
 		err = errors.New("missing required benchmark_id parameter")
 		return
@@ -76,7 +77,7 @@ func (r *EvalService) RunEval(ctx context.Context, benchmarkID string, body Eval
 
 // Run an evaluation on a benchmark.
 func (r *EvalService) RunEvalAlpha(ctx context.Context, benchmarkID string, body EvalRunEvalAlphaParams, opts ...option.RequestOption) (res *Job, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if benchmarkID == "" {
 		err = errors.New("missing required benchmark_id parameter")
 		return

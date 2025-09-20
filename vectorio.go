@@ -6,6 +6,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"slices"
 
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
 	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
@@ -35,7 +36,7 @@ func NewVectorIoService(opts ...option.RequestOption) (r VectorIoService) {
 
 // Insert chunks into a vector database.
 func (r *VectorIoService) Insert(ctx context.Context, body VectorIoInsertParams, opts ...option.RequestOption) (err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
 	path := "v1/vector-io/insert"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
@@ -44,7 +45,7 @@ func (r *VectorIoService) Insert(ctx context.Context, body VectorIoInsertParams,
 
 // Query chunks from a vector database.
 func (r *VectorIoService) Query(ctx context.Context, body VectorIoQueryParams, opts ...option.RequestOption) (res *QueryChunksResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	path := "v1/vector-io/query"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return

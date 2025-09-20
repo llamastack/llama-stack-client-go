@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 	"time"
 
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
@@ -40,7 +41,7 @@ func NewAgentSessionService(opts ...option.RequestOption) (r AgentSessionService
 
 // Create a new session for an agent.
 func (r *AgentSessionService) New(ctx context.Context, agentID string, body AgentSessionNewParams, opts ...option.RequestOption) (res *AgentSessionNewResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if agentID == "" {
 		err = errors.New("missing required agent_id parameter")
 		return
@@ -52,7 +53,7 @@ func (r *AgentSessionService) New(ctx context.Context, agentID string, body Agen
 
 // Retrieve an agent session by its ID.
 func (r *AgentSessionService) Get(ctx context.Context, sessionID string, params AgentSessionGetParams, opts ...option.RequestOption) (res *Session, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if params.AgentID == "" {
 		err = errors.New("missing required agent_id parameter")
 		return
@@ -68,7 +69,7 @@ func (r *AgentSessionService) Get(ctx context.Context, sessionID string, params 
 
 // List all session(s) of a given agent.
 func (r *AgentSessionService) List(ctx context.Context, agentID string, query AgentSessionListParams, opts ...option.RequestOption) (res *AgentSessionListResponse, err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	if agentID == "" {
 		err = errors.New("missing required agent_id parameter")
 		return
@@ -80,7 +81,7 @@ func (r *AgentSessionService) List(ctx context.Context, agentID string, query Ag
 
 // Delete an agent session by its ID and its associated turns.
 func (r *AgentSessionService) Delete(ctx context.Context, sessionID string, body AgentSessionDeleteParams, opts ...option.RequestOption) (err error) {
-	opts = append(r.Options[:], opts...)
+	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
 	if body.AgentID == "" {
 		err = errors.New("missing required agent_id parameter")
