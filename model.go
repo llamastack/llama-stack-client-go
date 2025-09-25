@@ -26,6 +26,7 @@ import (
 // the [NewModelService] method instead.
 type ModelService struct {
 	Options []option.RequestOption
+	OpenAI  ModelOpenAIService
 }
 
 // NewModelService generates a new service that applies the given options to each
@@ -34,6 +35,7 @@ type ModelService struct {
 func NewModelService(opts ...option.RequestOption) (r ModelService) {
 	r = ModelService{}
 	r.Options = opts
+	r.OpenAI = NewModelOpenAIService(opts...)
 	return
 }
 
