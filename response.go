@@ -99,6 +99,18 @@ func (r *ResponseService) ListAutoPaging(ctx context.Context, query ResponseList
 	return pagination.NewOpenAICursorPageAutoPager(r.List(ctx, query, opts...))
 }
 
+// Delete an OpenAI response by its ID.
+func (r *ResponseService) Delete(ctx context.Context, responseID string, opts ...option.RequestOption) (res *ResponseDeleteResponse, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if responseID == "" {
+		err = errors.New("missing required response_id parameter")
+		return
+	}
+	path := fmt.Sprintf("v1/openai/v1/responses/%s", responseID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
+	return
+}
+
 // Complete OpenAI response object containing generation results and metadata.
 type ResponseObject struct {
 	// Unique identifier for this response
@@ -6293,6 +6305,30 @@ type ResponseListResponseError struct {
 // Returns the unmodified JSON received from the API
 func (r ResponseListResponseError) RawJSON() string { return r.JSON.raw }
 func (r *ResponseListResponseError) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Response object confirming deletion of an OpenAI response.
+type ResponseDeleteResponse struct {
+	// Unique identifier of the deleted response
+	ID string `json:"id,required"`
+	// Deletion confirmation flag, always True
+	Deleted bool `json:"deleted,required"`
+	// Object type identifier, always "response"
+	Object constant.Response `json:"object,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Deleted     respjson.Field
+		Object      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseDeleteResponse) RawJSON() string { return r.JSON.raw }
+func (r *ResponseDeleteResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
