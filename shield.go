@@ -62,6 +62,19 @@ func (r *ShieldService) List(ctx context.Context, opts ...option.RequestOption) 
 	return
 }
 
+// Unregister a shield.
+func (r *ShieldService) Delete(ctx context.Context, identifier string, opts ...option.RequestOption) (err error) {
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	if identifier == "" {
+		err = errors.New("missing required identifier parameter")
+		return
+	}
+	path := fmt.Sprintf("v1/shields/%s", identifier)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
+	return
+}
+
 // Register a shield.
 func (r *ShieldService) Register(ctx context.Context, body ShieldRegisterParams, opts ...option.RequestOption) (res *Shield, err error) {
 	opts = slices.Concat(r.Options, opts)

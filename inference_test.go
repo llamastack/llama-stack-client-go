@@ -279,3 +279,33 @@ func TestInferenceEmbeddingsWithOptionalParams(t *testing.T) {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
 }
+
+func TestInferenceRerankWithOptionalParams(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := llamastackclient.NewClient(
+		option.WithBaseURL(baseURL),
+	)
+	_, err := client.Inference.Rerank(context.TODO(), llamastackclient.InferenceRerankParams{
+		Items: []llamastackclient.InferenceRerankParamsItemUnion{{
+			OfString: llamastackclient.String("string"),
+		}},
+		Model: "model",
+		Query: llamastackclient.InferenceRerankParamsQueryUnion{
+			OfString: llamastackclient.String("string"),
+		},
+		MaxNumResults: llamastackclient.Int(0),
+	})
+	if err != nil {
+		var apierr *llamastackclient.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
