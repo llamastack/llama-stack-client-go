@@ -47,7 +47,7 @@ func (r *VectorStoreFileService) New(ctx context.Context, vectorStoreID string, 
 		err = errors.New("missing required vector_store_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/openai/v1/vector_stores/%s/files", vectorStoreID)
+	path := fmt.Sprintf("v1/vector_stores/%s/files", vectorStoreID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
@@ -63,7 +63,7 @@ func (r *VectorStoreFileService) Get(ctx context.Context, fileID string, query V
 		err = errors.New("missing required file_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/openai/v1/vector_stores/%s/files/%s", query.VectorStoreID, fileID)
+	path := fmt.Sprintf("v1/vector_stores/%s/files/%s", query.VectorStoreID, fileID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return
 }
@@ -79,7 +79,7 @@ func (r *VectorStoreFileService) Update(ctx context.Context, fileID string, para
 		err = errors.New("missing required file_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/openai/v1/vector_stores/%s/files/%s", params.VectorStoreID, fileID)
+	path := fmt.Sprintf("v1/vector_stores/%s/files/%s", params.VectorStoreID, fileID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
@@ -93,7 +93,7 @@ func (r *VectorStoreFileService) List(ctx context.Context, vectorStoreID string,
 		err = errors.New("missing required vector_store_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/openai/v1/vector_stores/%s/files", vectorStoreID)
+	path := fmt.Sprintf("v1/vector_stores/%s/files", vectorStoreID)
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
 	if err != nil {
 		return nil, err
@@ -122,7 +122,7 @@ func (r *VectorStoreFileService) Delete(ctx context.Context, fileID string, body
 		err = errors.New("missing required file_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/openai/v1/vector_stores/%s/files/%s", body.VectorStoreID, fileID)
+	path := fmt.Sprintf("v1/vector_stores/%s/files/%s", body.VectorStoreID, fileID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
 	return
 }
@@ -138,7 +138,7 @@ func (r *VectorStoreFileService) Content(ctx context.Context, fileID string, que
 		err = errors.New("missing required file_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/openai/v1/vector_stores/%s/files/%s/content", query.VectorStoreID, fileID)
+	path := fmt.Sprintf("v1/vector_stores/%s/files/%s/content", query.VectorStoreID, fileID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return
 }

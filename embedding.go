@@ -39,7 +39,7 @@ func NewEmbeddingService(opts ...option.RequestOption) (r EmbeddingService) {
 // model.
 func (r *EmbeddingService) New(ctx context.Context, body EmbeddingNewParams, opts ...option.RequestOption) (res *CreateEmbeddingsResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	path := "v1/openai/v1/embeddings"
+	path := "v1/embeddings"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }

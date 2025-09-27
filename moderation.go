@@ -37,7 +37,7 @@ func NewModerationService(opts ...option.RequestOption) (r ModerationService) {
 // Classifies if text and/or image inputs are potentially harmful.
 func (r *ModerationService) New(ctx context.Context, body ModerationNewParams, opts ...option.RequestOption) (res *CreateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	path := "v1/openai/v1/moderations"
+	path := "v1/moderations"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }

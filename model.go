@@ -51,9 +51,9 @@ func (r *ModelService) Get(ctx context.Context, modelID string, opts ...option.R
 	return
 }
 
-// List all models.
-func (r *ModelService) List(ctx context.Context, opts ...option.RequestOption) (res *[]Model, err error) {
-	var env ListModelsResponse
+// List models using the OpenAI API.
+func (r *ModelService) List(ctx context.Context, opts ...option.RequestOption) (res *[]ModelListResponse, err error) {
+	var env ModelListResponseEnvelope
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/models"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
@@ -83,22 +83,6 @@ func (r *ModelService) Unregister(ctx context.Context, modelID string, opts ...o
 	path := fmt.Sprintf("v1/models/%s", modelID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
 	return
-}
-
-type ListModelsResponse struct {
-	Data []Model `json:"data,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ListModelsResponse) RawJSON() string { return r.JSON.raw }
-func (r *ListModelsResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
 }
 
 // A model resource representing an AI model registered in Llama Stack.
@@ -195,6 +179,45 @@ const (
 	ModelModelTypeLlm       ModelModelType = "llm"
 	ModelModelTypeEmbedding ModelModelType = "embedding"
 )
+
+// A model from OpenAI.
+type ModelListResponse struct {
+	ID      string         `json:"id,required"`
+	Created int64          `json:"created,required"`
+	Object  constant.Model `json:"object,required"`
+	OwnedBy string         `json:"owned_by,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Created     respjson.Field
+		Object      respjson.Field
+		OwnedBy     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ModelListResponse) RawJSON() string { return r.JSON.raw }
+func (r *ModelListResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ModelListResponseEnvelope struct {
+	Data []ModelListResponse `json:"data,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Data        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ModelListResponseEnvelope) RawJSON() string { return r.JSON.raw }
+func (r *ModelListResponseEnvelope) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 type ModelRegisterParams struct {
 	// The identifier of the model to register.
