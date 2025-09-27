@@ -35,26 +35,10 @@ func NewInferenceService(opts ...option.RequestOption) (r InferenceService) {
 	return
 }
 
-// Generate chat completions for a batch of messages using the specified model.
-func (r *InferenceService) BatchChatCompletion(ctx context.Context, body InferenceBatchChatCompletionParams, opts ...option.RequestOption) (res *InferenceBatchChatCompletionResponse, err error) {
-	opts = slices.Concat(r.Options, opts)
-	path := "v1/inference/batch-chat-completion"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
-}
-
-// Generate completions for a batch of content using the specified model.
-func (r *InferenceService) BatchCompletion(ctx context.Context, body InferenceBatchCompletionParams, opts ...option.RequestOption) (res *BatchCompletion, err error) {
-	opts = slices.Concat(r.Options, opts)
-	path := "v1/inference/batch-completion"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
-}
-
 // Generate a chat completion for the given messages using the specified model.
 //
 // Deprecated: /v1/inference/chat-completion is deprecated. Please use
-// /v1/openai/v1/chat/completions.
+// /v1/chat/completions.
 func (r *InferenceService) ChatCompletion(ctx context.Context, body InferenceChatCompletionParams, opts ...option.RequestOption) (res *ChatCompletionResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/inference/chat-completion"
@@ -65,7 +49,7 @@ func (r *InferenceService) ChatCompletion(ctx context.Context, body InferenceCha
 // Generate a chat completion for the given messages using the specified model.
 //
 // Deprecated: /v1/inference/chat-completion is deprecated. Please use
-// /v1/openai/v1/chat/completions.
+// /v1/chat/completions.
 func (r *InferenceService) ChatCompletionStreaming(ctx context.Context, body InferenceChatCompletionParams, opts ...option.RequestOption) (stream *ssestream.Stream[ChatCompletionResponseStreamChunk]) {
 	var (
 		raw *http.Response
@@ -78,37 +62,9 @@ func (r *InferenceService) ChatCompletionStreaming(ctx context.Context, body Inf
 	return ssestream.NewStream[ChatCompletionResponseStreamChunk](ssestream.NewDecoder(raw), err)
 }
 
-// Generate a completion for the given content using the specified model.
-//
-// Deprecated: /v1/inference/completion is deprecated. Please use
-// /v1/openai/v1/completions.
-func (r *InferenceService) Completion(ctx context.Context, body InferenceCompletionParams, opts ...option.RequestOption) (res *CompletionResponse, err error) {
-	opts = slices.Concat(r.Options, opts)
-	path := "v1/inference/completion"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
-}
-
-// Generate a completion for the given content using the specified model.
-//
-// Deprecated: /v1/inference/completion is deprecated. Please use
-// /v1/openai/v1/completions.
-func (r *InferenceService) CompletionStreaming(ctx context.Context, body InferenceCompletionParams, opts ...option.RequestOption) (stream *ssestream.Stream[CompletionResponse]) {
-	var (
-		raw *http.Response
-		err error
-	)
-	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithJSONSet("stream", true)}, opts...)
-	path := "v1/inference/completion"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &raw, opts...)
-	return ssestream.NewStream[CompletionResponse](ssestream.NewDecoder(raw), err)
-}
-
 // Generate embeddings for content pieces using the specified model.
 //
-// Deprecated: /v1/inference/embeddings is deprecated. Please use
-// /v1/openai/v1/embeddings.
+// Deprecated: /v1/inference/embeddings is deprecated. Please use /v1/embeddings.
 func (r *InferenceService) Embeddings(ctx context.Context, body InferenceEmbeddingsParams, opts ...option.RequestOption) (res *EmbeddingsResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/inference/embeddings"
@@ -182,44 +138,6 @@ func (r *ChatCompletionResponseStreamChunkEvent) UnmarshalJSON(data []byte) erro
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Response from a completion request.
-type CompletionResponse struct {
-	// The generated completion text
-	Content string `json:"content,required"`
-	// Reason why generation stopped
-	//
-	// Any of "end_of_turn", "end_of_message", "out_of_tokens".
-	StopReason CompletionResponseStopReason `json:"stop_reason,required"`
-	// Optional log probabilities for generated tokens
-	Logprobs []TokenLogProbs `json:"logprobs"`
-	// (Optional) List of metrics associated with the API response
-	Metrics []Metric `json:"metrics"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Content     respjson.Field
-		StopReason  respjson.Field
-		Logprobs    respjson.Field
-		Metrics     respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r CompletionResponse) RawJSON() string { return r.JSON.raw }
-func (r *CompletionResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Reason why generation stopped
-type CompletionResponseStopReason string
-
-const (
-	CompletionResponseStopReasonEndOfTurn    CompletionResponseStopReason = "end_of_turn"
-	CompletionResponseStopReasonEndOfMessage CompletionResponseStopReason = "end_of_message"
-	CompletionResponseStopReasonOutOfTokens  CompletionResponseStopReason = "out_of_tokens"
-)
-
 // Response containing generated embeddings.
 type EmbeddingsResponse struct {
 	// List of embedding vectors, one per input content. Each embedding is a list of
@@ -258,24 +176,6 @@ func (r *TokenLogProbs) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Response from a batch chat completion request.
-type InferenceBatchChatCompletionResponse struct {
-	// List of chat completion responses, one for each conversation in the batch
-	Batch []ChatCompletionResponse `json:"batch,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Batch       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r InferenceBatchChatCompletionResponse) RawJSON() string { return r.JSON.raw }
-func (r *InferenceBatchChatCompletionResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // A single rerank result from a reranking response.
 type InferenceRerankResponse struct {
 	// The original index of the document in the input list
@@ -295,149 +195,6 @@ type InferenceRerankResponse struct {
 // Returns the unmodified JSON received from the API
 func (r InferenceRerankResponse) RawJSON() string { return r.JSON.raw }
 func (r *InferenceRerankResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type InferenceBatchChatCompletionParams struct {
-	// The messages to generate completions for.
-	MessagesBatch [][]MessageUnionParam `json:"messages_batch,omitzero,required"`
-	// The identifier of the model to use. The model must be registered with Llama
-	// Stack and available via the /models endpoint.
-	ModelID string `json:"model_id,required"`
-	// (Optional) If specified, log probabilities for each token position will be
-	// returned.
-	Logprobs InferenceBatchChatCompletionParamsLogprobs `json:"logprobs,omitzero"`
-	// (Optional) Grammar specification for guided (structured) decoding.
-	ResponseFormat ResponseFormatUnionParam `json:"response_format,omitzero"`
-	// (Optional) Parameters to control the sampling strategy.
-	SamplingParams SamplingParams `json:"sampling_params,omitzero"`
-	// (Optional) Configuration for tool use.
-	ToolConfig InferenceBatchChatCompletionParamsToolConfig `json:"tool_config,omitzero"`
-	// (Optional) List of tool definitions available to the model.
-	Tools []InferenceBatchChatCompletionParamsTool `json:"tools,omitzero"`
-	paramObj
-}
-
-func (r InferenceBatchChatCompletionParams) MarshalJSON() (data []byte, err error) {
-	type shadow InferenceBatchChatCompletionParams
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *InferenceBatchChatCompletionParams) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// (Optional) If specified, log probabilities for each token position will be
-// returned.
-type InferenceBatchChatCompletionParamsLogprobs struct {
-	// How many tokens (for each position) to return log probabilities for.
-	TopK param.Opt[int64] `json:"top_k,omitzero"`
-	paramObj
-}
-
-func (r InferenceBatchChatCompletionParamsLogprobs) MarshalJSON() (data []byte, err error) {
-	type shadow InferenceBatchChatCompletionParamsLogprobs
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *InferenceBatchChatCompletionParamsLogprobs) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// (Optional) Configuration for tool use.
-type InferenceBatchChatCompletionParamsToolConfig struct {
-	// (Optional) Config for how to override the default system prompt. -
-	// `SystemMessageBehavior.append`: Appends the provided system message to the
-	// default system prompt. - `SystemMessageBehavior.replace`: Replaces the default
-	// system prompt with the provided system message. The system message can include
-	// the string '{{function_definitions}}' to indicate where the function definitions
-	// should be inserted.
-	//
-	// Any of "append", "replace".
-	SystemMessageBehavior string `json:"system_message_behavior,omitzero"`
-	// (Optional) Whether tool use is automatic, required, or none. Can also specify a
-	// tool name to use a specific tool. Defaults to ToolChoice.auto.
-	ToolChoice string `json:"tool_choice,omitzero"`
-	// (Optional) Instructs the model how to format tool calls. By default, Llama Stack
-	// will attempt to use a format that is best adapted to the model. -
-	// `ToolPromptFormat.json`: The tool calls are formatted as a JSON object. -
-	// `ToolPromptFormat.function_tag`: The tool calls are enclosed in a
-	// <function=function_name> tag. - `ToolPromptFormat.python_list`: The tool calls
-	// are output as Python syntax -- a list of function calls.
-	//
-	// Any of "json", "function_tag", "python_list".
-	ToolPromptFormat string `json:"tool_prompt_format,omitzero"`
-	paramObj
-}
-
-func (r InferenceBatchChatCompletionParamsToolConfig) MarshalJSON() (data []byte, err error) {
-	type shadow InferenceBatchChatCompletionParamsToolConfig
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *InferenceBatchChatCompletionParamsToolConfig) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[InferenceBatchChatCompletionParamsToolConfig](
-		"system_message_behavior", "append", "replace",
-	)
-	apijson.RegisterFieldValidator[InferenceBatchChatCompletionParamsToolConfig](
-		"tool_prompt_format", "json", "function_tag", "python_list",
-	)
-}
-
-// The property ToolName is required.
-type InferenceBatchChatCompletionParamsTool struct {
-	ToolName    string                         `json:"tool_name,omitzero,required"`
-	Description param.Opt[string]              `json:"description,omitzero"`
-	Parameters  map[string]ToolParamDefinition `json:"parameters,omitzero"`
-	paramObj
-}
-
-func (r InferenceBatchChatCompletionParamsTool) MarshalJSON() (data []byte, err error) {
-	type shadow InferenceBatchChatCompletionParamsTool
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *InferenceBatchChatCompletionParamsTool) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type InferenceBatchCompletionParams struct {
-	// The content to generate completions for.
-	ContentBatch []InterleavedContentUnionParam `json:"content_batch,omitzero,required"`
-	// The identifier of the model to use. The model must be registered with Llama
-	// Stack and available via the /models endpoint.
-	ModelID string `json:"model_id,required"`
-	// (Optional) If specified, log probabilities for each token position will be
-	// returned.
-	Logprobs InferenceBatchCompletionParamsLogprobs `json:"logprobs,omitzero"`
-	// (Optional) Grammar specification for guided (structured) decoding.
-	ResponseFormat ResponseFormatUnionParam `json:"response_format,omitzero"`
-	// (Optional) Parameters to control the sampling strategy.
-	SamplingParams SamplingParams `json:"sampling_params,omitzero"`
-	paramObj
-}
-
-func (r InferenceBatchCompletionParams) MarshalJSON() (data []byte, err error) {
-	type shadow InferenceBatchCompletionParams
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *InferenceBatchCompletionParams) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// (Optional) If specified, log probabilities for each token position will be
-// returned.
-type InferenceBatchCompletionParamsLogprobs struct {
-	// How many tokens (for each position) to return log probabilities for.
-	TopK param.Opt[int64] `json:"top_k,omitzero"`
-	paramObj
-}
-
-func (r InferenceBatchCompletionParamsLogprobs) MarshalJSON() (data []byte, err error) {
-	type shadow InferenceBatchCompletionParamsLogprobs
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *InferenceBatchCompletionParamsLogprobs) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -584,46 +341,6 @@ func (r InferenceChatCompletionParamsTool) MarshalJSON() (data []byte, err error
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *InferenceChatCompletionParamsTool) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type InferenceCompletionParams struct {
-	// The content to generate a completion for.
-	Content InterleavedContentUnionParam `json:"content,omitzero,required"`
-	// The identifier of the model to use. The model must be registered with Llama
-	// Stack and available via the /models endpoint.
-	ModelID string `json:"model_id,required"`
-	// (Optional) If specified, log probabilities for each token position will be
-	// returned.
-	Logprobs InferenceCompletionParamsLogprobs `json:"logprobs,omitzero"`
-	// (Optional) Grammar specification for guided (structured) decoding.
-	ResponseFormat ResponseFormatUnionParam `json:"response_format,omitzero"`
-	// (Optional) Parameters to control the sampling strategy.
-	SamplingParams SamplingParams `json:"sampling_params,omitzero"`
-	paramObj
-}
-
-func (r InferenceCompletionParams) MarshalJSON() (data []byte, err error) {
-	type shadow InferenceCompletionParams
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *InferenceCompletionParams) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// (Optional) If specified, log probabilities for each token position will be
-// returned.
-type InferenceCompletionParamsLogprobs struct {
-	// How many tokens (for each position) to return log probabilities for.
-	TopK param.Opt[int64] `json:"top_k,omitzero"`
-	paramObj
-}
-
-func (r InferenceCompletionParamsLogprobs) MarshalJSON() (data []byte, err error) {
-	type shadow InferenceCompletionParamsLogprobs
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *InferenceCompletionParamsLogprobs) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

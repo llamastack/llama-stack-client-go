@@ -44,6 +44,8 @@ func TestAgentNewWithOptionalParams(t *testing.T) {
 					Default: llamastackclient.ToolDefParameterDefaultUnionParam{
 						OfBool: llamastackclient.Bool(true),
 					},
+					Items: map[string]interface{}{},
+					Title: llamastackclient.String("title"),
 				}},
 			}},
 			EnableSessionPersistence: llamastackclient.Bool(true),
