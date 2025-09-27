@@ -418,24 +418,6 @@ func (u *AgentConfigToolgroupAgentToolGroupWithArgsArgUnionParam) asAny() any {
 	return nil
 }
 
-// Response from a batch completion request.
-type BatchCompletion struct {
-	// List of completion responses, one for each input in the batch
-	Batch []CompletionResponse `json:"batch,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Batch       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r BatchCompletion) RawJSON() string { return r.JSON.raw }
-func (r *BatchCompletion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // Response from a chat completion request.
 type ChatCompletionResponse struct {
 	// The complete response message
@@ -3469,7 +3451,9 @@ type ToolParamDefinition struct {
 	ParamType   string                          `json:"param_type,required"`
 	Description param.Opt[string]               `json:"description,omitzero"`
 	Required    param.Opt[bool]                 `json:"required,omitzero"`
+	Title       param.Opt[string]               `json:"title,omitzero"`
 	Default     ToolParamDefinitionDefaultUnion `json:"default,omitzero"`
+	Items       ToolParamDefinitionItemsUnion   `json:"items,omitzero"`
 	paramObj
 }
 
@@ -3500,6 +3484,37 @@ func (u *ToolParamDefinitionDefaultUnion) UnmarshalJSON(data []byte) error {
 }
 
 func (u *ToolParamDefinitionDefaultUnion) asAny() any {
+	if !param.IsOmitted(u.OfBool) {
+		return &u.OfBool.Value
+	} else if !param.IsOmitted(u.OfFloat) {
+		return &u.OfFloat.Value
+	} else if !param.IsOmitted(u.OfString) {
+		return &u.OfString.Value
+	} else if !param.IsOmitted(u.OfAnyArray) {
+		return &u.OfAnyArray
+	}
+	return nil
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type ToolParamDefinitionItemsUnion struct {
+	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
+	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
+	OfString   param.Opt[string]  `json:",omitzero,inline"`
+	OfAnyArray []any              `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u ToolParamDefinitionItemsUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
+}
+func (u *ToolParamDefinitionItemsUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *ToolParamDefinitionItemsUnion) asAny() any {
 	if !param.IsOmitted(u.OfBool) {
 		return &u.OfBool.Value
 	} else if !param.IsOmitted(u.OfFloat) {

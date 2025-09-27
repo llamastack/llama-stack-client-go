@@ -46,11 +46,14 @@ func NewFileService(opts ...option.RequestOption) (r FileService) {
 // Upload a file that can be used across various endpoints. The file upload should
 // be a multipart form request with:
 //
-// - file: The File object (not file name) to be uploaded.
-// - purpose: The intended purpose of the uploaded file.
+//   - file: The File object (not file name) to be uploaded.
+//   - purpose: The intended purpose of the uploaded file.
+//   - expires_after: Optional form values describing expiration for the file.
+//     Expected expires_after[anchor] = "created_at", expires_after[seconds] =
+//     {integer}. Seconds must be between 3600 and 2592000 (1 hour to 30 days).
 func (r *FileService) New(ctx context.Context, body FileNewParams, opts ...option.RequestOption) (res *File, err error) {
 	opts = slices.Concat(r.Options, opts)
-	path := "v1/openai/v1/files"
+	path := "v1/files"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
@@ -62,7 +65,7 @@ func (r *FileService) Get(ctx context.Context, fileID string, opts ...option.Req
 		err = errors.New("missing required file_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/openai/v1/files/%s", fileID)
+	path := fmt.Sprintf("v1/files/%s", fileID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return
 }
@@ -72,7 +75,7 @@ func (r *FileService) List(ctx context.Context, query FileListParams, opts ...op
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
-	path := "v1/openai/v1/files"
+	path := "v1/files"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
 	if err != nil {
 		return nil, err
@@ -97,7 +100,7 @@ func (r *FileService) Delete(ctx context.Context, fileID string, opts ...option.
 		err = errors.New("missing required file_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/openai/v1/files/%s", fileID)
+	path := fmt.Sprintf("v1/files/%s", fileID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
 	return
 }
@@ -109,7 +112,7 @@ func (r *FileService) Content(ctx context.Context, fileID string, opts ...option
 		err = errors.New("missing required file_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/openai/v1/files/%s/content", fileID)
+	path := fmt.Sprintf("v1/files/%s/content", fileID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return
 }
@@ -217,7 +220,9 @@ func (r *ListFilesResponse) UnmarshalJSON(data []byte) error {
 type FileContentResponse = any
 
 type FileNewParams struct {
-	File io.Reader `json:"file,omitzero,required" format:"binary"`
+	ExpiresAfterAnchor  param.Opt[string] `json:"expires_after_anchor,omitzero,required"`
+	ExpiresAfterSeconds param.Opt[int64]  `json:"expires_after_seconds,omitzero,required"`
+	File                io.Reader         `json:"file,omitzero,required" format:"binary"`
 	// Valid purpose values for OpenAI Files API.
 	//
 	// Any of "assistants", "batch".

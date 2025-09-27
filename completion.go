@@ -39,7 +39,7 @@ func NewCompletionService(opts ...option.RequestOption) (r CompletionService) {
 // specified model.
 func (r *CompletionService) New(ctx context.Context, body CompletionNewParams, opts ...option.RequestOption) (res *CompletionNewResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	path := "v1/openai/v1/completions"
+	path := "v1/completions"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
@@ -53,7 +53,7 @@ func (r *CompletionService) NewStreaming(ctx context.Context, body CompletionNew
 	)
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithJSONSet("stream", true)}, opts...)
-	path := "v1/openai/v1/completions"
+	path := "v1/completions"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &raw, opts...)
 	return ssestream.NewStream[CompletionNewResponse](ssestream.NewDecoder(raw), err)
 }

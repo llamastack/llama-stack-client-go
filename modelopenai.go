@@ -37,7 +37,7 @@ func NewModelOpenAIService(opts ...option.RequestOption) (r ModelOpenAIService) 
 func (r *ModelOpenAIService) List(ctx context.Context, opts ...option.RequestOption) (res *[]ModelOpenAIListResponse, err error) {
 	var env ModelOpenAIListResponseEnvelope
 	opts = slices.Concat(r.Options, opts)
-	path := "v1/openai/v1/models"
+	path := "v1/models"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
 	if err != nil {
 		return

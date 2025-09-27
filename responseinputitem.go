@@ -46,7 +46,7 @@ func (r *ResponseInputItemService) List(ctx context.Context, responseID string, 
 		err = errors.New("missing required response_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/openai/v1/responses/%s/input_items", responseID)
+	path := fmt.Sprintf("v1/responses/%s/input_items", responseID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
 	return
 }

@@ -159,6 +159,10 @@ type ToolDefParameter struct {
 	Required bool `json:"required,required"`
 	// (Optional) Default value for the parameter if not provided
 	Default ToolDefParameterDefaultUnion `json:"default,nullable"`
+	// Type of the elements when parameter_type is array
+	Items any `json:"items"`
+	// (Optional) Title of the parameter
+	Title string `json:"title"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Description   respjson.Field
@@ -166,6 +170,8 @@ type ToolDefParameter struct {
 		ParameterType respjson.Field
 		Required      respjson.Field
 		Default       respjson.Field
+		Items         respjson.Field
+		Title         respjson.Field
 		ExtraFields   map[string]respjson.Field
 		raw           string
 	} `json:"-"`
@@ -295,8 +301,12 @@ type ToolDefParameterParam struct {
 	ParameterType string `json:"parameter_type,required"`
 	// Whether this parameter is required for tool invocation
 	Required bool `json:"required,required"`
+	// (Optional) Title of the parameter
+	Title param.Opt[string] `json:"title,omitzero"`
 	// (Optional) Default value for the parameter if not provided
 	Default ToolDefParameterDefaultUnionParam `json:"default,omitzero"`
+	// Type of the elements when parameter_type is array
+	Items any `json:"items,omitzero"`
 	paramObj
 }
 

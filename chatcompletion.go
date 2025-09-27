@@ -45,7 +45,7 @@ func NewChatCompletionService(opts ...option.RequestOption) (r ChatCompletionSer
 // specified model.
 func (r *ChatCompletionService) New(ctx context.Context, body ChatCompletionNewParams, opts ...option.RequestOption) (res *ChatCompletionNewResponseUnion, err error) {
 	opts = slices.Concat(r.Options, opts)
-	path := "v1/openai/v1/chat/completions"
+	path := "v1/chat/completions"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
@@ -59,7 +59,7 @@ func (r *ChatCompletionService) NewStreaming(ctx context.Context, body ChatCompl
 	)
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithJSONSet("stream", true)}, opts...)
-	path := "v1/openai/v1/chat/completions"
+	path := "v1/chat/completions"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &raw, opts...)
 	return ssestream.NewStream[ChatCompletionChunk](ssestream.NewDecoder(raw), err)
 }
@@ -71,7 +71,7 @@ func (r *ChatCompletionService) Get(ctx context.Context, completionID string, op
 		err = errors.New("missing required completion_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/openai/v1/chat/completions/%s", completionID)
+	path := fmt.Sprintf("v1/chat/completions/%s", completionID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return
 }
@@ -81,7 +81,7 @@ func (r *ChatCompletionService) List(ctx context.Context, query ChatCompletionLi
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
-	path := "v1/openai/v1/chat/completions"
+	path := "v1/chat/completions"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
 	if err != nil {
 		return nil, err

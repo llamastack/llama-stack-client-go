@@ -46,7 +46,7 @@ func NewResponseService(opts ...option.RequestOption) (r ResponseService) {
 // Create a new OpenAI response.
 func (r *ResponseService) New(ctx context.Context, body ResponseNewParams, opts ...option.RequestOption) (res *ResponseObject, err error) {
 	opts = slices.Concat(r.Options, opts)
-	path := "v1/openai/v1/responses"
+	path := "v1/responses"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
@@ -59,7 +59,7 @@ func (r *ResponseService) NewStreaming(ctx context.Context, body ResponseNewPara
 	)
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithJSONSet("stream", true)}, opts...)
-	path := "v1/openai/v1/responses"
+	path := "v1/responses"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &raw, opts...)
 	return ssestream.NewStream[ResponseObjectStreamUnion](ssestream.NewDecoder(raw), err)
 }
@@ -71,7 +71,7 @@ func (r *ResponseService) Get(ctx context.Context, responseID string, opts ...op
 		err = errors.New("missing required response_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/openai/v1/responses/%s", responseID)
+	path := fmt.Sprintf("v1/responses/%s", responseID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return
 }
@@ -81,7 +81,7 @@ func (r *ResponseService) List(ctx context.Context, query ResponseListParams, op
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
-	path := "v1/openai/v1/responses"
+	path := "v1/responses"
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
 	if err != nil {
 		return nil, err
@@ -106,7 +106,7 @@ func (r *ResponseService) Delete(ctx context.Context, responseID string, opts ..
 		err = errors.New("missing required response_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/openai/v1/responses/%s", responseID)
+	path := fmt.Sprintf("v1/responses/%s", responseID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
 	return
 }
