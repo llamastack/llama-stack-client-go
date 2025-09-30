@@ -364,26 +364,17 @@ which can be used to wrap any `io.Reader` with the appropriate file name and con
 // A file from the file system
 file, err := os.Open("/path/to/file")
 llamastackclient.FileNewParams{
-	ExpiresAfterAnchor:  llamastackclient.String("expires_after_anchor"),
-	ExpiresAfterSeconds: llamastackclient.Int(0),
-	File:                file,
-	Purpose:             llamastackclient.FileNewParamsPurposeAssistants,
+	File: file,
 }
 
 // A file from a string
 llamastackclient.FileNewParams{
-	ExpiresAfterAnchor:  llamastackclient.String("expires_after_anchor"),
-	ExpiresAfterSeconds: llamastackclient.Int(0),
-	File:                strings.NewReader("my file contents"),
-	Purpose:             llamastackclient.FileNewParamsPurposeAssistants,
+	File: strings.NewReader("my file contents"),
 }
 
 // With a custom filename and contentType
 llamastackclient.FileNewParams{
-	ExpiresAfterAnchor:  llamastackclient.String("expires_after_anchor"),
-	ExpiresAfterSeconds: llamastackclient.Int(0),
-	File:                llamastackclient.NewFile(strings.NewReader(`{"hello": "foo"}`), "file.go", "application/json"),
-	Purpose:             llamastackclient.FileNewParamsPurposeAssistants,
+	File: llamastackclient.NewFile(strings.NewReader(`{"hello": "foo"}`), "file.go", "application/json"),
 }
 ```
 
