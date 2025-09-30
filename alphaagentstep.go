@@ -17,27 +17,27 @@ import (
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 )
 
-// AgentStepService contains methods and other services that help with interacting
-// with the llama-stack-client API.
+// AlphaAgentStepService contains methods and other services that help with
+// interacting with the llama-stack-client API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
-// the [NewAgentStepService] method instead.
-type AgentStepService struct {
+// the [NewAlphaAgentStepService] method instead.
+type AlphaAgentStepService struct {
 	Options []option.RequestOption
 }
 
-// NewAgentStepService generates a new service that applies the given options to
-// each request. These options are applied after the parent client's options (if
+// NewAlphaAgentStepService generates a new service that applies the given options
+// to each request. These options are applied after the parent client's options (if
 // there is one), and before any request-specific options.
-func NewAgentStepService(opts ...option.RequestOption) (r AgentStepService) {
-	r = AgentStepService{}
+func NewAlphaAgentStepService(opts ...option.RequestOption) (r AlphaAgentStepService) {
+	r = AlphaAgentStepService{}
 	r.Options = opts
 	return
 }
 
 // Retrieve an agent step by its ID.
-func (r *AgentStepService) Get(ctx context.Context, stepID string, query AgentStepGetParams, opts ...option.RequestOption) (res *AgentStepGetResponse, err error) {
+func (r *AlphaAgentStepService) Get(ctx context.Context, stepID string, query AlphaAgentStepGetParams, opts ...option.RequestOption) (res *AlphaAgentStepGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if query.AgentID == "" {
 		err = errors.New("missing required agent_id parameter")
@@ -61,9 +61,9 @@ func (r *AgentStepService) Get(ctx context.Context, stepID string, query AgentSt
 }
 
 // Response containing details of a specific agent step.
-type AgentStepGetResponse struct {
+type AlphaAgentStepGetResponse struct {
 	// The complete step data and execution details
-	Step AgentStepGetResponseStepUnion `json:"step,required"`
+	Step AlphaAgentStepGetResponseStepUnion `json:"step,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Step        respjson.Field
@@ -73,18 +73,20 @@ type AgentStepGetResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r AgentStepGetResponse) RawJSON() string { return r.JSON.raw }
-func (r *AgentStepGetResponse) UnmarshalJSON(data []byte) error {
+func (r AlphaAgentStepGetResponse) RawJSON() string { return r.JSON.raw }
+func (r *AlphaAgentStepGetResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// AgentStepGetResponseStepUnion contains all possible properties and values from
-// [InferenceStep], [ToolExecutionStep], [ShieldCallStep], [MemoryRetrievalStep].
+// AlphaAgentStepGetResponseStepUnion contains all possible properties and values
+// from [InferenceStep], [ToolExecutionStep], [ShieldCallStep],
+// [MemoryRetrievalStep].
 //
-// Use the [AgentStepGetResponseStepUnion.AsAny] method to switch on the variant.
+// Use the [AlphaAgentStepGetResponseStepUnion.AsAny] method to switch on the
+// variant.
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
-type AgentStepGetResponseStepUnion struct {
+type AlphaAgentStepGetResponseStepUnion struct {
 	// This field is from variant [InferenceStep].
 	ModelResponse CompletionMessage `json:"model_response"`
 	StepID        string            `json:"step_id"`
@@ -119,21 +121,21 @@ type AgentStepGetResponseStepUnion struct {
 	} `json:"-"`
 }
 
-// anyAgentStepGetResponseStep is implemented by each variant of
-// [AgentStepGetResponseStepUnion] to add type safety for the return type of
-// [AgentStepGetResponseStepUnion.AsAny]
-type anyAgentStepGetResponseStep interface {
-	implAgentStepGetResponseStepUnion()
+// anyAlphaAgentStepGetResponseStep is implemented by each variant of
+// [AlphaAgentStepGetResponseStepUnion] to add type safety for the return type of
+// [AlphaAgentStepGetResponseStepUnion.AsAny]
+type anyAlphaAgentStepGetResponseStep interface {
+	implAlphaAgentStepGetResponseStepUnion()
 }
 
-func (InferenceStep) implAgentStepGetResponseStepUnion()       {}
-func (ToolExecutionStep) implAgentStepGetResponseStepUnion()   {}
-func (ShieldCallStep) implAgentStepGetResponseStepUnion()      {}
-func (MemoryRetrievalStep) implAgentStepGetResponseStepUnion() {}
+func (InferenceStep) implAlphaAgentStepGetResponseStepUnion()       {}
+func (ToolExecutionStep) implAlphaAgentStepGetResponseStepUnion()   {}
+func (ShieldCallStep) implAlphaAgentStepGetResponseStepUnion()      {}
+func (MemoryRetrievalStep) implAlphaAgentStepGetResponseStepUnion() {}
 
 // Use the following switch statement to find the correct variant
 //
-//	switch variant := AgentStepGetResponseStepUnion.AsAny().(type) {
+//	switch variant := AlphaAgentStepGetResponseStepUnion.AsAny().(type) {
 //	case llamastackclient.InferenceStep:
 //	case llamastackclient.ToolExecutionStep:
 //	case llamastackclient.ShieldCallStep:
@@ -141,7 +143,7 @@ func (MemoryRetrievalStep) implAgentStepGetResponseStepUnion() {}
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
-func (u AgentStepGetResponseStepUnion) AsAny() anyAgentStepGetResponseStep {
+func (u AlphaAgentStepGetResponseStepUnion) AsAny() anyAlphaAgentStepGetResponseStep {
 	switch u.StepType {
 	case "inference":
 		return u.AsInference()
@@ -155,34 +157,34 @@ func (u AgentStepGetResponseStepUnion) AsAny() anyAgentStepGetResponseStep {
 	return nil
 }
 
-func (u AgentStepGetResponseStepUnion) AsInference() (v InferenceStep) {
+func (u AlphaAgentStepGetResponseStepUnion) AsInference() (v InferenceStep) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u AgentStepGetResponseStepUnion) AsToolExecution() (v ToolExecutionStep) {
+func (u AlphaAgentStepGetResponseStepUnion) AsToolExecution() (v ToolExecutionStep) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u AgentStepGetResponseStepUnion) AsShieldCall() (v ShieldCallStep) {
+func (u AlphaAgentStepGetResponseStepUnion) AsShieldCall() (v ShieldCallStep) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u AgentStepGetResponseStepUnion) AsMemoryRetrieval() (v MemoryRetrievalStep) {
+func (u AlphaAgentStepGetResponseStepUnion) AsMemoryRetrieval() (v MemoryRetrievalStep) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
 // Returns the unmodified JSON received from the API
-func (u AgentStepGetResponseStepUnion) RawJSON() string { return u.JSON.raw }
+func (u AlphaAgentStepGetResponseStepUnion) RawJSON() string { return u.JSON.raw }
 
-func (r *AgentStepGetResponseStepUnion) UnmarshalJSON(data []byte) error {
+func (r *AlphaAgentStepGetResponseStepUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type AgentStepGetParams struct {
+type AlphaAgentStepGetParams struct {
 	AgentID   string `path:"agent_id,required" json:"-"`
 	SessionID string `path:"session_id,required" json:"-"`
 	TurnID    string `path:"turn_id,required" json:"-"`

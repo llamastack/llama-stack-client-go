@@ -20,27 +20,27 @@ import (
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 )
 
-// AgentSessionService contains methods and other services that help with
+// AlphaAgentSessionService contains methods and other services that help with
 // interacting with the llama-stack-client API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
-// the [NewAgentSessionService] method instead.
-type AgentSessionService struct {
+// the [NewAlphaAgentSessionService] method instead.
+type AlphaAgentSessionService struct {
 	Options []option.RequestOption
 }
 
-// NewAgentSessionService generates a new service that applies the given options to
-// each request. These options are applied after the parent client's options (if
-// there is one), and before any request-specific options.
-func NewAgentSessionService(opts ...option.RequestOption) (r AgentSessionService) {
-	r = AgentSessionService{}
+// NewAlphaAgentSessionService generates a new service that applies the given
+// options to each request. These options are applied after the parent client's
+// options (if there is one), and before any request-specific options.
+func NewAlphaAgentSessionService(opts ...option.RequestOption) (r AlphaAgentSessionService) {
+	r = AlphaAgentSessionService{}
 	r.Options = opts
 	return
 }
 
 // Create a new session for an agent.
-func (r *AgentSessionService) New(ctx context.Context, agentID string, body AgentSessionNewParams, opts ...option.RequestOption) (res *AgentSessionNewResponse, err error) {
+func (r *AlphaAgentSessionService) New(ctx context.Context, agentID string, body AlphaAgentSessionNewParams, opts ...option.RequestOption) (res *AlphaAgentSessionNewResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if agentID == "" {
 		err = errors.New("missing required agent_id parameter")
@@ -52,7 +52,7 @@ func (r *AgentSessionService) New(ctx context.Context, agentID string, body Agen
 }
 
 // Retrieve an agent session by its ID.
-func (r *AgentSessionService) Get(ctx context.Context, sessionID string, params AgentSessionGetParams, opts ...option.RequestOption) (res *Session, err error) {
+func (r *AlphaAgentSessionService) Get(ctx context.Context, sessionID string, params AlphaAgentSessionGetParams, opts ...option.RequestOption) (res *Session, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if params.AgentID == "" {
 		err = errors.New("missing required agent_id parameter")
@@ -68,7 +68,7 @@ func (r *AgentSessionService) Get(ctx context.Context, sessionID string, params 
 }
 
 // List all session(s) of a given agent.
-func (r *AgentSessionService) List(ctx context.Context, agentID string, query AgentSessionListParams, opts ...option.RequestOption) (res *AgentSessionListResponse, err error) {
+func (r *AlphaAgentSessionService) List(ctx context.Context, agentID string, query AlphaAgentSessionListParams, opts ...option.RequestOption) (res *AlphaAgentSessionListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if agentID == "" {
 		err = errors.New("missing required agent_id parameter")
@@ -80,7 +80,7 @@ func (r *AgentSessionService) List(ctx context.Context, agentID string, query Ag
 }
 
 // Delete an agent session by its ID and its associated turns.
-func (r *AgentSessionService) Delete(ctx context.Context, sessionID string, body AgentSessionDeleteParams, opts ...option.RequestOption) (err error) {
+func (r *AlphaAgentSessionService) Delete(ctx context.Context, sessionID string, body AlphaAgentSessionDeleteParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
 	if body.AgentID == "" {
@@ -124,7 +124,7 @@ func (r *Session) UnmarshalJSON(data []byte) error {
 }
 
 // Response returned when creating a new agent session.
-type AgentSessionNewResponse struct {
+type AlphaAgentSessionNewResponse struct {
 	// Unique identifier for the created session
 	SessionID string `json:"session_id,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -136,15 +136,15 @@ type AgentSessionNewResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r AgentSessionNewResponse) RawJSON() string { return r.JSON.raw }
-func (r *AgentSessionNewResponse) UnmarshalJSON(data []byte) error {
+func (r AlphaAgentSessionNewResponse) RawJSON() string { return r.JSON.raw }
+func (r *AlphaAgentSessionNewResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // A generic paginated response that follows a simple format.
-type AgentSessionListResponse struct {
+type AlphaAgentSessionListResponse struct {
 	// The list of items for the current page
-	Data []map[string]AgentSessionListResponseDataUnion `json:"data,required"`
+	Data []map[string]AlphaAgentSessionListResponseDataUnion `json:"data,required"`
 	// Whether there are more items available after this set
 	HasMore bool `json:"has_more,required"`
 	// The URL for accessing this list
@@ -160,19 +160,19 @@ type AgentSessionListResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r AgentSessionListResponse) RawJSON() string { return r.JSON.raw }
-func (r *AgentSessionListResponse) UnmarshalJSON(data []byte) error {
+func (r AlphaAgentSessionListResponse) RawJSON() string { return r.JSON.raw }
+func (r *AlphaAgentSessionListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// AgentSessionListResponseDataUnion contains all possible properties and values
-// from [bool], [float64], [string], [[]any].
+// AlphaAgentSessionListResponseDataUnion contains all possible properties and
+// values from [bool], [float64], [string], [[]any].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 //
 // If the underlying value is not a json object, one of the following properties
 // will be valid: OfBool OfFloat OfString OfAnyArray]
-type AgentSessionListResponseDataUnion struct {
+type AlphaAgentSessionListResponseDataUnion struct {
 	// This field will be present if the value is a [bool] instead of an object.
 	OfBool bool `json:",inline"`
 	// This field will be present if the value is a [float64] instead of an object.
@@ -190,63 +190,64 @@ type AgentSessionListResponseDataUnion struct {
 	} `json:"-"`
 }
 
-func (u AgentSessionListResponseDataUnion) AsBool() (v bool) {
+func (u AlphaAgentSessionListResponseDataUnion) AsBool() (v bool) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u AgentSessionListResponseDataUnion) AsFloat() (v float64) {
+func (u AlphaAgentSessionListResponseDataUnion) AsFloat() (v float64) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u AgentSessionListResponseDataUnion) AsString() (v string) {
+func (u AlphaAgentSessionListResponseDataUnion) AsString() (v string) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u AgentSessionListResponseDataUnion) AsAnyArray() (v []any) {
+func (u AlphaAgentSessionListResponseDataUnion) AsAnyArray() (v []any) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
 // Returns the unmodified JSON received from the API
-func (u AgentSessionListResponseDataUnion) RawJSON() string { return u.JSON.raw }
+func (u AlphaAgentSessionListResponseDataUnion) RawJSON() string { return u.JSON.raw }
 
-func (r *AgentSessionListResponseDataUnion) UnmarshalJSON(data []byte) error {
+func (r *AlphaAgentSessionListResponseDataUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type AgentSessionNewParams struct {
+type AlphaAgentSessionNewParams struct {
 	// The name of the session to create.
 	SessionName string `json:"session_name,required"`
 	paramObj
 }
 
-func (r AgentSessionNewParams) MarshalJSON() (data []byte, err error) {
-	type shadow AgentSessionNewParams
+func (r AlphaAgentSessionNewParams) MarshalJSON() (data []byte, err error) {
+	type shadow AlphaAgentSessionNewParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *AgentSessionNewParams) UnmarshalJSON(data []byte) error {
+func (r *AlphaAgentSessionNewParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type AgentSessionGetParams struct {
+type AlphaAgentSessionGetParams struct {
 	AgentID string `path:"agent_id,required" json:"-"`
 	// (Optional) List of turn IDs to filter the session by.
 	TurnIDs []string `query:"turn_ids,omitzero" json:"-"`
 	paramObj
 }
 
-// URLQuery serializes [AgentSessionGetParams]'s query parameters as `url.Values`.
-func (r AgentSessionGetParams) URLQuery() (v url.Values, err error) {
+// URLQuery serializes [AlphaAgentSessionGetParams]'s query parameters as
+// `url.Values`.
+func (r AlphaAgentSessionGetParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
 
-type AgentSessionListParams struct {
+type AlphaAgentSessionListParams struct {
 	// The number of sessions to return.
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	// The index to start the pagination from.
@@ -254,15 +255,16 @@ type AgentSessionListParams struct {
 	paramObj
 }
 
-// URLQuery serializes [AgentSessionListParams]'s query parameters as `url.Values`.
-func (r AgentSessionListParams) URLQuery() (v url.Values, err error) {
+// URLQuery serializes [AlphaAgentSessionListParams]'s query parameters as
+// `url.Values`.
+func (r AlphaAgentSessionListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
 
-type AgentSessionDeleteParams struct {
+type AlphaAgentSessionDeleteParams struct {
 	AgentID string `path:"agent_id,required" json:"-"`
 	paramObj
 }
