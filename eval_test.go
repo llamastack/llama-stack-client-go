@@ -29,8 +29,8 @@ func TestEvalEvaluateRowsWithOptionalParams(t *testing.T) {
 		"benchmark_id",
 		llamastackclient.EvalEvaluateRowsParams{
 			BenchmarkConfig: llamastackclient.BenchmarkConfigParam{
-				EvalCandidate: llamastackclient.EvalCandidateUnionParam{
-					OfModel: &llamastackclient.EvalCandidateModelParam{
+				EvalCandidate: llamastackclient.BenchmarkConfigEvalCandidateUnionParam{
+					OfModel: &llamastackclient.BenchmarkConfigEvalCandidateModelParam{
 						Model: "model",
 						SamplingParams: llamastackclient.SamplingParams{
 							Strategy: llamastackclient.SamplingParamsStrategyUnion{
@@ -92,8 +92,8 @@ func TestEvalEvaluateRowsAlphaWithOptionalParams(t *testing.T) {
 		"benchmark_id",
 		llamastackclient.EvalEvaluateRowsAlphaParams{
 			BenchmarkConfig: llamastackclient.BenchmarkConfigParam{
-				EvalCandidate: llamastackclient.EvalCandidateUnionParam{
-					OfModel: &llamastackclient.EvalCandidateModelParam{
+				EvalCandidate: llamastackclient.BenchmarkConfigEvalCandidateUnionParam{
+					OfModel: &llamastackclient.BenchmarkConfigEvalCandidateModelParam{
 						Model: "model",
 						SamplingParams: llamastackclient.SamplingParams{
 							Strategy: llamastackclient.SamplingParamsStrategyUnion{
@@ -155,8 +155,8 @@ func TestEvalRunEvalWithOptionalParams(t *testing.T) {
 		"benchmark_id",
 		llamastackclient.EvalRunEvalParams{
 			BenchmarkConfig: llamastackclient.BenchmarkConfigParam{
-				EvalCandidate: llamastackclient.EvalCandidateUnionParam{
-					OfModel: &llamastackclient.EvalCandidateModelParam{
+				EvalCandidate: llamastackclient.BenchmarkConfigEvalCandidateUnionParam{
+					OfModel: &llamastackclient.BenchmarkConfigEvalCandidateModelParam{
 						Model: "model",
 						SamplingParams: llamastackclient.SamplingParams{
 							Strategy: llamastackclient.SamplingParamsStrategyUnion{
@@ -212,8 +212,8 @@ func TestEvalRunEvalAlphaWithOptionalParams(t *testing.T) {
 		"benchmark_id",
 		llamastackclient.EvalRunEvalAlphaParams{
 			BenchmarkConfig: llamastackclient.BenchmarkConfigParam{
-				EvalCandidate: llamastackclient.EvalCandidateUnionParam{
-					OfModel: &llamastackclient.EvalCandidateModelParam{
+				EvalCandidate: llamastackclient.BenchmarkConfigEvalCandidateUnionParam{
+					OfModel: &llamastackclient.BenchmarkConfigEvalCandidateModelParam{
 						Model: "model",
 						SamplingParams: llamastackclient.SamplingParams{
 							Strategy: llamastackclient.SamplingParamsStrategyUnion{
