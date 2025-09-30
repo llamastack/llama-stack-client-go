@@ -15,39 +15,39 @@ import (
 	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
-// PostTrainingService contains methods and other services that help with
+// AlphaPostTrainingService contains methods and other services that help with
 // interacting with the llama-stack-client API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
-// the [NewPostTrainingService] method instead.
-type PostTrainingService struct {
+// the [NewAlphaPostTrainingService] method instead.
+type AlphaPostTrainingService struct {
 	Options []option.RequestOption
-	Job     PostTrainingJobService
+	Job     AlphaPostTrainingJobService
 }
 
-// NewPostTrainingService generates a new service that applies the given options to
-// each request. These options are applied after the parent client's options (if
-// there is one), and before any request-specific options.
-func NewPostTrainingService(opts ...option.RequestOption) (r PostTrainingService) {
-	r = PostTrainingService{}
+// NewAlphaPostTrainingService generates a new service that applies the given
+// options to each request. These options are applied after the parent client's
+// options (if there is one), and before any request-specific options.
+func NewAlphaPostTrainingService(opts ...option.RequestOption) (r AlphaPostTrainingService) {
+	r = AlphaPostTrainingService{}
 	r.Options = opts
-	r.Job = NewPostTrainingJobService(opts...)
+	r.Job = NewAlphaPostTrainingJobService(opts...)
 	return
 }
 
 // Run preference optimization of a model.
-func (r *PostTrainingService) PreferenceOptimize(ctx context.Context, body PostTrainingPreferenceOptimizeParams, opts ...option.RequestOption) (res *PostTrainingJob, err error) {
+func (r *AlphaPostTrainingService) PreferenceOptimize(ctx context.Context, body AlphaPostTrainingPreferenceOptimizeParams, opts ...option.RequestOption) (res *PostTrainingJob, err error) {
 	opts = slices.Concat(r.Options, opts)
-	path := "v1/post-training/preference-optimize"
+	path := "v1alpha/post-training/preference-optimize"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // Run supervised fine-tuning of a model.
-func (r *PostTrainingService) SupervisedFineTune(ctx context.Context, body PostTrainingSupervisedFineTuneParams, opts ...option.RequestOption) (res *PostTrainingJob, err error) {
+func (r *AlphaPostTrainingService) SupervisedFineTune(ctx context.Context, body AlphaPostTrainingSupervisedFineTuneParams, opts ...option.RequestOption) (res *PostTrainingJob, err error) {
 	opts = slices.Concat(r.Options, opts)
-	path := "v1/post-training/supervised-fine-tune"
+	path := "v1alpha/post-training/supervised-fine-tune"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
@@ -279,34 +279,34 @@ func (r *PostTrainingJob) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type PostTrainingPreferenceOptimizeParams struct {
+type AlphaPostTrainingPreferenceOptimizeParams struct {
 	// The algorithm configuration.
-	AlgorithmConfig PostTrainingPreferenceOptimizeParamsAlgorithmConfig `json:"algorithm_config,omitzero,required"`
+	AlgorithmConfig AlphaPostTrainingPreferenceOptimizeParamsAlgorithmConfig `json:"algorithm_config,omitzero,required"`
 	// The model to fine-tune.
 	FinetunedModel string `json:"finetuned_model,required"`
 	// The hyperparam search configuration.
-	HyperparamSearchConfig map[string]PostTrainingPreferenceOptimizeParamsHyperparamSearchConfigUnion `json:"hyperparam_search_config,omitzero,required"`
+	HyperparamSearchConfig map[string]AlphaPostTrainingPreferenceOptimizeParamsHyperparamSearchConfigUnion `json:"hyperparam_search_config,omitzero,required"`
 	// The UUID of the job to create.
 	JobUuid string `json:"job_uuid,required"`
 	// The logger configuration.
-	LoggerConfig map[string]PostTrainingPreferenceOptimizeParamsLoggerConfigUnion `json:"logger_config,omitzero,required"`
+	LoggerConfig map[string]AlphaPostTrainingPreferenceOptimizeParamsLoggerConfigUnion `json:"logger_config,omitzero,required"`
 	// The training configuration.
-	TrainingConfig PostTrainingPreferenceOptimizeParamsTrainingConfig `json:"training_config,omitzero,required"`
+	TrainingConfig AlphaPostTrainingPreferenceOptimizeParamsTrainingConfig `json:"training_config,omitzero,required"`
 	paramObj
 }
 
-func (r PostTrainingPreferenceOptimizeParams) MarshalJSON() (data []byte, err error) {
-	type shadow PostTrainingPreferenceOptimizeParams
+func (r AlphaPostTrainingPreferenceOptimizeParams) MarshalJSON() (data []byte, err error) {
+	type shadow AlphaPostTrainingPreferenceOptimizeParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *PostTrainingPreferenceOptimizeParams) UnmarshalJSON(data []byte) error {
+func (r *AlphaPostTrainingPreferenceOptimizeParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The algorithm configuration.
 //
 // The properties Beta, LossType are required.
-type PostTrainingPreferenceOptimizeParamsAlgorithmConfig struct {
+type AlphaPostTrainingPreferenceOptimizeParamsAlgorithmConfig struct {
 	// Temperature parameter for the DPO loss
 	Beta float64 `json:"beta,required"`
 	// The type of loss function to use for DPO
@@ -316,16 +316,16 @@ type PostTrainingPreferenceOptimizeParamsAlgorithmConfig struct {
 	paramObj
 }
 
-func (r PostTrainingPreferenceOptimizeParamsAlgorithmConfig) MarshalJSON() (data []byte, err error) {
-	type shadow PostTrainingPreferenceOptimizeParamsAlgorithmConfig
+func (r AlphaPostTrainingPreferenceOptimizeParamsAlgorithmConfig) MarshalJSON() (data []byte, err error) {
+	type shadow AlphaPostTrainingPreferenceOptimizeParamsAlgorithmConfig
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *PostTrainingPreferenceOptimizeParamsAlgorithmConfig) UnmarshalJSON(data []byte) error {
+func (r *AlphaPostTrainingPreferenceOptimizeParamsAlgorithmConfig) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[PostTrainingPreferenceOptimizeParamsAlgorithmConfig](
+	apijson.RegisterFieldValidator[AlphaPostTrainingPreferenceOptimizeParamsAlgorithmConfig](
 		"loss_type", "sigmoid", "hinge", "ipo", "kto_pair",
 	)
 }
@@ -333,7 +333,7 @@ func init() {
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
-type PostTrainingPreferenceOptimizeParamsHyperparamSearchConfigUnion struct {
+type AlphaPostTrainingPreferenceOptimizeParamsHyperparamSearchConfigUnion struct {
 	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
 	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
 	OfString   param.Opt[string]  `json:",omitzero,inline"`
@@ -341,14 +341,14 @@ type PostTrainingPreferenceOptimizeParamsHyperparamSearchConfigUnion struct {
 	paramUnion
 }
 
-func (u PostTrainingPreferenceOptimizeParamsHyperparamSearchConfigUnion) MarshalJSON() ([]byte, error) {
+func (u AlphaPostTrainingPreferenceOptimizeParamsHyperparamSearchConfigUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
 }
-func (u *PostTrainingPreferenceOptimizeParamsHyperparamSearchConfigUnion) UnmarshalJSON(data []byte) error {
+func (u *AlphaPostTrainingPreferenceOptimizeParamsHyperparamSearchConfigUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
-func (u *PostTrainingPreferenceOptimizeParamsHyperparamSearchConfigUnion) asAny() any {
+func (u *AlphaPostTrainingPreferenceOptimizeParamsHyperparamSearchConfigUnion) asAny() any {
 	if !param.IsOmitted(u.OfBool) {
 		return &u.OfBool.Value
 	} else if !param.IsOmitted(u.OfFloat) {
@@ -364,7 +364,7 @@ func (u *PostTrainingPreferenceOptimizeParamsHyperparamSearchConfigUnion) asAny(
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
-type PostTrainingPreferenceOptimizeParamsLoggerConfigUnion struct {
+type AlphaPostTrainingPreferenceOptimizeParamsLoggerConfigUnion struct {
 	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
 	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
 	OfString   param.Opt[string]  `json:",omitzero,inline"`
@@ -372,14 +372,14 @@ type PostTrainingPreferenceOptimizeParamsLoggerConfigUnion struct {
 	paramUnion
 }
 
-func (u PostTrainingPreferenceOptimizeParamsLoggerConfigUnion) MarshalJSON() ([]byte, error) {
+func (u AlphaPostTrainingPreferenceOptimizeParamsLoggerConfigUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
 }
-func (u *PostTrainingPreferenceOptimizeParamsLoggerConfigUnion) UnmarshalJSON(data []byte) error {
+func (u *AlphaPostTrainingPreferenceOptimizeParamsLoggerConfigUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
-func (u *PostTrainingPreferenceOptimizeParamsLoggerConfigUnion) asAny() any {
+func (u *AlphaPostTrainingPreferenceOptimizeParamsLoggerConfigUnion) asAny() any {
 	if !param.IsOmitted(u.OfBool) {
 		return &u.OfBool.Value
 	} else if !param.IsOmitted(u.OfFloat) {
@@ -396,7 +396,7 @@ func (u *PostTrainingPreferenceOptimizeParamsLoggerConfigUnion) asAny() any {
 //
 // The properties GradientAccumulationSteps, MaxStepsPerEpoch, NEpochs are
 // required.
-type PostTrainingPreferenceOptimizeParamsTrainingConfig struct {
+type AlphaPostTrainingPreferenceOptimizeParamsTrainingConfig struct {
 	// Number of steps to accumulate gradients before updating
 	GradientAccumulationSteps int64 `json:"gradient_accumulation_steps,required"`
 	// Maximum number of steps to run per epoch
@@ -408,26 +408,26 @@ type PostTrainingPreferenceOptimizeParamsTrainingConfig struct {
 	// (Optional) Maximum number of validation steps per epoch
 	MaxValidationSteps param.Opt[int64] `json:"max_validation_steps,omitzero"`
 	// (Optional) Configuration for data loading and formatting
-	DataConfig PostTrainingPreferenceOptimizeParamsTrainingConfigDataConfig `json:"data_config,omitzero"`
+	DataConfig AlphaPostTrainingPreferenceOptimizeParamsTrainingConfigDataConfig `json:"data_config,omitzero"`
 	// (Optional) Configuration for memory and compute optimizations
-	EfficiencyConfig PostTrainingPreferenceOptimizeParamsTrainingConfigEfficiencyConfig `json:"efficiency_config,omitzero"`
+	EfficiencyConfig AlphaPostTrainingPreferenceOptimizeParamsTrainingConfigEfficiencyConfig `json:"efficiency_config,omitzero"`
 	// (Optional) Configuration for the optimization algorithm
-	OptimizerConfig PostTrainingPreferenceOptimizeParamsTrainingConfigOptimizerConfig `json:"optimizer_config,omitzero"`
+	OptimizerConfig AlphaPostTrainingPreferenceOptimizeParamsTrainingConfigOptimizerConfig `json:"optimizer_config,omitzero"`
 	paramObj
 }
 
-func (r PostTrainingPreferenceOptimizeParamsTrainingConfig) MarshalJSON() (data []byte, err error) {
-	type shadow PostTrainingPreferenceOptimizeParamsTrainingConfig
+func (r AlphaPostTrainingPreferenceOptimizeParamsTrainingConfig) MarshalJSON() (data []byte, err error) {
+	type shadow AlphaPostTrainingPreferenceOptimizeParamsTrainingConfig
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *PostTrainingPreferenceOptimizeParamsTrainingConfig) UnmarshalJSON(data []byte) error {
+func (r *AlphaPostTrainingPreferenceOptimizeParamsTrainingConfig) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // (Optional) Configuration for data loading and formatting
 //
 // The properties BatchSize, DataFormat, DatasetID, Shuffle are required.
-type PostTrainingPreferenceOptimizeParamsTrainingConfigDataConfig struct {
+type AlphaPostTrainingPreferenceOptimizeParamsTrainingConfigDataConfig struct {
 	// Number of samples per training batch
 	BatchSize int64 `json:"batch_size,required"`
 	// Format of the dataset (instruct or dialog)
@@ -448,22 +448,22 @@ type PostTrainingPreferenceOptimizeParamsTrainingConfigDataConfig struct {
 	paramObj
 }
 
-func (r PostTrainingPreferenceOptimizeParamsTrainingConfigDataConfig) MarshalJSON() (data []byte, err error) {
-	type shadow PostTrainingPreferenceOptimizeParamsTrainingConfigDataConfig
+func (r AlphaPostTrainingPreferenceOptimizeParamsTrainingConfigDataConfig) MarshalJSON() (data []byte, err error) {
+	type shadow AlphaPostTrainingPreferenceOptimizeParamsTrainingConfigDataConfig
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *PostTrainingPreferenceOptimizeParamsTrainingConfigDataConfig) UnmarshalJSON(data []byte) error {
+func (r *AlphaPostTrainingPreferenceOptimizeParamsTrainingConfigDataConfig) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[PostTrainingPreferenceOptimizeParamsTrainingConfigDataConfig](
+	apijson.RegisterFieldValidator[AlphaPostTrainingPreferenceOptimizeParamsTrainingConfigDataConfig](
 		"data_format", "instruct", "dialog",
 	)
 }
 
 // (Optional) Configuration for memory and compute optimizations
-type PostTrainingPreferenceOptimizeParamsTrainingConfigEfficiencyConfig struct {
+type AlphaPostTrainingPreferenceOptimizeParamsTrainingConfigEfficiencyConfig struct {
 	// (Optional) Whether to use activation checkpointing to reduce memory usage
 	EnableActivationCheckpointing param.Opt[bool] `json:"enable_activation_checkpointing,omitzero"`
 	// (Optional) Whether to offload activations to CPU to save GPU memory
@@ -475,18 +475,18 @@ type PostTrainingPreferenceOptimizeParamsTrainingConfigEfficiencyConfig struct {
 	paramObj
 }
 
-func (r PostTrainingPreferenceOptimizeParamsTrainingConfigEfficiencyConfig) MarshalJSON() (data []byte, err error) {
-	type shadow PostTrainingPreferenceOptimizeParamsTrainingConfigEfficiencyConfig
+func (r AlphaPostTrainingPreferenceOptimizeParamsTrainingConfigEfficiencyConfig) MarshalJSON() (data []byte, err error) {
+	type shadow AlphaPostTrainingPreferenceOptimizeParamsTrainingConfigEfficiencyConfig
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *PostTrainingPreferenceOptimizeParamsTrainingConfigEfficiencyConfig) UnmarshalJSON(data []byte) error {
+func (r *AlphaPostTrainingPreferenceOptimizeParamsTrainingConfigEfficiencyConfig) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // (Optional) Configuration for the optimization algorithm
 //
 // The properties Lr, NumWarmupSteps, OptimizerType, WeightDecay are required.
-type PostTrainingPreferenceOptimizeParamsTrainingConfigOptimizerConfig struct {
+type AlphaPostTrainingPreferenceOptimizeParamsTrainingConfigOptimizerConfig struct {
 	// Learning rate for the optimizer
 	Lr float64 `json:"lr,required"`
 	// Number of steps for learning rate warmup
@@ -500,29 +500,29 @@ type PostTrainingPreferenceOptimizeParamsTrainingConfigOptimizerConfig struct {
 	paramObj
 }
 
-func (r PostTrainingPreferenceOptimizeParamsTrainingConfigOptimizerConfig) MarshalJSON() (data []byte, err error) {
-	type shadow PostTrainingPreferenceOptimizeParamsTrainingConfigOptimizerConfig
+func (r AlphaPostTrainingPreferenceOptimizeParamsTrainingConfigOptimizerConfig) MarshalJSON() (data []byte, err error) {
+	type shadow AlphaPostTrainingPreferenceOptimizeParamsTrainingConfigOptimizerConfig
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *PostTrainingPreferenceOptimizeParamsTrainingConfigOptimizerConfig) UnmarshalJSON(data []byte) error {
+func (r *AlphaPostTrainingPreferenceOptimizeParamsTrainingConfigOptimizerConfig) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[PostTrainingPreferenceOptimizeParamsTrainingConfigOptimizerConfig](
+	apijson.RegisterFieldValidator[AlphaPostTrainingPreferenceOptimizeParamsTrainingConfigOptimizerConfig](
 		"optimizer_type", "adam", "adamw", "sgd",
 	)
 }
 
-type PostTrainingSupervisedFineTuneParams struct {
+type AlphaPostTrainingSupervisedFineTuneParams struct {
 	// The hyperparam search configuration.
-	HyperparamSearchConfig map[string]PostTrainingSupervisedFineTuneParamsHyperparamSearchConfigUnion `json:"hyperparam_search_config,omitzero,required"`
+	HyperparamSearchConfig map[string]AlphaPostTrainingSupervisedFineTuneParamsHyperparamSearchConfigUnion `json:"hyperparam_search_config,omitzero,required"`
 	// The UUID of the job to create.
 	JobUuid string `json:"job_uuid,required"`
 	// The logger configuration.
-	LoggerConfig map[string]PostTrainingSupervisedFineTuneParamsLoggerConfigUnion `json:"logger_config,omitzero,required"`
+	LoggerConfig map[string]AlphaPostTrainingSupervisedFineTuneParamsLoggerConfigUnion `json:"logger_config,omitzero,required"`
 	// The training configuration.
-	TrainingConfig PostTrainingSupervisedFineTuneParamsTrainingConfig `json:"training_config,omitzero,required"`
+	TrainingConfig AlphaPostTrainingSupervisedFineTuneParamsTrainingConfig `json:"training_config,omitzero,required"`
 	// The directory to save checkpoint(s) to.
 	CheckpointDir param.Opt[string] `json:"checkpoint_dir,omitzero"`
 	// The model to fine-tune.
@@ -532,18 +532,18 @@ type PostTrainingSupervisedFineTuneParams struct {
 	paramObj
 }
 
-func (r PostTrainingSupervisedFineTuneParams) MarshalJSON() (data []byte, err error) {
-	type shadow PostTrainingSupervisedFineTuneParams
+func (r AlphaPostTrainingSupervisedFineTuneParams) MarshalJSON() (data []byte, err error) {
+	type shadow AlphaPostTrainingSupervisedFineTuneParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *PostTrainingSupervisedFineTuneParams) UnmarshalJSON(data []byte) error {
+func (r *AlphaPostTrainingSupervisedFineTuneParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
-type PostTrainingSupervisedFineTuneParamsHyperparamSearchConfigUnion struct {
+type AlphaPostTrainingSupervisedFineTuneParamsHyperparamSearchConfigUnion struct {
 	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
 	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
 	OfString   param.Opt[string]  `json:",omitzero,inline"`
@@ -551,14 +551,14 @@ type PostTrainingSupervisedFineTuneParamsHyperparamSearchConfigUnion struct {
 	paramUnion
 }
 
-func (u PostTrainingSupervisedFineTuneParamsHyperparamSearchConfigUnion) MarshalJSON() ([]byte, error) {
+func (u AlphaPostTrainingSupervisedFineTuneParamsHyperparamSearchConfigUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
 }
-func (u *PostTrainingSupervisedFineTuneParamsHyperparamSearchConfigUnion) UnmarshalJSON(data []byte) error {
+func (u *AlphaPostTrainingSupervisedFineTuneParamsHyperparamSearchConfigUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
-func (u *PostTrainingSupervisedFineTuneParamsHyperparamSearchConfigUnion) asAny() any {
+func (u *AlphaPostTrainingSupervisedFineTuneParamsHyperparamSearchConfigUnion) asAny() any {
 	if !param.IsOmitted(u.OfBool) {
 		return &u.OfBool.Value
 	} else if !param.IsOmitted(u.OfFloat) {
@@ -574,7 +574,7 @@ func (u *PostTrainingSupervisedFineTuneParamsHyperparamSearchConfigUnion) asAny(
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
-type PostTrainingSupervisedFineTuneParamsLoggerConfigUnion struct {
+type AlphaPostTrainingSupervisedFineTuneParamsLoggerConfigUnion struct {
 	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
 	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
 	OfString   param.Opt[string]  `json:",omitzero,inline"`
@@ -582,14 +582,14 @@ type PostTrainingSupervisedFineTuneParamsLoggerConfigUnion struct {
 	paramUnion
 }
 
-func (u PostTrainingSupervisedFineTuneParamsLoggerConfigUnion) MarshalJSON() ([]byte, error) {
+func (u AlphaPostTrainingSupervisedFineTuneParamsLoggerConfigUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
 }
-func (u *PostTrainingSupervisedFineTuneParamsLoggerConfigUnion) UnmarshalJSON(data []byte) error {
+func (u *AlphaPostTrainingSupervisedFineTuneParamsLoggerConfigUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
-func (u *PostTrainingSupervisedFineTuneParamsLoggerConfigUnion) asAny() any {
+func (u *AlphaPostTrainingSupervisedFineTuneParamsLoggerConfigUnion) asAny() any {
 	if !param.IsOmitted(u.OfBool) {
 		return &u.OfBool.Value
 	} else if !param.IsOmitted(u.OfFloat) {
@@ -606,7 +606,7 @@ func (u *PostTrainingSupervisedFineTuneParamsLoggerConfigUnion) asAny() any {
 //
 // The properties GradientAccumulationSteps, MaxStepsPerEpoch, NEpochs are
 // required.
-type PostTrainingSupervisedFineTuneParamsTrainingConfig struct {
+type AlphaPostTrainingSupervisedFineTuneParamsTrainingConfig struct {
 	// Number of steps to accumulate gradients before updating
 	GradientAccumulationSteps int64 `json:"gradient_accumulation_steps,required"`
 	// Maximum number of steps to run per epoch
@@ -618,26 +618,26 @@ type PostTrainingSupervisedFineTuneParamsTrainingConfig struct {
 	// (Optional) Maximum number of validation steps per epoch
 	MaxValidationSteps param.Opt[int64] `json:"max_validation_steps,omitzero"`
 	// (Optional) Configuration for data loading and formatting
-	DataConfig PostTrainingSupervisedFineTuneParamsTrainingConfigDataConfig `json:"data_config,omitzero"`
+	DataConfig AlphaPostTrainingSupervisedFineTuneParamsTrainingConfigDataConfig `json:"data_config,omitzero"`
 	// (Optional) Configuration for memory and compute optimizations
-	EfficiencyConfig PostTrainingSupervisedFineTuneParamsTrainingConfigEfficiencyConfig `json:"efficiency_config,omitzero"`
+	EfficiencyConfig AlphaPostTrainingSupervisedFineTuneParamsTrainingConfigEfficiencyConfig `json:"efficiency_config,omitzero"`
 	// (Optional) Configuration for the optimization algorithm
-	OptimizerConfig PostTrainingSupervisedFineTuneParamsTrainingConfigOptimizerConfig `json:"optimizer_config,omitzero"`
+	OptimizerConfig AlphaPostTrainingSupervisedFineTuneParamsTrainingConfigOptimizerConfig `json:"optimizer_config,omitzero"`
 	paramObj
 }
 
-func (r PostTrainingSupervisedFineTuneParamsTrainingConfig) MarshalJSON() (data []byte, err error) {
-	type shadow PostTrainingSupervisedFineTuneParamsTrainingConfig
+func (r AlphaPostTrainingSupervisedFineTuneParamsTrainingConfig) MarshalJSON() (data []byte, err error) {
+	type shadow AlphaPostTrainingSupervisedFineTuneParamsTrainingConfig
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *PostTrainingSupervisedFineTuneParamsTrainingConfig) UnmarshalJSON(data []byte) error {
+func (r *AlphaPostTrainingSupervisedFineTuneParamsTrainingConfig) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // (Optional) Configuration for data loading and formatting
 //
 // The properties BatchSize, DataFormat, DatasetID, Shuffle are required.
-type PostTrainingSupervisedFineTuneParamsTrainingConfigDataConfig struct {
+type AlphaPostTrainingSupervisedFineTuneParamsTrainingConfigDataConfig struct {
 	// Number of samples per training batch
 	BatchSize int64 `json:"batch_size,required"`
 	// Format of the dataset (instruct or dialog)
@@ -658,22 +658,22 @@ type PostTrainingSupervisedFineTuneParamsTrainingConfigDataConfig struct {
 	paramObj
 }
 
-func (r PostTrainingSupervisedFineTuneParamsTrainingConfigDataConfig) MarshalJSON() (data []byte, err error) {
-	type shadow PostTrainingSupervisedFineTuneParamsTrainingConfigDataConfig
+func (r AlphaPostTrainingSupervisedFineTuneParamsTrainingConfigDataConfig) MarshalJSON() (data []byte, err error) {
+	type shadow AlphaPostTrainingSupervisedFineTuneParamsTrainingConfigDataConfig
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *PostTrainingSupervisedFineTuneParamsTrainingConfigDataConfig) UnmarshalJSON(data []byte) error {
+func (r *AlphaPostTrainingSupervisedFineTuneParamsTrainingConfigDataConfig) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[PostTrainingSupervisedFineTuneParamsTrainingConfigDataConfig](
+	apijson.RegisterFieldValidator[AlphaPostTrainingSupervisedFineTuneParamsTrainingConfigDataConfig](
 		"data_format", "instruct", "dialog",
 	)
 }
 
 // (Optional) Configuration for memory and compute optimizations
-type PostTrainingSupervisedFineTuneParamsTrainingConfigEfficiencyConfig struct {
+type AlphaPostTrainingSupervisedFineTuneParamsTrainingConfigEfficiencyConfig struct {
 	// (Optional) Whether to use activation checkpointing to reduce memory usage
 	EnableActivationCheckpointing param.Opt[bool] `json:"enable_activation_checkpointing,omitzero"`
 	// (Optional) Whether to offload activations to CPU to save GPU memory
@@ -685,18 +685,18 @@ type PostTrainingSupervisedFineTuneParamsTrainingConfigEfficiencyConfig struct {
 	paramObj
 }
 
-func (r PostTrainingSupervisedFineTuneParamsTrainingConfigEfficiencyConfig) MarshalJSON() (data []byte, err error) {
-	type shadow PostTrainingSupervisedFineTuneParamsTrainingConfigEfficiencyConfig
+func (r AlphaPostTrainingSupervisedFineTuneParamsTrainingConfigEfficiencyConfig) MarshalJSON() (data []byte, err error) {
+	type shadow AlphaPostTrainingSupervisedFineTuneParamsTrainingConfigEfficiencyConfig
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *PostTrainingSupervisedFineTuneParamsTrainingConfigEfficiencyConfig) UnmarshalJSON(data []byte) error {
+func (r *AlphaPostTrainingSupervisedFineTuneParamsTrainingConfigEfficiencyConfig) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // (Optional) Configuration for the optimization algorithm
 //
 // The properties Lr, NumWarmupSteps, OptimizerType, WeightDecay are required.
-type PostTrainingSupervisedFineTuneParamsTrainingConfigOptimizerConfig struct {
+type AlphaPostTrainingSupervisedFineTuneParamsTrainingConfigOptimizerConfig struct {
 	// Learning rate for the optimizer
 	Lr float64 `json:"lr,required"`
 	// Number of steps for learning rate warmup
@@ -710,16 +710,16 @@ type PostTrainingSupervisedFineTuneParamsTrainingConfigOptimizerConfig struct {
 	paramObj
 }
 
-func (r PostTrainingSupervisedFineTuneParamsTrainingConfigOptimizerConfig) MarshalJSON() (data []byte, err error) {
-	type shadow PostTrainingSupervisedFineTuneParamsTrainingConfigOptimizerConfig
+func (r AlphaPostTrainingSupervisedFineTuneParamsTrainingConfigOptimizerConfig) MarshalJSON() (data []byte, err error) {
+	type shadow AlphaPostTrainingSupervisedFineTuneParamsTrainingConfigOptimizerConfig
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *PostTrainingSupervisedFineTuneParamsTrainingConfigOptimizerConfig) UnmarshalJSON(data []byte) error {
+func (r *AlphaPostTrainingSupervisedFineTuneParamsTrainingConfigOptimizerConfig) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[PostTrainingSupervisedFineTuneParamsTrainingConfigOptimizerConfig](
+	apijson.RegisterFieldValidator[AlphaPostTrainingSupervisedFineTuneParamsTrainingConfigOptimizerConfig](
 		"optimizer_type", "adam", "adamw", "sgd",
 	)
 }

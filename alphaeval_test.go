@@ -13,7 +13,7 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 )
 
-func TestEvalEvaluateRowsWithOptionalParams(t *testing.T) {
+func TestAlphaEvalEvaluateRowsWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -24,10 +24,10 @@ func TestEvalEvaluateRowsWithOptionalParams(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Eval.EvaluateRows(
+	_, err := client.Alpha.Eval.EvaluateRows(
 		context.TODO(),
 		"benchmark_id",
-		llamastackclient.EvalEvaluateRowsParams{
+		llamastackclient.AlphaEvalEvaluateRowsParams{
 			BenchmarkConfig: llamastackclient.BenchmarkConfigParam{
 				EvalCandidate: llamastackclient.BenchmarkConfigEvalCandidateUnionParam{
 					OfModel: &llamastackclient.BenchmarkConfigEvalCandidateModelParam{
@@ -59,7 +59,7 @@ func TestEvalEvaluateRowsWithOptionalParams(t *testing.T) {
 				},
 				NumExamples: llamastackclient.Int(0),
 			},
-			InputRows: []map[string]llamastackclient.EvalEvaluateRowsParamsInputRowUnion{{
+			InputRows: []map[string]llamastackclient.AlphaEvalEvaluateRowsParamsInputRowUnion{{
 				"foo": {
 					OfBool: llamastackclient.Bool(true),
 				},
@@ -76,7 +76,7 @@ func TestEvalEvaluateRowsWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestEvalEvaluateRowsAlphaWithOptionalParams(t *testing.T) {
+func TestAlphaEvalEvaluateRowsAlphaWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -87,10 +87,10 @@ func TestEvalEvaluateRowsAlphaWithOptionalParams(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Eval.EvaluateRowsAlpha(
+	_, err := client.Alpha.Eval.EvaluateRowsAlpha(
 		context.TODO(),
 		"benchmark_id",
-		llamastackclient.EvalEvaluateRowsAlphaParams{
+		llamastackclient.AlphaEvalEvaluateRowsAlphaParams{
 			BenchmarkConfig: llamastackclient.BenchmarkConfigParam{
 				EvalCandidate: llamastackclient.BenchmarkConfigEvalCandidateUnionParam{
 					OfModel: &llamastackclient.BenchmarkConfigEvalCandidateModelParam{
@@ -122,7 +122,7 @@ func TestEvalEvaluateRowsAlphaWithOptionalParams(t *testing.T) {
 				},
 				NumExamples: llamastackclient.Int(0),
 			},
-			InputRows: []map[string]llamastackclient.EvalEvaluateRowsAlphaParamsInputRowUnion{{
+			InputRows: []map[string]llamastackclient.AlphaEvalEvaluateRowsAlphaParamsInputRowUnion{{
 				"foo": {
 					OfBool: llamastackclient.Bool(true),
 				},
@@ -139,7 +139,7 @@ func TestEvalEvaluateRowsAlphaWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestEvalRunEvalWithOptionalParams(t *testing.T) {
+func TestAlphaEvalRunEvalWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -150,10 +150,10 @@ func TestEvalRunEvalWithOptionalParams(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Eval.RunEval(
+	_, err := client.Alpha.Eval.RunEval(
 		context.TODO(),
 		"benchmark_id",
-		llamastackclient.EvalRunEvalParams{
+		llamastackclient.AlphaEvalRunEvalParams{
 			BenchmarkConfig: llamastackclient.BenchmarkConfigParam{
 				EvalCandidate: llamastackclient.BenchmarkConfigEvalCandidateUnionParam{
 					OfModel: &llamastackclient.BenchmarkConfigEvalCandidateModelParam{
@@ -196,7 +196,7 @@ func TestEvalRunEvalWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestEvalRunEvalAlphaWithOptionalParams(t *testing.T) {
+func TestAlphaEvalRunEvalAlphaWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -207,10 +207,10 @@ func TestEvalRunEvalAlphaWithOptionalParams(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Eval.RunEvalAlpha(
+	_, err := client.Alpha.Eval.RunEvalAlpha(
 		context.TODO(),
 		"benchmark_id",
-		llamastackclient.EvalRunEvalAlphaParams{
+		llamastackclient.AlphaEvalRunEvalAlphaParams{
 			BenchmarkConfig: llamastackclient.BenchmarkConfigParam{
 				EvalCandidate: llamastackclient.BenchmarkConfigEvalCandidateUnionParam{
 					OfModel: &llamastackclient.BenchmarkConfigEvalCandidateModelParam{

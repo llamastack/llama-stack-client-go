@@ -13,7 +13,7 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 )
 
-func TestPostTrainingPreferenceOptimizeWithOptionalParams(t *testing.T) {
+func TestAlphaPostTrainingPreferenceOptimizeWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -24,28 +24,28 @@ func TestPostTrainingPreferenceOptimizeWithOptionalParams(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.PostTraining.PreferenceOptimize(context.TODO(), llamastackclient.PostTrainingPreferenceOptimizeParams{
-		AlgorithmConfig: llamastackclient.PostTrainingPreferenceOptimizeParamsAlgorithmConfig{
+	_, err := client.Alpha.PostTraining.PreferenceOptimize(context.TODO(), llamastackclient.AlphaPostTrainingPreferenceOptimizeParams{
+		AlgorithmConfig: llamastackclient.AlphaPostTrainingPreferenceOptimizeParamsAlgorithmConfig{
 			Beta:     0,
 			LossType: "sigmoid",
 		},
 		FinetunedModel: "finetuned_model",
-		HyperparamSearchConfig: map[string]llamastackclient.PostTrainingPreferenceOptimizeParamsHyperparamSearchConfigUnion{
+		HyperparamSearchConfig: map[string]llamastackclient.AlphaPostTrainingPreferenceOptimizeParamsHyperparamSearchConfigUnion{
 			"foo": {
 				OfBool: llamastackclient.Bool(true),
 			},
 		},
 		JobUuid: "job_uuid",
-		LoggerConfig: map[string]llamastackclient.PostTrainingPreferenceOptimizeParamsLoggerConfigUnion{
+		LoggerConfig: map[string]llamastackclient.AlphaPostTrainingPreferenceOptimizeParamsLoggerConfigUnion{
 			"foo": {
 				OfBool: llamastackclient.Bool(true),
 			},
 		},
-		TrainingConfig: llamastackclient.PostTrainingPreferenceOptimizeParamsTrainingConfig{
+		TrainingConfig: llamastackclient.AlphaPostTrainingPreferenceOptimizeParamsTrainingConfig{
 			GradientAccumulationSteps: 0,
 			MaxStepsPerEpoch:          0,
 			NEpochs:                   0,
-			DataConfig: llamastackclient.PostTrainingPreferenceOptimizeParamsTrainingConfigDataConfig{
+			DataConfig: llamastackclient.AlphaPostTrainingPreferenceOptimizeParamsTrainingConfigDataConfig{
 				BatchSize:           0,
 				DataFormat:          "instruct",
 				DatasetID:           "dataset_id",
@@ -55,14 +55,14 @@ func TestPostTrainingPreferenceOptimizeWithOptionalParams(t *testing.T) {
 				ValidationDatasetID: llamastackclient.String("validation_dataset_id"),
 			},
 			Dtype: llamastackclient.String("dtype"),
-			EfficiencyConfig: llamastackclient.PostTrainingPreferenceOptimizeParamsTrainingConfigEfficiencyConfig{
+			EfficiencyConfig: llamastackclient.AlphaPostTrainingPreferenceOptimizeParamsTrainingConfigEfficiencyConfig{
 				EnableActivationCheckpointing: llamastackclient.Bool(true),
 				EnableActivationOffloading:    llamastackclient.Bool(true),
 				FsdpCPUOffload:                llamastackclient.Bool(true),
 				MemoryEfficientFsdpWrap:       llamastackclient.Bool(true),
 			},
 			MaxValidationSteps: llamastackclient.Int(0),
-			OptimizerConfig: llamastackclient.PostTrainingPreferenceOptimizeParamsTrainingConfigOptimizerConfig{
+			OptimizerConfig: llamastackclient.AlphaPostTrainingPreferenceOptimizeParamsTrainingConfigOptimizerConfig{
 				Lr:             0,
 				NumWarmupSteps: 0,
 				OptimizerType:  "adam",
@@ -79,7 +79,7 @@ func TestPostTrainingPreferenceOptimizeWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestPostTrainingSupervisedFineTuneWithOptionalParams(t *testing.T) {
+func TestAlphaPostTrainingSupervisedFineTuneWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -90,23 +90,23 @@ func TestPostTrainingSupervisedFineTuneWithOptionalParams(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.PostTraining.SupervisedFineTune(context.TODO(), llamastackclient.PostTrainingSupervisedFineTuneParams{
-		HyperparamSearchConfig: map[string]llamastackclient.PostTrainingSupervisedFineTuneParamsHyperparamSearchConfigUnion{
+	_, err := client.Alpha.PostTraining.SupervisedFineTune(context.TODO(), llamastackclient.AlphaPostTrainingSupervisedFineTuneParams{
+		HyperparamSearchConfig: map[string]llamastackclient.AlphaPostTrainingSupervisedFineTuneParamsHyperparamSearchConfigUnion{
 			"foo": {
 				OfBool: llamastackclient.Bool(true),
 			},
 		},
 		JobUuid: "job_uuid",
-		LoggerConfig: map[string]llamastackclient.PostTrainingSupervisedFineTuneParamsLoggerConfigUnion{
+		LoggerConfig: map[string]llamastackclient.AlphaPostTrainingSupervisedFineTuneParamsLoggerConfigUnion{
 			"foo": {
 				OfBool: llamastackclient.Bool(true),
 			},
 		},
-		TrainingConfig: llamastackclient.PostTrainingSupervisedFineTuneParamsTrainingConfig{
+		TrainingConfig: llamastackclient.AlphaPostTrainingSupervisedFineTuneParamsTrainingConfig{
 			GradientAccumulationSteps: 0,
 			MaxStepsPerEpoch:          0,
 			NEpochs:                   0,
-			DataConfig: llamastackclient.PostTrainingSupervisedFineTuneParamsTrainingConfigDataConfig{
+			DataConfig: llamastackclient.AlphaPostTrainingSupervisedFineTuneParamsTrainingConfigDataConfig{
 				BatchSize:           0,
 				DataFormat:          "instruct",
 				DatasetID:           "dataset_id",
@@ -116,14 +116,14 @@ func TestPostTrainingSupervisedFineTuneWithOptionalParams(t *testing.T) {
 				ValidationDatasetID: llamastackclient.String("validation_dataset_id"),
 			},
 			Dtype: llamastackclient.String("dtype"),
-			EfficiencyConfig: llamastackclient.PostTrainingSupervisedFineTuneParamsTrainingConfigEfficiencyConfig{
+			EfficiencyConfig: llamastackclient.AlphaPostTrainingSupervisedFineTuneParamsTrainingConfigEfficiencyConfig{
 				EnableActivationCheckpointing: llamastackclient.Bool(true),
 				EnableActivationOffloading:    llamastackclient.Bool(true),
 				FsdpCPUOffload:                llamastackclient.Bool(true),
 				MemoryEfficientFsdpWrap:       llamastackclient.Bool(true),
 			},
 			MaxValidationSteps: llamastackclient.Int(0),
-			OptimizerConfig: llamastackclient.PostTrainingSupervisedFineTuneParamsTrainingConfigOptimizerConfig{
+			OptimizerConfig: llamastackclient.AlphaPostTrainingSupervisedFineTuneParamsTrainingConfigOptimizerConfig{
 				Lr:             0,
 				NumWarmupSteps: 0,
 				OptimizerType:  "adam",

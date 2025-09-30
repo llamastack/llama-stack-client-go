@@ -46,7 +46,7 @@ func (r *AlphaAgentSessionService) New(ctx context.Context, agentID string, body
 		err = errors.New("missing required agent_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/agents/%s/session", agentID)
+	path := fmt.Sprintf("v1alpha/agents/%s/session", agentID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
@@ -62,7 +62,7 @@ func (r *AlphaAgentSessionService) Get(ctx context.Context, sessionID string, pa
 		err = errors.New("missing required session_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/agents/%s/session/%s", params.AgentID, sessionID)
+	path := fmt.Sprintf("v1alpha/agents/%s/session/%s", params.AgentID, sessionID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
 	return
 }
@@ -74,7 +74,7 @@ func (r *AlphaAgentSessionService) List(ctx context.Context, agentID string, que
 		err = errors.New("missing required agent_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/agents/%s/sessions", agentID)
+	path := fmt.Sprintf("v1alpha/agents/%s/sessions", agentID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
 	return
 }
@@ -91,7 +91,7 @@ func (r *AlphaAgentSessionService) Delete(ctx context.Context, sessionID string,
 		err = errors.New("missing required session_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/agents/%s/session/%s", body.AgentID, sessionID)
+	path := fmt.Sprintf("v1alpha/agents/%s/session/%s", body.AgentID, sessionID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
 	return
 }
