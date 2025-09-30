@@ -13,7 +13,7 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 )
 
-func TestAgentSessionNew(t *testing.T) {
+func TestAlphaAgentSessionNew(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -24,10 +24,10 @@ func TestAgentSessionNew(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Agents.Session.New(
+	_, err := client.Alpha.Agents.Session.New(
 		context.TODO(),
 		"agent_id",
-		llamastackclient.AgentSessionNewParams{
+		llamastackclient.AlphaAgentSessionNewParams{
 			SessionName: "session_name",
 		},
 	)
@@ -40,7 +40,7 @@ func TestAgentSessionNew(t *testing.T) {
 	}
 }
 
-func TestAgentSessionGetWithOptionalParams(t *testing.T) {
+func TestAlphaAgentSessionGetWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -51,10 +51,10 @@ func TestAgentSessionGetWithOptionalParams(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Agents.Session.Get(
+	_, err := client.Alpha.Agents.Session.Get(
 		context.TODO(),
 		"session_id",
-		llamastackclient.AgentSessionGetParams{
+		llamastackclient.AlphaAgentSessionGetParams{
 			AgentID: "agent_id",
 			TurnIDs: []string{"string"},
 		},
@@ -68,7 +68,7 @@ func TestAgentSessionGetWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestAgentSessionListWithOptionalParams(t *testing.T) {
+func TestAlphaAgentSessionListWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -79,10 +79,10 @@ func TestAgentSessionListWithOptionalParams(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Agents.Session.List(
+	_, err := client.Alpha.Agents.Session.List(
 		context.TODO(),
 		"agent_id",
-		llamastackclient.AgentSessionListParams{
+		llamastackclient.AlphaAgentSessionListParams{
 			Limit:      llamastackclient.Int(0),
 			StartIndex: llamastackclient.Int(0),
 		},
@@ -96,7 +96,7 @@ func TestAgentSessionListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestAgentSessionDelete(t *testing.T) {
+func TestAlphaAgentSessionDelete(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -107,10 +107,10 @@ func TestAgentSessionDelete(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	err := client.Agents.Session.Delete(
+	err := client.Alpha.Agents.Session.Delete(
 		context.TODO(),
 		"session_id",
-		llamastackclient.AgentSessionDeleteParams{
+		llamastackclient.AlphaAgentSessionDeleteParams{
 			AgentID: "agent_id",
 		},
 	)

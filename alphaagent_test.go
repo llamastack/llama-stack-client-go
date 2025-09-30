@@ -13,7 +13,7 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 )
 
-func TestAgentNewWithOptionalParams(t *testing.T) {
+func TestAlphaAgentNewWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -24,7 +24,7 @@ func TestAgentNewWithOptionalParams(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Agents.New(context.TODO(), llamastackclient.AgentNewParams{
+	_, err := client.Alpha.Agents.New(context.TODO(), llamastackclient.AlphaAgentNewParams{
 		AgentConfig: llamastackclient.AgentConfigParam{
 			Instructions: "instructions",
 			Model:        "model",
@@ -91,7 +91,7 @@ func TestAgentNewWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestAgentGet(t *testing.T) {
+func TestAlphaAgentGet(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -102,7 +102,7 @@ func TestAgentGet(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Agents.Get(context.TODO(), "agent_id")
+	_, err := client.Alpha.Agents.Get(context.TODO(), "agent_id")
 	if err != nil {
 		var apierr *llamastackclient.Error
 		if errors.As(err, &apierr) {
@@ -112,7 +112,7 @@ func TestAgentGet(t *testing.T) {
 	}
 }
 
-func TestAgentListWithOptionalParams(t *testing.T) {
+func TestAlphaAgentListWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -123,7 +123,7 @@ func TestAgentListWithOptionalParams(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Agents.List(context.TODO(), llamastackclient.AgentListParams{
+	_, err := client.Alpha.Agents.List(context.TODO(), llamastackclient.AlphaAgentListParams{
 		Limit:      llamastackclient.Int(0),
 		StartIndex: llamastackclient.Int(0),
 	})
@@ -136,7 +136,7 @@ func TestAgentListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestAgentDelete(t *testing.T) {
+func TestAlphaAgentDelete(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -147,7 +147,7 @@ func TestAgentDelete(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	err := client.Agents.Delete(context.TODO(), "agent_id")
+	err := client.Alpha.Agents.Delete(context.TODO(), "agent_id")
 	if err != nil {
 		var apierr *llamastackclient.Error
 		if errors.As(err, &apierr) {
