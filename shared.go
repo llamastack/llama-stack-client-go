@@ -418,30 +418,6 @@ func (u *AgentConfigToolgroupAgentToolGroupWithArgsArgUnionParam) asAny() any {
 	return nil
 }
 
-// Response from a chat completion request.
-type ChatCompletionResponse struct {
-	// The complete response message
-	CompletionMessage CompletionMessage `json:"completion_message,required"`
-	// Optional log probabilities for generated tokens
-	Logprobs []TokenLogProbs `json:"logprobs"`
-	// (Optional) List of metrics associated with the API response
-	Metrics []Metric `json:"metrics"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		CompletionMessage respjson.Field
-		Logprobs          respjson.Field
-		Metrics           respjson.Field
-		ExtraFields       map[string]respjson.Field
-		raw               string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionResponse) RawJSON() string { return r.JSON.raw }
-func (r *ChatCompletionResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // A message containing the model's (assistant) response in a chat conversation.
 type CompletionMessage struct {
 	// The content of the model's response
@@ -1720,30 +1696,6 @@ func init() {
 		apijson.Discriminator[ToolResponseMessageParam]("tool"),
 		apijson.Discriminator[CompletionMessageParam]("assistant"),
 	)
-}
-
-// A metric value included in API responses.
-type Metric struct {
-	// The name of the metric
-	Metric string `json:"metric,required"`
-	// The numeric value of the metric
-	Value float64 `json:"value,required"`
-	// (Optional) The unit of measurement for the metric value
-	Unit string `json:"unit"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Metric      respjson.Field
-		Value       respjson.Field
-		Unit        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r Metric) RawJSON() string { return r.JSON.raw }
-func (r *Metric) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
 }
 
 // Configuration for the RAG query generation.
@@ -3442,87 +3394,6 @@ func (u *ToolCallArgumentsMapItemMapItemUnionParam) asAny() any {
 		return &u.OfFloat.Value
 	} else if !param.IsOmitted(u.OfBool) {
 		return &u.OfBool.Value
-	}
-	return nil
-}
-
-// The property ParamType is required.
-type ToolParamDefinition struct {
-	ParamType   string                          `json:"param_type,required"`
-	Description param.Opt[string]               `json:"description,omitzero"`
-	Required    param.Opt[bool]                 `json:"required,omitzero"`
-	Title       param.Opt[string]               `json:"title,omitzero"`
-	Default     ToolParamDefinitionDefaultUnion `json:"default,omitzero"`
-	Items       ToolParamDefinitionItemsUnion   `json:"items,omitzero"`
-	paramObj
-}
-
-func (r ToolParamDefinition) MarshalJSON() (data []byte, err error) {
-	type shadow ToolParamDefinition
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ToolParamDefinition) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type ToolParamDefinitionDefaultUnion struct {
-	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
-	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
-	OfString   param.Opt[string]  `json:",omitzero,inline"`
-	OfAnyArray []any              `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u ToolParamDefinitionDefaultUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
-}
-func (u *ToolParamDefinitionDefaultUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *ToolParamDefinitionDefaultUnion) asAny() any {
-	if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfAnyArray) {
-		return &u.OfAnyArray
-	}
-	return nil
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type ToolParamDefinitionItemsUnion struct {
-	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
-	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
-	OfString   param.Opt[string]  `json:",omitzero,inline"`
-	OfAnyArray []any              `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u ToolParamDefinitionItemsUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
-}
-func (u *ToolParamDefinitionItemsUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *ToolParamDefinitionItemsUnion) asAny() any {
-	if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfAnyArray) {
-		return &u.OfAnyArray
 	}
 	return nil
 }

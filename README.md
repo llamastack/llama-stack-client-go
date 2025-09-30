@@ -265,7 +265,7 @@ client := llamastackclient.NewClient(
 	option.WithHeader("X-Some-Header", "custom_header_info"),
 )
 
-client.Inference.ChatCompletion(context.TODO(), ...,
+client.Toolgroups.List(context.TODO(), ...,
 	// Override the header
 	option.WithHeader("X-Some-Header", "some_other_custom_header_info"),
 	// Add an undocumented field to the request body, using sjson syntax
@@ -296,23 +296,14 @@ When the API returns a non-success status code, we return an error with type
 To handle errors, we recommend that you use the `errors.As` pattern:
 
 ```go
-_, err := client.Inference.ChatCompletion(context.TODO(), llamastackclient.InferenceChatCompletionParams{
-	Messages: []llamastackclient.MessageUnionParam{{
-		OfUser: &llamastackclient.UserMessageParam{
-			Content: llamastackclient.InterleavedContentUnionParam{
-				OfString: llamastackclient.String("string"),
-			},
-		},
-	}},
-	ModelID: "model_id",
-})
+_, err := client.Toolgroups.List(context.TODO())
 if err != nil {
 	var apierr *llamastackclient.Error
 	if errors.As(err, &apierr) {
 		println(string(apierr.DumpRequest(true)))  // Prints the serialized HTTP request
 		println(string(apierr.DumpResponse(true))) // Prints the serialized HTTP response
 	}
-	panic(err.Error()) // GET "/v1/inference/chat-completion": 400 Bad Request { ... }
+	panic(err.Error()) // GET "/v1/toolgroups": 400 Bad Request { ... }
 }
 ```
 
@@ -330,18 +321,8 @@ To set a per-retry timeout, use `option.WithRequestTimeout()`.
 // This sets the timeout for the request, including all the retries.
 ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 defer cancel()
-client.Inference.ChatCompletion(
+client.Toolgroups.List(
 	ctx,
-	llamastackclient.InferenceChatCompletionParams{
-		Messages: []llamastackclient.MessageUnionParam{{
-			OfUser: &llamastackclient.UserMessageParam{
-				Content: llamastackclient.InterleavedContentUnionParam{
-					OfString: llamastackclient.String("string"),
-				},
-			},
-		}},
-		ModelID: "model_id",
-	},
 	// This sets the per-retry timeout
 	option.WithRequestTimeout(20*time.Second),
 )
@@ -393,20 +374,7 @@ client := llamastackclient.NewClient(
 )
 
 // Override per-request:
-client.Inference.ChatCompletion(
-	context.TODO(),
-	llamastackclient.InferenceChatCompletionParams{
-		Messages: []llamastackclient.MessageUnionParam{{
-			OfUser: &llamastackclient.UserMessageParam{
-				Content: llamastackclient.InterleavedContentUnionParam{
-					OfString: llamastackclient.String("string"),
-				},
-			},
-		}},
-		ModelID: "model_id",
-	},
-	option.WithMaxRetries(5),
-)
+client.Toolgroups.List(context.TODO(), option.WithMaxRetries(5))
 ```
 
 ### Accessing raw response data (e.g. response headers)
@@ -417,24 +385,11 @@ you need to examine response headers, status codes, or other details.
 ```go
 // Create a variable to store the HTTP response
 var response *http.Response
-chatCompletionResponse, err := client.Inference.ChatCompletion(
-	context.TODO(),
-	llamastackclient.InferenceChatCompletionParams{
-		Messages: []llamastackclient.MessageUnionParam{{
-			OfUser: &llamastackclient.UserMessageParam{
-				Content: llamastackclient.InterleavedContentUnionParam{
-					OfString: llamastackclient.String("string"),
-				},
-			},
-		}},
-		ModelID: "model_id",
-	},
-	option.WithResponseInto(&response),
-)
+toolGroups, err := client.Toolgroups.List(context.TODO(), option.WithResponseInto(&response))
 if err != nil {
 	// handle error
 }
-fmt.Printf("%+v\n", chatCompletionResponse)
+fmt.Printf("%+v\n", toolGroups)
 
 fmt.Printf("Status Code: %d\n", response.StatusCode)
 fmt.Printf("Headers: %+#v\n", response.Header)
