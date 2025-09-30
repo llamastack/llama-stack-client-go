@@ -28,8 +28,9 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewVectorStoreService] method instead.
 type VectorStoreService struct {
-	Options []option.RequestOption
-	Files   VectorStoreFileService
+	Options     []option.RequestOption
+	Files       VectorStoreFileService
+	FileBatches VectorStoreFileBatchService
 }
 
 // NewVectorStoreService generates a new service that applies the given options to
@@ -39,6 +40,7 @@ func NewVectorStoreService(opts ...option.RequestOption) (r VectorStoreService) 
 	r = VectorStoreService{}
 	r.Options = opts
 	r.Files = NewVectorStoreFileService(opts...)
+	r.FileBatches = NewVectorStoreFileBatchService(opts...)
 	return
 }
 

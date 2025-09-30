@@ -56,18 +56,6 @@ func (r *FileService) New(ctx context.Context, body FileNewParams, opts ...optio
 	return
 }
 
-// Returns information about a specific file.
-func (r *FileService) Get(ctx context.Context, fileID string, opts ...option.RequestOption) (res *File, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if fileID == "" {
-		err = errors.New("missing required file_id parameter")
-		return
-	}
-	path := fmt.Sprintf("v1/files/%s", fileID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
-}
-
 // Returns a list of files that belong to the user's organization.
 func (r *FileService) List(ctx context.Context, query FileListParams, opts ...option.RequestOption) (res *pagination.OpenAICursorPage[File], err error) {
 	var raw *http.Response
@@ -91,18 +79,6 @@ func (r *FileService) ListAutoPaging(ctx context.Context, query FileListParams, 
 	return pagination.NewOpenAICursorPageAutoPager(r.List(ctx, query, opts...))
 }
 
-// Delete a file.
-func (r *FileService) Delete(ctx context.Context, fileID string, opts ...option.RequestOption) (res *DeleteFileResponse, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if fileID == "" {
-		err = errors.New("missing required file_id parameter")
-		return
-	}
-	path := fmt.Sprintf("v1/files/%s", fileID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
-	return
-}
-
 // Returns the contents of the specified file.
 func (r *FileService) Content(ctx context.Context, fileID string, opts ...option.RequestOption) (res *FileContentResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -113,30 +89,6 @@ func (r *FileService) Content(ctx context.Context, fileID string, opts ...option
 	path := fmt.Sprintf("v1/files/%s/content", fileID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return
-}
-
-// Response for deleting a file in OpenAI Files API.
-type DeleteFileResponse struct {
-	// The file identifier that was deleted
-	ID string `json:"id,required"`
-	// Whether the file was successfully deleted
-	Deleted bool `json:"deleted,required"`
-	// The object type, which is always "file"
-	Object constant.File `json:"object,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		Deleted     respjson.Field
-		Object      respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r DeleteFileResponse) RawJSON() string { return r.JSON.raw }
-func (r *DeleteFileResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
 }
 
 // OpenAI File object as defined in the OpenAI Files API.
