@@ -69,8 +69,8 @@ func TestToolRuntimeRagToolQueryWithOptionalParams(t *testing.T) {
 			ChunkTemplate:      "chunk_template",
 			MaxChunks:          0,
 			MaxTokensInContext: 0,
-			QueryGeneratorConfig: llamastackclient.QueryGeneratorConfigUnionParam{
-				OfDefault: &llamastackclient.QueryGeneratorConfigDefaultParam{
+			QueryGeneratorConfig: llamastackclient.QueryConfigQueryGeneratorConfigUnionParam{
+				OfDefault: &llamastackclient.QueryConfigQueryGeneratorConfigDefaultParam{
 					Separator: "separator",
 				},
 			},

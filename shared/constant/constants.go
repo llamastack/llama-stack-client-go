@@ -31,6 +31,7 @@ type ChatCompletion string                     // Always "chat.completion"
 type ChatCompletionChunk string                // Always "chat.completion.chunk"
 type CompletionInput string                    // Always "completion_input"
 type ContainerFileCitation string              // Always "container_file_citation"
+type CreatedAt string                          // Always "created_at"
 type Dataset string                            // Always "dataset"
 type Default string                            // Always "default"
 type Developer string                          // Always "developer"
@@ -139,6 +140,7 @@ func (c ChatCompletion) Default() ChatCompletion               { return "chat.co
 func (c ChatCompletionChunk) Default() ChatCompletionChunk     { return "chat.completion.chunk" }
 func (c CompletionInput) Default() CompletionInput             { return "completion_input" }
 func (c ContainerFileCitation) Default() ContainerFileCitation { return "container_file_citation" }
+func (c CreatedAt) Default() CreatedAt                         { return "created_at" }
 func (c Dataset) Default() Dataset                             { return "dataset" }
 func (c Default) Default() Default                             { return "default" }
 func (c Developer) Default() Developer                         { return "developer" }
@@ -279,6 +281,7 @@ func (c ChatCompletion) MarshalJSON() ([]byte, error)                     { retu
 func (c ChatCompletionChunk) MarshalJSON() ([]byte, error)                { return marshalString(c) }
 func (c CompletionInput) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
 func (c ContainerFileCitation) MarshalJSON() ([]byte, error)              { return marshalString(c) }
+func (c CreatedAt) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
 func (c Dataset) MarshalJSON() ([]byte, error)                            { return marshalString(c) }
 func (c Default) MarshalJSON() ([]byte, error)                            { return marshalString(c) }
 func (c Developer) MarshalJSON() ([]byte, error)                          { return marshalString(c) }

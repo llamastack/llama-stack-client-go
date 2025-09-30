@@ -92,7 +92,7 @@ func (r *EvalService) RunEvalAlpha(ctx context.Context, benchmarkID string, body
 // The properties EvalCandidate, ScoringParams are required.
 type BenchmarkConfigParam struct {
 	// The candidate to evaluate.
-	EvalCandidate EvalCandidateUnionParam `json:"eval_candidate,omitzero,required"`
+	EvalCandidate BenchmarkConfigEvalCandidateUnionParam `json:"eval_candidate,omitzero,required"`
 	// Map between scoring function id and parameters for each scoring function you
 	// want to run
 	ScoringParams map[string]ScoringFnParamsUnion `json:"scoring_params,omitzero,required"`
@@ -110,36 +110,23 @@ func (r *BenchmarkConfigParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func EvalCandidateParamOfModel(model string, samplingParams SamplingParams) EvalCandidateUnionParam {
-	var variant EvalCandidateModelParam
-	variant.Model = model
-	variant.SamplingParams = samplingParams
-	return EvalCandidateUnionParam{OfModel: &variant}
-}
-
-func EvalCandidateParamOfAgent(config AgentConfigParam) EvalCandidateUnionParam {
-	var agent EvalCandidateAgentParam
-	agent.Config = config
-	return EvalCandidateUnionParam{OfAgent: &agent}
-}
-
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
-type EvalCandidateUnionParam struct {
-	OfModel *EvalCandidateModelParam `json:",omitzero,inline"`
-	OfAgent *EvalCandidateAgentParam `json:",omitzero,inline"`
+type BenchmarkConfigEvalCandidateUnionParam struct {
+	OfModel *BenchmarkConfigEvalCandidateModelParam `json:",omitzero,inline"`
+	OfAgent *BenchmarkConfigEvalCandidateAgentParam `json:",omitzero,inline"`
 	paramUnion
 }
 
-func (u EvalCandidateUnionParam) MarshalJSON() ([]byte, error) {
+func (u BenchmarkConfigEvalCandidateUnionParam) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfModel, u.OfAgent)
 }
-func (u *EvalCandidateUnionParam) UnmarshalJSON(data []byte) error {
+func (u *BenchmarkConfigEvalCandidateUnionParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
-func (u *EvalCandidateUnionParam) asAny() any {
+func (u *BenchmarkConfigEvalCandidateUnionParam) asAny() any {
 	if !param.IsOmitted(u.OfModel) {
 		return u.OfModel
 	} else if !param.IsOmitted(u.OfAgent) {
@@ -149,7 +136,7 @@ func (u *EvalCandidateUnionParam) asAny() any {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u EvalCandidateUnionParam) GetModel() *string {
+func (u BenchmarkConfigEvalCandidateUnionParam) GetModel() *string {
 	if vt := u.OfModel; vt != nil {
 		return &vt.Model
 	}
@@ -157,7 +144,7 @@ func (u EvalCandidateUnionParam) GetModel() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u EvalCandidateUnionParam) GetSamplingParams() *SamplingParams {
+func (u BenchmarkConfigEvalCandidateUnionParam) GetSamplingParams() *SamplingParams {
 	if vt := u.OfModel; vt != nil {
 		return &vt.SamplingParams
 	}
@@ -165,7 +152,7 @@ func (u EvalCandidateUnionParam) GetSamplingParams() *SamplingParams {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u EvalCandidateUnionParam) GetSystemMessage() *SystemMessageParam {
+func (u BenchmarkConfigEvalCandidateUnionParam) GetSystemMessage() *SystemMessageParam {
 	if vt := u.OfModel; vt != nil {
 		return &vt.SystemMessage
 	}
@@ -173,7 +160,7 @@ func (u EvalCandidateUnionParam) GetSystemMessage() *SystemMessageParam {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u EvalCandidateUnionParam) GetConfig() *AgentConfigParam {
+func (u BenchmarkConfigEvalCandidateUnionParam) GetConfig() *AgentConfigParam {
 	if vt := u.OfAgent; vt != nil {
 		return &vt.Config
 	}
@@ -181,7 +168,7 @@ func (u EvalCandidateUnionParam) GetConfig() *AgentConfigParam {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u EvalCandidateUnionParam) GetType() *string {
+func (u BenchmarkConfigEvalCandidateUnionParam) GetType() *string {
 	if vt := u.OfModel; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfAgent; vt != nil {
@@ -191,17 +178,17 @@ func (u EvalCandidateUnionParam) GetType() *string {
 }
 
 func init() {
-	apijson.RegisterUnion[EvalCandidateUnionParam](
+	apijson.RegisterUnion[BenchmarkConfigEvalCandidateUnionParam](
 		"type",
-		apijson.Discriminator[EvalCandidateModelParam]("model"),
-		apijson.Discriminator[EvalCandidateAgentParam]("agent"),
+		apijson.Discriminator[BenchmarkConfigEvalCandidateModelParam]("model"),
+		apijson.Discriminator[BenchmarkConfigEvalCandidateAgentParam]("agent"),
 	)
 }
 
 // A model candidate for evaluation.
 //
 // The properties Model, SamplingParams, Type are required.
-type EvalCandidateModelParam struct {
+type BenchmarkConfigEvalCandidateModelParam struct {
 	// The model ID to evaluate.
 	Model string `json:"model,required"`
 	// The sampling parameters for the model.
@@ -213,18 +200,18 @@ type EvalCandidateModelParam struct {
 	paramObj
 }
 
-func (r EvalCandidateModelParam) MarshalJSON() (data []byte, err error) {
-	type shadow EvalCandidateModelParam
+func (r BenchmarkConfigEvalCandidateModelParam) MarshalJSON() (data []byte, err error) {
+	type shadow BenchmarkConfigEvalCandidateModelParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *EvalCandidateModelParam) UnmarshalJSON(data []byte) error {
+func (r *BenchmarkConfigEvalCandidateModelParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // An agent candidate for evaluation.
 //
 // The properties Config, Type are required.
-type EvalCandidateAgentParam struct {
+type BenchmarkConfigEvalCandidateAgentParam struct {
 	// The configuration for the agent candidate.
 	Config AgentConfigParam `json:"config,omitzero,required"`
 	// This field can be elided, and will marshal its zero value as "agent".
@@ -232,11 +219,11 @@ type EvalCandidateAgentParam struct {
 	paramObj
 }
 
-func (r EvalCandidateAgentParam) MarshalJSON() (data []byte, err error) {
-	type shadow EvalCandidateAgentParam
+func (r BenchmarkConfigEvalCandidateAgentParam) MarshalJSON() (data []byte, err error) {
+	type shadow BenchmarkConfigEvalCandidateAgentParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *EvalCandidateAgentParam) UnmarshalJSON(data []byte) error {
+func (r *BenchmarkConfigEvalCandidateAgentParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

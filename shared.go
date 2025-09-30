@@ -507,201 +507,6 @@ func (r *CompletionMessageParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ContentDeltaUnion contains all possible properties and values from
-// [ContentDeltaText], [ContentDeltaImage], [ContentDeltaToolCall].
-//
-// Use the [ContentDeltaUnion.AsAny] method to switch on the variant.
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-type ContentDeltaUnion struct {
-	// This field is from variant [ContentDeltaText].
-	Text string `json:"text"`
-	// Any of "text", "image", "tool_call".
-	Type string `json:"type"`
-	// This field is from variant [ContentDeltaImage].
-	Image string `json:"image"`
-	// This field is from variant [ContentDeltaToolCall].
-	ParseStatus string `json:"parse_status"`
-	// This field is from variant [ContentDeltaToolCall].
-	ToolCall ContentDeltaToolCallToolCallUnion `json:"tool_call"`
-	JSON     struct {
-		Text        respjson.Field
-		Type        respjson.Field
-		Image       respjson.Field
-		ParseStatus respjson.Field
-		ToolCall    respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// anyContentDelta is implemented by each variant of [ContentDeltaUnion] to add
-// type safety for the return type of [ContentDeltaUnion.AsAny]
-type anyContentDelta interface {
-	implContentDeltaUnion()
-}
-
-// Use the following switch statement to find the correct variant
-//
-//	switch variant := ContentDeltaUnion.AsAny().(type) {
-//	case llamastackclient.ContentDeltaText:
-//	case llamastackclient.ContentDeltaImage:
-//	case llamastackclient.ContentDeltaToolCall:
-//	default:
-//	  fmt.Errorf("no variant present")
-//	}
-func (u ContentDeltaUnion) AsAny() anyContentDelta {
-	switch u.Type {
-	case "text":
-		return u.AsText()
-	case "image":
-		return u.AsImage()
-	case "tool_call":
-		return u.AsToolCall()
-	}
-	return nil
-}
-
-func (u ContentDeltaUnion) AsText() (v ContentDeltaText) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ContentDeltaUnion) AsImage() (v ContentDeltaImage) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ContentDeltaUnion) AsToolCall() (v ContentDeltaToolCall) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ContentDeltaUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ContentDeltaUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A text content delta for streaming responses.
-type ContentDeltaText struct {
-	// The incremental text content
-	Text string `json:"text,required"`
-	// Discriminator type of the delta. Always "text"
-	Type constant.Text `json:"type,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Text        respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ContentDeltaText) RawJSON() string { return r.JSON.raw }
-func (r *ContentDeltaText) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (ContentDeltaText) implContentDeltaUnion() {}
-
-// An image content delta for streaming responses.
-type ContentDeltaImage struct {
-	// The incremental image data as bytes
-	Image string `json:"image,required"`
-	// Discriminator type of the delta. Always "image"
-	Type constant.Image `json:"type,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Image       respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ContentDeltaImage) RawJSON() string { return r.JSON.raw }
-func (r *ContentDeltaImage) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (ContentDeltaImage) implContentDeltaUnion() {}
-
-// A tool call content delta for streaming responses.
-type ContentDeltaToolCall struct {
-	// Current parsing status of the tool call
-	//
-	// Any of "started", "in_progress", "failed", "succeeded".
-	ParseStatus string `json:"parse_status,required"`
-	// Either an in-progress tool call string or the final parsed tool call
-	ToolCall ContentDeltaToolCallToolCallUnion `json:"tool_call,required"`
-	// Discriminator type of the delta. Always "tool_call"
-	Type constant.ToolCall `json:"type,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ParseStatus respjson.Field
-		ToolCall    respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ContentDeltaToolCall) RawJSON() string { return r.JSON.raw }
-func (r *ContentDeltaToolCall) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func (ContentDeltaToolCall) implContentDeltaUnion() {}
-
-// ContentDeltaToolCallToolCallUnion contains all possible properties and values
-// from [string], [ToolCall].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString]
-type ContentDeltaToolCallToolCallUnion struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field is from variant [ToolCall].
-	Arguments ToolCallArgumentsUnion `json:"arguments"`
-	// This field is from variant [ToolCall].
-	CallID string `json:"call_id"`
-	// This field is from variant [ToolCall].
-	ToolName ToolCallToolName `json:"tool_name"`
-	// This field is from variant [ToolCall].
-	ArgumentsJson string `json:"arguments_json"`
-	JSON          struct {
-		OfString      respjson.Field
-		Arguments     respjson.Field
-		CallID        respjson.Field
-		ToolName      respjson.Field
-		ArgumentsJson respjson.Field
-		raw           string
-	} `json:"-"`
-}
-
-func (u ContentDeltaToolCallToolCallUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ContentDeltaToolCallToolCallUnion) AsToolCall() (v ToolCall) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ContentDeltaToolCallToolCallUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ContentDeltaToolCallToolCallUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // A document to be used for document ingestion in the RAG Tool.
 //
 // The properties Content, DocumentID, Metadata are required.
@@ -1713,7 +1518,7 @@ type QueryConfigParam struct {
 	// Maximum number of tokens in the context.
 	MaxTokensInContext int64 `json:"max_tokens_in_context,required"`
 	// Configuration for the query generator.
-	QueryGeneratorConfig QueryGeneratorConfigUnionParam `json:"query_generator_config,omitzero,required"`
+	QueryGeneratorConfig QueryConfigQueryGeneratorConfigUnionParam `json:"query_generator_config,omitzero,required"`
 	// Search mode for retrieval—either "vector", "keyword", or "hybrid". Default
 	// "vector".
 	//
@@ -1729,6 +1534,117 @@ func (r QueryConfigParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *QueryConfigParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type QueryConfigQueryGeneratorConfigUnionParam struct {
+	OfDefault *QueryConfigQueryGeneratorConfigDefaultParam `json:",omitzero,inline"`
+	OfLlm     *QueryConfigQueryGeneratorConfigLlmParam     `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u QueryConfigQueryGeneratorConfigUnionParam) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfDefault, u.OfLlm)
+}
+func (u *QueryConfigQueryGeneratorConfigUnionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *QueryConfigQueryGeneratorConfigUnionParam) asAny() any {
+	if !param.IsOmitted(u.OfDefault) {
+		return u.OfDefault
+	} else if !param.IsOmitted(u.OfLlm) {
+		return u.OfLlm
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u QueryConfigQueryGeneratorConfigUnionParam) GetSeparator() *string {
+	if vt := u.OfDefault; vt != nil {
+		return &vt.Separator
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u QueryConfigQueryGeneratorConfigUnionParam) GetModel() *string {
+	if vt := u.OfLlm; vt != nil {
+		return &vt.Model
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u QueryConfigQueryGeneratorConfigUnionParam) GetTemplate() *string {
+	if vt := u.OfLlm; vt != nil {
+		return &vt.Template
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u QueryConfigQueryGeneratorConfigUnionParam) GetType() *string {
+	if vt := u.OfDefault; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfLlm; vt != nil {
+		return (*string)(&vt.Type)
+	}
+	return nil
+}
+
+func init() {
+	apijson.RegisterUnion[QueryConfigQueryGeneratorConfigUnionParam](
+		"type",
+		apijson.Discriminator[QueryConfigQueryGeneratorConfigDefaultParam]("default"),
+		apijson.Discriminator[QueryConfigQueryGeneratorConfigLlmParam]("llm"),
+	)
+}
+
+// Configuration for the default RAG query generator.
+//
+// The properties Separator, Type are required.
+type QueryConfigQueryGeneratorConfigDefaultParam struct {
+	// String separator used to join query terms
+	Separator string `json:"separator,required"`
+	// Type of query generator, always 'default'
+	//
+	// This field can be elided, and will marshal its zero value as "default".
+	Type constant.Default `json:"type,required"`
+	paramObj
+}
+
+func (r QueryConfigQueryGeneratorConfigDefaultParam) MarshalJSON() (data []byte, err error) {
+	type shadow QueryConfigQueryGeneratorConfigDefaultParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *QueryConfigQueryGeneratorConfigDefaultParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Configuration for the LLM-based RAG query generator.
+//
+// The properties Model, Template, Type are required.
+type QueryConfigQueryGeneratorConfigLlmParam struct {
+	// Name of the language model to use for query generation
+	Model string `json:"model,required"`
+	// Template string for formatting the query generation prompt
+	Template string `json:"template,required"`
+	// Type of query generator, always 'llm'
+	//
+	// This field can be elided, and will marshal its zero value as "llm".
+	Type constant.Llm `json:"type,required"`
+	paramObj
+}
+
+func (r QueryConfigQueryGeneratorConfigLlmParam) MarshalJSON() (data []byte, err error) {
+	type shadow QueryConfigQueryGeneratorConfigLlmParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *QueryConfigQueryGeneratorConfigLlmParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1842,130 +1758,6 @@ func (r QueryConfigRankerWeightedParam) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *QueryConfigRankerWeightedParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func QueryGeneratorConfigParamOfDefault(separator string) QueryGeneratorConfigUnionParam {
-	var default_ QueryGeneratorConfigDefaultParam
-	default_.Separator = separator
-	return QueryGeneratorConfigUnionParam{OfDefault: &default_}
-}
-
-func QueryGeneratorConfigParamOfLlm(model string, template string) QueryGeneratorConfigUnionParam {
-	var llm QueryGeneratorConfigLlmParam
-	llm.Model = model
-	llm.Template = template
-	return QueryGeneratorConfigUnionParam{OfLlm: &llm}
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type QueryGeneratorConfigUnionParam struct {
-	OfDefault *QueryGeneratorConfigDefaultParam `json:",omitzero,inline"`
-	OfLlm     *QueryGeneratorConfigLlmParam     `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u QueryGeneratorConfigUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfDefault, u.OfLlm)
-}
-func (u *QueryGeneratorConfigUnionParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *QueryGeneratorConfigUnionParam) asAny() any {
-	if !param.IsOmitted(u.OfDefault) {
-		return u.OfDefault
-	} else if !param.IsOmitted(u.OfLlm) {
-		return u.OfLlm
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u QueryGeneratorConfigUnionParam) GetSeparator() *string {
-	if vt := u.OfDefault; vt != nil {
-		return &vt.Separator
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u QueryGeneratorConfigUnionParam) GetModel() *string {
-	if vt := u.OfLlm; vt != nil {
-		return &vt.Model
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u QueryGeneratorConfigUnionParam) GetTemplate() *string {
-	if vt := u.OfLlm; vt != nil {
-		return &vt.Template
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u QueryGeneratorConfigUnionParam) GetType() *string {
-	if vt := u.OfDefault; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfLlm; vt != nil {
-		return (*string)(&vt.Type)
-	}
-	return nil
-}
-
-func init() {
-	apijson.RegisterUnion[QueryGeneratorConfigUnionParam](
-		"type",
-		apijson.Discriminator[QueryGeneratorConfigDefaultParam]("default"),
-		apijson.Discriminator[QueryGeneratorConfigLlmParam]("llm"),
-	)
-}
-
-// Configuration for the default RAG query generator.
-//
-// The properties Separator, Type are required.
-type QueryGeneratorConfigDefaultParam struct {
-	// String separator used to join query terms
-	Separator string `json:"separator,required"`
-	// Type of query generator, always 'default'
-	//
-	// This field can be elided, and will marshal its zero value as "default".
-	Type constant.Default `json:"type,required"`
-	paramObj
-}
-
-func (r QueryGeneratorConfigDefaultParam) MarshalJSON() (data []byte, err error) {
-	type shadow QueryGeneratorConfigDefaultParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *QueryGeneratorConfigDefaultParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Configuration for the LLM-based RAG query generator.
-//
-// The properties Model, Template, Type are required.
-type QueryGeneratorConfigLlmParam struct {
-	// Name of the language model to use for query generation
-	Model string `json:"model,required"`
-	// Template string for formatting the query generation prompt
-	Template string `json:"template,required"`
-	// Type of query generator, always 'llm'
-	//
-	// This field can be elided, and will marshal its zero value as "llm".
-	Type constant.Llm `json:"type,required"`
-	paramObj
-}
-
-func (r QueryGeneratorConfigLlmParam) MarshalJSON() (data []byte, err error) {
-	type shadow QueryGeneratorConfigLlmParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *QueryGeneratorConfigLlmParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

@@ -219,6 +219,15 @@ type FileContentResponse = any
 
 type FileNewParams struct {
 	File io.Reader `json:"file,omitzero,required" format:"binary"`
+	// Valid purpose values for OpenAI Files API.
+	//
+	// Any of "assistants", "batch".
+	Purpose FileNewParamsPurpose `json:"purpose,omitzero,required"`
+	// Control expiration of uploaded files. Params:
+	//
+	// - anchor, must be "created_at"
+	// - seconds, must be int between 3600 and 2592000 (1 hour to 30 days)
+	ExpiresAfter FileNewParamsExpiresAfter `json:"expires_after,omitzero"`
 	paramObj
 }
 
@@ -238,6 +247,35 @@ func (r FileNewParams) MarshalMultipart() (data []byte, contentType string, err 
 		return nil, "", err
 	}
 	return buf.Bytes(), writer.FormDataContentType(), nil
+}
+
+// Valid purpose values for OpenAI Files API.
+type FileNewParamsPurpose string
+
+const (
+	FileNewParamsPurposeAssistants FileNewParamsPurpose = "assistants"
+	FileNewParamsPurposeBatch      FileNewParamsPurpose = "batch"
+)
+
+// Control expiration of uploaded files. Params:
+//
+// - anchor, must be "created_at"
+// - seconds, must be int between 3600 and 2592000 (1 hour to 30 days)
+//
+// The properties Anchor, Seconds are required.
+type FileNewParamsExpiresAfter struct {
+	Seconds int64 `json:"seconds,required"`
+	// This field can be elided, and will marshal its zero value as "created_at".
+	Anchor constant.CreatedAt `json:"anchor,required"`
+	paramObj
+}
+
+func (r FileNewParamsExpiresAfter) MarshalJSON() (data []byte, err error) {
+	type shadow FileNewParamsExpiresAfter
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *FileNewParamsExpiresAfter) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 type FileListParams struct {
