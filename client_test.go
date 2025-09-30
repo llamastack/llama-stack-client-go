@@ -38,16 +38,7 @@ func TestUserAgentHeader(t *testing.T) {
 			},
 		}),
 	)
-	client.Inference.ChatCompletion(context.Background(), llamastackclient.InferenceChatCompletionParams{
-		Messages: []llamastackclient.MessageUnionParam{{
-			OfUser: &llamastackclient.UserMessageParam{
-				Content: llamastackclient.InterleavedContentUnionParam{
-					OfString: llamastackclient.String("string"),
-				},
-			},
-		}},
-		ModelID: "model_id",
-	})
+	client.Toolgroups.List(context.Background())
 	if userAgent != fmt.Sprintf("LlamaStackClient/Go %s", internal.PackageVersion) {
 		t.Errorf("Expected User-Agent to be correct, but got: %#v", userAgent)
 	}
@@ -70,16 +61,7 @@ func TestRetryAfter(t *testing.T) {
 			},
 		}),
 	)
-	_, err := client.Inference.ChatCompletion(context.Background(), llamastackclient.InferenceChatCompletionParams{
-		Messages: []llamastackclient.MessageUnionParam{{
-			OfUser: &llamastackclient.UserMessageParam{
-				Content: llamastackclient.InterleavedContentUnionParam{
-					OfString: llamastackclient.String("string"),
-				},
-			},
-		}},
-		ModelID: "model_id",
-	})
+	_, err := client.Toolgroups.List(context.Background())
 	if err == nil {
 		t.Error("Expected there to be a cancel error")
 	}
@@ -113,16 +95,7 @@ func TestDeleteRetryCountHeader(t *testing.T) {
 		}),
 		option.WithHeaderDel("X-Stainless-Retry-Count"),
 	)
-	_, err := client.Inference.ChatCompletion(context.Background(), llamastackclient.InferenceChatCompletionParams{
-		Messages: []llamastackclient.MessageUnionParam{{
-			OfUser: &llamastackclient.UserMessageParam{
-				Content: llamastackclient.InterleavedContentUnionParam{
-					OfString: llamastackclient.String("string"),
-				},
-			},
-		}},
-		ModelID: "model_id",
-	})
+	_, err := client.Toolgroups.List(context.Background())
 	if err == nil {
 		t.Error("Expected there to be a cancel error")
 	}
@@ -151,16 +124,7 @@ func TestOverwriteRetryCountHeader(t *testing.T) {
 		}),
 		option.WithHeader("X-Stainless-Retry-Count", "42"),
 	)
-	_, err := client.Inference.ChatCompletion(context.Background(), llamastackclient.InferenceChatCompletionParams{
-		Messages: []llamastackclient.MessageUnionParam{{
-			OfUser: &llamastackclient.UserMessageParam{
-				Content: llamastackclient.InterleavedContentUnionParam{
-					OfString: llamastackclient.String("string"),
-				},
-			},
-		}},
-		ModelID: "model_id",
-	})
+	_, err := client.Toolgroups.List(context.Background())
 	if err == nil {
 		t.Error("Expected there to be a cancel error")
 	}
@@ -188,16 +152,7 @@ func TestRetryAfterMs(t *testing.T) {
 			},
 		}),
 	)
-	_, err := client.Inference.ChatCompletion(context.Background(), llamastackclient.InferenceChatCompletionParams{
-		Messages: []llamastackclient.MessageUnionParam{{
-			OfUser: &llamastackclient.UserMessageParam{
-				Content: llamastackclient.InterleavedContentUnionParam{
-					OfString: llamastackclient.String("string"),
-				},
-			},
-		}},
-		ModelID: "model_id",
-	})
+	_, err := client.Toolgroups.List(context.Background())
 	if err == nil {
 		t.Error("Expected there to be a cancel error")
 	}
@@ -219,16 +174,7 @@ func TestContextCancel(t *testing.T) {
 	)
 	cancelCtx, cancel := context.WithCancel(context.Background())
 	cancel()
-	_, err := client.Inference.ChatCompletion(cancelCtx, llamastackclient.InferenceChatCompletionParams{
-		Messages: []llamastackclient.MessageUnionParam{{
-			OfUser: &llamastackclient.UserMessageParam{
-				Content: llamastackclient.InterleavedContentUnionParam{
-					OfString: llamastackclient.String("string"),
-				},
-			},
-		}},
-		ModelID: "model_id",
-	})
+	_, err := client.Toolgroups.List(cancelCtx)
 	if err == nil {
 		t.Error("Expected there to be a cancel error")
 	}
@@ -247,16 +193,7 @@ func TestContextCancelDelay(t *testing.T) {
 	)
 	cancelCtx, cancel := context.WithTimeout(context.Background(), 2*time.Millisecond)
 	defer cancel()
-	_, err := client.Inference.ChatCompletion(cancelCtx, llamastackclient.InferenceChatCompletionParams{
-		Messages: []llamastackclient.MessageUnionParam{{
-			OfUser: &llamastackclient.UserMessageParam{
-				Content: llamastackclient.InterleavedContentUnionParam{
-					OfString: llamastackclient.String("string"),
-				},
-			},
-		}},
-		ModelID: "model_id",
-	})
+	_, err := client.Toolgroups.List(cancelCtx)
 	if err == nil {
 		t.Error("expected there to be a cancel error")
 	}
@@ -281,16 +218,7 @@ func TestContextDeadline(t *testing.T) {
 				},
 			}),
 		)
-		_, err := client.Inference.ChatCompletion(deadlineCtx, llamastackclient.InferenceChatCompletionParams{
-			Messages: []llamastackclient.MessageUnionParam{{
-				OfUser: &llamastackclient.UserMessageParam{
-					Content: llamastackclient.InterleavedContentUnionParam{
-						OfString: llamastackclient.String("string"),
-					},
-				},
-			}},
-			ModelID: "model_id",
-		})
+		_, err := client.Toolgroups.List(deadlineCtx)
 		if err == nil {
 			t.Error("expected there to be a deadline error")
 		}
@@ -334,15 +262,11 @@ func TestContextDeadlineStreaming(t *testing.T) {
 				},
 			}),
 		)
-		stream := client.Inference.ChatCompletionStreaming(deadlineCtx, llamastackclient.InferenceChatCompletionParams{
-			Messages: []llamastackclient.MessageUnionParam{{
-				OfUser: &llamastackclient.UserMessageParam{
-					Content: llamastackclient.InterleavedContentUnionParam{
-						OfString: llamastackclient.String("string"),
-					},
-				},
-			}},
-			ModelID: "model_id",
+		stream := client.Responses.NewStreaming(deadlineCtx, llamastackclient.ResponseNewParams{
+			Input: llamastackclient.ResponseNewParamsInputUnion{
+				OfString: llamastackclient.String("string"),
+			},
+			Model: "model",
 		})
 		for stream.Next() {
 			_ = stream.Current()
@@ -387,17 +311,13 @@ func TestContextDeadlineStreamingWithRequestTimeout(t *testing.T) {
 				},
 			}),
 		)
-		stream := client.Inference.ChatCompletionStreaming(
+		stream := client.Responses.NewStreaming(
 			context.Background(),
-			llamastackclient.InferenceChatCompletionParams{
-				Messages: []llamastackclient.MessageUnionParam{{
-					OfUser: &llamastackclient.UserMessageParam{
-						Content: llamastackclient.InterleavedContentUnionParam{
-							OfString: llamastackclient.String("string"),
-						},
-					},
-				}},
-				ModelID: "model_id",
+			llamastackclient.ResponseNewParams{
+				Input: llamastackclient.ResponseNewParamsInputUnion{
+					OfString: llamastackclient.String("string"),
+				},
+				Model: "model",
 			},
 			option.WithRequestTimeout((100 * time.Millisecond)),
 		)
