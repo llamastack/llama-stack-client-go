@@ -127,22 +127,6 @@ func (r *VectorStoreFileService) Delete(ctx context.Context, fileID string, body
 	return
 }
 
-// Retrieves the contents of a vector store file.
-func (r *VectorStoreFileService) Content(ctx context.Context, fileID string, query VectorStoreFileContentParams, opts ...option.RequestOption) (res *VectorStoreFileContentResponse, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if query.VectorStoreID == "" {
-		err = errors.New("missing required vector_store_id parameter")
-		return
-	}
-	if fileID == "" {
-		err = errors.New("missing required file_id parameter")
-		return
-	}
-	path := fmt.Sprintf("v1/vector_stores/%s/files/%s/content", query.VectorStoreID, fileID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
-}
-
 // OpenAI Vector Store File object.
 type VectorStoreFile struct {
 	// Unique identifier for the file
@@ -429,106 +413,6 @@ func (r *VectorStoreFileDeleteResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Response from retrieving the contents of a vector store file.
-type VectorStoreFileContentResponse struct {
-	// Key-value attributes associated with the file
-	Attributes map[string]VectorStoreFileContentResponseAttributeUnion `json:"attributes,required"`
-	// List of content items from the file
-	Content []VectorStoreFileContentResponseContent `json:"content,required"`
-	// Unique identifier for the file
-	FileID string `json:"file_id,required"`
-	// Name of the file
-	Filename string `json:"filename,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Attributes  respjson.Field
-		Content     respjson.Field
-		FileID      respjson.Field
-		Filename    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r VectorStoreFileContentResponse) RawJSON() string { return r.JSON.raw }
-func (r *VectorStoreFileContentResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// VectorStoreFileContentResponseAttributeUnion contains all possible properties
-// and values from [bool], [float64], [string], [[]any].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type VectorStoreFileContentResponseAttributeUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
-	} `json:"-"`
-}
-
-func (u VectorStoreFileContentResponseAttributeUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u VectorStoreFileContentResponseAttributeUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u VectorStoreFileContentResponseAttributeUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u VectorStoreFileContentResponseAttributeUnion) AsAnyArray() (v []any) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u VectorStoreFileContentResponseAttributeUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *VectorStoreFileContentResponseAttributeUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Content item from a vector store file or search result.
-type VectorStoreFileContentResponseContent struct {
-	// The actual text content
-	Text string `json:"text,required"`
-	// Content type, currently only "text" is supported
-	Type constant.Text `json:"type,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Text        respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r VectorStoreFileContentResponseContent) RawJSON() string { return r.JSON.raw }
-func (r *VectorStoreFileContentResponseContent) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type VectorStoreFileNewParams struct {
 	// The ID of the file to attach to the vector store.
 	FileID string `json:"file_id,required"`
@@ -784,11 +668,6 @@ const (
 )
 
 type VectorStoreFileDeleteParams struct {
-	VectorStoreID string `path:"vector_store_id,required" json:"-"`
-	paramObj
-}
-
-type VectorStoreFileContentParams struct {
 	VectorStoreID string `path:"vector_store_id,required" json:"-"`
 	paramObj
 }
