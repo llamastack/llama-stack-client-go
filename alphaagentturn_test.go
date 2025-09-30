@@ -13,7 +13,7 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 )
 
-func TestAgentTurnNewWithOptionalParams(t *testing.T) {
+func TestAlphaAgentTurnNewWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -24,12 +24,12 @@ func TestAgentTurnNewWithOptionalParams(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Agents.Turn.New(
+	_, err := client.Alpha.Agents.Turn.New(
 		context.TODO(),
 		"session_id",
-		llamastackclient.AgentTurnNewParams{
+		llamastackclient.AlphaAgentTurnNewParams{
 			AgentID: "agent_id",
-			Messages: []llamastackclient.AgentTurnNewParamsMessageUnion{{
+			Messages: []llamastackclient.AlphaAgentTurnNewParamsMessageUnion{{
 				OfUserMessage: &llamastackclient.UserMessageParam{
 					Content: llamastackclient.InterleavedContentUnionParam{
 						OfString: llamastackclient.String("string"),
@@ -39,18 +39,18 @@ func TestAgentTurnNewWithOptionalParams(t *testing.T) {
 					},
 				},
 			}},
-			Documents: []llamastackclient.AgentTurnNewParamsDocument{{
-				Content: llamastackclient.AgentTurnNewParamsDocumentContentUnion{
+			Documents: []llamastackclient.AlphaAgentTurnNewParamsDocument{{
+				Content: llamastackclient.AlphaAgentTurnNewParamsDocumentContentUnion{
 					OfString: llamastackclient.String("string"),
 				},
 				MimeType: "mime_type",
 			}},
-			ToolConfig: llamastackclient.AgentTurnNewParamsToolConfig{
+			ToolConfig: llamastackclient.AlphaAgentTurnNewParamsToolConfig{
 				SystemMessageBehavior: "append",
 				ToolChoice:            "auto",
 				ToolPromptFormat:      "json",
 			},
-			Toolgroups: []llamastackclient.AgentTurnNewParamsToolgroupUnion{{
+			Toolgroups: []llamastackclient.AlphaAgentTurnNewParamsToolgroupUnion{{
 				OfString: llamastackclient.String("string"),
 			}},
 		},
@@ -64,7 +64,7 @@ func TestAgentTurnNewWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestAgentTurnGet(t *testing.T) {
+func TestAlphaAgentTurnGet(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -75,10 +75,10 @@ func TestAgentTurnGet(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Agents.Turn.Get(
+	_, err := client.Alpha.Agents.Turn.Get(
 		context.TODO(),
 		"turn_id",
-		llamastackclient.AgentTurnGetParams{
+		llamastackclient.AlphaAgentTurnGetParams{
 			AgentID:   "agent_id",
 			SessionID: "session_id",
 		},
@@ -92,7 +92,7 @@ func TestAgentTurnGet(t *testing.T) {
 	}
 }
 
-func TestAgentTurnResumeWithOptionalParams(t *testing.T) {
+func TestAlphaAgentTurnResumeWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -103,10 +103,10 @@ func TestAgentTurnResumeWithOptionalParams(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Agents.Turn.Resume(
+	_, err := client.Alpha.Agents.Turn.Resume(
 		context.TODO(),
 		"turn_id",
-		llamastackclient.AgentTurnResumeParams{
+		llamastackclient.AlphaAgentTurnResumeParams{
 			AgentID:   "agent_id",
 			SessionID: "session_id",
 			ToolResponses: []llamastackclient.ToolResponseParam{{

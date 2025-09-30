@@ -21,11 +21,9 @@ type Client struct {
 	Tools                   ToolService
 	ToolRuntime             ToolRuntimeService
 	Responses               ResponseService
-	Agents                  AgentService
 	Datasets                DatasetService
 	Eval                    EvalService
 	Inspect                 InspectService
-	Inference               InferenceService
 	Embeddings              EmbeddingService
 	Chat                    ChatService
 	Completions             CompletionService
@@ -45,6 +43,7 @@ type Client struct {
 	ScoringFunctions        ScoringFunctionService
 	Benchmarks              BenchmarkService
 	Files                   FileService
+	Alpha                   AlphaService
 }
 
 // DefaultClientOptions read from the environment (LLAMA_STACK_CLIENT_API_KEY,
@@ -73,11 +72,9 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Tools = NewToolService(opts...)
 	r.ToolRuntime = NewToolRuntimeService(opts...)
 	r.Responses = NewResponseService(opts...)
-	r.Agents = NewAgentService(opts...)
 	r.Datasets = NewDatasetService(opts...)
 	r.Eval = NewEvalService(opts...)
 	r.Inspect = NewInspectService(opts...)
-	r.Inference = NewInferenceService(opts...)
 	r.Embeddings = NewEmbeddingService(opts...)
 	r.Chat = NewChatService(opts...)
 	r.Completions = NewCompletionService(opts...)
@@ -97,6 +94,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.ScoringFunctions = NewScoringFunctionService(opts...)
 	r.Benchmarks = NewBenchmarkService(opts...)
 	r.Files = NewFileService(opts...)
+	r.Alpha = NewAlphaService(opts...)
 
 	return
 }

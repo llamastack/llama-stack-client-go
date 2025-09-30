@@ -13,7 +13,7 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 )
 
-func TestInferenceRerankWithOptionalParams(t *testing.T) {
+func TestAlphaInferenceRerankWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -24,12 +24,12 @@ func TestInferenceRerankWithOptionalParams(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Inference.Rerank(context.TODO(), llamastackclient.InferenceRerankParams{
-		Items: []llamastackclient.InferenceRerankParamsItemUnion{{
+	_, err := client.Alpha.Inference.Rerank(context.TODO(), llamastackclient.AlphaInferenceRerankParams{
+		Items: []llamastackclient.AlphaInferenceRerankParamsItemUnion{{
 			OfString: llamastackclient.String("string"),
 		}},
 		Model: "model",
-		Query: llamastackclient.InferenceRerankParamsQueryUnion{
+		Query: llamastackclient.AlphaInferenceRerankParamsQueryUnion{
 			OfString: llamastackclient.String("string"),
 		},
 		MaxNumResults: llamastackclient.Int(0),

@@ -13,7 +13,7 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 )
 
-func TestAgentStepGet(t *testing.T) {
+func TestAlphaAgentStepGet(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -24,10 +24,10 @@ func TestAgentStepGet(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Agents.Steps.Get(
+	_, err := client.Alpha.Agents.Steps.Get(
 		context.TODO(),
 		"step_id",
-		llamastackclient.AgentStepGetParams{
+		llamastackclient.AlphaAgentStepGetParams{
 			AgentID:   "agent_id",
 			SessionID: "session_id",
 			TurnID:    "turn_id",
