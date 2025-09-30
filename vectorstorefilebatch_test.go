@@ -75,38 +75,6 @@ func TestVectorStoreFileBatchGet(t *testing.T) {
 	}
 }
 
-func TestVectorStoreFileBatchListWithOptionalParams(t *testing.T) {
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := llamastackclient.NewClient(
-		option.WithBaseURL(baseURL),
-	)
-	_, err := client.VectorStores.FileBatches.List(
-		context.TODO(),
-		"batch_id",
-		llamastackclient.VectorStoreFileBatchListParams{
-			VectorStoreID: "vector_store_id",
-			After:         llamastackclient.String("after"),
-			Before:        llamastackclient.String("before"),
-			Filter:        llamastackclient.String("filter"),
-			Limit:         llamastackclient.Int(0),
-			Order:         llamastackclient.String("order"),
-		},
-	)
-	if err != nil {
-		var apierr *llamastackclient.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
 func TestVectorStoreFileBatchCancel(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
@@ -123,6 +91,38 @@ func TestVectorStoreFileBatchCancel(t *testing.T) {
 		"batch_id",
 		llamastackclient.VectorStoreFileBatchCancelParams{
 			VectorStoreID: "vector_store_id",
+		},
+	)
+	if err != nil {
+		var apierr *llamastackclient.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestVectorStoreFileBatchListFilesWithOptionalParams(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := llamastackclient.NewClient(
+		option.WithBaseURL(baseURL),
+	)
+	_, err := client.VectorStores.FileBatches.ListFiles(
+		context.TODO(),
+		"batch_id",
+		llamastackclient.VectorStoreFileBatchListFilesParams{
+			VectorStoreID: "vector_store_id",
+			After:         llamastackclient.String("after"),
+			Before:        llamastackclient.String("before"),
+			Filter:        llamastackclient.String("filter"),
+			Limit:         llamastackclient.Int(0),
+			Order:         llamastackclient.String("order"),
 		},
 	)
 	if err != nil {
