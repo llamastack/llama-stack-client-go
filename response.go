@@ -139,8 +139,6 @@ type ResponseObject struct {
 	TopP float64 `json:"top_p"`
 	// (Optional) Truncation strategy applied to the response
 	Truncation string `json:"truncation"`
-	// (Optional) User identifier associated with the request
-	User string `json:"user"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                 respjson.Field
@@ -156,7 +154,6 @@ type ResponseObject struct {
 		Temperature        respjson.Field
 		TopP               respjson.Field
 		Truncation         respjson.Field
-		User               respjson.Field
 		ExtraFields        map[string]respjson.Field
 		raw                string
 	} `json:"-"`
@@ -4427,8 +4424,6 @@ type ResponseListResponse struct {
 	TopP float64 `json:"top_p"`
 	// (Optional) Truncation strategy applied to the response
 	Truncation string `json:"truncation"`
-	// (Optional) User identifier associated with the request
-	User string `json:"user"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                 respjson.Field
@@ -4445,7 +4440,6 @@ type ResponseListResponse struct {
 		Temperature        respjson.Field
 		TopP               respjson.Field
 		Truncation         respjson.Field
-		User               respjson.Field
 		ExtraFields        map[string]respjson.Field
 		raw                string
 	} `json:"-"`

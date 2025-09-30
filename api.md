@@ -237,15 +237,11 @@ Methods:
 Response Types:
 
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ChatCompletionResponseStreamChunk">ChatCompletionResponseStreamChunk</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#EmbeddingsResponse">EmbeddingsResponse</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#TokenLogProbs">TokenLogProbs</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#InferenceRerankResponse">InferenceRerankResponse</a>
 
 Methods:
 
 - <code title="post /v1/inference/chat-completion">client.Inference.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#InferenceService.ChatCompletion">ChatCompletion</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#InferenceChatCompletionParams">InferenceChatCompletionParams</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ChatCompletionResponse">ChatCompletionResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="post /v1/inference/embeddings">client.Inference.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#InferenceService.Embeddings">Embeddings</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#InferenceEmbeddingsParams">InferenceEmbeddingsParams</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#EmbeddingsResponse">EmbeddingsResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="post /v1/inference/rerank">client.Inference.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#InferenceService.Rerank">Rerank</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#InferenceRerankParams">InferenceRerankParams</a>) ([]<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#InferenceRerankResponse">InferenceRerankResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Embeddings
 
@@ -352,25 +348,21 @@ Methods:
 
 Response Types:
 
+- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ListModelsResponse">ListModelsResponse</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Model">Model</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelListResponse">ModelListResponse</a>
 
 Methods:
 
 - <code title="get /v1/models/{model_id}">client.Models.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, modelID <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Model">Model</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="get /v1/models">client.Models.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) ([]<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelListResponse">ModelListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /v1/models">client.Models.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) ([]<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Model">Model</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="post /v1/models">client.Models.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelService.Register">Register</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelRegisterParams">ModelRegisterParams</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Model">Model</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="delete /v1/models/{model_id}">client.Models.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelService.Unregister">Unregister</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, modelID <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
 
 ## OpenAI
 
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelOpenAIListResponse">ModelOpenAIListResponse</a>
-
 Methods:
 
-- <code title="get /v1/models">client.Models.OpenAI.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelOpenAIService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) ([]<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelOpenAIListResponse">ModelOpenAIListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /v1/models">client.Models.OpenAI.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelOpenAIService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) ([]<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Model">Model</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # PostTraining
 
