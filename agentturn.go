@@ -568,7 +568,7 @@ type TurnResponseEventPayloadUnion struct {
 	// This field is from variant [TurnResponseEventPayloadStepStart].
 	Metadata map[string]TurnResponseEventPayloadStepStartMetadataUnion `json:"metadata"`
 	// This field is from variant [TurnResponseEventPayloadStepProgress].
-	Delta ContentDeltaUnion `json:"delta"`
+	Delta TurnResponseEventPayloadStepProgressDeltaUnion `json:"delta"`
 	// This field is from variant [TurnResponseEventPayloadStepComplete].
 	StepDetails TurnResponseEventPayloadStepCompleteStepDetailsUnion `json:"step_details"`
 	// This field is from variant [TurnResponseEventPayloadTurnStart].
@@ -753,7 +753,7 @@ func (r *TurnResponseEventPayloadStepStartMetadataUnion) UnmarshalJSON(data []by
 // Payload for step progress events in agent turn responses.
 type TurnResponseEventPayloadStepProgress struct {
 	// Incremental content changes during step execution
-	Delta ContentDeltaUnion `json:"delta,required"`
+	Delta TurnResponseEventPayloadStepProgressDeltaUnion `json:"delta,required"`
 	// Type of event being reported
 	EventType constant.StepProgress `json:"event_type,required"`
 	// Unique identifier for the step within a turn
@@ -776,6 +776,208 @@ type TurnResponseEventPayloadStepProgress struct {
 // Returns the unmodified JSON received from the API
 func (r TurnResponseEventPayloadStepProgress) RawJSON() string { return r.JSON.raw }
 func (r *TurnResponseEventPayloadStepProgress) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// TurnResponseEventPayloadStepProgressDeltaUnion contains all possible properties
+// and values from [TurnResponseEventPayloadStepProgressDeltaText],
+// [TurnResponseEventPayloadStepProgressDeltaImage],
+// [TurnResponseEventPayloadStepProgressDeltaToolCall].
+//
+// Use the [TurnResponseEventPayloadStepProgressDeltaUnion.AsAny] method to switch
+// on the variant.
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type TurnResponseEventPayloadStepProgressDeltaUnion struct {
+	// This field is from variant [TurnResponseEventPayloadStepProgressDeltaText].
+	Text string `json:"text"`
+	// Any of "text", "image", "tool_call".
+	Type string `json:"type"`
+	// This field is from variant [TurnResponseEventPayloadStepProgressDeltaImage].
+	Image string `json:"image"`
+	// This field is from variant [TurnResponseEventPayloadStepProgressDeltaToolCall].
+	ParseStatus string `json:"parse_status"`
+	// This field is from variant [TurnResponseEventPayloadStepProgressDeltaToolCall].
+	ToolCall TurnResponseEventPayloadStepProgressDeltaToolCallToolCallUnion `json:"tool_call"`
+	JSON     struct {
+		Text        respjson.Field
+		Type        respjson.Field
+		Image       respjson.Field
+		ParseStatus respjson.Field
+		ToolCall    respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// anyTurnResponseEventPayloadStepProgressDelta is implemented by each variant of
+// [TurnResponseEventPayloadStepProgressDeltaUnion] to add type safety for the
+// return type of [TurnResponseEventPayloadStepProgressDeltaUnion.AsAny]
+type anyTurnResponseEventPayloadStepProgressDelta interface {
+	implTurnResponseEventPayloadStepProgressDeltaUnion()
+}
+
+func (TurnResponseEventPayloadStepProgressDeltaText) implTurnResponseEventPayloadStepProgressDeltaUnion() {
+}
+func (TurnResponseEventPayloadStepProgressDeltaImage) implTurnResponseEventPayloadStepProgressDeltaUnion() {
+}
+func (TurnResponseEventPayloadStepProgressDeltaToolCall) implTurnResponseEventPayloadStepProgressDeltaUnion() {
+}
+
+// Use the following switch statement to find the correct variant
+//
+//	switch variant := TurnResponseEventPayloadStepProgressDeltaUnion.AsAny().(type) {
+//	case llamastackclient.TurnResponseEventPayloadStepProgressDeltaText:
+//	case llamastackclient.TurnResponseEventPayloadStepProgressDeltaImage:
+//	case llamastackclient.TurnResponseEventPayloadStepProgressDeltaToolCall:
+//	default:
+//	  fmt.Errorf("no variant present")
+//	}
+func (u TurnResponseEventPayloadStepProgressDeltaUnion) AsAny() anyTurnResponseEventPayloadStepProgressDelta {
+	switch u.Type {
+	case "text":
+		return u.AsText()
+	case "image":
+		return u.AsImage()
+	case "tool_call":
+		return u.AsToolCall()
+	}
+	return nil
+}
+
+func (u TurnResponseEventPayloadStepProgressDeltaUnion) AsText() (v TurnResponseEventPayloadStepProgressDeltaText) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u TurnResponseEventPayloadStepProgressDeltaUnion) AsImage() (v TurnResponseEventPayloadStepProgressDeltaImage) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u TurnResponseEventPayloadStepProgressDeltaUnion) AsToolCall() (v TurnResponseEventPayloadStepProgressDeltaToolCall) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u TurnResponseEventPayloadStepProgressDeltaUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *TurnResponseEventPayloadStepProgressDeltaUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A text content delta for streaming responses.
+type TurnResponseEventPayloadStepProgressDeltaText struct {
+	// The incremental text content
+	Text string `json:"text,required"`
+	// Discriminator type of the delta. Always "text"
+	Type constant.Text `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Text        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TurnResponseEventPayloadStepProgressDeltaText) RawJSON() string { return r.JSON.raw }
+func (r *TurnResponseEventPayloadStepProgressDeltaText) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// An image content delta for streaming responses.
+type TurnResponseEventPayloadStepProgressDeltaImage struct {
+	// The incremental image data as bytes
+	Image string `json:"image,required"`
+	// Discriminator type of the delta. Always "image"
+	Type constant.Image `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Image       respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TurnResponseEventPayloadStepProgressDeltaImage) RawJSON() string { return r.JSON.raw }
+func (r *TurnResponseEventPayloadStepProgressDeltaImage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A tool call content delta for streaming responses.
+type TurnResponseEventPayloadStepProgressDeltaToolCall struct {
+	// Current parsing status of the tool call
+	//
+	// Any of "started", "in_progress", "failed", "succeeded".
+	ParseStatus string `json:"parse_status,required"`
+	// Either an in-progress tool call string or the final parsed tool call
+	ToolCall TurnResponseEventPayloadStepProgressDeltaToolCallToolCallUnion `json:"tool_call,required"`
+	// Discriminator type of the delta. Always "tool_call"
+	Type constant.ToolCall `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ParseStatus respjson.Field
+		ToolCall    respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TurnResponseEventPayloadStepProgressDeltaToolCall) RawJSON() string { return r.JSON.raw }
+func (r *TurnResponseEventPayloadStepProgressDeltaToolCall) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// TurnResponseEventPayloadStepProgressDeltaToolCallToolCallUnion contains all
+// possible properties and values from [string], [ToolCall].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+//
+// If the underlying value is not a json object, one of the following properties
+// will be valid: OfString]
+type TurnResponseEventPayloadStepProgressDeltaToolCallToolCallUnion struct {
+	// This field will be present if the value is a [string] instead of an object.
+	OfString string `json:",inline"`
+	// This field is from variant [ToolCall].
+	Arguments ToolCallArgumentsUnion `json:"arguments"`
+	// This field is from variant [ToolCall].
+	CallID string `json:"call_id"`
+	// This field is from variant [ToolCall].
+	ToolName ToolCallToolName `json:"tool_name"`
+	// This field is from variant [ToolCall].
+	ArgumentsJson string `json:"arguments_json"`
+	JSON          struct {
+		OfString      respjson.Field
+		Arguments     respjson.Field
+		CallID        respjson.Field
+		ToolName      respjson.Field
+		ArgumentsJson respjson.Field
+		raw           string
+	} `json:"-"`
+}
+
+func (u TurnResponseEventPayloadStepProgressDeltaToolCallToolCallUnion) AsString() (v string) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u TurnResponseEventPayloadStepProgressDeltaToolCallToolCallUnion) AsToolCall() (v ToolCall) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u TurnResponseEventPayloadStepProgressDeltaToolCallToolCallUnion) RawJSON() string {
+	return u.JSON.raw
+}
+
+func (r *TurnResponseEventPayloadStepProgressDeltaToolCallToolCallUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

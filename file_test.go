@@ -15,7 +15,7 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 )
 
-func TestFileNew(t *testing.T) {
+func TestFileNewWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -27,7 +27,11 @@ func TestFileNew(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Files.New(context.TODO(), llamastackclient.FileNewParams{
-		File: io.Reader(bytes.NewBuffer([]byte("some file contents"))),
+		File:    io.Reader(bytes.NewBuffer([]byte("some file contents"))),
+		Purpose: llamastackclient.FileNewParamsPurposeAssistants,
+		ExpiresAfter: llamastackclient.FileNewParamsExpiresAfter{
+			Seconds: 0,
+		},
 	})
 	if err != nil {
 		var apierr *llamastackclient.Error

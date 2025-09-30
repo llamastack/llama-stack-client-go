@@ -7,7 +7,6 @@
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#InterleavedContentItemUnionParam">InterleavedContentItemUnionParam</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#MessageUnionParam">MessageUnionParam</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#QueryConfigParam">QueryConfigParam</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#QueryGeneratorConfigUnionParam">QueryGeneratorConfigUnionParam</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ResponseFormatUnionParam">ResponseFormatUnionParam</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#SamplingParams">SamplingParams</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#SystemMessageParam">SystemMessageParam</a>
@@ -19,7 +18,6 @@
 
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AgentConfig">AgentConfig</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#CompletionMessage">CompletionMessage</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ContentDeltaUnion">ContentDeltaUnion</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#InterleavedContentUnion">InterleavedContentUnion</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#InterleavedContentItemUnion">InterleavedContentItemUnion</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#QueryResult">QueryResult</a>
@@ -162,7 +160,6 @@ Response Types:
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AgentTurnResponseStreamChunk">AgentTurnResponseStreamChunk</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Turn">Turn</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#TurnResponseEvent">TurnResponseEvent</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#TurnResponseEventPayloadUnion">TurnResponseEventPayloadUnion</a>
 
 Methods:
 
@@ -193,7 +190,6 @@ Methods:
 Params Types:
 
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#BenchmarkConfigParam">BenchmarkConfigParam</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#EvalCandidateUnionParam">EvalCandidateUnionParam</a>
 
 Response Types:
 
