@@ -27,10 +27,7 @@ func TestFileNew(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Files.New(context.TODO(), llamastackclient.FileNewParams{
-		ExpiresAfterAnchor:  llamastackclient.String("expires_after_anchor"),
-		ExpiresAfterSeconds: llamastackclient.Int(0),
-		File:                io.Reader(bytes.NewBuffer([]byte("some file contents"))),
-		Purpose:             llamastackclient.FileNewParamsPurposeAssistants,
+		File: io.Reader(bytes.NewBuffer([]byte("some file contents"))),
 	})
 	if err != nil {
 		var apierr *llamastackclient.Error

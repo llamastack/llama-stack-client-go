@@ -11,7 +11,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
 	"github.com/llamastack/llama-stack-client-go/option"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
-	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
 // ModelOpenAIService contains methods and other services that help with
@@ -33,9 +32,9 @@ func NewModelOpenAIService(opts ...option.RequestOption) (r ModelOpenAIService) 
 	return
 }
 
-// List models using the OpenAI API.
-func (r *ModelOpenAIService) List(ctx context.Context, opts ...option.RequestOption) (res *[]ModelOpenAIListResponse, err error) {
-	var env ModelOpenAIListResponseEnvelope
+// List all models.
+func (r *ModelOpenAIService) List(ctx context.Context, opts ...option.RequestOption) (res *[]Model, err error) {
+	var env ListModelsResponse
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/models"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
@@ -46,31 +45,8 @@ func (r *ModelOpenAIService) List(ctx context.Context, opts ...option.RequestOpt
 	return
 }
 
-// A model from OpenAI.
-type ModelOpenAIListResponse struct {
-	ID      string         `json:"id,required"`
-	Created int64          `json:"created,required"`
-	Object  constant.Model `json:"object,required"`
-	OwnedBy string         `json:"owned_by,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		Created     respjson.Field
-		Object      respjson.Field
-		OwnedBy     respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ModelOpenAIListResponse) RawJSON() string { return r.JSON.raw }
-func (r *ModelOpenAIListResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type ModelOpenAIListResponseEnvelope struct {
-	Data []ModelOpenAIListResponse `json:"data,required"`
+type ListModelsResponse struct {
+	Data []Model `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -80,7 +56,7 @@ type ModelOpenAIListResponseEnvelope struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r ModelOpenAIListResponseEnvelope) RawJSON() string { return r.JSON.raw }
-func (r *ModelOpenAIListResponseEnvelope) UnmarshalJSON(data []byte) error {
+func (r ListModelsResponse) RawJSON() string { return r.JSON.raw }
+func (r *ListModelsResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }

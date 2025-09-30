@@ -46,11 +46,9 @@ func NewFileService(opts ...option.RequestOption) (r FileService) {
 // Upload a file that can be used across various endpoints. The file upload should
 // be a multipart form request with:
 //
-//   - file: The File object (not file name) to be uploaded.
-//   - purpose: The intended purpose of the uploaded file.
-//   - expires_after: Optional form values describing expiration for the file.
-//     Expected expires_after[anchor] = "created_at", expires_after[seconds] =
-//     {integer}. Seconds must be between 3600 and 2592000 (1 hour to 30 days).
+// - file: The File object (not file name) to be uploaded.
+// - purpose: The intended purpose of the uploaded file.
+// - expires_after: Optional form values describing expiration for the file.
 func (r *FileService) New(ctx context.Context, body FileNewParams, opts ...option.RequestOption) (res *File, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/files"
@@ -220,13 +218,7 @@ func (r *ListFilesResponse) UnmarshalJSON(data []byte) error {
 type FileContentResponse = any
 
 type FileNewParams struct {
-	ExpiresAfterAnchor  param.Opt[string] `json:"expires_after_anchor,omitzero,required"`
-	ExpiresAfterSeconds param.Opt[int64]  `json:"expires_after_seconds,omitzero,required"`
-	File                io.Reader         `json:"file,omitzero,required" format:"binary"`
-	// Valid purpose values for OpenAI Files API.
-	//
-	// Any of "assistants", "batch".
-	Purpose FileNewParamsPurpose `json:"purpose,omitzero,required"`
+	File io.Reader `json:"file,omitzero,required" format:"binary"`
 	paramObj
 }
 
@@ -247,14 +239,6 @@ func (r FileNewParams) MarshalMultipart() (data []byte, contentType string, err 
 	}
 	return buf.Bytes(), writer.FormDataContentType(), nil
 }
-
-// Valid purpose values for OpenAI Files API.
-type FileNewParamsPurpose string
-
-const (
-	FileNewParamsPurposeAssistants FileNewParamsPurpose = "assistants"
-	FileNewParamsPurposeBatch      FileNewParamsPurpose = "batch"
-)
 
 type FileListParams struct {
 	// A cursor for use in pagination. `after` is an object ID that defines your place
