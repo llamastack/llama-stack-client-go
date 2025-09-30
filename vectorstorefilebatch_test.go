@@ -3,10 +3,8 @@
 package llamastackclient_test
 
 import (
-	"bytes"
 	"context"
 	"errors"
-	"io"
 	"os"
 	"testing"
 
@@ -15,7 +13,7 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 )
 
-func TestFileNewWithOptionalParams(t *testing.T) {
+func TestVectorStoreFileBatchNewWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -26,13 +24,21 @@ func TestFileNewWithOptionalParams(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Files.New(context.TODO(), llamastackclient.FileNewParams{
-		File:    io.Reader(bytes.NewBuffer([]byte("some file contents"))),
-		Purpose: llamastackclient.FileNewParamsPurposeAssistants,
-		ExpiresAfter: llamastackclient.FileNewParamsExpiresAfter{
-			Seconds: 0,
+	_, err := client.VectorStores.FileBatches.New(
+		context.TODO(),
+		"vector_store_id",
+		llamastackclient.VectorStoreFileBatchNewParams{
+			FileIDs: []string{"string"},
+			Attributes: map[string]llamastackclient.VectorStoreFileBatchNewParamsAttributeUnion{
+				"foo": {
+					OfBool: llamastackclient.Bool(true),
+				},
+			},
+			ChunkingStrategy: llamastackclient.VectorStoreFileBatchNewParamsChunkingStrategyUnion{
+				OfAuto: &llamastackclient.VectorStoreFileBatchNewParamsChunkingStrategyAuto{},
+			},
 		},
-	})
+	)
 	if err != nil {
 		var apierr *llamastackclient.Error
 		if errors.As(err, &apierr) {
@@ -42,7 +48,7 @@ func TestFileNewWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestFileGet(t *testing.T) {
+func TestVectorStoreFileBatchGet(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -53,7 +59,13 @@ func TestFileGet(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Files.Get(context.TODO(), "file_id")
+	_, err := client.VectorStores.FileBatches.Get(
+		context.TODO(),
+		"batch_id",
+		llamastackclient.VectorStoreFileBatchGetParams{
+			VectorStoreID: "vector_store_id",
+		},
+	)
 	if err != nil {
 		var apierr *llamastackclient.Error
 		if errors.As(err, &apierr) {
@@ -63,7 +75,7 @@ func TestFileGet(t *testing.T) {
 	}
 }
 
-func TestFileListWithOptionalParams(t *testing.T) {
+func TestVectorStoreFileBatchListWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -74,12 +86,18 @@ func TestFileListWithOptionalParams(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Files.List(context.TODO(), llamastackclient.FileListParams{
-		After:   llamastackclient.String("after"),
-		Limit:   llamastackclient.Int(0),
-		Order:   llamastackclient.FileListParamsOrderAsc,
-		Purpose: llamastackclient.FileListParamsPurposeAssistants,
-	})
+	_, err := client.VectorStores.FileBatches.List(
+		context.TODO(),
+		"batch_id",
+		llamastackclient.VectorStoreFileBatchListParams{
+			VectorStoreID: "vector_store_id",
+			After:         llamastackclient.String("after"),
+			Before:        llamastackclient.String("before"),
+			Filter:        llamastackclient.String("filter"),
+			Limit:         llamastackclient.Int(0),
+			Order:         llamastackclient.String("order"),
+		},
+	)
 	if err != nil {
 		var apierr *llamastackclient.Error
 		if errors.As(err, &apierr) {
@@ -89,7 +107,7 @@ func TestFileListWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestFileDelete(t *testing.T) {
+func TestVectorStoreFileBatchCancel(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -100,28 +118,13 @@ func TestFileDelete(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Files.Delete(context.TODO(), "file_id")
-	if err != nil {
-		var apierr *llamastackclient.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestFileContent(t *testing.T) {
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := llamastackclient.NewClient(
-		option.WithBaseURL(baseURL),
+	_, err := client.VectorStores.FileBatches.Cancel(
+		context.TODO(),
+		"batch_id",
+		llamastackclient.VectorStoreFileBatchCancelParams{
+			VectorStoreID: "vector_store_id",
+		},
 	)
-	_, err := client.Files.Content(context.TODO(), "file_id")
 	if err != nil {
 		var apierr *llamastackclient.Error
 		if errors.As(err, &apierr) {
