@@ -13,7 +13,7 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 )
 
-func TestPostTrainingJobList(t *testing.T) {
+func TestAlphaEvalJobGet(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -24,7 +24,13 @@ func TestPostTrainingJobList(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.PostTraining.Job.List(context.TODO())
+	_, err := client.Alpha.Eval.Jobs.Get(
+		context.TODO(),
+		"job_id",
+		llamastackclient.AlphaEvalJobGetParams{
+			BenchmarkID: "benchmark_id",
+		},
+	)
 	if err != nil {
 		var apierr *llamastackclient.Error
 		if errors.As(err, &apierr) {
@@ -34,7 +40,7 @@ func TestPostTrainingJobList(t *testing.T) {
 	}
 }
 
-func TestPostTrainingJobArtifacts(t *testing.T) {
+func TestAlphaEvalJobCancel(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -45,9 +51,13 @@ func TestPostTrainingJobArtifacts(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.PostTraining.Job.Artifacts(context.TODO(), llamastackclient.PostTrainingJobArtifactsParams{
-		JobUuid: "job_uuid",
-	})
+	err := client.Alpha.Eval.Jobs.Cancel(
+		context.TODO(),
+		"job_id",
+		llamastackclient.AlphaEvalJobCancelParams{
+			BenchmarkID: "benchmark_id",
+		},
+	)
 	if err != nil {
 		var apierr *llamastackclient.Error
 		if errors.As(err, &apierr) {
@@ -57,7 +67,7 @@ func TestPostTrainingJobArtifacts(t *testing.T) {
 	}
 }
 
-func TestPostTrainingJobCancel(t *testing.T) {
+func TestAlphaEvalJobStatus(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -68,32 +78,13 @@ func TestPostTrainingJobCancel(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	err := client.PostTraining.Job.Cancel(context.TODO(), llamastackclient.PostTrainingJobCancelParams{
-		JobUuid: "job_uuid",
-	})
-	if err != nil {
-		var apierr *llamastackclient.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestPostTrainingJobStatus(t *testing.T) {
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := llamastackclient.NewClient(
-		option.WithBaseURL(baseURL),
+	_, err := client.Alpha.Eval.Jobs.Status(
+		context.TODO(),
+		"job_id",
+		llamastackclient.AlphaEvalJobStatusParams{
+			BenchmarkID: "benchmark_id",
+		},
 	)
-	_, err := client.PostTraining.Job.Status(context.TODO(), llamastackclient.PostTrainingJobStatusParams{
-		JobUuid: "job_uuid",
-	})
 	if err != nil {
 		var apierr *llamastackclient.Error
 		if errors.As(err, &apierr) {

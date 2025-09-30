@@ -55,7 +55,7 @@ func (r *AlphaAgentStepService) Get(ctx context.Context, stepID string, query Al
 		err = errors.New("missing required step_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/agents/%s/session/%s/turn/%s/step/%s", query.AgentID, query.SessionID, query.TurnID, stepID)
+	path := fmt.Sprintf("v1alpha/agents/%s/session/%s/turn/%s/step/%s", query.AgentID, query.SessionID, query.TurnID, stepID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return
 }

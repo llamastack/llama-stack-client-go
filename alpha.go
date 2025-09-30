@@ -13,9 +13,11 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewAlphaService] method instead.
 type AlphaService struct {
-	Options   []option.RequestOption
-	Inference AlphaInferenceService
-	Agents    AlphaAgentService
+	Options      []option.RequestOption
+	Inference    AlphaInferenceService
+	PostTraining AlphaPostTrainingService
+	Eval         AlphaEvalService
+	Agents       AlphaAgentService
 }
 
 // NewAlphaService generates a new service that applies the given options to each
@@ -25,6 +27,8 @@ func NewAlphaService(opts ...option.RequestOption) (r AlphaService) {
 	r = AlphaService{}
 	r.Options = opts
 	r.Inference = NewAlphaInferenceService(opts...)
+	r.PostTraining = NewAlphaPostTrainingService(opts...)
+	r.Eval = NewAlphaEvalService(opts...)
 	r.Agents = NewAlphaAgentService(opts...)
 	return
 }

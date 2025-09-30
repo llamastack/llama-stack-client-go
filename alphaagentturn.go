@@ -50,7 +50,7 @@ func (r *AlphaAgentTurnService) New(ctx context.Context, sessionID string, param
 		err = errors.New("missing required session_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/agents/%s/session/%s/turn", params.AgentID, sessionID)
+	path := fmt.Sprintf("v1alpha/agents/%s/session/%s/turn", params.AgentID, sessionID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
@@ -71,7 +71,7 @@ func (r *AlphaAgentTurnService) NewStreaming(ctx context.Context, sessionID stri
 		err = errors.New("missing required session_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/agents/%s/session/%s/turn", params.AgentID, sessionID)
+	path := fmt.Sprintf("v1alpha/agents/%s/session/%s/turn", params.AgentID, sessionID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &raw, opts...)
 	return ssestream.NewStream[AgentTurnResponseStreamChunk](ssestream.NewDecoder(raw), err)
 }
@@ -91,7 +91,7 @@ func (r *AlphaAgentTurnService) Get(ctx context.Context, turnID string, query Al
 		err = errors.New("missing required turn_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/agents/%s/session/%s/turn/%s", query.AgentID, query.SessionID, turnID)
+	path := fmt.Sprintf("v1alpha/agents/%s/session/%s/turn/%s", query.AgentID, query.SessionID, turnID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return
 }
@@ -114,7 +114,7 @@ func (r *AlphaAgentTurnService) Resume(ctx context.Context, turnID string, param
 		err = errors.New("missing required turn_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/agents/%s/session/%s/turn/%s/resume", params.AgentID, params.SessionID, turnID)
+	path := fmt.Sprintf("v1alpha/agents/%s/session/%s/turn/%s/resume", params.AgentID, params.SessionID, turnID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
 	return
 }
@@ -142,7 +142,7 @@ func (r *AlphaAgentTurnService) ResumeStreaming(ctx context.Context, turnID stri
 		err = errors.New("missing required turn_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/agents/%s/session/%s/turn/%s/resume", params.AgentID, params.SessionID, turnID)
+	path := fmt.Sprintf("v1alpha/agents/%s/session/%s/turn/%s/resume", params.AgentID, params.SessionID, turnID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &raw, opts...)
 	return ssestream.NewStream[AgentTurnResponseStreamChunk](ssestream.NewDecoder(raw), err)
 }
