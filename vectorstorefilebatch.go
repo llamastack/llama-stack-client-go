@@ -67,8 +67,24 @@ func (r *VectorStoreFileBatchService) Get(ctx context.Context, batchID string, q
 	return
 }
 
+// Cancels a vector store file batch.
+func (r *VectorStoreFileBatchService) Cancel(ctx context.Context, batchID string, body VectorStoreFileBatchCancelParams, opts ...option.RequestOption) (res *VectorStoreFileBatches, err error) {
+	opts = slices.Concat(r.Options, opts)
+	if body.VectorStoreID == "" {
+		err = errors.New("missing required vector_store_id parameter")
+		return
+	}
+	if batchID == "" {
+		err = errors.New("missing required batch_id parameter")
+		return
+	}
+	path := fmt.Sprintf("v1/vector_stores/%s/file_batches/%s/cancel", body.VectorStoreID, batchID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
+	return
+}
+
 // Returns a list of vector store files in a batch.
-func (r *VectorStoreFileBatchService) List(ctx context.Context, batchID string, params VectorStoreFileBatchListParams, opts ...option.RequestOption) (res *pagination.OpenAICursorPage[VectorStoreFile], err error) {
+func (r *VectorStoreFileBatchService) ListFiles(ctx context.Context, batchID string, params VectorStoreFileBatchListFilesParams, opts ...option.RequestOption) (res *pagination.OpenAICursorPage[VectorStoreFile], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
@@ -94,24 +110,8 @@ func (r *VectorStoreFileBatchService) List(ctx context.Context, batchID string, 
 }
 
 // Returns a list of vector store files in a batch.
-func (r *VectorStoreFileBatchService) ListAutoPaging(ctx context.Context, batchID string, params VectorStoreFileBatchListParams, opts ...option.RequestOption) *pagination.OpenAICursorPageAutoPager[VectorStoreFile] {
-	return pagination.NewOpenAICursorPageAutoPager(r.List(ctx, batchID, params, opts...))
-}
-
-// Cancels a vector store file batch.
-func (r *VectorStoreFileBatchService) Cancel(ctx context.Context, batchID string, body VectorStoreFileBatchCancelParams, opts ...option.RequestOption) (res *VectorStoreFileBatches, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if body.VectorStoreID == "" {
-		err = errors.New("missing required vector_store_id parameter")
-		return
-	}
-	if batchID == "" {
-		err = errors.New("missing required batch_id parameter")
-		return
-	}
-	path := fmt.Sprintf("v1/vector_stores/%s/file_batches/%s/cancel", body.VectorStoreID, batchID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
-	return
+func (r *VectorStoreFileBatchService) ListFilesAutoPaging(ctx context.Context, batchID string, params VectorStoreFileBatchListFilesParams, opts ...option.RequestOption) *pagination.OpenAICursorPageAutoPager[VectorStoreFile] {
+	return pagination.NewOpenAICursorPageAutoPager(r.ListFiles(ctx, batchID, params, opts...))
 }
 
 // Response from listing files in a vector store file batch.
@@ -388,7 +388,12 @@ type VectorStoreFileBatchGetParams struct {
 	paramObj
 }
 
-type VectorStoreFileBatchListParams struct {
+type VectorStoreFileBatchCancelParams struct {
+	VectorStoreID string `path:"vector_store_id,required" json:"-"`
+	paramObj
+}
+
+type VectorStoreFileBatchListFilesParams struct {
 	VectorStoreID string `path:"vector_store_id,required" json:"-"`
 	// A cursor for use in pagination. `after` is an object ID that defines your place
 	// in the list.
@@ -407,16 +412,11 @@ type VectorStoreFileBatchListParams struct {
 	paramObj
 }
 
-// URLQuery serializes [VectorStoreFileBatchListParams]'s query parameters as
+// URLQuery serializes [VectorStoreFileBatchListFilesParams]'s query parameters as
 // `url.Values`.
-func (r VectorStoreFileBatchListParams) URLQuery() (v url.Values, err error) {
+func (r VectorStoreFileBatchListFilesParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatComma,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
-}
-
-type VectorStoreFileBatchCancelParams struct {
-	VectorStoreID string `path:"vector_store_id,required" json:"-"`
-	paramObj
 }
