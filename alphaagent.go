@@ -49,7 +49,7 @@ func NewAlphaAgentService(opts ...option.RequestOption) (r AlphaAgentService) {
 // Create an agent with the given configuration.
 func (r *AlphaAgentService) New(ctx context.Context, body AlphaAgentNewParams, opts ...option.RequestOption) (res *AlphaAgentNewResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	path := "v1/agents"
+	path := "v1alpha/agents"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
@@ -61,7 +61,7 @@ func (r *AlphaAgentService) Get(ctx context.Context, agentID string, opts ...opt
 		err = errors.New("missing required agent_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/agents/%s", agentID)
+	path := fmt.Sprintf("v1alpha/agents/%s", agentID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return
 }
@@ -69,7 +69,7 @@ func (r *AlphaAgentService) Get(ctx context.Context, agentID string, opts ...opt
 // List all agents.
 func (r *AlphaAgentService) List(ctx context.Context, query AlphaAgentListParams, opts ...option.RequestOption) (res *AlphaAgentListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	path := "v1/agents"
+	path := "v1alpha/agents"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
 	return
 }
@@ -82,7 +82,7 @@ func (r *AlphaAgentService) Delete(ctx context.Context, agentID string, opts ...
 		err = errors.New("missing required agent_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/agents/%s", agentID)
+	path := fmt.Sprintf("v1alpha/agents/%s", agentID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
 	return
 }

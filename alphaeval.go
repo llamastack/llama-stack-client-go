@@ -18,71 +18,71 @@ import (
 	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
-// EvalService contains methods and other services that help with interacting with
-// the llama-stack-client API.
+// AlphaEvalService contains methods and other services that help with interacting
+// with the llama-stack-client API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
-// the [NewEvalService] method instead.
-type EvalService struct {
+// the [NewAlphaEvalService] method instead.
+type AlphaEvalService struct {
 	Options []option.RequestOption
-	Jobs    EvalJobService
+	Jobs    AlphaEvalJobService
 }
 
-// NewEvalService generates a new service that applies the given options to each
-// request. These options are applied after the parent client's options (if there
-// is one), and before any request-specific options.
-func NewEvalService(opts ...option.RequestOption) (r EvalService) {
-	r = EvalService{}
+// NewAlphaEvalService generates a new service that applies the given options to
+// each request. These options are applied after the parent client's options (if
+// there is one), and before any request-specific options.
+func NewAlphaEvalService(opts ...option.RequestOption) (r AlphaEvalService) {
+	r = AlphaEvalService{}
 	r.Options = opts
-	r.Jobs = NewEvalJobService(opts...)
+	r.Jobs = NewAlphaEvalJobService(opts...)
 	return
 }
 
 // Evaluate a list of rows on a benchmark.
-func (r *EvalService) EvaluateRows(ctx context.Context, benchmarkID string, body EvalEvaluateRowsParams, opts ...option.RequestOption) (res *EvaluateResponse, err error) {
+func (r *AlphaEvalService) EvaluateRows(ctx context.Context, benchmarkID string, body AlphaEvalEvaluateRowsParams, opts ...option.RequestOption) (res *EvaluateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if benchmarkID == "" {
 		err = errors.New("missing required benchmark_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/eval/benchmarks/%s/evaluations", benchmarkID)
+	path := fmt.Sprintf("v1alpha/eval/benchmarks/%s/evaluations", benchmarkID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // Evaluate a list of rows on a benchmark.
-func (r *EvalService) EvaluateRowsAlpha(ctx context.Context, benchmarkID string, body EvalEvaluateRowsAlphaParams, opts ...option.RequestOption) (res *EvaluateResponse, err error) {
+func (r *AlphaEvalService) EvaluateRowsAlpha(ctx context.Context, benchmarkID string, body AlphaEvalEvaluateRowsAlphaParams, opts ...option.RequestOption) (res *EvaluateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if benchmarkID == "" {
 		err = errors.New("missing required benchmark_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/eval/benchmarks/%s/evaluations", benchmarkID)
+	path := fmt.Sprintf("v1alpha/eval/benchmarks/%s/evaluations", benchmarkID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // Run an evaluation on a benchmark.
-func (r *EvalService) RunEval(ctx context.Context, benchmarkID string, body EvalRunEvalParams, opts ...option.RequestOption) (res *Job, err error) {
+func (r *AlphaEvalService) RunEval(ctx context.Context, benchmarkID string, body AlphaEvalRunEvalParams, opts ...option.RequestOption) (res *Job, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if benchmarkID == "" {
 		err = errors.New("missing required benchmark_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/eval/benchmarks/%s/jobs", benchmarkID)
+	path := fmt.Sprintf("v1alpha/eval/benchmarks/%s/jobs", benchmarkID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
 // Run an evaluation on a benchmark.
-func (r *EvalService) RunEvalAlpha(ctx context.Context, benchmarkID string, body EvalRunEvalAlphaParams, opts ...option.RequestOption) (res *Job, err error) {
+func (r *AlphaEvalService) RunEvalAlpha(ctx context.Context, benchmarkID string, body AlphaEvalRunEvalAlphaParams, opts ...option.RequestOption) (res *Job, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if benchmarkID == "" {
 		err = errors.New("missing required benchmark_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/eval/benchmarks/%s/jobs", benchmarkID)
+	path := fmt.Sprintf("v1alpha/eval/benchmarks/%s/jobs", benchmarkID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
@@ -334,28 +334,28 @@ const (
 	JobStatusCancelled  JobStatus = "cancelled"
 )
 
-type EvalEvaluateRowsParams struct {
+type AlphaEvalEvaluateRowsParams struct {
 	// The configuration for the benchmark.
 	BenchmarkConfig BenchmarkConfigParam `json:"benchmark_config,omitzero,required"`
 	// The rows to evaluate.
-	InputRows []map[string]EvalEvaluateRowsParamsInputRowUnion `json:"input_rows,omitzero,required"`
+	InputRows []map[string]AlphaEvalEvaluateRowsParamsInputRowUnion `json:"input_rows,omitzero,required"`
 	// The scoring functions to use for the evaluation.
 	ScoringFunctions []string `json:"scoring_functions,omitzero,required"`
 	paramObj
 }
 
-func (r EvalEvaluateRowsParams) MarshalJSON() (data []byte, err error) {
-	type shadow EvalEvaluateRowsParams
+func (r AlphaEvalEvaluateRowsParams) MarshalJSON() (data []byte, err error) {
+	type shadow AlphaEvalEvaluateRowsParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *EvalEvaluateRowsParams) UnmarshalJSON(data []byte) error {
+func (r *AlphaEvalEvaluateRowsParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
-type EvalEvaluateRowsParamsInputRowUnion struct {
+type AlphaEvalEvaluateRowsParamsInputRowUnion struct {
 	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
 	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
 	OfString   param.Opt[string]  `json:",omitzero,inline"`
@@ -363,14 +363,14 @@ type EvalEvaluateRowsParamsInputRowUnion struct {
 	paramUnion
 }
 
-func (u EvalEvaluateRowsParamsInputRowUnion) MarshalJSON() ([]byte, error) {
+func (u AlphaEvalEvaluateRowsParamsInputRowUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
 }
-func (u *EvalEvaluateRowsParamsInputRowUnion) UnmarshalJSON(data []byte) error {
+func (u *AlphaEvalEvaluateRowsParamsInputRowUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
-func (u *EvalEvaluateRowsParamsInputRowUnion) asAny() any {
+func (u *AlphaEvalEvaluateRowsParamsInputRowUnion) asAny() any {
 	if !param.IsOmitted(u.OfBool) {
 		return &u.OfBool.Value
 	} else if !param.IsOmitted(u.OfFloat) {
@@ -383,28 +383,28 @@ func (u *EvalEvaluateRowsParamsInputRowUnion) asAny() any {
 	return nil
 }
 
-type EvalEvaluateRowsAlphaParams struct {
+type AlphaEvalEvaluateRowsAlphaParams struct {
 	// The configuration for the benchmark.
 	BenchmarkConfig BenchmarkConfigParam `json:"benchmark_config,omitzero,required"`
 	// The rows to evaluate.
-	InputRows []map[string]EvalEvaluateRowsAlphaParamsInputRowUnion `json:"input_rows,omitzero,required"`
+	InputRows []map[string]AlphaEvalEvaluateRowsAlphaParamsInputRowUnion `json:"input_rows,omitzero,required"`
 	// The scoring functions to use for the evaluation.
 	ScoringFunctions []string `json:"scoring_functions,omitzero,required"`
 	paramObj
 }
 
-func (r EvalEvaluateRowsAlphaParams) MarshalJSON() (data []byte, err error) {
-	type shadow EvalEvaluateRowsAlphaParams
+func (r AlphaEvalEvaluateRowsAlphaParams) MarshalJSON() (data []byte, err error) {
+	type shadow AlphaEvalEvaluateRowsAlphaParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *EvalEvaluateRowsAlphaParams) UnmarshalJSON(data []byte) error {
+func (r *AlphaEvalEvaluateRowsAlphaParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
-type EvalEvaluateRowsAlphaParamsInputRowUnion struct {
+type AlphaEvalEvaluateRowsAlphaParamsInputRowUnion struct {
 	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
 	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
 	OfString   param.Opt[string]  `json:",omitzero,inline"`
@@ -412,14 +412,14 @@ type EvalEvaluateRowsAlphaParamsInputRowUnion struct {
 	paramUnion
 }
 
-func (u EvalEvaluateRowsAlphaParamsInputRowUnion) MarshalJSON() ([]byte, error) {
+func (u AlphaEvalEvaluateRowsAlphaParamsInputRowUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
 }
-func (u *EvalEvaluateRowsAlphaParamsInputRowUnion) UnmarshalJSON(data []byte) error {
+func (u *AlphaEvalEvaluateRowsAlphaParamsInputRowUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
-func (u *EvalEvaluateRowsAlphaParamsInputRowUnion) asAny() any {
+func (u *AlphaEvalEvaluateRowsAlphaParamsInputRowUnion) asAny() any {
 	if !param.IsOmitted(u.OfBool) {
 		return &u.OfBool.Value
 	} else if !param.IsOmitted(u.OfFloat) {
@@ -432,30 +432,30 @@ func (u *EvalEvaluateRowsAlphaParamsInputRowUnion) asAny() any {
 	return nil
 }
 
-type EvalRunEvalParams struct {
+type AlphaEvalRunEvalParams struct {
 	// The configuration for the benchmark.
 	BenchmarkConfig BenchmarkConfigParam `json:"benchmark_config,omitzero,required"`
 	paramObj
 }
 
-func (r EvalRunEvalParams) MarshalJSON() (data []byte, err error) {
-	type shadow EvalRunEvalParams
+func (r AlphaEvalRunEvalParams) MarshalJSON() (data []byte, err error) {
+	type shadow AlphaEvalRunEvalParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *EvalRunEvalParams) UnmarshalJSON(data []byte) error {
+func (r *AlphaEvalRunEvalParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type EvalRunEvalAlphaParams struct {
+type AlphaEvalRunEvalAlphaParams struct {
 	// The configuration for the benchmark.
 	BenchmarkConfig BenchmarkConfigParam `json:"benchmark_config,omitzero,required"`
 	paramObj
 }
 
-func (r EvalRunEvalAlphaParams) MarshalJSON() (data []byte, err error) {
-	type shadow EvalRunEvalAlphaParams
+func (r AlphaEvalRunEvalAlphaParams) MarshalJSON() (data []byte, err error) {
+	type shadow AlphaEvalRunEvalAlphaParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *EvalRunEvalAlphaParams) UnmarshalJSON(data []byte) error {
+func (r *AlphaEvalRunEvalAlphaParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }

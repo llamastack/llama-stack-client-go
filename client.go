@@ -22,7 +22,6 @@ type Client struct {
 	ToolRuntime             ToolRuntimeService
 	Responses               ResponseService
 	Datasets                DatasetService
-	Eval                    EvalService
 	Inspect                 InspectService
 	Embeddings              EmbeddingService
 	Chat                    ChatService
@@ -31,7 +30,6 @@ type Client struct {
 	VectorDBs               VectorDBService
 	VectorStores            VectorStoreService
 	Models                  ModelService
-	PostTraining            PostTrainingService
 	Providers               ProviderService
 	Routes                  RouteService
 	Moderations             ModerationService
@@ -73,7 +71,6 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.ToolRuntime = NewToolRuntimeService(opts...)
 	r.Responses = NewResponseService(opts...)
 	r.Datasets = NewDatasetService(opts...)
-	r.Eval = NewEvalService(opts...)
 	r.Inspect = NewInspectService(opts...)
 	r.Embeddings = NewEmbeddingService(opts...)
 	r.Chat = NewChatService(opts...)
@@ -82,7 +79,6 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.VectorDBs = NewVectorDBService(opts...)
 	r.VectorStores = NewVectorStoreService(opts...)
 	r.Models = NewModelService(opts...)
-	r.PostTraining = NewPostTrainingService(opts...)
 	r.Providers = NewProviderService(opts...)
 	r.Routes = NewRouteService(opts...)
 	r.Moderations = NewModerationService(opts...)
