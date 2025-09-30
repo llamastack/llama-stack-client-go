@@ -56,7 +56,7 @@ func (r *AlphaAgentTurnService) New(ctx context.Context, sessionID string, param
 }
 
 // Create a new turn for an agent.
-func (r *AlphaAgentTurnService) NewStreaming(ctx context.Context, sessionID string, params AlphaAgentTurnNewParams, opts ...option.RequestOption) (stream *ssestream.Stream[any]) {
+func (r *AlphaAgentTurnService) NewStreaming(ctx context.Context, sessionID string, params AlphaAgentTurnNewParams, opts ...option.RequestOption) (stream *ssestream.Stream[AgentTurnResponseStreamChunk]) {
 	var (
 		raw *http.Response
 		err error
@@ -73,7 +73,7 @@ func (r *AlphaAgentTurnService) NewStreaming(ctx context.Context, sessionID stri
 	}
 	path := fmt.Sprintf("v1/agents/%s/session/%s/turn", params.AgentID, sessionID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &raw, opts...)
-	return ssestream.NewStream[any](ssestream.NewDecoder(raw), err)
+	return ssestream.NewStream[AgentTurnResponseStreamChunk](ssestream.NewDecoder(raw), err)
 }
 
 // Retrieve an agent turn by its ID.
@@ -123,7 +123,7 @@ func (r *AlphaAgentTurnService) Resume(ctx context.Context, turnID string, param
 // status `awaiting_input` due to pending input from client side tool calls, this
 // endpoint can be used to submit the outputs from the tool calls once they are
 // ready.
-func (r *AlphaAgentTurnService) ResumeStreaming(ctx context.Context, turnID string, params AlphaAgentTurnResumeParams, opts ...option.RequestOption) (stream *ssestream.Stream[any]) {
+func (r *AlphaAgentTurnService) ResumeStreaming(ctx context.Context, turnID string, params AlphaAgentTurnResumeParams, opts ...option.RequestOption) (stream *ssestream.Stream[AgentTurnResponseStreamChunk]) {
 	var (
 		raw *http.Response
 		err error
@@ -144,7 +144,25 @@ func (r *AlphaAgentTurnService) ResumeStreaming(ctx context.Context, turnID stri
 	}
 	path := fmt.Sprintf("v1/agents/%s/session/%s/turn/%s/resume", params.AgentID, params.SessionID, turnID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &raw, opts...)
-	return ssestream.NewStream[any](ssestream.NewDecoder(raw), err)
+	return ssestream.NewStream[AgentTurnResponseStreamChunk](ssestream.NewDecoder(raw), err)
+}
+
+// Streamed agent turn completion response.
+type AgentTurnResponseStreamChunk struct {
+	// Individual event in the agent turn response stream
+	Event TurnResponseEvent `json:"event,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Event       respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r AgentTurnResponseStreamChunk) RawJSON() string { return r.JSON.raw }
+func (r *AgentTurnResponseStreamChunk) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // A single turn in an interaction with an Agentic System.
@@ -511,6 +529,654 @@ type TurnOutputAttachmentContentURL struct {
 // Returns the unmodified JSON received from the API
 func (r TurnOutputAttachmentContentURL) RawJSON() string { return r.JSON.raw }
 func (r *TurnOutputAttachmentContentURL) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// An event in an agent turn response stream.
+type TurnResponseEvent struct {
+	// Event-specific payload containing event data
+	Payload TurnResponseEventPayloadUnion `json:"payload,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Payload     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TurnResponseEvent) RawJSON() string { return r.JSON.raw }
+func (r *TurnResponseEvent) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// TurnResponseEventPayloadUnion contains all possible properties and values from
+// [TurnResponseEventPayloadStepStart], [TurnResponseEventPayloadStepProgress],
+// [TurnResponseEventPayloadStepComplete], [TurnResponseEventPayloadTurnStart],
+// [TurnResponseEventPayloadTurnComplete],
+// [TurnResponseEventPayloadTurnAwaitingInput].
+//
+// Use the [TurnResponseEventPayloadUnion.AsAny] method to switch on the variant.
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type TurnResponseEventPayloadUnion struct {
+	// Any of "step_start", "step_progress", "step_complete", "turn_start",
+	// "turn_complete", "turn_awaiting_input".
+	EventType string `json:"event_type"`
+	StepID    string `json:"step_id"`
+	StepType  string `json:"step_type"`
+	// This field is from variant [TurnResponseEventPayloadStepStart].
+	Metadata map[string]TurnResponseEventPayloadStepStartMetadataUnion `json:"metadata"`
+	// This field is from variant [TurnResponseEventPayloadStepProgress].
+	Delta TurnResponseEventPayloadStepProgressDeltaUnion `json:"delta"`
+	// This field is from variant [TurnResponseEventPayloadStepComplete].
+	StepDetails TurnResponseEventPayloadStepCompleteStepDetailsUnion `json:"step_details"`
+	// This field is from variant [TurnResponseEventPayloadTurnStart].
+	TurnID string `json:"turn_id"`
+	// This field is from variant [TurnResponseEventPayloadTurnComplete].
+	Turn Turn `json:"turn"`
+	JSON struct {
+		EventType   respjson.Field
+		StepID      respjson.Field
+		StepType    respjson.Field
+		Metadata    respjson.Field
+		Delta       respjson.Field
+		StepDetails respjson.Field
+		TurnID      respjson.Field
+		Turn        respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// anyTurnResponseEventPayload is implemented by each variant of
+// [TurnResponseEventPayloadUnion] to add type safety for the return type of
+// [TurnResponseEventPayloadUnion.AsAny]
+type anyTurnResponseEventPayload interface {
+	implTurnResponseEventPayloadUnion()
+}
+
+func (TurnResponseEventPayloadStepStart) implTurnResponseEventPayloadUnion()         {}
+func (TurnResponseEventPayloadStepProgress) implTurnResponseEventPayloadUnion()      {}
+func (TurnResponseEventPayloadStepComplete) implTurnResponseEventPayloadUnion()      {}
+func (TurnResponseEventPayloadTurnStart) implTurnResponseEventPayloadUnion()         {}
+func (TurnResponseEventPayloadTurnComplete) implTurnResponseEventPayloadUnion()      {}
+func (TurnResponseEventPayloadTurnAwaitingInput) implTurnResponseEventPayloadUnion() {}
+
+// Use the following switch statement to find the correct variant
+//
+//	switch variant := TurnResponseEventPayloadUnion.AsAny().(type) {
+//	case llamastackclient.TurnResponseEventPayloadStepStart:
+//	case llamastackclient.TurnResponseEventPayloadStepProgress:
+//	case llamastackclient.TurnResponseEventPayloadStepComplete:
+//	case llamastackclient.TurnResponseEventPayloadTurnStart:
+//	case llamastackclient.TurnResponseEventPayloadTurnComplete:
+//	case llamastackclient.TurnResponseEventPayloadTurnAwaitingInput:
+//	default:
+//	  fmt.Errorf("no variant present")
+//	}
+func (u TurnResponseEventPayloadUnion) AsAny() anyTurnResponseEventPayload {
+	switch u.EventType {
+	case "step_start":
+		return u.AsStepStart()
+	case "step_progress":
+		return u.AsStepProgress()
+	case "step_complete":
+		return u.AsStepComplete()
+	case "turn_start":
+		return u.AsTurnStart()
+	case "turn_complete":
+		return u.AsTurnComplete()
+	case "turn_awaiting_input":
+		return u.AsTurnAwaitingInput()
+	}
+	return nil
+}
+
+func (u TurnResponseEventPayloadUnion) AsStepStart() (v TurnResponseEventPayloadStepStart) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u TurnResponseEventPayloadUnion) AsStepProgress() (v TurnResponseEventPayloadStepProgress) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u TurnResponseEventPayloadUnion) AsStepComplete() (v TurnResponseEventPayloadStepComplete) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u TurnResponseEventPayloadUnion) AsTurnStart() (v TurnResponseEventPayloadTurnStart) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u TurnResponseEventPayloadUnion) AsTurnComplete() (v TurnResponseEventPayloadTurnComplete) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u TurnResponseEventPayloadUnion) AsTurnAwaitingInput() (v TurnResponseEventPayloadTurnAwaitingInput) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u TurnResponseEventPayloadUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *TurnResponseEventPayloadUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Payload for step start events in agent turn responses.
+type TurnResponseEventPayloadStepStart struct {
+	// Type of event being reported
+	EventType constant.StepStart `json:"event_type,required"`
+	// Unique identifier for the step within a turn
+	StepID string `json:"step_id,required"`
+	// Type of step being executed
+	//
+	// Any of "inference", "tool_execution", "shield_call", "memory_retrieval".
+	StepType string `json:"step_type,required"`
+	// (Optional) Additional metadata for the step
+	Metadata map[string]TurnResponseEventPayloadStepStartMetadataUnion `json:"metadata"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		EventType   respjson.Field
+		StepID      respjson.Field
+		StepType    respjson.Field
+		Metadata    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TurnResponseEventPayloadStepStart) RawJSON() string { return r.JSON.raw }
+func (r *TurnResponseEventPayloadStepStart) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// TurnResponseEventPayloadStepStartMetadataUnion contains all possible properties
+// and values from [bool], [float64], [string], [[]any].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+//
+// If the underlying value is not a json object, one of the following properties
+// will be valid: OfBool OfFloat OfString OfAnyArray]
+type TurnResponseEventPayloadStepStartMetadataUnion struct {
+	// This field will be present if the value is a [bool] instead of an object.
+	OfBool bool `json:",inline"`
+	// This field will be present if the value is a [float64] instead of an object.
+	OfFloat float64 `json:",inline"`
+	// This field will be present if the value is a [string] instead of an object.
+	OfString string `json:",inline"`
+	// This field will be present if the value is a [[]any] instead of an object.
+	OfAnyArray []any `json:",inline"`
+	JSON       struct {
+		OfBool     respjson.Field
+		OfFloat    respjson.Field
+		OfString   respjson.Field
+		OfAnyArray respjson.Field
+		raw        string
+	} `json:"-"`
+}
+
+func (u TurnResponseEventPayloadStepStartMetadataUnion) AsBool() (v bool) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u TurnResponseEventPayloadStepStartMetadataUnion) AsFloat() (v float64) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u TurnResponseEventPayloadStepStartMetadataUnion) AsString() (v string) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u TurnResponseEventPayloadStepStartMetadataUnion) AsAnyArray() (v []any) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u TurnResponseEventPayloadStepStartMetadataUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *TurnResponseEventPayloadStepStartMetadataUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Payload for step progress events in agent turn responses.
+type TurnResponseEventPayloadStepProgress struct {
+	// Incremental content changes during step execution
+	Delta TurnResponseEventPayloadStepProgressDeltaUnion `json:"delta,required"`
+	// Type of event being reported
+	EventType constant.StepProgress `json:"event_type,required"`
+	// Unique identifier for the step within a turn
+	StepID string `json:"step_id,required"`
+	// Type of step being executed
+	//
+	// Any of "inference", "tool_execution", "shield_call", "memory_retrieval".
+	StepType string `json:"step_type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Delta       respjson.Field
+		EventType   respjson.Field
+		StepID      respjson.Field
+		StepType    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TurnResponseEventPayloadStepProgress) RawJSON() string { return r.JSON.raw }
+func (r *TurnResponseEventPayloadStepProgress) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// TurnResponseEventPayloadStepProgressDeltaUnion contains all possible properties
+// and values from [TurnResponseEventPayloadStepProgressDeltaText],
+// [TurnResponseEventPayloadStepProgressDeltaImage],
+// [TurnResponseEventPayloadStepProgressDeltaToolCall].
+//
+// Use the [TurnResponseEventPayloadStepProgressDeltaUnion.AsAny] method to switch
+// on the variant.
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type TurnResponseEventPayloadStepProgressDeltaUnion struct {
+	// This field is from variant [TurnResponseEventPayloadStepProgressDeltaText].
+	Text string `json:"text"`
+	// Any of "text", "image", "tool_call".
+	Type string `json:"type"`
+	// This field is from variant [TurnResponseEventPayloadStepProgressDeltaImage].
+	Image string `json:"image"`
+	// This field is from variant [TurnResponseEventPayloadStepProgressDeltaToolCall].
+	ParseStatus string `json:"parse_status"`
+	// This field is from variant [TurnResponseEventPayloadStepProgressDeltaToolCall].
+	ToolCall TurnResponseEventPayloadStepProgressDeltaToolCallToolCallUnion `json:"tool_call"`
+	JSON     struct {
+		Text        respjson.Field
+		Type        respjson.Field
+		Image       respjson.Field
+		ParseStatus respjson.Field
+		ToolCall    respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// anyTurnResponseEventPayloadStepProgressDelta is implemented by each variant of
+// [TurnResponseEventPayloadStepProgressDeltaUnion] to add type safety for the
+// return type of [TurnResponseEventPayloadStepProgressDeltaUnion.AsAny]
+type anyTurnResponseEventPayloadStepProgressDelta interface {
+	implTurnResponseEventPayloadStepProgressDeltaUnion()
+}
+
+func (TurnResponseEventPayloadStepProgressDeltaText) implTurnResponseEventPayloadStepProgressDeltaUnion() {
+}
+func (TurnResponseEventPayloadStepProgressDeltaImage) implTurnResponseEventPayloadStepProgressDeltaUnion() {
+}
+func (TurnResponseEventPayloadStepProgressDeltaToolCall) implTurnResponseEventPayloadStepProgressDeltaUnion() {
+}
+
+// Use the following switch statement to find the correct variant
+//
+//	switch variant := TurnResponseEventPayloadStepProgressDeltaUnion.AsAny().(type) {
+//	case llamastackclient.TurnResponseEventPayloadStepProgressDeltaText:
+//	case llamastackclient.TurnResponseEventPayloadStepProgressDeltaImage:
+//	case llamastackclient.TurnResponseEventPayloadStepProgressDeltaToolCall:
+//	default:
+//	  fmt.Errorf("no variant present")
+//	}
+func (u TurnResponseEventPayloadStepProgressDeltaUnion) AsAny() anyTurnResponseEventPayloadStepProgressDelta {
+	switch u.Type {
+	case "text":
+		return u.AsText()
+	case "image":
+		return u.AsImage()
+	case "tool_call":
+		return u.AsToolCall()
+	}
+	return nil
+}
+
+func (u TurnResponseEventPayloadStepProgressDeltaUnion) AsText() (v TurnResponseEventPayloadStepProgressDeltaText) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u TurnResponseEventPayloadStepProgressDeltaUnion) AsImage() (v TurnResponseEventPayloadStepProgressDeltaImage) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u TurnResponseEventPayloadStepProgressDeltaUnion) AsToolCall() (v TurnResponseEventPayloadStepProgressDeltaToolCall) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u TurnResponseEventPayloadStepProgressDeltaUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *TurnResponseEventPayloadStepProgressDeltaUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A text content delta for streaming responses.
+type TurnResponseEventPayloadStepProgressDeltaText struct {
+	// The incremental text content
+	Text string `json:"text,required"`
+	// Discriminator type of the delta. Always "text"
+	Type constant.Text `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Text        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TurnResponseEventPayloadStepProgressDeltaText) RawJSON() string { return r.JSON.raw }
+func (r *TurnResponseEventPayloadStepProgressDeltaText) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// An image content delta for streaming responses.
+type TurnResponseEventPayloadStepProgressDeltaImage struct {
+	// The incremental image data as bytes
+	Image string `json:"image,required"`
+	// Discriminator type of the delta. Always "image"
+	Type constant.Image `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Image       respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TurnResponseEventPayloadStepProgressDeltaImage) RawJSON() string { return r.JSON.raw }
+func (r *TurnResponseEventPayloadStepProgressDeltaImage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A tool call content delta for streaming responses.
+type TurnResponseEventPayloadStepProgressDeltaToolCall struct {
+	// Current parsing status of the tool call
+	//
+	// Any of "started", "in_progress", "failed", "succeeded".
+	ParseStatus string `json:"parse_status,required"`
+	// Either an in-progress tool call string or the final parsed tool call
+	ToolCall TurnResponseEventPayloadStepProgressDeltaToolCallToolCallUnion `json:"tool_call,required"`
+	// Discriminator type of the delta. Always "tool_call"
+	Type constant.ToolCall `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ParseStatus respjson.Field
+		ToolCall    respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TurnResponseEventPayloadStepProgressDeltaToolCall) RawJSON() string { return r.JSON.raw }
+func (r *TurnResponseEventPayloadStepProgressDeltaToolCall) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// TurnResponseEventPayloadStepProgressDeltaToolCallToolCallUnion contains all
+// possible properties and values from [string], [ToolCall].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+//
+// If the underlying value is not a json object, one of the following properties
+// will be valid: OfString]
+type TurnResponseEventPayloadStepProgressDeltaToolCallToolCallUnion struct {
+	// This field will be present if the value is a [string] instead of an object.
+	OfString string `json:",inline"`
+	// This field is from variant [ToolCall].
+	Arguments ToolCallArgumentsUnion `json:"arguments"`
+	// This field is from variant [ToolCall].
+	CallID string `json:"call_id"`
+	// This field is from variant [ToolCall].
+	ToolName ToolCallToolName `json:"tool_name"`
+	// This field is from variant [ToolCall].
+	ArgumentsJson string `json:"arguments_json"`
+	JSON          struct {
+		OfString      respjson.Field
+		Arguments     respjson.Field
+		CallID        respjson.Field
+		ToolName      respjson.Field
+		ArgumentsJson respjson.Field
+		raw           string
+	} `json:"-"`
+}
+
+func (u TurnResponseEventPayloadStepProgressDeltaToolCallToolCallUnion) AsString() (v string) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u TurnResponseEventPayloadStepProgressDeltaToolCallToolCallUnion) AsToolCall() (v ToolCall) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u TurnResponseEventPayloadStepProgressDeltaToolCallToolCallUnion) RawJSON() string {
+	return u.JSON.raw
+}
+
+func (r *TurnResponseEventPayloadStepProgressDeltaToolCallToolCallUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Payload for step completion events in agent turn responses.
+type TurnResponseEventPayloadStepComplete struct {
+	// Type of event being reported
+	EventType constant.StepComplete `json:"event_type,required"`
+	// Complete details of the executed step
+	StepDetails TurnResponseEventPayloadStepCompleteStepDetailsUnion `json:"step_details,required"`
+	// Unique identifier for the step within a turn
+	StepID string `json:"step_id,required"`
+	// Type of step being executed
+	//
+	// Any of "inference", "tool_execution", "shield_call", "memory_retrieval".
+	StepType string `json:"step_type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		EventType   respjson.Field
+		StepDetails respjson.Field
+		StepID      respjson.Field
+		StepType    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TurnResponseEventPayloadStepComplete) RawJSON() string { return r.JSON.raw }
+func (r *TurnResponseEventPayloadStepComplete) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// TurnResponseEventPayloadStepCompleteStepDetailsUnion contains all possible
+// properties and values from [InferenceStep], [ToolExecutionStep],
+// [ShieldCallStep], [MemoryRetrievalStep].
+//
+// Use the [TurnResponseEventPayloadStepCompleteStepDetailsUnion.AsAny] method to
+// switch on the variant.
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type TurnResponseEventPayloadStepCompleteStepDetailsUnion struct {
+	// This field is from variant [InferenceStep].
+	ModelResponse CompletionMessage `json:"model_response"`
+	StepID        string            `json:"step_id"`
+	// Any of "inference", "tool_execution", "shield_call", "memory_retrieval".
+	StepType    string    `json:"step_type"`
+	TurnID      string    `json:"turn_id"`
+	CompletedAt time.Time `json:"completed_at"`
+	StartedAt   time.Time `json:"started_at"`
+	// This field is from variant [ToolExecutionStep].
+	ToolCalls []ToolCall `json:"tool_calls"`
+	// This field is from variant [ToolExecutionStep].
+	ToolResponses []ToolResponse `json:"tool_responses"`
+	// This field is from variant [ShieldCallStep].
+	Violation SafetyViolation `json:"violation"`
+	// This field is from variant [MemoryRetrievalStep].
+	InsertedContext InterleavedContentUnion `json:"inserted_context"`
+	// This field is from variant [MemoryRetrievalStep].
+	VectorDBIDs string `json:"vector_db_ids"`
+	JSON        struct {
+		ModelResponse   respjson.Field
+		StepID          respjson.Field
+		StepType        respjson.Field
+		TurnID          respjson.Field
+		CompletedAt     respjson.Field
+		StartedAt       respjson.Field
+		ToolCalls       respjson.Field
+		ToolResponses   respjson.Field
+		Violation       respjson.Field
+		InsertedContext respjson.Field
+		VectorDBIDs     respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+// anyTurnResponseEventPayloadStepCompleteStepDetails is implemented by each
+// variant of [TurnResponseEventPayloadStepCompleteStepDetailsUnion] to add type
+// safety for the return type of
+// [TurnResponseEventPayloadStepCompleteStepDetailsUnion.AsAny]
+type anyTurnResponseEventPayloadStepCompleteStepDetails interface {
+	implTurnResponseEventPayloadStepCompleteStepDetailsUnion()
+}
+
+func (InferenceStep) implTurnResponseEventPayloadStepCompleteStepDetailsUnion()       {}
+func (ToolExecutionStep) implTurnResponseEventPayloadStepCompleteStepDetailsUnion()   {}
+func (ShieldCallStep) implTurnResponseEventPayloadStepCompleteStepDetailsUnion()      {}
+func (MemoryRetrievalStep) implTurnResponseEventPayloadStepCompleteStepDetailsUnion() {}
+
+// Use the following switch statement to find the correct variant
+//
+//	switch variant := TurnResponseEventPayloadStepCompleteStepDetailsUnion.AsAny().(type) {
+//	case llamastackclient.InferenceStep:
+//	case llamastackclient.ToolExecutionStep:
+//	case llamastackclient.ShieldCallStep:
+//	case llamastackclient.MemoryRetrievalStep:
+//	default:
+//	  fmt.Errorf("no variant present")
+//	}
+func (u TurnResponseEventPayloadStepCompleteStepDetailsUnion) AsAny() anyTurnResponseEventPayloadStepCompleteStepDetails {
+	switch u.StepType {
+	case "inference":
+		return u.AsInference()
+	case "tool_execution":
+		return u.AsToolExecution()
+	case "shield_call":
+		return u.AsShieldCall()
+	case "memory_retrieval":
+		return u.AsMemoryRetrieval()
+	}
+	return nil
+}
+
+func (u TurnResponseEventPayloadStepCompleteStepDetailsUnion) AsInference() (v InferenceStep) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u TurnResponseEventPayloadStepCompleteStepDetailsUnion) AsToolExecution() (v ToolExecutionStep) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u TurnResponseEventPayloadStepCompleteStepDetailsUnion) AsShieldCall() (v ShieldCallStep) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u TurnResponseEventPayloadStepCompleteStepDetailsUnion) AsMemoryRetrieval() (v MemoryRetrievalStep) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u TurnResponseEventPayloadStepCompleteStepDetailsUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *TurnResponseEventPayloadStepCompleteStepDetailsUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Payload for turn start events in agent turn responses.
+type TurnResponseEventPayloadTurnStart struct {
+	// Type of event being reported
+	EventType constant.TurnStart `json:"event_type,required"`
+	// Unique identifier for the turn within a session
+	TurnID string `json:"turn_id,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		EventType   respjson.Field
+		TurnID      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TurnResponseEventPayloadTurnStart) RawJSON() string { return r.JSON.raw }
+func (r *TurnResponseEventPayloadTurnStart) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Payload for turn completion events in agent turn responses.
+type TurnResponseEventPayloadTurnComplete struct {
+	// Type of event being reported
+	EventType constant.TurnComplete `json:"event_type,required"`
+	// Complete turn data including all steps and results
+	Turn Turn `json:"turn,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		EventType   respjson.Field
+		Turn        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TurnResponseEventPayloadTurnComplete) RawJSON() string { return r.JSON.raw }
+func (r *TurnResponseEventPayloadTurnComplete) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Payload for turn awaiting input events in agent turn responses.
+type TurnResponseEventPayloadTurnAwaitingInput struct {
+	// Type of event being reported
+	EventType constant.TurnAwaitingInput `json:"event_type,required"`
+	// Turn data when waiting for external tool responses
+	Turn Turn `json:"turn,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		EventType   respjson.Field
+		Turn        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r TurnResponseEventPayloadTurnAwaitingInput) RawJSON() string { return r.JSON.raw }
+func (r *TurnResponseEventPayloadTurnAwaitingInput) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
