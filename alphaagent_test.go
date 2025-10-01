@@ -31,22 +31,21 @@ func TestAlphaAgentNewWithOptionalParams(t *testing.T) {
 			ClientTools: []llamastackclient.ToolDefParam{{
 				Name:        "name",
 				Description: llamastackclient.String("description"),
+				InputSchema: map[string]llamastackclient.ToolDefInputSchemaUnionParam{
+					"foo": {
+						OfBool: llamastackclient.Bool(true),
+					},
+				},
 				Metadata: map[string]llamastackclient.ToolDefMetadataUnionParam{
 					"foo": {
 						OfBool: llamastackclient.Bool(true),
 					},
 				},
-				Parameters: []llamastackclient.ToolDefParameterParam{{
-					Description:   "description",
-					Name:          "name",
-					ParameterType: "parameter_type",
-					Required:      true,
-					Default: llamastackclient.ToolDefParameterDefaultUnionParam{
+				OutputSchema: map[string]llamastackclient.ToolDefOutputSchemaUnionParam{
+					"foo": {
 						OfBool: llamastackclient.Bool(true),
 					},
-					Items: map[string]interface{}{},
-					Title: llamastackclient.String("title"),
-				}},
+				},
 			}},
 			EnableSessionPersistence: llamastackclient.Bool(true),
 			InputShields:             []string{"string"},

@@ -59,6 +59,8 @@ type Llm string                                // Always "llm"
 type LlmAsJudge string                         // Always "llm_as_judge"
 type LoRa string                               // Always "LoRA"
 type Mcp string                                // Always "mcp"
+type McpApprovalRequest string                 // Always "mcp_approval_request"
+type McpApprovalResponse string                // Always "mcp_approval_response"
 type McpCall string                            // Always "mcp_call"
 type McpListTools string                       // Always "mcp_list_tools"
 type MemoryRetrieval string                    // Always "memory_retrieval"
@@ -168,6 +170,8 @@ func (c Llm) Default() Llm                                     { return "llm" }
 func (c LlmAsJudge) Default() LlmAsJudge                       { return "llm_as_judge" }
 func (c LoRa) Default() LoRa                                   { return "LoRA" }
 func (c Mcp) Default() Mcp                                     { return "mcp" }
+func (c McpApprovalRequest) Default() McpApprovalRequest       { return "mcp_approval_request" }
+func (c McpApprovalResponse) Default() McpApprovalResponse     { return "mcp_approval_response" }
 func (c McpCall) Default() McpCall                             { return "mcp_call" }
 func (c McpListTools) Default() McpListTools                   { return "mcp_list_tools" }
 func (c MemoryRetrieval) Default() MemoryRetrieval             { return "memory_retrieval" }
@@ -309,6 +313,8 @@ func (c Llm) MarshalJSON() ([]byte, error)                                { retu
 func (c LlmAsJudge) MarshalJSON() ([]byte, error)                         { return marshalString(c) }
 func (c LoRa) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
 func (c Mcp) MarshalJSON() ([]byte, error)                                { return marshalString(c) }
+func (c McpApprovalRequest) MarshalJSON() ([]byte, error)                 { return marshalString(c) }
+func (c McpApprovalResponse) MarshalJSON() ([]byte, error)                { return marshalString(c) }
 func (c McpCall) MarshalJSON() ([]byte, error)                            { return marshalString(c) }
 func (c McpListTools) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
 func (c MemoryRetrieval) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
