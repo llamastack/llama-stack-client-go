@@ -78,6 +78,8 @@ func (r *ResponseInputItemListResponse) UnmarshalJSON(data []byte) error {
 // [ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCall],
 // [ResponseInputItemListResponseDataOpenAIResponseOutputMessageFunctionToolCall],
 // [ResponseInputItemListResponseDataOpenAIResponseInputFunctionToolCallOutput],
+// [ResponseInputItemListResponseDataOpenAIResponseMcpApprovalRequest],
+// [ResponseInputItemListResponseDataOpenAIResponseMcpApprovalResponse],
 // [ResponseInputItemListResponseDataOpenAIResponseMessage].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
@@ -90,17 +92,25 @@ type ResponseInputItemListResponseDataUnion struct {
 	Queries []string `json:"queries"`
 	// This field is from variant
 	// [ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCall].
-	Results []ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCallResult `json:"results"`
-	// This field is from variant
-	// [ResponseInputItemListResponseDataOpenAIResponseOutputMessageFunctionToolCall].
-	Arguments string `json:"arguments"`
-	CallID    string `json:"call_id"`
-	// This field is from variant
-	// [ResponseInputItemListResponseDataOpenAIResponseOutputMessageFunctionToolCall].
-	Name string `json:"name"`
+	Results   []ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCallResult `json:"results"`
+	Arguments string                                                                                 `json:"arguments"`
+	CallID    string                                                                                 `json:"call_id"`
+	Name      string                                                                                 `json:"name"`
 	// This field is from variant
 	// [ResponseInputItemListResponseDataOpenAIResponseInputFunctionToolCallOutput].
 	Output string `json:"output"`
+	// This field is from variant
+	// [ResponseInputItemListResponseDataOpenAIResponseMcpApprovalRequest].
+	ServerLabel string `json:"server_label"`
+	// This field is from variant
+	// [ResponseInputItemListResponseDataOpenAIResponseMcpApprovalResponse].
+	ApprovalRequestID string `json:"approval_request_id"`
+	// This field is from variant
+	// [ResponseInputItemListResponseDataOpenAIResponseMcpApprovalResponse].
+	Approve bool `json:"approve"`
+	// This field is from variant
+	// [ResponseInputItemListResponseDataOpenAIResponseMcpApprovalResponse].
+	Reason string `json:"reason"`
 	// This field is from variant
 	// [ResponseInputItemListResponseDataOpenAIResponseMessage].
 	Content ResponseInputItemListResponseDataOpenAIResponseMessageContentUnion `json:"content"`
@@ -108,18 +118,22 @@ type ResponseInputItemListResponseDataUnion struct {
 	// [ResponseInputItemListResponseDataOpenAIResponseMessage].
 	Role ResponseInputItemListResponseDataOpenAIResponseMessageRole `json:"role"`
 	JSON struct {
-		ID        respjson.Field
-		Status    respjson.Field
-		Type      respjson.Field
-		Queries   respjson.Field
-		Results   respjson.Field
-		Arguments respjson.Field
-		CallID    respjson.Field
-		Name      respjson.Field
-		Output    respjson.Field
-		Content   respjson.Field
-		Role      respjson.Field
-		raw       string
+		ID                respjson.Field
+		Status            respjson.Field
+		Type              respjson.Field
+		Queries           respjson.Field
+		Results           respjson.Field
+		Arguments         respjson.Field
+		CallID            respjson.Field
+		Name              respjson.Field
+		Output            respjson.Field
+		ServerLabel       respjson.Field
+		ApprovalRequestID respjson.Field
+		Approve           respjson.Field
+		Reason            respjson.Field
+		Content           respjson.Field
+		Role              respjson.Field
+		raw               string
 	} `json:"-"`
 }
 
@@ -139,6 +153,16 @@ func (u ResponseInputItemListResponseDataUnion) AsOpenAIResponseOutputMessageFun
 }
 
 func (u ResponseInputItemListResponseDataUnion) AsOpenAIResponseInputFunctionToolCallOutput() (v ResponseInputItemListResponseDataOpenAIResponseInputFunctionToolCallOutput) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseInputItemListResponseDataUnion) AsOpenAIResponseMcpApprovalRequest() (v ResponseInputItemListResponseDataOpenAIResponseMcpApprovalRequest) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseInputItemListResponseDataUnion) AsOpenAIResponseMcpApprovalResponse() (v ResponseInputItemListResponseDataOpenAIResponseMcpApprovalResponse) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -360,6 +384,60 @@ func (r ResponseInputItemListResponseDataOpenAIResponseInputFunctionToolCallOutp
 	return r.JSON.raw
 }
 func (r *ResponseInputItemListResponseDataOpenAIResponseInputFunctionToolCallOutput) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A request for human approval of a tool invocation.
+type ResponseInputItemListResponseDataOpenAIResponseMcpApprovalRequest struct {
+	ID          string                      `json:"id,required"`
+	Arguments   string                      `json:"arguments,required"`
+	Name        string                      `json:"name,required"`
+	ServerLabel string                      `json:"server_label,required"`
+	Type        constant.McpApprovalRequest `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Arguments   respjson.Field
+		Name        respjson.Field
+		ServerLabel respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseInputItemListResponseDataOpenAIResponseMcpApprovalRequest) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseInputItemListResponseDataOpenAIResponseMcpApprovalRequest) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A response to an MCP approval request.
+type ResponseInputItemListResponseDataOpenAIResponseMcpApprovalResponse struct {
+	ApprovalRequestID string                       `json:"approval_request_id,required"`
+	Approve           bool                         `json:"approve,required"`
+	Type              constant.McpApprovalResponse `json:"type,required"`
+	ID                string                       `json:"id"`
+	Reason            string                       `json:"reason"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ApprovalRequestID respjson.Field
+		Approve           respjson.Field
+		Type              respjson.Field
+		ID                respjson.Field
+		Reason            respjson.Field
+		ExtraFields       map[string]respjson.Field
+		raw               string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseInputItemListResponseDataOpenAIResponseMcpApprovalResponse) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseInputItemListResponseDataOpenAIResponseMcpApprovalResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
