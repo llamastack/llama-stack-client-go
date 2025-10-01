@@ -168,7 +168,8 @@ func (r *ResponseObject) UnmarshalJSON(data []byte) error {
 // ResponseObjectOutputUnion contains all possible properties and values from
 // [ResponseObjectOutputMessage], [ResponseObjectOutputWebSearchCall],
 // [ResponseObjectOutputFileSearchCall], [ResponseObjectOutputFunctionCall],
-// [ResponseObjectOutputMcpCall], [ResponseObjectOutputMcpListTools].
+// [ResponseObjectOutputMcpCall], [ResponseObjectOutputMcpListTools],
+// [ResponseObjectOutputMcpApprovalRequest].
 //
 // Use the [ResponseObjectOutputUnion.AsAny] method to switch on the variant.
 //
@@ -179,7 +180,7 @@ type ResponseObjectOutputUnion struct {
 	// This field is from variant [ResponseObjectOutputMessage].
 	Role ResponseObjectOutputMessageRole `json:"role"`
 	// Any of "message", "web_search_call", "file_search_call", "function_call",
-	// "mcp_call", "mcp_list_tools".
+	// "mcp_call", "mcp_list_tools", "mcp_approval_request".
 	Type   string `json:"type"`
 	ID     string `json:"id"`
 	Status string `json:"status"`
@@ -224,12 +225,13 @@ type anyResponseObjectOutput interface {
 	implResponseObjectOutputUnion()
 }
 
-func (ResponseObjectOutputMessage) implResponseObjectOutputUnion()        {}
-func (ResponseObjectOutputWebSearchCall) implResponseObjectOutputUnion()  {}
-func (ResponseObjectOutputFileSearchCall) implResponseObjectOutputUnion() {}
-func (ResponseObjectOutputFunctionCall) implResponseObjectOutputUnion()   {}
-func (ResponseObjectOutputMcpCall) implResponseObjectOutputUnion()        {}
-func (ResponseObjectOutputMcpListTools) implResponseObjectOutputUnion()   {}
+func (ResponseObjectOutputMessage) implResponseObjectOutputUnion()            {}
+func (ResponseObjectOutputWebSearchCall) implResponseObjectOutputUnion()      {}
+func (ResponseObjectOutputFileSearchCall) implResponseObjectOutputUnion()     {}
+func (ResponseObjectOutputFunctionCall) implResponseObjectOutputUnion()       {}
+func (ResponseObjectOutputMcpCall) implResponseObjectOutputUnion()            {}
+func (ResponseObjectOutputMcpListTools) implResponseObjectOutputUnion()       {}
+func (ResponseObjectOutputMcpApprovalRequest) implResponseObjectOutputUnion() {}
 
 // Use the following switch statement to find the correct variant
 //
@@ -240,6 +242,7 @@ func (ResponseObjectOutputMcpListTools) implResponseObjectOutputUnion()   {}
 //	case llamastackclient.ResponseObjectOutputFunctionCall:
 //	case llamastackclient.ResponseObjectOutputMcpCall:
 //	case llamastackclient.ResponseObjectOutputMcpListTools:
+//	case llamastackclient.ResponseObjectOutputMcpApprovalRequest:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -257,6 +260,8 @@ func (u ResponseObjectOutputUnion) AsAny() anyResponseObjectOutput {
 		return u.AsMcpCall()
 	case "mcp_list_tools":
 		return u.AsMcpListTools()
+	case "mcp_approval_request":
+		return u.AsMcpApprovalRequest()
 	}
 	return nil
 }
@@ -287,6 +292,11 @@ func (u ResponseObjectOutputUnion) AsMcpCall() (v ResponseObjectOutputMcpCall) {
 }
 
 func (u ResponseObjectOutputUnion) AsMcpListTools() (v ResponseObjectOutputMcpListTools) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectOutputUnion) AsMcpApprovalRequest() (v ResponseObjectOutputMcpApprovalRequest) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -1075,6 +1085,31 @@ func (r *ResponseObjectOutputMcpListToolsToolInputSchemaUnion) UnmarshalJSON(dat
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A request for human approval of a tool invocation.
+type ResponseObjectOutputMcpApprovalRequest struct {
+	ID          string                      `json:"id,required"`
+	Arguments   string                      `json:"arguments,required"`
+	Name        string                      `json:"name,required"`
+	ServerLabel string                      `json:"server_label,required"`
+	Type        constant.McpApprovalRequest `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Arguments   respjson.Field
+		Name        respjson.Field
+		ServerLabel respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectOutputMcpApprovalRequest) RawJSON() string { return r.JSON.raw }
+func (r *ResponseObjectOutputMcpApprovalRequest) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type ResponseObjectOutputRole string
 
 const (
@@ -1742,7 +1777,8 @@ func (r *ResponseObjectStreamResponseOutputItemAdded) UnmarshalJSON(data []byte)
 // [ResponseObjectStreamResponseOutputItemAddedItemFileSearchCall],
 // [ResponseObjectStreamResponseOutputItemAddedItemFunctionCall],
 // [ResponseObjectStreamResponseOutputItemAddedItemMcpCall],
-// [ResponseObjectStreamResponseOutputItemAddedItemMcpListTools].
+// [ResponseObjectStreamResponseOutputItemAddedItemMcpListTools],
+// [ResponseObjectStreamResponseOutputItemAddedItemMcpApprovalRequest].
 //
 // Use the [ResponseObjectStreamResponseOutputItemAddedItemUnion.AsAny] method to
 // switch on the variant.
@@ -1756,7 +1792,7 @@ type ResponseObjectStreamResponseOutputItemAddedItemUnion struct {
 	// [ResponseObjectStreamResponseOutputItemAddedItemMessage].
 	Role ResponseObjectStreamResponseOutputItemAddedItemMessageRole `json:"role"`
 	// Any of "message", "web_search_call", "file_search_call", "function_call",
-	// "mcp_call", "mcp_list_tools".
+	// "mcp_call", "mcp_list_tools", "mcp_approval_request".
 	Type   string `json:"type"`
 	ID     string `json:"id"`
 	Status string `json:"status"`
@@ -1820,6 +1856,8 @@ func (ResponseObjectStreamResponseOutputItemAddedItemMcpCall) implResponseObject
 }
 func (ResponseObjectStreamResponseOutputItemAddedItemMcpListTools) implResponseObjectStreamResponseOutputItemAddedItemUnion() {
 }
+func (ResponseObjectStreamResponseOutputItemAddedItemMcpApprovalRequest) implResponseObjectStreamResponseOutputItemAddedItemUnion() {
+}
 
 // Use the following switch statement to find the correct variant
 //
@@ -1830,6 +1868,7 @@ func (ResponseObjectStreamResponseOutputItemAddedItemMcpListTools) implResponseO
 //	case llamastackclient.ResponseObjectStreamResponseOutputItemAddedItemFunctionCall:
 //	case llamastackclient.ResponseObjectStreamResponseOutputItemAddedItemMcpCall:
 //	case llamastackclient.ResponseObjectStreamResponseOutputItemAddedItemMcpListTools:
+//	case llamastackclient.ResponseObjectStreamResponseOutputItemAddedItemMcpApprovalRequest:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -1847,6 +1886,8 @@ func (u ResponseObjectStreamResponseOutputItemAddedItemUnion) AsAny() anyRespons
 		return u.AsMcpCall()
 	case "mcp_list_tools":
 		return u.AsMcpListTools()
+	case "mcp_approval_request":
+		return u.AsMcpApprovalRequest()
 	}
 	return nil
 }
@@ -1877,6 +1918,11 @@ func (u ResponseObjectStreamResponseOutputItemAddedItemUnion) AsMcpCall() (v Res
 }
 
 func (u ResponseObjectStreamResponseOutputItemAddedItemUnion) AsMcpListTools() (v ResponseObjectStreamResponseOutputItemAddedItemMcpListTools) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectStreamResponseOutputItemAddedItemUnion) AsMcpApprovalRequest() (v ResponseObjectStreamResponseOutputItemAddedItemMcpApprovalRequest) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -2702,6 +2748,33 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMcpListToolsToolInputSch
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A request for human approval of a tool invocation.
+type ResponseObjectStreamResponseOutputItemAddedItemMcpApprovalRequest struct {
+	ID          string                      `json:"id,required"`
+	Arguments   string                      `json:"arguments,required"`
+	Name        string                      `json:"name,required"`
+	ServerLabel string                      `json:"server_label,required"`
+	Type        constant.McpApprovalRequest `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Arguments   respjson.Field
+		Name        respjson.Field
+		ServerLabel respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseOutputItemAddedItemMcpApprovalRequest) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseObjectStreamResponseOutputItemAddedItemMcpApprovalRequest) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type ResponseObjectStreamResponseOutputItemAddedItemRole string
 
 const (
@@ -2748,7 +2821,8 @@ func (r *ResponseObjectStreamResponseOutputItemDone) UnmarshalJSON(data []byte) 
 // [ResponseObjectStreamResponseOutputItemDoneItemFileSearchCall],
 // [ResponseObjectStreamResponseOutputItemDoneItemFunctionCall],
 // [ResponseObjectStreamResponseOutputItemDoneItemMcpCall],
-// [ResponseObjectStreamResponseOutputItemDoneItemMcpListTools].
+// [ResponseObjectStreamResponseOutputItemDoneItemMcpListTools],
+// [ResponseObjectStreamResponseOutputItemDoneItemMcpApprovalRequest].
 //
 // Use the [ResponseObjectStreamResponseOutputItemDoneItemUnion.AsAny] method to
 // switch on the variant.
@@ -2762,7 +2836,7 @@ type ResponseObjectStreamResponseOutputItemDoneItemUnion struct {
 	// [ResponseObjectStreamResponseOutputItemDoneItemMessage].
 	Role ResponseObjectStreamResponseOutputItemDoneItemMessageRole `json:"role"`
 	// Any of "message", "web_search_call", "file_search_call", "function_call",
-	// "mcp_call", "mcp_list_tools".
+	// "mcp_call", "mcp_list_tools", "mcp_approval_request".
 	Type   string `json:"type"`
 	ID     string `json:"id"`
 	Status string `json:"status"`
@@ -2825,6 +2899,8 @@ func (ResponseObjectStreamResponseOutputItemDoneItemMcpCall) implResponseObjectS
 }
 func (ResponseObjectStreamResponseOutputItemDoneItemMcpListTools) implResponseObjectStreamResponseOutputItemDoneItemUnion() {
 }
+func (ResponseObjectStreamResponseOutputItemDoneItemMcpApprovalRequest) implResponseObjectStreamResponseOutputItemDoneItemUnion() {
+}
 
 // Use the following switch statement to find the correct variant
 //
@@ -2835,6 +2911,7 @@ func (ResponseObjectStreamResponseOutputItemDoneItemMcpListTools) implResponseOb
 //	case llamastackclient.ResponseObjectStreamResponseOutputItemDoneItemFunctionCall:
 //	case llamastackclient.ResponseObjectStreamResponseOutputItemDoneItemMcpCall:
 //	case llamastackclient.ResponseObjectStreamResponseOutputItemDoneItemMcpListTools:
+//	case llamastackclient.ResponseObjectStreamResponseOutputItemDoneItemMcpApprovalRequest:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -2852,6 +2929,8 @@ func (u ResponseObjectStreamResponseOutputItemDoneItemUnion) AsAny() anyResponse
 		return u.AsMcpCall()
 	case "mcp_list_tools":
 		return u.AsMcpListTools()
+	case "mcp_approval_request":
+		return u.AsMcpApprovalRequest()
 	}
 	return nil
 }
@@ -2882,6 +2961,11 @@ func (u ResponseObjectStreamResponseOutputItemDoneItemUnion) AsMcpCall() (v Resp
 }
 
 func (u ResponseObjectStreamResponseOutputItemDoneItemUnion) AsMcpListTools() (v ResponseObjectStreamResponseOutputItemDoneItemMcpListTools) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectStreamResponseOutputItemDoneItemUnion) AsMcpApprovalRequest() (v ResponseObjectStreamResponseOutputItemDoneItemMcpApprovalRequest) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -3707,6 +3791,33 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMcpListToolsToolInputSche
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A request for human approval of a tool invocation.
+type ResponseObjectStreamResponseOutputItemDoneItemMcpApprovalRequest struct {
+	ID          string                      `json:"id,required"`
+	Arguments   string                      `json:"arguments,required"`
+	Name        string                      `json:"name,required"`
+	ServerLabel string                      `json:"server_label,required"`
+	Type        constant.McpApprovalRequest `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Arguments   respjson.Field
+		Name        respjson.Field
+		ServerLabel respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseOutputItemDoneItemMcpApprovalRequest) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseObjectStreamResponseOutputItemDoneItemMcpApprovalRequest) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type ResponseObjectStreamResponseOutputItemDoneItemRole string
 
 const (
@@ -4456,6 +4567,8 @@ func (r *ResponseListResponse) UnmarshalJSON(data []byte) error {
 // [ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCall],
 // [ResponseListResponseInputOpenAIResponseOutputMessageFunctionToolCall],
 // [ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutput],
+// [ResponseListResponseInputOpenAIResponseMcpApprovalRequest],
+// [ResponseListResponseInputOpenAIResponseMcpApprovalResponse],
 // [ResponseListResponseInputOpenAIResponseMessage].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
@@ -4468,34 +4581,46 @@ type ResponseListResponseInputUnion struct {
 	Queries []string `json:"queries"`
 	// This field is from variant
 	// [ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCall].
-	Results []ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResult `json:"results"`
-	// This field is from variant
-	// [ResponseListResponseInputOpenAIResponseOutputMessageFunctionToolCall].
-	Arguments string `json:"arguments"`
-	CallID    string `json:"call_id"`
-	// This field is from variant
-	// [ResponseListResponseInputOpenAIResponseOutputMessageFunctionToolCall].
-	Name string `json:"name"`
+	Results   []ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResult `json:"results"`
+	Arguments string                                                                         `json:"arguments"`
+	CallID    string                                                                         `json:"call_id"`
+	Name      string                                                                         `json:"name"`
 	// This field is from variant
 	// [ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutput].
 	Output string `json:"output"`
+	// This field is from variant
+	// [ResponseListResponseInputOpenAIResponseMcpApprovalRequest].
+	ServerLabel string `json:"server_label"`
+	// This field is from variant
+	// [ResponseListResponseInputOpenAIResponseMcpApprovalResponse].
+	ApprovalRequestID string `json:"approval_request_id"`
+	// This field is from variant
+	// [ResponseListResponseInputOpenAIResponseMcpApprovalResponse].
+	Approve bool `json:"approve"`
+	// This field is from variant
+	// [ResponseListResponseInputOpenAIResponseMcpApprovalResponse].
+	Reason string `json:"reason"`
 	// This field is from variant [ResponseListResponseInputOpenAIResponseMessage].
 	Content ResponseListResponseInputOpenAIResponseMessageContentUnion `json:"content"`
 	// This field is from variant [ResponseListResponseInputOpenAIResponseMessage].
 	Role ResponseListResponseInputOpenAIResponseMessageRole `json:"role"`
 	JSON struct {
-		ID        respjson.Field
-		Status    respjson.Field
-		Type      respjson.Field
-		Queries   respjson.Field
-		Results   respjson.Field
-		Arguments respjson.Field
-		CallID    respjson.Field
-		Name      respjson.Field
-		Output    respjson.Field
-		Content   respjson.Field
-		Role      respjson.Field
-		raw       string
+		ID                respjson.Field
+		Status            respjson.Field
+		Type              respjson.Field
+		Queries           respjson.Field
+		Results           respjson.Field
+		Arguments         respjson.Field
+		CallID            respjson.Field
+		Name              respjson.Field
+		Output            respjson.Field
+		ServerLabel       respjson.Field
+		ApprovalRequestID respjson.Field
+		Approve           respjson.Field
+		Reason            respjson.Field
+		Content           respjson.Field
+		Role              respjson.Field
+		raw               string
 	} `json:"-"`
 }
 
@@ -4515,6 +4640,16 @@ func (u ResponseListResponseInputUnion) AsOpenAIResponseOutputMessageFunctionToo
 }
 
 func (u ResponseListResponseInputUnion) AsOpenAIResponseInputFunctionToolCallOutput() (v ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutput) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseListResponseInputUnion) AsOpenAIResponseMcpApprovalRequest() (v ResponseListResponseInputOpenAIResponseMcpApprovalRequest) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseListResponseInputUnion) AsOpenAIResponseMcpApprovalResponse() (v ResponseListResponseInputOpenAIResponseMcpApprovalResponse) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -4736,6 +4871,60 @@ func (r ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutput) RawJ
 	return r.JSON.raw
 }
 func (r *ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutput) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A request for human approval of a tool invocation.
+type ResponseListResponseInputOpenAIResponseMcpApprovalRequest struct {
+	ID          string                      `json:"id,required"`
+	Arguments   string                      `json:"arguments,required"`
+	Name        string                      `json:"name,required"`
+	ServerLabel string                      `json:"server_label,required"`
+	Type        constant.McpApprovalRequest `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Arguments   respjson.Field
+		Name        respjson.Field
+		ServerLabel respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseListResponseInputOpenAIResponseMcpApprovalRequest) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseListResponseInputOpenAIResponseMcpApprovalRequest) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A response to an MCP approval request.
+type ResponseListResponseInputOpenAIResponseMcpApprovalResponse struct {
+	ApprovalRequestID string                       `json:"approval_request_id,required"`
+	Approve           bool                         `json:"approve,required"`
+	Type              constant.McpApprovalResponse `json:"type,required"`
+	ID                string                       `json:"id"`
+	Reason            string                       `json:"reason"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ApprovalRequestID respjson.Field
+		Approve           respjson.Field
+		Type              respjson.Field
+		ID                respjson.Field
+		Reason            respjson.Field
+		ExtraFields       map[string]respjson.Field
+		raw               string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseListResponseInputOpenAIResponseMcpApprovalResponse) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseListResponseInputOpenAIResponseMcpApprovalResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -5240,7 +5429,8 @@ const (
 // [ResponseListResponseOutputMessage], [ResponseListResponseOutputWebSearchCall],
 // [ResponseListResponseOutputFileSearchCall],
 // [ResponseListResponseOutputFunctionCall], [ResponseListResponseOutputMcpCall],
-// [ResponseListResponseOutputMcpListTools].
+// [ResponseListResponseOutputMcpListTools],
+// [ResponseListResponseOutputMcpApprovalRequest].
 //
 // Use the [ResponseListResponseOutputUnion.AsAny] method to switch on the variant.
 //
@@ -5251,7 +5441,7 @@ type ResponseListResponseOutputUnion struct {
 	// This field is from variant [ResponseListResponseOutputMessage].
 	Role ResponseListResponseOutputMessageRole `json:"role"`
 	// Any of "message", "web_search_call", "file_search_call", "function_call",
-	// "mcp_call", "mcp_list_tools".
+	// "mcp_call", "mcp_list_tools", "mcp_approval_request".
 	Type   string `json:"type"`
 	ID     string `json:"id"`
 	Status string `json:"status"`
@@ -5296,12 +5486,13 @@ type anyResponseListResponseOutput interface {
 	implResponseListResponseOutputUnion()
 }
 
-func (ResponseListResponseOutputMessage) implResponseListResponseOutputUnion()        {}
-func (ResponseListResponseOutputWebSearchCall) implResponseListResponseOutputUnion()  {}
-func (ResponseListResponseOutputFileSearchCall) implResponseListResponseOutputUnion() {}
-func (ResponseListResponseOutputFunctionCall) implResponseListResponseOutputUnion()   {}
-func (ResponseListResponseOutputMcpCall) implResponseListResponseOutputUnion()        {}
-func (ResponseListResponseOutputMcpListTools) implResponseListResponseOutputUnion()   {}
+func (ResponseListResponseOutputMessage) implResponseListResponseOutputUnion()            {}
+func (ResponseListResponseOutputWebSearchCall) implResponseListResponseOutputUnion()      {}
+func (ResponseListResponseOutputFileSearchCall) implResponseListResponseOutputUnion()     {}
+func (ResponseListResponseOutputFunctionCall) implResponseListResponseOutputUnion()       {}
+func (ResponseListResponseOutputMcpCall) implResponseListResponseOutputUnion()            {}
+func (ResponseListResponseOutputMcpListTools) implResponseListResponseOutputUnion()       {}
+func (ResponseListResponseOutputMcpApprovalRequest) implResponseListResponseOutputUnion() {}
 
 // Use the following switch statement to find the correct variant
 //
@@ -5312,6 +5503,7 @@ func (ResponseListResponseOutputMcpListTools) implResponseListResponseOutputUnio
 //	case llamastackclient.ResponseListResponseOutputFunctionCall:
 //	case llamastackclient.ResponseListResponseOutputMcpCall:
 //	case llamastackclient.ResponseListResponseOutputMcpListTools:
+//	case llamastackclient.ResponseListResponseOutputMcpApprovalRequest:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -5329,6 +5521,8 @@ func (u ResponseListResponseOutputUnion) AsAny() anyResponseListResponseOutput {
 		return u.AsMcpCall()
 	case "mcp_list_tools":
 		return u.AsMcpListTools()
+	case "mcp_approval_request":
+		return u.AsMcpApprovalRequest()
 	}
 	return nil
 }
@@ -5359,6 +5553,11 @@ func (u ResponseListResponseOutputUnion) AsMcpCall() (v ResponseListResponseOutp
 }
 
 func (u ResponseListResponseOutputUnion) AsMcpListTools() (v ResponseListResponseOutputMcpListTools) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseListResponseOutputUnion) AsMcpApprovalRequest() (v ResponseListResponseOutputMcpApprovalRequest) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -6159,6 +6358,31 @@ func (r *ResponseListResponseOutputMcpListToolsToolInputSchemaUnion) UnmarshalJS
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A request for human approval of a tool invocation.
+type ResponseListResponseOutputMcpApprovalRequest struct {
+	ID          string                      `json:"id,required"`
+	Arguments   string                      `json:"arguments,required"`
+	Name        string                      `json:"name,required"`
+	ServerLabel string                      `json:"server_label,required"`
+	Type        constant.McpApprovalRequest `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Arguments   respjson.Field
+		Name        respjson.Field
+		ServerLabel respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseListResponseOutputMcpApprovalRequest) RawJSON() string { return r.JSON.raw }
+func (r *ResponseListResponseOutputMcpApprovalRequest) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type ResponseListResponseOutputRole string
 
 const (
@@ -6388,6 +6612,8 @@ type ResponseNewParamsInputArrayItemUnion struct {
 	OfOpenAIResponseOutputMessageFileSearchToolCall *ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageFileSearchToolCall `json:",omitzero,inline"`
 	OfOpenAIResponseOutputMessageFunctionToolCall   *ResponseNewParamsInputArrayItemOpenAIResponseOutputMessageFunctionToolCall   `json:",omitzero,inline"`
 	OfOpenAIResponseInputFunctionToolCallOutput     *ResponseNewParamsInputArrayItemOpenAIResponseInputFunctionToolCallOutput     `json:",omitzero,inline"`
+	OfOpenAIResponseMcpApprovalRequest              *ResponseNewParamsInputArrayItemOpenAIResponseMcpApprovalRequest              `json:",omitzero,inline"`
+	OfOpenAIResponseMcpApprovalResponse             *ResponseNewParamsInputArrayItemOpenAIResponseMcpApprovalResponse             `json:",omitzero,inline"`
 	OfOpenAIResponseMessage                         *ResponseNewParamsInputArrayItemOpenAIResponseMessage                         `json:",omitzero,inline"`
 	paramUnion
 }
@@ -6397,6 +6623,8 @@ func (u ResponseNewParamsInputArrayItemUnion) MarshalJSON() ([]byte, error) {
 		u.OfOpenAIResponseOutputMessageFileSearchToolCall,
 		u.OfOpenAIResponseOutputMessageFunctionToolCall,
 		u.OfOpenAIResponseInputFunctionToolCallOutput,
+		u.OfOpenAIResponseMcpApprovalRequest,
+		u.OfOpenAIResponseMcpApprovalResponse,
 		u.OfOpenAIResponseMessage)
 }
 func (u *ResponseNewParamsInputArrayItemUnion) UnmarshalJSON(data []byte) error {
@@ -6412,6 +6640,10 @@ func (u *ResponseNewParamsInputArrayItemUnion) asAny() any {
 		return u.OfOpenAIResponseOutputMessageFunctionToolCall
 	} else if !param.IsOmitted(u.OfOpenAIResponseInputFunctionToolCallOutput) {
 		return u.OfOpenAIResponseInputFunctionToolCallOutput
+	} else if !param.IsOmitted(u.OfOpenAIResponseMcpApprovalRequest) {
+		return u.OfOpenAIResponseMcpApprovalRequest
+	} else if !param.IsOmitted(u.OfOpenAIResponseMcpApprovalResponse) {
+		return u.OfOpenAIResponseMcpApprovalResponse
 	} else if !param.IsOmitted(u.OfOpenAIResponseMessage) {
 		return u.OfOpenAIResponseMessage
 	}
@@ -6435,25 +6667,41 @@ func (u ResponseNewParamsInputArrayItemUnion) GetResults() []ResponseNewParamsIn
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputArrayItemUnion) GetArguments() *string {
-	if vt := u.OfOpenAIResponseOutputMessageFunctionToolCall; vt != nil {
-		return &vt.Arguments
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputArrayItemUnion) GetName() *string {
-	if vt := u.OfOpenAIResponseOutputMessageFunctionToolCall; vt != nil {
-		return &vt.Name
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
 func (u ResponseNewParamsInputArrayItemUnion) GetOutput() *string {
 	if vt := u.OfOpenAIResponseInputFunctionToolCallOutput; vt != nil {
 		return &vt.Output
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ResponseNewParamsInputArrayItemUnion) GetServerLabel() *string {
+	if vt := u.OfOpenAIResponseMcpApprovalRequest; vt != nil {
+		return &vt.ServerLabel
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ResponseNewParamsInputArrayItemUnion) GetApprovalRequestID() *string {
+	if vt := u.OfOpenAIResponseMcpApprovalResponse; vt != nil {
+		return &vt.ApprovalRequestID
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ResponseNewParamsInputArrayItemUnion) GetApprove() *bool {
+	if vt := u.OfOpenAIResponseMcpApprovalResponse; vt != nil {
+		return &vt.Approve
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ResponseNewParamsInputArrayItemUnion) GetReason() *string {
+	if vt := u.OfOpenAIResponseMcpApprovalResponse; vt != nil && vt.Reason.Valid() {
+		return &vt.Reason.Value
 	}
 	return nil
 }
@@ -6483,6 +6731,10 @@ func (u ResponseNewParamsInputArrayItemUnion) GetID() *string {
 	} else if vt := u.OfOpenAIResponseOutputMessageFunctionToolCall; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
 	} else if vt := u.OfOpenAIResponseInputFunctionToolCallOutput; vt != nil && vt.ID.Valid() {
+		return &vt.ID.Value
+	} else if vt := u.OfOpenAIResponseMcpApprovalRequest; vt != nil {
+		return (*string)(&vt.ID)
+	} else if vt := u.OfOpenAIResponseMcpApprovalResponse; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
 	} else if vt := u.OfOpenAIResponseMessage; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
@@ -6516,8 +6768,22 @@ func (u ResponseNewParamsInputArrayItemUnion) GetType() *string {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfOpenAIResponseInputFunctionToolCallOutput; vt != nil {
 		return (*string)(&vt.Type)
+	} else if vt := u.OfOpenAIResponseMcpApprovalRequest; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfOpenAIResponseMcpApprovalResponse; vt != nil {
+		return (*string)(&vt.Type)
 	} else if vt := u.OfOpenAIResponseMessage; vt != nil {
 		return (*string)(&vt.Type)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ResponseNewParamsInputArrayItemUnion) GetArguments() *string {
+	if vt := u.OfOpenAIResponseOutputMessageFunctionToolCall; vt != nil {
+		return (*string)(&vt.Arguments)
+	} else if vt := u.OfOpenAIResponseMcpApprovalRequest; vt != nil {
+		return (*string)(&vt.Arguments)
 	}
 	return nil
 }
@@ -6528,6 +6794,16 @@ func (u ResponseNewParamsInputArrayItemUnion) GetCallID() *string {
 		return (*string)(&vt.CallID)
 	} else if vt := u.OfOpenAIResponseInputFunctionToolCallOutput; vt != nil {
 		return (*string)(&vt.CallID)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ResponseNewParamsInputArrayItemUnion) GetName() *string {
+	if vt := u.OfOpenAIResponseOutputMessageFunctionToolCall; vt != nil {
+		return (*string)(&vt.Name)
+	} else if vt := u.OfOpenAIResponseMcpApprovalRequest; vt != nil {
+		return (*string)(&vt.Name)
 	}
 	return nil
 }
@@ -6687,6 +6963,50 @@ func (r ResponseNewParamsInputArrayItemOpenAIResponseInputFunctionToolCallOutput
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *ResponseNewParamsInputArrayItemOpenAIResponseInputFunctionToolCallOutput) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A request for human approval of a tool invocation.
+//
+// The properties ID, Arguments, Name, ServerLabel, Type are required.
+type ResponseNewParamsInputArrayItemOpenAIResponseMcpApprovalRequest struct {
+	ID          string `json:"id,required"`
+	Arguments   string `json:"arguments,required"`
+	Name        string `json:"name,required"`
+	ServerLabel string `json:"server_label,required"`
+	// This field can be elided, and will marshal its zero value as
+	// "mcp_approval_request".
+	Type constant.McpApprovalRequest `json:"type,required"`
+	paramObj
+}
+
+func (r ResponseNewParamsInputArrayItemOpenAIResponseMcpApprovalRequest) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsInputArrayItemOpenAIResponseMcpApprovalRequest
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ResponseNewParamsInputArrayItemOpenAIResponseMcpApprovalRequest) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A response to an MCP approval request.
+//
+// The properties ApprovalRequestID, Approve, Type are required.
+type ResponseNewParamsInputArrayItemOpenAIResponseMcpApprovalResponse struct {
+	ApprovalRequestID string            `json:"approval_request_id,required"`
+	Approve           bool              `json:"approve,required"`
+	ID                param.Opt[string] `json:"id,omitzero"`
+	Reason            param.Opt[string] `json:"reason,omitzero"`
+	// This field can be elided, and will marshal its zero value as
+	// "mcp_approval_response".
+	Type constant.McpApprovalResponse `json:"type,required"`
+	paramObj
+}
+
+func (r ResponseNewParamsInputArrayItemOpenAIResponseMcpApprovalResponse) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsInputArrayItemOpenAIResponseMcpApprovalResponse
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ResponseNewParamsInputArrayItemOpenAIResponseMcpApprovalResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
