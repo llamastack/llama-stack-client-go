@@ -25,10 +25,35 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Responses.New(context.TODO(), llamastackclient.ResponseNewParams{
-		After: llamastackclient.String("after"),
-		Limit: llamastackclient.Int(0),
-		Model: llamastackclient.String("model"),
-		Order: llamastackclient.ResponseNewParamsOrderAsc,
+		Input: llamastackclient.ResponseNewParamsInputUnion{
+			OfString: llamastackclient.String("string"),
+		},
+		Model:              "model",
+		Include:            []string{"string"},
+		Instructions:       llamastackclient.String("instructions"),
+		MaxInferIters:      llamastackclient.Int(0),
+		PreviousResponseID: llamastackclient.String("previous_response_id"),
+		Store:              llamastackclient.Bool(true),
+		Temperature:        llamastackclient.Float(0),
+		Text: llamastackclient.ResponseNewParamsText{
+			Format: llamastackclient.ResponseNewParamsTextFormat{
+				Type:        llamastackclient.ResponseNewParamsTextFormatTypeText,
+				Description: llamastackclient.String("description"),
+				Name:        llamastackclient.String("name"),
+				Schema: map[string]llamastackclient.ResponseNewParamsTextFormatSchemaUnion{
+					"foo": {
+						OfBool: llamastackclient.Bool(true),
+					},
+				},
+				Strict: llamastackclient.Bool(true),
+			},
+		},
+		Tools: []llamastackclient.ResponseNewParamsToolUnion{{
+			OfOpenAIResponseInputToolWebSearch: &llamastackclient.ResponseNewParamsToolOpenAIResponseInputToolWebSearch{
+				Type:              llamastackclient.ResponseNewParamsToolOpenAIResponseInputToolWebSearchTypeWebSearch,
+				SearchContextSize: llamastackclient.String("search_context_size"),
+			},
+		}},
 	})
 	if err != nil {
 		var apierr *llamastackclient.Error
