@@ -87,28 +87,25 @@ type Tool struct {
 	// Human-readable description of what the tool does
 	Description string `json:"description,required"`
 	Identifier  string `json:"identifier,required"`
-	ProviderID  string `json:"provider_id,required"`
+	// List of parameters this tool accepts
+	Parameters []ToolParameter `json:"parameters,required"`
+	ProviderID string          `json:"provider_id,required"`
 	// ID of the tool group this tool belongs to
 	ToolgroupID string `json:"toolgroup_id,required"`
 	// Type of resource, always 'tool'
 	Type constant.Tool `json:"type,required"`
-	// JSON Schema for the tool's input parameters
-	InputSchema map[string]ToolInputSchemaUnion `json:"input_schema"`
 	// (Optional) Additional metadata about the tool
-	Metadata map[string]ToolMetadataUnion `json:"metadata"`
-	// JSON Schema for the tool's output
-	OutputSchema       map[string]ToolOutputSchemaUnion `json:"output_schema"`
-	ProviderResourceID string                           `json:"provider_resource_id"`
+	Metadata           map[string]ToolMetadataUnion `json:"metadata"`
+	ProviderResourceID string                       `json:"provider_resource_id"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Description        respjson.Field
 		Identifier         respjson.Field
+		Parameters         respjson.Field
 		ProviderID         respjson.Field
 		ToolgroupID        respjson.Field
 		Type               respjson.Field
-		InputSchema        respjson.Field
 		Metadata           respjson.Field
-		OutputSchema       respjson.Field
 		ProviderResourceID respjson.Field
 		ExtraFields        map[string]respjson.Field
 		raw                string
@@ -121,14 +118,50 @@ func (r *Tool) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ToolInputSchemaUnion contains all possible properties and values from [bool],
-// [float64], [string], [[]any].
+// Parameter definition for a tool.
+type ToolParameter struct {
+	// Human-readable description of what the parameter does
+	Description string `json:"description,required"`
+	// Name of the parameter
+	Name string `json:"name,required"`
+	// Type of the parameter (e.g., string, integer)
+	ParameterType string `json:"parameter_type,required"`
+	// Whether this parameter is required for tool invocation
+	Required bool `json:"required,required"`
+	// (Optional) Default value for the parameter if not provided
+	Default ToolParameterDefaultUnion `json:"default,nullable"`
+	// Type of the elements when parameter_type is array
+	Items any `json:"items"`
+	// (Optional) Title of the parameter
+	Title string `json:"title"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Description   respjson.Field
+		Name          respjson.Field
+		ParameterType respjson.Field
+		Required      respjson.Field
+		Default       respjson.Field
+		Items         respjson.Field
+		Title         respjson.Field
+		ExtraFields   map[string]respjson.Field
+		raw           string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ToolParameter) RawJSON() string { return r.JSON.raw }
+func (r *ToolParameter) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToolParameterDefaultUnion contains all possible properties and values from
+// [bool], [float64], [string], [[]any].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 //
 // If the underlying value is not a json object, one of the following properties
 // will be valid: OfBool OfFloat OfString OfAnyArray]
-type ToolInputSchemaUnion struct {
+type ToolParameterDefaultUnion struct {
 	// This field will be present if the value is a [bool] instead of an object.
 	OfBool bool `json:",inline"`
 	// This field will be present if the value is a [float64] instead of an object.
@@ -146,30 +179,30 @@ type ToolInputSchemaUnion struct {
 	} `json:"-"`
 }
 
-func (u ToolInputSchemaUnion) AsBool() (v bool) {
+func (u ToolParameterDefaultUnion) AsBool() (v bool) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ToolInputSchemaUnion) AsFloat() (v float64) {
+func (u ToolParameterDefaultUnion) AsFloat() (v float64) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ToolInputSchemaUnion) AsString() (v string) {
+func (u ToolParameterDefaultUnion) AsString() (v string) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ToolInputSchemaUnion) AsAnyArray() (v []any) {
+func (u ToolParameterDefaultUnion) AsAnyArray() (v []any) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
 // Returns the unmodified JSON received from the API
-func (u ToolInputSchemaUnion) RawJSON() string { return u.JSON.raw }
+func (u ToolParameterDefaultUnion) RawJSON() string { return u.JSON.raw }
 
-func (r *ToolInputSchemaUnion) UnmarshalJSON(data []byte) error {
+func (r *ToolParameterDefaultUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -222,58 +255,6 @@ func (u ToolMetadataUnion) AsAnyArray() (v []any) {
 func (u ToolMetadataUnion) RawJSON() string { return u.JSON.raw }
 
 func (r *ToolMetadataUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToolOutputSchemaUnion contains all possible properties and values from [bool],
-// [float64], [string], [[]any].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type ToolOutputSchemaUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
-	} `json:"-"`
-}
-
-func (u ToolOutputSchemaUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ToolOutputSchemaUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ToolOutputSchemaUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ToolOutputSchemaUnion) AsAnyArray() (v []any) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ToolOutputSchemaUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ToolOutputSchemaUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
