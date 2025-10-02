@@ -945,20 +945,17 @@ type TurnResponseEventPayloadStepProgressDeltaToolCallToolCallUnion struct {
 	// This field will be present if the value is a [string] instead of an object.
 	OfString string `json:",inline"`
 	// This field is from variant [ToolCall].
-	Arguments ToolCallArgumentsUnion `json:"arguments"`
+	Arguments string `json:"arguments"`
 	// This field is from variant [ToolCall].
 	CallID string `json:"call_id"`
 	// This field is from variant [ToolCall].
 	ToolName ToolCallToolName `json:"tool_name"`
-	// This field is from variant [ToolCall].
-	ArgumentsJson string `json:"arguments_json"`
-	JSON          struct {
-		OfString      respjson.Field
-		Arguments     respjson.Field
-		CallID        respjson.Field
-		ToolName      respjson.Field
-		ArgumentsJson respjson.Field
-		raw           string
+	JSON     struct {
+		OfString  respjson.Field
+		Arguments respjson.Field
+		CallID    respjson.Field
+		ToolName  respjson.Field
+		raw       string
 	} `json:"-"`
 }
 
