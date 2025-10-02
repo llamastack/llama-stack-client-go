@@ -2825,18 +2825,16 @@ func (r *SystemMessageParam) UnmarshalJSON(data []byte) error {
 }
 
 type ToolCall struct {
-	Arguments     ToolCallArgumentsUnion `json:"arguments,required"`
-	CallID        string                 `json:"call_id,required"`
-	ToolName      ToolCallToolName       `json:"tool_name,required"`
-	ArgumentsJson string                 `json:"arguments_json"`
+	Arguments string           `json:"arguments,required"`
+	CallID    string           `json:"call_id,required"`
+	ToolName  ToolCallToolName `json:"tool_name,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Arguments     respjson.Field
-		CallID        respjson.Field
-		ToolName      respjson.Field
-		ArgumentsJson respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
+		Arguments   respjson.Field
+		CallID      respjson.Field
+		ToolName    respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
 	} `json:"-"`
 }
 
@@ -2855,196 +2853,6 @@ func (r ToolCall) ToParam() ToolCallParam {
 	return param.Override[ToolCallParam](json.RawMessage(r.RawJSON()))
 }
 
-// ToolCallArgumentsUnion contains all possible properties and values from
-// [string], [map[string]ToolCallArgumentsMapItemUnion].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString OfFloat OfBool OfToolCallArgumentsMapItemArray]
-type ToolCallArgumentsUnion struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a
-	// [[]ToolCallArgumentsMapItemArrayItemUnion] instead of an object.
-	OfToolCallArgumentsMapItemArray []ToolCallArgumentsMapItemArrayItemUnion `json:",inline"`
-	JSON                            struct {
-		OfString                        respjson.Field
-		OfFloat                         respjson.Field
-		OfBool                          respjson.Field
-		OfToolCallArgumentsMapItemArray respjson.Field
-		raw                             string
-	} `json:"-"`
-}
-
-func (u ToolCallArgumentsUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ToolCallArgumentsUnion) AsToolCallArgumentsMapMap() (v map[string]ToolCallArgumentsMapItemUnion) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ToolCallArgumentsUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ToolCallArgumentsUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToolCallArgumentsMapItemUnion contains all possible properties and values from
-// [string], [float64], [bool], [[]ToolCallArgumentsMapItemArrayItemUnion],
-// [map[string]ToolCallArgumentsMapItemMapItemUnion].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString OfFloat OfBool OfToolCallArgumentsMapItemArray]
-type ToolCallArgumentsMapItemUnion struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a
-	// [[]ToolCallArgumentsMapItemArrayItemUnion] instead of an object.
-	OfToolCallArgumentsMapItemArray []ToolCallArgumentsMapItemArrayItemUnion `json:",inline"`
-	JSON                            struct {
-		OfString                        respjson.Field
-		OfFloat                         respjson.Field
-		OfBool                          respjson.Field
-		OfToolCallArgumentsMapItemArray respjson.Field
-		raw                             string
-	} `json:"-"`
-}
-
-func (u ToolCallArgumentsMapItemUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ToolCallArgumentsMapItemUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ToolCallArgumentsMapItemUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ToolCallArgumentsMapItemUnion) AsToolCallArgumentsMapItemArray() (v []ToolCallArgumentsMapItemArrayItemUnion) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ToolCallArgumentsMapItemUnion) AsToolCallArgumentsMapItemMapMap() (v map[string]ToolCallArgumentsMapItemMapItemUnion) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ToolCallArgumentsMapItemUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ToolCallArgumentsMapItemUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToolCallArgumentsMapItemArrayItemUnion contains all possible properties and
-// values from [string], [float64], [bool].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString OfFloat OfBool]
-type ToolCallArgumentsMapItemArrayItemUnion struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	JSON   struct {
-		OfString respjson.Field
-		OfFloat  respjson.Field
-		OfBool   respjson.Field
-		raw      string
-	} `json:"-"`
-}
-
-func (u ToolCallArgumentsMapItemArrayItemUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ToolCallArgumentsMapItemArrayItemUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ToolCallArgumentsMapItemArrayItemUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ToolCallArgumentsMapItemArrayItemUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ToolCallArgumentsMapItemArrayItemUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToolCallArgumentsMapItemMapItemUnion contains all possible properties and values
-// from [string], [float64], [bool].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString OfFloat OfBool]
-type ToolCallArgumentsMapItemMapItemUnion struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	JSON   struct {
-		OfString respjson.Field
-		OfFloat  respjson.Field
-		OfBool   respjson.Field
-		raw      string
-	} `json:"-"`
-}
-
-func (u ToolCallArgumentsMapItemMapItemUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ToolCallArgumentsMapItemMapItemUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ToolCallArgumentsMapItemMapItemUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ToolCallArgumentsMapItemMapItemUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ToolCallArgumentsMapItemMapItemUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type ToolCallToolName string
 
 const (
@@ -3056,10 +2864,9 @@ const (
 
 // The properties Arguments, CallID, ToolName are required.
 type ToolCallParam struct {
-	Arguments     ToolCallArgumentsUnionParam `json:"arguments,omitzero,required"`
-	CallID        string                      `json:"call_id,required"`
-	ToolName      ToolCallToolName            `json:"tool_name,omitzero,required"`
-	ArgumentsJson param.Opt[string]           `json:"arguments_json,omitzero"`
+	Arguments string           `json:"arguments,required"`
+	CallID    string           `json:"call_id,required"`
+	ToolName  ToolCallToolName `json:"tool_name,omitzero,required"`
 	paramObj
 }
 
@@ -3069,125 +2876,6 @@ func (r ToolCallParam) MarshalJSON() (data []byte, err error) {
 }
 func (r *ToolCallParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type ToolCallArgumentsUnionParam struct {
-	OfString                  param.Opt[string]                             `json:",omitzero,inline"`
-	OfToolCallArgumentsMapMap map[string]ToolCallArgumentsMapItemUnionParam `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u ToolCallArgumentsUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfString, u.OfToolCallArgumentsMapMap)
-}
-func (u *ToolCallArgumentsUnionParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *ToolCallArgumentsUnionParam) asAny() any {
-	if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfToolCallArgumentsMapMap) {
-		return &u.OfToolCallArgumentsMapMap
-	}
-	return nil
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type ToolCallArgumentsMapItemUnionParam struct {
-	OfString                         param.Opt[string]                                    `json:",omitzero,inline"`
-	OfFloat                          param.Opt[float64]                                   `json:",omitzero,inline"`
-	OfBool                           param.Opt[bool]                                      `json:",omitzero,inline"`
-	OfToolCallArgumentsMapItemArray  []ToolCallArgumentsMapItemArrayItemUnionParam        `json:",omitzero,inline"`
-	OfToolCallArgumentsMapItemMapMap map[string]ToolCallArgumentsMapItemMapItemUnionParam `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u ToolCallArgumentsMapItemUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfString,
-		u.OfFloat,
-		u.OfBool,
-		u.OfToolCallArgumentsMapItemArray,
-		u.OfToolCallArgumentsMapItemMapMap)
-}
-func (u *ToolCallArgumentsMapItemUnionParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *ToolCallArgumentsMapItemUnionParam) asAny() any {
-	if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	} else if !param.IsOmitted(u.OfToolCallArgumentsMapItemArray) {
-		return &u.OfToolCallArgumentsMapItemArray
-	} else if !param.IsOmitted(u.OfToolCallArgumentsMapItemMapMap) {
-		return &u.OfToolCallArgumentsMapItemMapMap
-	}
-	return nil
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type ToolCallArgumentsMapItemArrayItemUnionParam struct {
-	OfString param.Opt[string]  `json:",omitzero,inline"`
-	OfFloat  param.Opt[float64] `json:",omitzero,inline"`
-	OfBool   param.Opt[bool]    `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u ToolCallArgumentsMapItemArrayItemUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfString, u.OfFloat, u.OfBool)
-}
-func (u *ToolCallArgumentsMapItemArrayItemUnionParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *ToolCallArgumentsMapItemArrayItemUnionParam) asAny() any {
-	if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	}
-	return nil
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type ToolCallArgumentsMapItemMapItemUnionParam struct {
-	OfString param.Opt[string]  `json:",omitzero,inline"`
-	OfFloat  param.Opt[float64] `json:",omitzero,inline"`
-	OfBool   param.Opt[bool]    `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u ToolCallArgumentsMapItemMapItemUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfString, u.OfFloat, u.OfBool)
-}
-func (u *ToolCallArgumentsMapItemMapItemUnionParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *ToolCallArgumentsMapItemMapItemUnionParam) asAny() any {
-	if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	}
-	return nil
 }
 
 // A message representing the result of a tool invocation.

@@ -65,18 +65,24 @@ type ToolDef struct {
 	Name string `json:"name,required"`
 	// (Optional) Human-readable description of what the tool does
 	Description string `json:"description"`
+	// (Optional) JSON Schema for tool inputs (MCP inputSchema)
+	InputSchema map[string]ToolDefInputSchemaUnion `json:"input_schema"`
 	// (Optional) Additional metadata about the tool
 	Metadata map[string]ToolDefMetadataUnion `json:"metadata"`
-	// (Optional) List of parameters this tool accepts
-	Parameters []ToolDefParameter `json:"parameters"`
+	// (Optional) JSON Schema for tool outputs (MCP outputSchema)
+	OutputSchema map[string]ToolDefOutputSchemaUnion `json:"output_schema"`
+	// (Optional) ID of the tool group this tool belongs to
+	ToolgroupID string `json:"toolgroup_id"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Name        respjson.Field
-		Description respjson.Field
-		Metadata    respjson.Field
-		Parameters  respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		Name         respjson.Field
+		Description  respjson.Field
+		InputSchema  respjson.Field
+		Metadata     respjson.Field
+		OutputSchema respjson.Field
+		ToolgroupID  respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
 	} `json:"-"`
 }
 
@@ -93,6 +99,58 @@ func (r *ToolDef) UnmarshalJSON(data []byte) error {
 // ToolDefParam.Overrides()
 func (r ToolDef) ToParam() ToolDefParam {
 	return param.Override[ToolDefParam](json.RawMessage(r.RawJSON()))
+}
+
+// ToolDefInputSchemaUnion contains all possible properties and values from [bool],
+// [float64], [string], [[]any].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+//
+// If the underlying value is not a json object, one of the following properties
+// will be valid: OfBool OfFloat OfString OfAnyArray]
+type ToolDefInputSchemaUnion struct {
+	// This field will be present if the value is a [bool] instead of an object.
+	OfBool bool `json:",inline"`
+	// This field will be present if the value is a [float64] instead of an object.
+	OfFloat float64 `json:",inline"`
+	// This field will be present if the value is a [string] instead of an object.
+	OfString string `json:",inline"`
+	// This field will be present if the value is a [[]any] instead of an object.
+	OfAnyArray []any `json:",inline"`
+	JSON       struct {
+		OfBool     respjson.Field
+		OfFloat    respjson.Field
+		OfString   respjson.Field
+		OfAnyArray respjson.Field
+		raw        string
+	} `json:"-"`
+}
+
+func (u ToolDefInputSchemaUnion) AsBool() (v bool) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ToolDefInputSchemaUnion) AsFloat() (v float64) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ToolDefInputSchemaUnion) AsString() (v string) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ToolDefInputSchemaUnion) AsAnyArray() (v []any) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u ToolDefInputSchemaUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *ToolDefInputSchemaUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // ToolDefMetadataUnion contains all possible properties and values from [bool],
@@ -147,50 +205,14 @@ func (r *ToolDefMetadataUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Parameter definition for a tool.
-type ToolDefParameter struct {
-	// Human-readable description of what the parameter does
-	Description string `json:"description,required"`
-	// Name of the parameter
-	Name string `json:"name,required"`
-	// Type of the parameter (e.g., string, integer)
-	ParameterType string `json:"parameter_type,required"`
-	// Whether this parameter is required for tool invocation
-	Required bool `json:"required,required"`
-	// (Optional) Default value for the parameter if not provided
-	Default ToolDefParameterDefaultUnion `json:"default,nullable"`
-	// Type of the elements when parameter_type is array
-	Items any `json:"items"`
-	// (Optional) Title of the parameter
-	Title string `json:"title"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Description   respjson.Field
-		Name          respjson.Field
-		ParameterType respjson.Field
-		Required      respjson.Field
-		Default       respjson.Field
-		Items         respjson.Field
-		Title         respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ToolDefParameter) RawJSON() string { return r.JSON.raw }
-func (r *ToolDefParameter) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToolDefParameterDefaultUnion contains all possible properties and values from
+// ToolDefOutputSchemaUnion contains all possible properties and values from
 // [bool], [float64], [string], [[]any].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 //
 // If the underlying value is not a json object, one of the following properties
 // will be valid: OfBool OfFloat OfString OfAnyArray]
-type ToolDefParameterDefaultUnion struct {
+type ToolDefOutputSchemaUnion struct {
 	// This field will be present if the value is a [bool] instead of an object.
 	OfBool bool `json:",inline"`
 	// This field will be present if the value is a [float64] instead of an object.
@@ -208,30 +230,30 @@ type ToolDefParameterDefaultUnion struct {
 	} `json:"-"`
 }
 
-func (u ToolDefParameterDefaultUnion) AsBool() (v bool) {
+func (u ToolDefOutputSchemaUnion) AsBool() (v bool) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ToolDefParameterDefaultUnion) AsFloat() (v float64) {
+func (u ToolDefOutputSchemaUnion) AsFloat() (v float64) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ToolDefParameterDefaultUnion) AsString() (v string) {
+func (u ToolDefOutputSchemaUnion) AsString() (v string) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ToolDefParameterDefaultUnion) AsAnyArray() (v []any) {
+func (u ToolDefOutputSchemaUnion) AsAnyArray() (v []any) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
 // Returns the unmodified JSON received from the API
-func (u ToolDefParameterDefaultUnion) RawJSON() string { return u.JSON.raw }
+func (u ToolDefOutputSchemaUnion) RawJSON() string { return u.JSON.raw }
 
-func (r *ToolDefParameterDefaultUnion) UnmarshalJSON(data []byte) error {
+func (r *ToolDefOutputSchemaUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -243,10 +265,14 @@ type ToolDefParam struct {
 	Name string `json:"name,required"`
 	// (Optional) Human-readable description of what the tool does
 	Description param.Opt[string] `json:"description,omitzero"`
+	// (Optional) ID of the tool group this tool belongs to
+	ToolgroupID param.Opt[string] `json:"toolgroup_id,omitzero"`
+	// (Optional) JSON Schema for tool inputs (MCP inputSchema)
+	InputSchema map[string]ToolDefInputSchemaUnionParam `json:"input_schema,omitzero"`
 	// (Optional) Additional metadata about the tool
 	Metadata map[string]ToolDefMetadataUnionParam `json:"metadata,omitzero"`
-	// (Optional) List of parameters this tool accepts
-	Parameters []ToolDefParameterParam `json:"parameters,omitzero"`
+	// (Optional) JSON Schema for tool outputs (MCP outputSchema)
+	OutputSchema map[string]ToolDefOutputSchemaUnionParam `json:"output_schema,omitzero"`
 	paramObj
 }
 
@@ -256,6 +282,37 @@ func (r ToolDefParam) MarshalJSON() (data []byte, err error) {
 }
 func (r *ToolDefParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type ToolDefInputSchemaUnionParam struct {
+	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
+	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
+	OfString   param.Opt[string]  `json:",omitzero,inline"`
+	OfAnyArray []any              `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u ToolDefInputSchemaUnionParam) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
+}
+func (u *ToolDefInputSchemaUnionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *ToolDefInputSchemaUnionParam) asAny() any {
+	if !param.IsOmitted(u.OfBool) {
+		return &u.OfBool.Value
+	} else if !param.IsOmitted(u.OfFloat) {
+		return &u.OfFloat.Value
+	} else if !param.IsOmitted(u.OfString) {
+		return &u.OfString.Value
+	} else if !param.IsOmitted(u.OfAnyArray) {
+		return &u.OfAnyArray
+	}
+	return nil
 }
 
 // Only one field can be non-zero.
@@ -289,39 +346,10 @@ func (u *ToolDefMetadataUnionParam) asAny() any {
 	return nil
 }
 
-// Parameter definition for a tool.
-//
-// The properties Description, Name, ParameterType, Required are required.
-type ToolDefParameterParam struct {
-	// Human-readable description of what the parameter does
-	Description string `json:"description,required"`
-	// Name of the parameter
-	Name string `json:"name,required"`
-	// Type of the parameter (e.g., string, integer)
-	ParameterType string `json:"parameter_type,required"`
-	// Whether this parameter is required for tool invocation
-	Required bool `json:"required,required"`
-	// (Optional) Title of the parameter
-	Title param.Opt[string] `json:"title,omitzero"`
-	// (Optional) Default value for the parameter if not provided
-	Default ToolDefParameterDefaultUnionParam `json:"default,omitzero"`
-	// Type of the elements when parameter_type is array
-	Items any `json:"items,omitzero"`
-	paramObj
-}
-
-func (r ToolDefParameterParam) MarshalJSON() (data []byte, err error) {
-	type shadow ToolDefParameterParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ToolDefParameterParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
-type ToolDefParameterDefaultUnionParam struct {
+type ToolDefOutputSchemaUnionParam struct {
 	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
 	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
 	OfString   param.Opt[string]  `json:",omitzero,inline"`
@@ -329,14 +357,14 @@ type ToolDefParameterDefaultUnionParam struct {
 	paramUnion
 }
 
-func (u ToolDefParameterDefaultUnionParam) MarshalJSON() ([]byte, error) {
+func (u ToolDefOutputSchemaUnionParam) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
 }
-func (u *ToolDefParameterDefaultUnionParam) UnmarshalJSON(data []byte) error {
+func (u *ToolDefOutputSchemaUnionParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
-func (u *ToolDefParameterDefaultUnionParam) asAny() any {
+func (u *ToolDefOutputSchemaUnionParam) asAny() any {
 	if !param.IsOmitted(u.OfBool) {
 		return &u.OfBool.Value
 	} else if !param.IsOmitted(u.OfFloat) {
