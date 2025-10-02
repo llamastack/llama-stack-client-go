@@ -39,7 +39,6 @@ type Embedding string                          // Always "embedding"
 type File string                               // Always "file"
 type FileCitation string                       // Always "file_citation"
 type FilePath string                           // Always "file_path"
-type FileSearch string                         // Always "file_search"
 type FileSearchCall string                     // Always "file_search_call"
 type Function string                           // Always "function"
 type FunctionCall string                       // Always "function_call"
@@ -58,7 +57,6 @@ type List string                               // Always "list"
 type Llm string                                // Always "llm"
 type LlmAsJudge string                         // Always "llm_as_judge"
 type LoRa string                               // Always "LoRA"
-type Mcp string                                // Always "mcp"
 type McpApprovalRequest string                 // Always "mcp_approval_request"
 type McpApprovalResponse string                // Always "mcp_approval_response"
 type McpCall string                            // Always "mcp_call"
@@ -150,7 +148,6 @@ func (c Embedding) Default() Embedding                         { return "embeddi
 func (c File) Default() File                                   { return "file" }
 func (c FileCitation) Default() FileCitation                   { return "file_citation" }
 func (c FilePath) Default() FilePath                           { return "file_path" }
-func (c FileSearch) Default() FileSearch                       { return "file_search" }
 func (c FileSearchCall) Default() FileSearchCall               { return "file_search_call" }
 func (c Function) Default() Function                           { return "function" }
 func (c FunctionCall) Default() FunctionCall                   { return "function_call" }
@@ -169,7 +166,6 @@ func (c List) Default() List                                   { return "list" }
 func (c Llm) Default() Llm                                     { return "llm" }
 func (c LlmAsJudge) Default() LlmAsJudge                       { return "llm_as_judge" }
 func (c LoRa) Default() LoRa                                   { return "LoRA" }
-func (c Mcp) Default() Mcp                                     { return "mcp" }
 func (c McpApprovalRequest) Default() McpApprovalRequest       { return "mcp_approval_request" }
 func (c McpApprovalResponse) Default() McpApprovalResponse     { return "mcp_approval_response" }
 func (c McpCall) Default() McpCall                             { return "mcp_call" }
@@ -293,7 +289,6 @@ func (c Embedding) MarshalJSON() ([]byte, error)                          { retu
 func (c File) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
 func (c FileCitation) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
 func (c FilePath) MarshalJSON() ([]byte, error)                           { return marshalString(c) }
-func (c FileSearch) MarshalJSON() ([]byte, error)                         { return marshalString(c) }
 func (c FileSearchCall) MarshalJSON() ([]byte, error)                     { return marshalString(c) }
 func (c Function) MarshalJSON() ([]byte, error)                           { return marshalString(c) }
 func (c FunctionCall) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
@@ -312,7 +307,6 @@ func (c List) MarshalJSON() ([]byte, error)                               { retu
 func (c Llm) MarshalJSON() ([]byte, error)                                { return marshalString(c) }
 func (c LlmAsJudge) MarshalJSON() ([]byte, error)                         { return marshalString(c) }
 func (c LoRa) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
-func (c Mcp) MarshalJSON() ([]byte, error)                                { return marshalString(c) }
 func (c McpApprovalRequest) MarshalJSON() ([]byte, error)                 { return marshalString(c) }
 func (c McpApprovalResponse) MarshalJSON() ([]byte, error)                { return marshalString(c) }
 func (c McpCall) MarshalJSON() ([]byte, error)                            { return marshalString(c) }
