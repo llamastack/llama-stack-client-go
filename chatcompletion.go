@@ -41,8 +41,8 @@ func NewChatCompletionService(opts ...option.RequestOption) (r ChatCompletionSer
 	return
 }
 
-// Generate an OpenAI-compatible chat completion for the given messages using the
-// specified model.
+// Create chat completions. Generate an OpenAI-compatible chat completion for the
+// given messages using the specified model.
 func (r *ChatCompletionService) New(ctx context.Context, body ChatCompletionNewParams, opts ...option.RequestOption) (res *ChatCompletionNewResponseUnion, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/chat/completions"
@@ -50,8 +50,8 @@ func (r *ChatCompletionService) New(ctx context.Context, body ChatCompletionNewP
 	return
 }
 
-// Generate an OpenAI-compatible chat completion for the given messages using the
-// specified model.
+// Create chat completions. Generate an OpenAI-compatible chat completion for the
+// given messages using the specified model.
 func (r *ChatCompletionService) NewStreaming(ctx context.Context, body ChatCompletionNewParams, opts ...option.RequestOption) (stream *ssestream.Stream[ChatCompletionChunk]) {
 	var (
 		raw *http.Response
@@ -64,7 +64,7 @@ func (r *ChatCompletionService) NewStreaming(ctx context.Context, body ChatCompl
 	return ssestream.NewStream[ChatCompletionChunk](ssestream.NewDecoder(raw), err)
 }
 
-// Describe a chat completion by its ID.
+// Get chat completion. Describe a chat completion by its ID.
 func (r *ChatCompletionService) Get(ctx context.Context, completionID string, opts ...option.RequestOption) (res *ChatCompletionGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if completionID == "" {
@@ -76,7 +76,7 @@ func (r *ChatCompletionService) Get(ctx context.Context, completionID string, op
 	return
 }
 
-// List all chat completions.
+// List chat completions.
 func (r *ChatCompletionService) List(ctx context.Context, query ChatCompletionListParams, opts ...option.RequestOption) (res *pagination.OpenAICursorPage[ChatCompletionListResponse], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
@@ -94,7 +94,7 @@ func (r *ChatCompletionService) List(ctx context.Context, query ChatCompletionLi
 	return res, nil
 }
 
-// List all chat completions.
+// List chat completions.
 func (r *ChatCompletionService) ListAutoPaging(ctx context.Context, query ChatCompletionListParams, opts ...option.RequestOption) *pagination.OpenAICursorPageAutoPager[ChatCompletionListResponse] {
 	return pagination.NewOpenAICursorPageAutoPager(r.List(ctx, query, opts...))
 }
@@ -112,12 +112,16 @@ type ChatCompletionNewResponseUnion struct {
 	Created int64                                 `json:"created"`
 	Model   string                                `json:"model"`
 	Object  string                                `json:"object"`
-	JSON    struct {
+	// This field is a union of [ChatCompletionNewResponseOpenAIChatCompletionUsage],
+	// [ChatCompletionChunkUsage]
+	Usage ChatCompletionNewResponseUnionUsage `json:"usage"`
+	JSON  struct {
 		ID      respjson.Field
 		Choices respjson.Field
 		Created respjson.Field
 		Model   respjson.Field
 		Object  respjson.Field
+		Usage   respjson.Field
 		raw     string
 	} `json:"-"`
 }
@@ -167,6 +171,76 @@ func (r *ChatCompletionNewResponseUnionChoices) UnmarshalJSON(data []byte) error
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// ChatCompletionNewResponseUnionUsage is an implicit subunion of
+// [ChatCompletionNewResponseUnion]. ChatCompletionNewResponseUnionUsage provides
+// convenient access to the sub-properties of the union.
+//
+// For type safety it is recommended to directly use a variant of the
+// [ChatCompletionNewResponseUnion].
+type ChatCompletionNewResponseUnionUsage struct {
+	CompletionTokens int64 `json:"completion_tokens"`
+	PromptTokens     int64 `json:"prompt_tokens"`
+	TotalTokens      int64 `json:"total_tokens"`
+	// This field is a union of
+	// [ChatCompletionNewResponseOpenAIChatCompletionUsageCompletionTokensDetails],
+	// [ChatCompletionChunkUsageCompletionTokensDetails]
+	CompletionTokensDetails ChatCompletionNewResponseUnionUsageCompletionTokensDetails `json:"completion_tokens_details"`
+	// This field is a union of
+	// [ChatCompletionNewResponseOpenAIChatCompletionUsagePromptTokensDetails],
+	// [ChatCompletionChunkUsagePromptTokensDetails]
+	PromptTokensDetails ChatCompletionNewResponseUnionUsagePromptTokensDetails `json:"prompt_tokens_details"`
+	JSON                struct {
+		CompletionTokens        respjson.Field
+		PromptTokens            respjson.Field
+		TotalTokens             respjson.Field
+		CompletionTokensDetails respjson.Field
+		PromptTokensDetails     respjson.Field
+		raw                     string
+	} `json:"-"`
+}
+
+func (r *ChatCompletionNewResponseUnionUsage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ChatCompletionNewResponseUnionUsageCompletionTokensDetails is an implicit
+// subunion of [ChatCompletionNewResponseUnion].
+// ChatCompletionNewResponseUnionUsageCompletionTokensDetails provides convenient
+// access to the sub-properties of the union.
+//
+// For type safety it is recommended to directly use a variant of the
+// [ChatCompletionNewResponseUnion].
+type ChatCompletionNewResponseUnionUsageCompletionTokensDetails struct {
+	ReasoningTokens int64 `json:"reasoning_tokens"`
+	JSON            struct {
+		ReasoningTokens respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+func (r *ChatCompletionNewResponseUnionUsageCompletionTokensDetails) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ChatCompletionNewResponseUnionUsagePromptTokensDetails is an implicit subunion
+// of [ChatCompletionNewResponseUnion].
+// ChatCompletionNewResponseUnionUsagePromptTokensDetails provides convenient
+// access to the sub-properties of the union.
+//
+// For type safety it is recommended to directly use a variant of the
+// [ChatCompletionNewResponseUnion].
+type ChatCompletionNewResponseUnionUsagePromptTokensDetails struct {
+	CachedTokens int64 `json:"cached_tokens"`
+	JSON         struct {
+		CachedTokens respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+func (r *ChatCompletionNewResponseUnionUsagePromptTokensDetails) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // Response from an OpenAI-compatible chat completion request.
 type ChatCompletionNewResponseOpenAIChatCompletion struct {
 	// The ID of the chat completion
@@ -179,6 +253,8 @@ type ChatCompletionNewResponseOpenAIChatCompletion struct {
 	Model string `json:"model,required"`
 	// The object type, which will be "chat.completion"
 	Object constant.ChatCompletion `json:"object,required"`
+	// Token usage information for the completion
+	Usage ChatCompletionNewResponseOpenAIChatCompletionUsage `json:"usage"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -186,6 +262,7 @@ type ChatCompletionNewResponseOpenAIChatCompletion struct {
 		Created     respjson.Field
 		Model       respjson.Field
 		Object      respjson.Field
+		Usage       respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -1216,6 +1293,76 @@ func (r *ChatCompletionNewResponseOpenAIChatCompletionChoiceLogprobsRefusalTopLo
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Token usage information for the completion
+type ChatCompletionNewResponseOpenAIChatCompletionUsage struct {
+	// Number of tokens in the completion
+	CompletionTokens int64 `json:"completion_tokens,required"`
+	// Number of tokens in the prompt
+	PromptTokens int64 `json:"prompt_tokens,required"`
+	// Total tokens used (prompt + completion)
+	TotalTokens int64 `json:"total_tokens,required"`
+	// Token details for output tokens in OpenAI chat completion usage.
+	CompletionTokensDetails ChatCompletionNewResponseOpenAIChatCompletionUsageCompletionTokensDetails `json:"completion_tokens_details"`
+	// Token details for prompt tokens in OpenAI chat completion usage.
+	PromptTokensDetails ChatCompletionNewResponseOpenAIChatCompletionUsagePromptTokensDetails `json:"prompt_tokens_details"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		CompletionTokens        respjson.Field
+		PromptTokens            respjson.Field
+		TotalTokens             respjson.Field
+		CompletionTokensDetails respjson.Field
+		PromptTokensDetails     respjson.Field
+		ExtraFields             map[string]respjson.Field
+		raw                     string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionNewResponseOpenAIChatCompletionUsage) RawJSON() string { return r.JSON.raw }
+func (r *ChatCompletionNewResponseOpenAIChatCompletionUsage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Token details for output tokens in OpenAI chat completion usage.
+type ChatCompletionNewResponseOpenAIChatCompletionUsageCompletionTokensDetails struct {
+	// Number of tokens used for reasoning (o1/o3 models)
+	ReasoningTokens int64 `json:"reasoning_tokens"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ReasoningTokens respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionNewResponseOpenAIChatCompletionUsageCompletionTokensDetails) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ChatCompletionNewResponseOpenAIChatCompletionUsageCompletionTokensDetails) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Token details for prompt tokens in OpenAI chat completion usage.
+type ChatCompletionNewResponseOpenAIChatCompletionUsagePromptTokensDetails struct {
+	// Number of tokens retrieved from cache
+	CachedTokens int64 `json:"cached_tokens"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		CachedTokens respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionNewResponseOpenAIChatCompletionUsagePromptTokensDetails) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ChatCompletionNewResponseOpenAIChatCompletionUsagePromptTokensDetails) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type ChatCompletionGetResponse struct {
 	// The ID of the chat completion
 	ID string `json:"id,required"`
@@ -1228,6 +1375,8 @@ type ChatCompletionGetResponse struct {
 	Model string `json:"model,required"`
 	// The object type, which will be "chat.completion"
 	Object constant.ChatCompletion `json:"object,required"`
+	// Token usage information for the completion
+	Usage ChatCompletionGetResponseUsage `json:"usage"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID            respjson.Field
@@ -1236,6 +1385,7 @@ type ChatCompletionGetResponse struct {
 		InputMessages respjson.Field
 		Model         respjson.Field
 		Object        respjson.Field
+		Usage         respjson.Field
 		ExtraFields   map[string]respjson.Field
 		raw           string
 	} `json:"-"`
@@ -3061,6 +3211,72 @@ func (r *ChatCompletionGetResponseInputMessageDeveloperContentArrayItem) Unmarsh
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Token usage information for the completion
+type ChatCompletionGetResponseUsage struct {
+	// Number of tokens in the completion
+	CompletionTokens int64 `json:"completion_tokens,required"`
+	// Number of tokens in the prompt
+	PromptTokens int64 `json:"prompt_tokens,required"`
+	// Total tokens used (prompt + completion)
+	TotalTokens int64 `json:"total_tokens,required"`
+	// Token details for output tokens in OpenAI chat completion usage.
+	CompletionTokensDetails ChatCompletionGetResponseUsageCompletionTokensDetails `json:"completion_tokens_details"`
+	// Token details for prompt tokens in OpenAI chat completion usage.
+	PromptTokensDetails ChatCompletionGetResponseUsagePromptTokensDetails `json:"prompt_tokens_details"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		CompletionTokens        respjson.Field
+		PromptTokens            respjson.Field
+		TotalTokens             respjson.Field
+		CompletionTokensDetails respjson.Field
+		PromptTokensDetails     respjson.Field
+		ExtraFields             map[string]respjson.Field
+		raw                     string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionGetResponseUsage) RawJSON() string { return r.JSON.raw }
+func (r *ChatCompletionGetResponseUsage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Token details for output tokens in OpenAI chat completion usage.
+type ChatCompletionGetResponseUsageCompletionTokensDetails struct {
+	// Number of tokens used for reasoning (o1/o3 models)
+	ReasoningTokens int64 `json:"reasoning_tokens"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ReasoningTokens respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionGetResponseUsageCompletionTokensDetails) RawJSON() string { return r.JSON.raw }
+func (r *ChatCompletionGetResponseUsageCompletionTokensDetails) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Token details for prompt tokens in OpenAI chat completion usage.
+type ChatCompletionGetResponseUsagePromptTokensDetails struct {
+	// Number of tokens retrieved from cache
+	CachedTokens int64 `json:"cached_tokens"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		CachedTokens respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionGetResponseUsagePromptTokensDetails) RawJSON() string { return r.JSON.raw }
+func (r *ChatCompletionGetResponseUsagePromptTokensDetails) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type ChatCompletionListResponse struct {
 	// The ID of the chat completion
 	ID string `json:"id,required"`
@@ -3073,6 +3289,8 @@ type ChatCompletionListResponse struct {
 	Model string `json:"model,required"`
 	// The object type, which will be "chat.completion"
 	Object constant.ChatCompletion `json:"object,required"`
+	// Token usage information for the completion
+	Usage ChatCompletionListResponseUsage `json:"usage"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID            respjson.Field
@@ -3081,6 +3299,7 @@ type ChatCompletionListResponse struct {
 		InputMessages respjson.Field
 		Model         respjson.Field
 		Object        respjson.Field
+		Usage         respjson.Field
 		ExtraFields   map[string]respjson.Field
 		raw           string
 	} `json:"-"`
@@ -4916,6 +5135,72 @@ func (r ChatCompletionListResponseInputMessageDeveloperContentArrayItem) RawJSON
 	return r.JSON.raw
 }
 func (r *ChatCompletionListResponseInputMessageDeveloperContentArrayItem) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Token usage information for the completion
+type ChatCompletionListResponseUsage struct {
+	// Number of tokens in the completion
+	CompletionTokens int64 `json:"completion_tokens,required"`
+	// Number of tokens in the prompt
+	PromptTokens int64 `json:"prompt_tokens,required"`
+	// Total tokens used (prompt + completion)
+	TotalTokens int64 `json:"total_tokens,required"`
+	// Token details for output tokens in OpenAI chat completion usage.
+	CompletionTokensDetails ChatCompletionListResponseUsageCompletionTokensDetails `json:"completion_tokens_details"`
+	// Token details for prompt tokens in OpenAI chat completion usage.
+	PromptTokensDetails ChatCompletionListResponseUsagePromptTokensDetails `json:"prompt_tokens_details"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		CompletionTokens        respjson.Field
+		PromptTokens            respjson.Field
+		TotalTokens             respjson.Field
+		CompletionTokensDetails respjson.Field
+		PromptTokensDetails     respjson.Field
+		ExtraFields             map[string]respjson.Field
+		raw                     string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionListResponseUsage) RawJSON() string { return r.JSON.raw }
+func (r *ChatCompletionListResponseUsage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Token details for output tokens in OpenAI chat completion usage.
+type ChatCompletionListResponseUsageCompletionTokensDetails struct {
+	// Number of tokens used for reasoning (o1/o3 models)
+	ReasoningTokens int64 `json:"reasoning_tokens"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ReasoningTokens respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionListResponseUsageCompletionTokensDetails) RawJSON() string { return r.JSON.raw }
+func (r *ChatCompletionListResponseUsageCompletionTokensDetails) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Token details for prompt tokens in OpenAI chat completion usage.
+type ChatCompletionListResponseUsagePromptTokensDetails struct {
+	// Number of tokens retrieved from cache
+	CachedTokens int64 `json:"cached_tokens"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		CachedTokens respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionListResponseUsagePromptTokensDetails) RawJSON() string { return r.JSON.raw }
+func (r *ChatCompletionListResponseUsagePromptTokensDetails) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

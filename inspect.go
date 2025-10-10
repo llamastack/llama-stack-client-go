@@ -33,7 +33,7 @@ func NewInspectService(opts ...option.RequestOption) (r InspectService) {
 	return
 }
 
-// Get the current health status of the service.
+// Get health status. Get the current health status of the service.
 func (r *InspectService) Health(ctx context.Context, opts ...option.RequestOption) (res *HealthInfo, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/health"
@@ -41,7 +41,7 @@ func (r *InspectService) Health(ctx context.Context, opts ...option.RequestOptio
 	return
 }
 
-// Get the version of the service.
+// Get version. Get the version of the service.
 func (r *InspectService) Version(ctx context.Context, opts ...option.RequestOption) (res *VersionInfo, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/version"

@@ -33,7 +33,7 @@ func NewSafetyService(opts ...option.RequestOption) (r SafetyService) {
 	return
 }
 
-// Run a shield.
+// Run shield. Run a shield.
 func (r *SafetyService) RunShield(ctx context.Context, body SafetyRunShieldParams, opts ...option.RequestOption) (res *RunShieldResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/safety/run-shield"
