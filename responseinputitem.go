@@ -39,7 +39,7 @@ func NewResponseInputItemService(opts ...option.RequestOption) (r ResponseInputI
 	return
 }
 
-// List input items for a given OpenAI response.
+// List input items.
 func (r *ResponseInputItemService) List(ctx context.Context, responseID string, query ResponseInputItemListParams, opts ...option.RequestOption) (res *ResponseInputItemListResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if responseID == "" {

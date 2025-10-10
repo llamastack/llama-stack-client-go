@@ -35,8 +35,8 @@ func NewCompletionService(opts ...option.RequestOption) (r CompletionService) {
 	return
 }
 
-// Generate an OpenAI-compatible completion for the given prompt using the
-// specified model.
+// Create completion. Generate an OpenAI-compatible completion for the given prompt
+// using the specified model.
 func (r *CompletionService) New(ctx context.Context, body CompletionNewParams, opts ...option.RequestOption) (res *CompletionNewResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/completions"
@@ -44,8 +44,8 @@ func (r *CompletionService) New(ctx context.Context, body CompletionNewParams, o
 	return
 }
 
-// Generate an OpenAI-compatible completion for the given prompt using the
-// specified model.
+// Create completion. Generate an OpenAI-compatible completion for the given prompt
+// using the specified model.
 func (r *CompletionService) NewStreaming(ctx context.Context, body CompletionNewParams, opts ...option.RequestOption) (stream *ssestream.Stream[CompletionNewResponse]) {
 	var (
 		raw *http.Response

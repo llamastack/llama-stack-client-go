@@ -35,8 +35,8 @@ func NewEmbeddingService(opts ...option.RequestOption) (r EmbeddingService) {
 	return
 }
 
-// Generate OpenAI-compatible embeddings for the given input using the specified
-// model.
+// Create embeddings. Generate OpenAI-compatible embeddings for the given input
+// using the specified model.
 func (r *EmbeddingService) New(ctx context.Context, body EmbeddingNewParams, opts ...option.RequestOption) (res *CreateEmbeddingsResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/embeddings"

@@ -32,7 +32,8 @@ func NewRouteService(opts ...option.RequestOption) (r RouteService) {
 	return
 }
 
-// List all available API routes with their methods and implementing providers.
+// List routes. List all available API routes with their methods and implementing
+// providers.
 func (r *RouteService) List(ctx context.Context, opts ...option.RequestOption) (res *[]RouteInfo, err error) {
 	var env ListRoutesResponse
 	opts = slices.Concat(r.Options, opts)
