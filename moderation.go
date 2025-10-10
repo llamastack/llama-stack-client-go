@@ -34,7 +34,8 @@ func NewModerationService(opts ...option.RequestOption) (r ModerationService) {
 	return
 }
 
-// Classifies if text and/or image inputs are potentially harmful.
+// Create moderation. Classifies if text and/or image inputs are potentially
+// harmful.
 func (r *ModerationService) New(ctx context.Context, body ModerationNewParams, opts ...option.RequestOption) (res *CreateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/moderations"

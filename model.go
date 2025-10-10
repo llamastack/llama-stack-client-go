@@ -39,7 +39,7 @@ func NewModelService(opts ...option.RequestOption) (r ModelService) {
 	return
 }
 
-// Get a model by its identifier.
+// Get model. Get a model by its identifier.
 func (r *ModelService) Get(ctx context.Context, modelID string, opts ...option.RequestOption) (res *Model, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if modelID == "" {
@@ -64,7 +64,7 @@ func (r *ModelService) List(ctx context.Context, opts ...option.RequestOption) (
 	return
 }
 
-// Register a model.
+// Register model. Register a model.
 func (r *ModelService) Register(ctx context.Context, body ModelRegisterParams, opts ...option.RequestOption) (res *Model, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/models"
@@ -72,7 +72,7 @@ func (r *ModelService) Register(ctx context.Context, body ModelRegisterParams, o
 	return
 }
 
-// Unregister a model.
+// Unregister model. Unregister a model.
 func (r *ModelService) Unregister(ctx context.Context, modelID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)

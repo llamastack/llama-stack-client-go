@@ -31,6 +31,7 @@ type ChatCompletion string                     // Always "chat.completion"
 type ChatCompletionChunk string                // Always "chat.completion.chunk"
 type CompletionInput string                    // Always "completion_input"
 type ContainerFileCitation string              // Always "container_file_citation"
+type Conversation string                       // Always "conversation"
 type CreatedAt string                          // Always "created_at"
 type Dataset string                            // Always "dataset"
 type Default string                            // Always "default"
@@ -71,6 +72,7 @@ type Number string                             // Always "number"
 type Object string                             // Always "object"
 type OutputText string                         // Always "output_text"
 type Qat string                                // Always "QAT"
+type ReasoningText string                      // Always "reasoning_text"
 type Refusal string                            // Always "refusal"
 type RegexParser string                        // Always "regex_parser"
 type Response string                           // Always "response"
@@ -78,8 +80,11 @@ type ResponseCompleted string                  // Always "response.completed"
 type ResponseContentPartAdded string           // Always "response.content_part.added"
 type ResponseContentPartDone string            // Always "response.content_part.done"
 type ResponseCreated string                    // Always "response.created"
+type ResponseFailed string                     // Always "response.failed"
 type ResponseFunctionCallArgumentsDelta string // Always "response.function_call_arguments.delta"
 type ResponseFunctionCallArgumentsDone string  // Always "response.function_call_arguments.done"
+type ResponseInProgress string                 // Always "response.in_progress"
+type ResponseIncomplete string                 // Always "response.incomplete"
 type ResponseMcpCallArgumentsDelta string      // Always "response.mcp_call.arguments.delta"
 type ResponseMcpCallArgumentsDone string       // Always "response.mcp_call.arguments.done"
 type ResponseMcpCallCompleted string           // Always "response.mcp_call.completed"
@@ -142,6 +147,7 @@ func (c ChatCompletion) Default() ChatCompletion               { return "chat.co
 func (c ChatCompletionChunk) Default() ChatCompletionChunk     { return "chat.completion.chunk" }
 func (c CompletionInput) Default() CompletionInput             { return "completion_input" }
 func (c ContainerFileCitation) Default() ContainerFileCitation { return "container_file_citation" }
+func (c Conversation) Default() Conversation                   { return "conversation" }
 func (c CreatedAt) Default() CreatedAt                         { return "created_at" }
 func (c Dataset) Default() Dataset                             { return "dataset" }
 func (c Default) Default() Default                             { return "default" }
@@ -182,6 +188,7 @@ func (c Number) Default() Number                               { return "number"
 func (c Object) Default() Object                               { return "object" }
 func (c OutputText) Default() OutputText                       { return "output_text" }
 func (c Qat) Default() Qat                                     { return "QAT" }
+func (c ReasoningText) Default() ReasoningText                 { return "reasoning_text" }
 func (c Refusal) Default() Refusal                             { return "refusal" }
 func (c RegexParser) Default() RegexParser                     { return "regex_parser" }
 func (c Response) Default() Response                           { return "response" }
@@ -193,12 +200,15 @@ func (c ResponseContentPartDone) Default() ResponseContentPartDone {
 	return "response.content_part.done"
 }
 func (c ResponseCreated) Default() ResponseCreated { return "response.created" }
+func (c ResponseFailed) Default() ResponseFailed   { return "response.failed" }
 func (c ResponseFunctionCallArgumentsDelta) Default() ResponseFunctionCallArgumentsDelta {
 	return "response.function_call_arguments.delta"
 }
 func (c ResponseFunctionCallArgumentsDone) Default() ResponseFunctionCallArgumentsDone {
 	return "response.function_call_arguments.done"
 }
+func (c ResponseInProgress) Default() ResponseInProgress { return "response.in_progress" }
+func (c ResponseIncomplete) Default() ResponseIncomplete { return "response.incomplete" }
 func (c ResponseMcpCallArgumentsDelta) Default() ResponseMcpCallArgumentsDelta {
 	return "response.mcp_call.arguments.delta"
 }
@@ -285,6 +295,7 @@ func (c ChatCompletion) MarshalJSON() ([]byte, error)                     { retu
 func (c ChatCompletionChunk) MarshalJSON() ([]byte, error)                { return marshalString(c) }
 func (c CompletionInput) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
 func (c ContainerFileCitation) MarshalJSON() ([]byte, error)              { return marshalString(c) }
+func (c Conversation) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
 func (c CreatedAt) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
 func (c Dataset) MarshalJSON() ([]byte, error)                            { return marshalString(c) }
 func (c Default) MarshalJSON() ([]byte, error)                            { return marshalString(c) }
@@ -325,6 +336,7 @@ func (c Number) MarshalJSON() ([]byte, error)                             { retu
 func (c Object) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
 func (c OutputText) MarshalJSON() ([]byte, error)                         { return marshalString(c) }
 func (c Qat) MarshalJSON() ([]byte, error)                                { return marshalString(c) }
+func (c ReasoningText) MarshalJSON() ([]byte, error)                      { return marshalString(c) }
 func (c Refusal) MarshalJSON() ([]byte, error)                            { return marshalString(c) }
 func (c RegexParser) MarshalJSON() ([]byte, error)                        { return marshalString(c) }
 func (c Response) MarshalJSON() ([]byte, error)                           { return marshalString(c) }
@@ -332,8 +344,11 @@ func (c ResponseCompleted) MarshalJSON() ([]byte, error)                  { retu
 func (c ResponseContentPartAdded) MarshalJSON() ([]byte, error)           { return marshalString(c) }
 func (c ResponseContentPartDone) MarshalJSON() ([]byte, error)            { return marshalString(c) }
 func (c ResponseCreated) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
+func (c ResponseFailed) MarshalJSON() ([]byte, error)                     { return marshalString(c) }
 func (c ResponseFunctionCallArgumentsDelta) MarshalJSON() ([]byte, error) { return marshalString(c) }
 func (c ResponseFunctionCallArgumentsDone) MarshalJSON() ([]byte, error)  { return marshalString(c) }
+func (c ResponseInProgress) MarshalJSON() ([]byte, error)                 { return marshalString(c) }
+func (c ResponseIncomplete) MarshalJSON() ([]byte, error)                 { return marshalString(c) }
 func (c ResponseMcpCallArgumentsDelta) MarshalJSON() ([]byte, error)      { return marshalString(c) }
 func (c ResponseMcpCallArgumentsDone) MarshalJSON() ([]byte, error)       { return marshalString(c) }
 func (c ResponseMcpCallCompleted) MarshalJSON() ([]byte, error)           { return marshalString(c) }

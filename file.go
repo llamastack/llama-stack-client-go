@@ -43,8 +43,9 @@ func NewFileService(opts ...option.RequestOption) (r FileService) {
 	return
 }
 
-// Upload a file that can be used across various endpoints. The file upload should
-// be a multipart form request with:
+// Upload file. Upload a file that can be used across various endpoints.
+//
+// The file upload should be a multipart form request with:
 //
 // - file: The File object (not file name) to be uploaded.
 // - purpose: The intended purpose of the uploaded file.
@@ -56,7 +57,7 @@ func (r *FileService) New(ctx context.Context, body FileNewParams, opts ...optio
 	return
 }
 
-// Returns information about a specific file.
+// Retrieve file. Returns information about a specific file.
 func (r *FileService) Get(ctx context.Context, fileID string, opts ...option.RequestOption) (res *File, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if fileID == "" {
@@ -68,7 +69,7 @@ func (r *FileService) Get(ctx context.Context, fileID string, opts ...option.Req
 	return
 }
 
-// Returns a list of files that belong to the user's organization.
+// List files. Returns a list of files that belong to the user's organization.
 func (r *FileService) List(ctx context.Context, query FileListParams, opts ...option.RequestOption) (res *pagination.OpenAICursorPage[File], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
@@ -86,12 +87,12 @@ func (r *FileService) List(ctx context.Context, query FileListParams, opts ...op
 	return res, nil
 }
 
-// Returns a list of files that belong to the user's organization.
+// List files. Returns a list of files that belong to the user's organization.
 func (r *FileService) ListAutoPaging(ctx context.Context, query FileListParams, opts ...option.RequestOption) *pagination.OpenAICursorPageAutoPager[File] {
 	return pagination.NewOpenAICursorPageAutoPager(r.List(ctx, query, opts...))
 }
 
-// Delete a file.
+// Delete file.
 func (r *FileService) Delete(ctx context.Context, fileID string, opts ...option.RequestOption) (res *DeleteFileResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if fileID == "" {
@@ -103,7 +104,7 @@ func (r *FileService) Delete(ctx context.Context, fileID string, opts ...option.
 	return
 }
 
-// Returns the contents of the specified file.
+// Retrieve file content. Returns the contents of the specified file.
 func (r *FileService) Content(ctx context.Context, fileID string, opts ...option.RequestOption) (res *FileContentResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if fileID == "" {
