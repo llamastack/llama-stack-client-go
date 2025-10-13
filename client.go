@@ -28,7 +28,6 @@ type Client struct {
 	Chat                    ChatService
 	Completions             CompletionService
 	VectorIo                VectorIoService
-	VectorDBs               VectorDBService
 	VectorStores            VectorStoreService
 	Models                  ModelService
 	Providers               ProviderService
@@ -78,7 +77,6 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Chat = NewChatService(opts...)
 	r.Completions = NewCompletionService(opts...)
 	r.VectorIo = NewVectorIoService(opts...)
-	r.VectorDBs = NewVectorDBService(opts...)
 	r.VectorStores = NewVectorStoreService(opts...)
 	r.Models = NewModelService(opts...)
 	r.Providers = NewProviderService(opts...)

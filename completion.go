@@ -242,7 +242,6 @@ type CompletionNewParams struct {
 	N param.Opt[int64] `json:"n,omitzero"`
 	// (Optional) The penalty for repeated tokens.
 	PresencePenalty param.Opt[float64] `json:"presence_penalty,omitzero"`
-	PromptLogprobs  param.Opt[int64]   `json:"prompt_logprobs,omitzero"`
 	// (Optional) The seed to use.
 	Seed param.Opt[int64] `json:"seed,omitzero"`
 	// (Optional) The suffix that should be appended to the completion.
@@ -252,8 +251,7 @@ type CompletionNewParams struct {
 	// (Optional) The top p to use.
 	TopP param.Opt[float64] `json:"top_p,omitzero"`
 	// (Optional) The user to use.
-	User         param.Opt[string] `json:"user,omitzero"`
-	GuidedChoice []string          `json:"guided_choice,omitzero"`
+	User param.Opt[string] `json:"user,omitzero"`
 	// (Optional) The logit bias to use.
 	LogitBias map[string]float64 `json:"logit_bias,omitzero"`
 	// (Optional) The stop tokens to use.

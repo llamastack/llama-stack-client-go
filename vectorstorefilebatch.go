@@ -39,7 +39,8 @@ func NewVectorStoreFileBatchService(opts ...option.RequestOption) (r VectorStore
 	return
 }
 
-// Create a vector store file batch.
+// Create a vector store file batch. Generate an OpenAI-compatible vector store
+// file batch for the given vector store.
 func (r *VectorStoreFileBatchService) New(ctx context.Context, vectorStoreID string, body VectorStoreFileBatchNewParams, opts ...option.RequestOption) (res *VectorStoreFileBatches, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if vectorStoreID == "" {
@@ -220,11 +221,11 @@ const (
 )
 
 type VectorStoreFileBatchNewParams struct {
-	// A list of File IDs that the vector store should use.
+	// A list of File IDs that the vector store should use
 	FileIDs []string `json:"file_ids,omitzero,required"`
-	// (Optional) Key-value attributes to store with the files.
+	// (Optional) Key-value attributes to store with the files
 	Attributes map[string]VectorStoreFileBatchNewParamsAttributeUnion `json:"attributes,omitzero"`
-	// (Optional) The chunking strategy used to chunk the file(s). Defaults to auto.
+	// (Optional) The chunking strategy used to chunk the file(s). Defaults to auto
 	ChunkingStrategy VectorStoreFileBatchNewParamsChunkingStrategyUnion `json:"chunking_strategy,omitzero"`
 	paramObj
 }

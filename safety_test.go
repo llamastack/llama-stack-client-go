@@ -25,14 +25,12 @@ func TestSafetyRunShield(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Safety.RunShield(context.TODO(), llamastackclient.SafetyRunShieldParams{
-		Messages: []llamastackclient.MessageUnionParam{{
-			OfUser: &llamastackclient.UserMessageParam{
-				Content: llamastackclient.InterleavedContentUnionParam{
+		Messages: []llamastackclient.SafetyRunShieldParamsMessageUnion{{
+			OfUser: &llamastackclient.SafetyRunShieldParamsMessageUser{
+				Content: llamastackclient.SafetyRunShieldParamsMessageUserContentUnion{
 					OfString: llamastackclient.String("string"),
 				},
-				Context: llamastackclient.InterleavedContentUnionParam{
-					OfString: llamastackclient.String("string"),
-				},
+				Name: llamastackclient.String("name"),
 			},
 		}},
 		Params: map[string]llamastackclient.SafetyRunShieldParamsParamUnion{
