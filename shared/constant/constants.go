@@ -81,6 +81,9 @@ type ResponseContentPartAdded string           // Always "response.content_part.
 type ResponseContentPartDone string            // Always "response.content_part.done"
 type ResponseCreated string                    // Always "response.created"
 type ResponseFailed string                     // Always "response.failed"
+type ResponseFileSearchCallCompleted string    // Always "response.file_search_call.completed"
+type ResponseFileSearchCallInProgress string   // Always "response.file_search_call.in_progress"
+type ResponseFileSearchCallSearching string    // Always "response.file_search_call.searching"
 type ResponseFunctionCallArgumentsDelta string // Always "response.function_call_arguments.delta"
 type ResponseFunctionCallArgumentsDone string  // Always "response.function_call_arguments.done"
 type ResponseInProgress string                 // Always "response.in_progress"
@@ -95,8 +98,17 @@ type ResponseMcpListToolsFailed string         // Always "response.mcp_list_tool
 type ResponseMcpListToolsInProgress string     // Always "response.mcp_list_tools.in_progress"
 type ResponseOutputItemAdded string            // Always "response.output_item.added"
 type ResponseOutputItemDone string             // Always "response.output_item.done"
+type ResponseOutputTextAnnotationAdded string  // Always "response.output_text.annotation.added"
 type ResponseOutputTextDelta string            // Always "response.output_text.delta"
 type ResponseOutputTextDone string             // Always "response.output_text.done"
+type ResponseReasoningSummaryPartAdded string  // Always "response.reasoning_summary_part.added"
+type ResponseReasoningSummaryPartDone string   // Always "response.reasoning_summary_part.done"
+type ResponseReasoningSummaryTextDelta string  // Always "response.reasoning_summary_text.delta"
+type ResponseReasoningSummaryTextDone string   // Always "response.reasoning_summary_text.done"
+type ResponseReasoningTextDelta string         // Always "response.reasoning_text.delta"
+type ResponseReasoningTextDone string          // Always "response.reasoning_text.done"
+type ResponseRefusalDelta string               // Always "response.refusal.delta"
+type ResponseRefusalDone string                // Always "response.refusal.done"
 type ResponseWebSearchCallCompleted string     // Always "response.web_search_call.completed"
 type ResponseWebSearchCallInProgress string    // Always "response.web_search_call.in_progress"
 type ResponseWebSearchCallSearching string     // Always "response.web_search_call.searching"
@@ -113,6 +125,7 @@ type StepProgress string                       // Always "step_progress"
 type StepStart string                          // Always "step_start"
 type String string                             // Always "string"
 type StructuredLog string                      // Always "structured_log"
+type SummaryText string                        // Always "summary_text"
 type System string                             // Always "system"
 type Text string                               // Always "text"
 type TextCompletion string                     // Always "text_completion"
@@ -130,7 +143,6 @@ type UnstructuredLog string                    // Always "unstructured_log"
 type Uri string                                // Always "uri"
 type URLCitation string                        // Always "url_citation"
 type User string                               // Always "user"
-type VectorDB string                           // Always "vector_db"
 type WebSearchCall string                      // Always "web_search_call"
 type Weighted string                           // Always "weighted"
 
@@ -201,6 +213,15 @@ func (c ResponseContentPartDone) Default() ResponseContentPartDone {
 }
 func (c ResponseCreated) Default() ResponseCreated { return "response.created" }
 func (c ResponseFailed) Default() ResponseFailed   { return "response.failed" }
+func (c ResponseFileSearchCallCompleted) Default() ResponseFileSearchCallCompleted {
+	return "response.file_search_call.completed"
+}
+func (c ResponseFileSearchCallInProgress) Default() ResponseFileSearchCallInProgress {
+	return "response.file_search_call.in_progress"
+}
+func (c ResponseFileSearchCallSearching) Default() ResponseFileSearchCallSearching {
+	return "response.file_search_call.searching"
+}
 func (c ResponseFunctionCallArgumentsDelta) Default() ResponseFunctionCallArgumentsDelta {
 	return "response.function_call_arguments.delta"
 }
@@ -235,10 +256,33 @@ func (c ResponseOutputItemAdded) Default() ResponseOutputItemAdded {
 	return "response.output_item.added"
 }
 func (c ResponseOutputItemDone) Default() ResponseOutputItemDone { return "response.output_item.done" }
+func (c ResponseOutputTextAnnotationAdded) Default() ResponseOutputTextAnnotationAdded {
+	return "response.output_text.annotation.added"
+}
 func (c ResponseOutputTextDelta) Default() ResponseOutputTextDelta {
 	return "response.output_text.delta"
 }
 func (c ResponseOutputTextDone) Default() ResponseOutputTextDone { return "response.output_text.done" }
+func (c ResponseReasoningSummaryPartAdded) Default() ResponseReasoningSummaryPartAdded {
+	return "response.reasoning_summary_part.added"
+}
+func (c ResponseReasoningSummaryPartDone) Default() ResponseReasoningSummaryPartDone {
+	return "response.reasoning_summary_part.done"
+}
+func (c ResponseReasoningSummaryTextDelta) Default() ResponseReasoningSummaryTextDelta {
+	return "response.reasoning_summary_text.delta"
+}
+func (c ResponseReasoningSummaryTextDone) Default() ResponseReasoningSummaryTextDone {
+	return "response.reasoning_summary_text.done"
+}
+func (c ResponseReasoningTextDelta) Default() ResponseReasoningTextDelta {
+	return "response.reasoning_text.delta"
+}
+func (c ResponseReasoningTextDone) Default() ResponseReasoningTextDone {
+	return "response.reasoning_text.done"
+}
+func (c ResponseRefusalDelta) Default() ResponseRefusalDelta { return "response.refusal.delta" }
+func (c ResponseRefusalDone) Default() ResponseRefusalDone   { return "response.refusal.done" }
 func (c ResponseWebSearchCallCompleted) Default() ResponseWebSearchCallCompleted {
 	return "response.web_search_call.completed"
 }
@@ -261,6 +305,7 @@ func (c StepProgress) Default() StepProgress           { return "step_progress" 
 func (c StepStart) Default() StepStart                 { return "step_start" }
 func (c String) Default() String                       { return "string" }
 func (c StructuredLog) Default() StructuredLog         { return "structured_log" }
+func (c SummaryText) Default() SummaryText             { return "summary_text" }
 func (c System) Default() System                       { return "system" }
 func (c Text) Default() Text                           { return "text" }
 func (c TextCompletion) Default() TextCompletion       { return "text_completion" }
@@ -278,7 +323,6 @@ func (c UnstructuredLog) Default() UnstructuredLog     { return "unstructured_lo
 func (c Uri) Default() Uri                             { return "uri" }
 func (c URLCitation) Default() URLCitation             { return "url_citation" }
 func (c User) Default() User                           { return "user" }
-func (c VectorDB) Default() VectorDB                   { return "vector_db" }
 func (c WebSearchCall) Default() WebSearchCall         { return "web_search_call" }
 func (c Weighted) Default() Weighted                   { return "weighted" }
 
@@ -345,6 +389,9 @@ func (c ResponseContentPartAdded) MarshalJSON() ([]byte, error)           { retu
 func (c ResponseContentPartDone) MarshalJSON() ([]byte, error)            { return marshalString(c) }
 func (c ResponseCreated) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
 func (c ResponseFailed) MarshalJSON() ([]byte, error)                     { return marshalString(c) }
+func (c ResponseFileSearchCallCompleted) MarshalJSON() ([]byte, error)    { return marshalString(c) }
+func (c ResponseFileSearchCallInProgress) MarshalJSON() ([]byte, error)   { return marshalString(c) }
+func (c ResponseFileSearchCallSearching) MarshalJSON() ([]byte, error)    { return marshalString(c) }
 func (c ResponseFunctionCallArgumentsDelta) MarshalJSON() ([]byte, error) { return marshalString(c) }
 func (c ResponseFunctionCallArgumentsDone) MarshalJSON() ([]byte, error)  { return marshalString(c) }
 func (c ResponseInProgress) MarshalJSON() ([]byte, error)                 { return marshalString(c) }
@@ -359,8 +406,17 @@ func (c ResponseMcpListToolsFailed) MarshalJSON() ([]byte, error)         { retu
 func (c ResponseMcpListToolsInProgress) MarshalJSON() ([]byte, error)     { return marshalString(c) }
 func (c ResponseOutputItemAdded) MarshalJSON() ([]byte, error)            { return marshalString(c) }
 func (c ResponseOutputItemDone) MarshalJSON() ([]byte, error)             { return marshalString(c) }
+func (c ResponseOutputTextAnnotationAdded) MarshalJSON() ([]byte, error)  { return marshalString(c) }
 func (c ResponseOutputTextDelta) MarshalJSON() ([]byte, error)            { return marshalString(c) }
 func (c ResponseOutputTextDone) MarshalJSON() ([]byte, error)             { return marshalString(c) }
+func (c ResponseReasoningSummaryPartAdded) MarshalJSON() ([]byte, error)  { return marshalString(c) }
+func (c ResponseReasoningSummaryPartDone) MarshalJSON() ([]byte, error)   { return marshalString(c) }
+func (c ResponseReasoningSummaryTextDelta) MarshalJSON() ([]byte, error)  { return marshalString(c) }
+func (c ResponseReasoningSummaryTextDone) MarshalJSON() ([]byte, error)   { return marshalString(c) }
+func (c ResponseReasoningTextDelta) MarshalJSON() ([]byte, error)         { return marshalString(c) }
+func (c ResponseReasoningTextDone) MarshalJSON() ([]byte, error)          { return marshalString(c) }
+func (c ResponseRefusalDelta) MarshalJSON() ([]byte, error)               { return marshalString(c) }
+func (c ResponseRefusalDone) MarshalJSON() ([]byte, error)                { return marshalString(c) }
 func (c ResponseWebSearchCallCompleted) MarshalJSON() ([]byte, error)     { return marshalString(c) }
 func (c ResponseWebSearchCallInProgress) MarshalJSON() ([]byte, error)    { return marshalString(c) }
 func (c ResponseWebSearchCallSearching) MarshalJSON() ([]byte, error)     { return marshalString(c) }
@@ -377,6 +433,7 @@ func (c StepProgress) MarshalJSON() ([]byte, error)                       { retu
 func (c StepStart) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
 func (c String) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
 func (c StructuredLog) MarshalJSON() ([]byte, error)                      { return marshalString(c) }
+func (c SummaryText) MarshalJSON() ([]byte, error)                        { return marshalString(c) }
 func (c System) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
 func (c Text) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
 func (c TextCompletion) MarshalJSON() ([]byte, error)                     { return marshalString(c) }
@@ -394,7 +451,6 @@ func (c UnstructuredLog) MarshalJSON() ([]byte, error)                    { retu
 func (c Uri) MarshalJSON() ([]byte, error)                                { return marshalString(c) }
 func (c URLCitation) MarshalJSON() ([]byte, error)                        { return marshalString(c) }
 func (c User) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
-func (c VectorDB) MarshalJSON() ([]byte, error)                           { return marshalString(c) }
 func (c WebSearchCall) MarshalJSON() ([]byte, error)                      { return marshalString(c) }
 func (c Weighted) MarshalJSON() ([]byte, error)                           { return marshalString(c) }
 

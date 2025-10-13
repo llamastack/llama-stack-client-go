@@ -44,7 +44,8 @@ func NewVectorStoreService(opts ...option.RequestOption) (r VectorStoreService) 
 	return
 }
 
-// Creates a vector store.
+// Creates a vector store. Generate an OpenAI-compatible vector store with the
+// given parameters.
 func (r *VectorStoreService) New(ctx context.Context, body VectorStoreNewParams, opts ...option.RequestOption) (res *VectorStore, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/vector_stores"
@@ -486,23 +487,15 @@ func (r *VectorStoreSearchResponseDataAttributeUnion) UnmarshalJSON(data []byte)
 }
 
 type VectorStoreNewParams struct {
-	// The dimension of the embedding vectors (default: 384).
-	EmbeddingDimension param.Opt[int64] `json:"embedding_dimension,omitzero"`
-	// The embedding model to use for this vector store.
-	EmbeddingModel param.Opt[string] `json:"embedding_model,omitzero"`
-	// A name for the vector store.
+	// (Optional) A name for the vector store
 	Name param.Opt[string] `json:"name,omitzero"`
-	// The ID of the provider to use for this vector store.
-	ProviderID param.Opt[string] `json:"provider_id,omitzero"`
-	// The chunking strategy used to chunk the file(s). If not set, will use the `auto`
-	// strategy.
+	// (Optional) Strategy for splitting files into chunks
 	ChunkingStrategy map[string]VectorStoreNewParamsChunkingStrategyUnion `json:"chunking_strategy,omitzero"`
-	// The expiration policy for a vector store.
+	// (Optional) Expiration policy for the vector store
 	ExpiresAfter map[string]VectorStoreNewParamsExpiresAfterUnion `json:"expires_after,omitzero"`
-	// A list of File IDs that the vector store should use. Useful for tools like
-	// `file_search` that can access files.
+	// List of file IDs to include in the vector store
 	FileIDs []string `json:"file_ids,omitzero"`
-	// Set of 16 key-value pairs that can be attached to an object.
+	// Set of key-value pairs that can be attached to the vector store
 	Metadata map[string]VectorStoreNewParamsMetadataUnion `json:"metadata,omitzero"`
 	paramObj
 }
