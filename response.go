@@ -1731,6 +1731,18 @@ func (r *ResponseObjectUsageOutputTokensDetails) UnmarshalJSON(data []byte) erro
 // [ResponseObjectStreamResponseMcpCallCompleted],
 // [ResponseObjectStreamResponseContentPartAdded],
 // [ResponseObjectStreamResponseContentPartDone],
+// [ResponseObjectStreamResponseReasoningTextDelta],
+// [ResponseObjectStreamResponseReasoningTextDone],
+// [ResponseObjectStreamResponseReasoningSummaryPartAdded],
+// [ResponseObjectStreamResponseReasoningSummaryPartDone],
+// [ResponseObjectStreamResponseReasoningSummaryTextDelta],
+// [ResponseObjectStreamResponseReasoningSummaryTextDone],
+// [ResponseObjectStreamResponseRefusalDelta],
+// [ResponseObjectStreamResponseRefusalDone],
+// [ResponseObjectStreamResponseOutputTextAnnotationAdded],
+// [ResponseObjectStreamResponseFileSearchCallInProgress],
+// [ResponseObjectStreamResponseFileSearchCallSearching],
+// [ResponseObjectStreamResponseFileSearchCallCompleted],
 // [ResponseObjectStreamResponseIncomplete], [ResponseObjectStreamResponseFailed],
 // [ResponseObjectStreamResponseCompleted].
 //
@@ -1750,7 +1762,14 @@ type ResponseObjectStreamUnion struct {
 	// "response.mcp_call.arguments.done", "response.mcp_call.in_progress",
 	// "response.mcp_call.failed", "response.mcp_call.completed",
 	// "response.content_part.added", "response.content_part.done",
-	// "response.incomplete", "response.failed", "response.completed".
+	// "response.reasoning_text.delta", "response.reasoning_text.done",
+	// "response.reasoning_summary_part.added", "response.reasoning_summary_part.done",
+	// "response.reasoning_summary_text.delta", "response.reasoning_summary_text.done",
+	// "response.refusal.delta", "response.refusal.done",
+	// "response.output_text.annotation.added",
+	// "response.file_search_call.in_progress", "response.file_search_call.searching",
+	// "response.file_search_call.completed", "response.incomplete", "response.failed",
+	// "response.completed".
 	Type           string `json:"type"`
 	SequenceNumber int64  `json:"sequence_number"`
 	// This field is a union of [ResponseObjectStreamResponseOutputItemAddedItemUnion],
@@ -1761,27 +1780,41 @@ type ResponseObjectStreamUnion struct {
 	ContentIndex int64                         `json:"content_index"`
 	Delta        string                        `json:"delta"`
 	ItemID       string                        `json:"item_id"`
-	// This field is from variant [ResponseObjectStreamResponseOutputTextDone].
-	Text      string `json:"text"`
-	Arguments string `json:"arguments"`
+	Text         string                        `json:"text"`
+	Arguments    string                        `json:"arguments"`
 	// This field is a union of
 	// [ResponseObjectStreamResponseContentPartAddedPartUnion],
-	// [ResponseObjectStreamResponseContentPartDonePartUnion]
-	Part ResponseObjectStreamUnionPart `json:"part"`
-	JSON struct {
-		Response       respjson.Field
-		Type           respjson.Field
-		SequenceNumber respjson.Field
-		Item           respjson.Field
-		OutputIndex    respjson.Field
-		ResponseID     respjson.Field
-		ContentIndex   respjson.Field
-		Delta          respjson.Field
-		ItemID         respjson.Field
-		Text           respjson.Field
-		Arguments      respjson.Field
-		Part           respjson.Field
-		raw            string
+	// [ResponseObjectStreamResponseContentPartDonePartUnion],
+	// [ResponseObjectStreamResponseReasoningSummaryPartAddedPart],
+	// [ResponseObjectStreamResponseReasoningSummaryPartDonePart]
+	Part         ResponseObjectStreamUnionPart `json:"part"`
+	SummaryIndex int64                         `json:"summary_index"`
+	// This field is from variant [ResponseObjectStreamResponseRefusalDone].
+	Refusal string `json:"refusal"`
+	// This field is from variant
+	// [ResponseObjectStreamResponseOutputTextAnnotationAdded].
+	Annotation ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationUnion `json:"annotation"`
+	// This field is from variant
+	// [ResponseObjectStreamResponseOutputTextAnnotationAdded].
+	AnnotationIndex int64 `json:"annotation_index"`
+	JSON            struct {
+		Response        respjson.Field
+		Type            respjson.Field
+		SequenceNumber  respjson.Field
+		Item            respjson.Field
+		OutputIndex     respjson.Field
+		ResponseID      respjson.Field
+		ContentIndex    respjson.Field
+		Delta           respjson.Field
+		ItemID          respjson.Field
+		Text            respjson.Field
+		Arguments       respjson.Field
+		Part            respjson.Field
+		SummaryIndex    respjson.Field
+		Refusal         respjson.Field
+		Annotation      respjson.Field
+		AnnotationIndex respjson.Field
+		raw             string
 	} `json:"-"`
 }
 
@@ -1813,6 +1846,18 @@ func (ResponseObjectStreamResponseMcpCallFailed) implResponseObjectStreamUnion()
 func (ResponseObjectStreamResponseMcpCallCompleted) implResponseObjectStreamUnion()           {}
 func (ResponseObjectStreamResponseContentPartAdded) implResponseObjectStreamUnion()           {}
 func (ResponseObjectStreamResponseContentPartDone) implResponseObjectStreamUnion()            {}
+func (ResponseObjectStreamResponseReasoningTextDelta) implResponseObjectStreamUnion()         {}
+func (ResponseObjectStreamResponseReasoningTextDone) implResponseObjectStreamUnion()          {}
+func (ResponseObjectStreamResponseReasoningSummaryPartAdded) implResponseObjectStreamUnion()  {}
+func (ResponseObjectStreamResponseReasoningSummaryPartDone) implResponseObjectStreamUnion()   {}
+func (ResponseObjectStreamResponseReasoningSummaryTextDelta) implResponseObjectStreamUnion()  {}
+func (ResponseObjectStreamResponseReasoningSummaryTextDone) implResponseObjectStreamUnion()   {}
+func (ResponseObjectStreamResponseRefusalDelta) implResponseObjectStreamUnion()               {}
+func (ResponseObjectStreamResponseRefusalDone) implResponseObjectStreamUnion()                {}
+func (ResponseObjectStreamResponseOutputTextAnnotationAdded) implResponseObjectStreamUnion()  {}
+func (ResponseObjectStreamResponseFileSearchCallInProgress) implResponseObjectStreamUnion()   {}
+func (ResponseObjectStreamResponseFileSearchCallSearching) implResponseObjectStreamUnion()    {}
+func (ResponseObjectStreamResponseFileSearchCallCompleted) implResponseObjectStreamUnion()    {}
 func (ResponseObjectStreamResponseIncomplete) implResponseObjectStreamUnion()                 {}
 func (ResponseObjectStreamResponseFailed) implResponseObjectStreamUnion()                     {}
 func (ResponseObjectStreamResponseCompleted) implResponseObjectStreamUnion()                  {}
@@ -1841,6 +1886,18 @@ func (ResponseObjectStreamResponseCompleted) implResponseObjectStreamUnion()    
 //	case llamastackclient.ResponseObjectStreamResponseMcpCallCompleted:
 //	case llamastackclient.ResponseObjectStreamResponseContentPartAdded:
 //	case llamastackclient.ResponseObjectStreamResponseContentPartDone:
+//	case llamastackclient.ResponseObjectStreamResponseReasoningTextDelta:
+//	case llamastackclient.ResponseObjectStreamResponseReasoningTextDone:
+//	case llamastackclient.ResponseObjectStreamResponseReasoningSummaryPartAdded:
+//	case llamastackclient.ResponseObjectStreamResponseReasoningSummaryPartDone:
+//	case llamastackclient.ResponseObjectStreamResponseReasoningSummaryTextDelta:
+//	case llamastackclient.ResponseObjectStreamResponseReasoningSummaryTextDone:
+//	case llamastackclient.ResponseObjectStreamResponseRefusalDelta:
+//	case llamastackclient.ResponseObjectStreamResponseRefusalDone:
+//	case llamastackclient.ResponseObjectStreamResponseOutputTextAnnotationAdded:
+//	case llamastackclient.ResponseObjectStreamResponseFileSearchCallInProgress:
+//	case llamastackclient.ResponseObjectStreamResponseFileSearchCallSearching:
+//	case llamastackclient.ResponseObjectStreamResponseFileSearchCallCompleted:
 //	case llamastackclient.ResponseObjectStreamResponseIncomplete:
 //	case llamastackclient.ResponseObjectStreamResponseFailed:
 //	case llamastackclient.ResponseObjectStreamResponseCompleted:
@@ -1891,6 +1948,30 @@ func (u ResponseObjectStreamUnion) AsAny() anyResponseObjectStream {
 		return u.AsResponseContentPartAdded()
 	case "response.content_part.done":
 		return u.AsResponseContentPartDone()
+	case "response.reasoning_text.delta":
+		return u.AsResponseReasoningTextDelta()
+	case "response.reasoning_text.done":
+		return u.AsResponseReasoningTextDone()
+	case "response.reasoning_summary_part.added":
+		return u.AsResponseReasoningSummaryPartAdded()
+	case "response.reasoning_summary_part.done":
+		return u.AsResponseReasoningSummaryPartDone()
+	case "response.reasoning_summary_text.delta":
+		return u.AsResponseReasoningSummaryTextDelta()
+	case "response.reasoning_summary_text.done":
+		return u.AsResponseReasoningSummaryTextDone()
+	case "response.refusal.delta":
+		return u.AsResponseRefusalDelta()
+	case "response.refusal.done":
+		return u.AsResponseRefusalDone()
+	case "response.output_text.annotation.added":
+		return u.AsResponseOutputTextAnnotationAdded()
+	case "response.file_search_call.in_progress":
+		return u.AsResponseFileSearchCallInProgress()
+	case "response.file_search_call.searching":
+		return u.AsResponseFileSearchCallSearching()
+	case "response.file_search_call.completed":
+		return u.AsResponseFileSearchCallCompleted()
 	case "response.incomplete":
 		return u.AsResponseIncomplete()
 	case "response.failed":
@@ -2002,6 +2083,66 @@ func (u ResponseObjectStreamUnion) AsResponseContentPartAdded() (v ResponseObjec
 }
 
 func (u ResponseObjectStreamUnion) AsResponseContentPartDone() (v ResponseObjectStreamResponseContentPartDone) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectStreamUnion) AsResponseReasoningTextDelta() (v ResponseObjectStreamResponseReasoningTextDelta) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectStreamUnion) AsResponseReasoningTextDone() (v ResponseObjectStreamResponseReasoningTextDone) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectStreamUnion) AsResponseReasoningSummaryPartAdded() (v ResponseObjectStreamResponseReasoningSummaryPartAdded) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectStreamUnion) AsResponseReasoningSummaryPartDone() (v ResponseObjectStreamResponseReasoningSummaryPartDone) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectStreamUnion) AsResponseReasoningSummaryTextDelta() (v ResponseObjectStreamResponseReasoningSummaryTextDelta) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectStreamUnion) AsResponseReasoningSummaryTextDone() (v ResponseObjectStreamResponseReasoningSummaryTextDone) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectStreamUnion) AsResponseRefusalDelta() (v ResponseObjectStreamResponseRefusalDelta) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectStreamUnion) AsResponseRefusalDone() (v ResponseObjectStreamResponseRefusalDone) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectStreamUnion) AsResponseOutputTextAnnotationAdded() (v ResponseObjectStreamResponseOutputTextAnnotationAdded) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectStreamUnion) AsResponseFileSearchCallInProgress() (v ResponseObjectStreamResponseFileSearchCallInProgress) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectStreamUnion) AsResponseFileSearchCallSearching() (v ResponseObjectStreamResponseFileSearchCallSearching) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectStreamUnion) AsResponseFileSearchCallCompleted() (v ResponseObjectStreamResponseFileSearchCallCompleted) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -5736,6 +5877,656 @@ func (r ResponseObjectStreamResponseContentPartDonePartReasoningText) RawJSON() 
 	return r.JSON.raw
 }
 func (r *ResponseObjectStreamResponseContentPartDonePartReasoningText) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Streaming event for incremental reasoning text updates.
+type ResponseObjectStreamResponseReasoningTextDelta struct {
+	// Index position of the reasoning content part
+	ContentIndex int64 `json:"content_index,required"`
+	// Incremental reasoning text being added
+	Delta string `json:"delta,required"`
+	// Unique identifier of the output item being updated
+	ItemID string `json:"item_id,required"`
+	// Index position of the item in the output list
+	OutputIndex int64 `json:"output_index,required"`
+	// Sequential number for ordering streaming events
+	SequenceNumber int64 `json:"sequence_number,required"`
+	// Event type identifier, always "response.reasoning_text.delta"
+	Type constant.ResponseReasoningTextDelta `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ContentIndex   respjson.Field
+		Delta          respjson.Field
+		ItemID         respjson.Field
+		OutputIndex    respjson.Field
+		SequenceNumber respjson.Field
+		Type           respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseReasoningTextDelta) RawJSON() string { return r.JSON.raw }
+func (r *ResponseObjectStreamResponseReasoningTextDelta) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Streaming event for when reasoning text is completed.
+type ResponseObjectStreamResponseReasoningTextDone struct {
+	// Index position of the reasoning content part
+	ContentIndex int64 `json:"content_index,required"`
+	// Unique identifier of the completed output item
+	ItemID string `json:"item_id,required"`
+	// Index position of the item in the output list
+	OutputIndex int64 `json:"output_index,required"`
+	// Sequential number for ordering streaming events
+	SequenceNumber int64 `json:"sequence_number,required"`
+	// Final complete reasoning text
+	Text string `json:"text,required"`
+	// Event type identifier, always "response.reasoning_text.done"
+	Type constant.ResponseReasoningTextDone `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ContentIndex   respjson.Field
+		ItemID         respjson.Field
+		OutputIndex    respjson.Field
+		SequenceNumber respjson.Field
+		Text           respjson.Field
+		Type           respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseReasoningTextDone) RawJSON() string { return r.JSON.raw }
+func (r *ResponseObjectStreamResponseReasoningTextDone) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Streaming event for when a new reasoning summary part is added.
+type ResponseObjectStreamResponseReasoningSummaryPartAdded struct {
+	// Unique identifier of the output item
+	ItemID string `json:"item_id,required"`
+	// Index position of the output item
+	OutputIndex int64 `json:"output_index,required"`
+	// The summary part that was added
+	Part ResponseObjectStreamResponseReasoningSummaryPartAddedPart `json:"part,required"`
+	// Sequential number for ordering streaming events
+	SequenceNumber int64 `json:"sequence_number,required"`
+	// Index of the summary part within the reasoning summary
+	SummaryIndex int64 `json:"summary_index,required"`
+	// Event type identifier, always "response.reasoning_summary_part.added"
+	Type constant.ResponseReasoningSummaryPartAdded `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ItemID         respjson.Field
+		OutputIndex    respjson.Field
+		Part           respjson.Field
+		SequenceNumber respjson.Field
+		SummaryIndex   respjson.Field
+		Type           respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseReasoningSummaryPartAdded) RawJSON() string { return r.JSON.raw }
+func (r *ResponseObjectStreamResponseReasoningSummaryPartAdded) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The summary part that was added
+type ResponseObjectStreamResponseReasoningSummaryPartAddedPart struct {
+	// Summary text
+	Text string `json:"text,required"`
+	// Content part type identifier, always "summary_text"
+	Type constant.SummaryText `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Text        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseReasoningSummaryPartAddedPart) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseObjectStreamResponseReasoningSummaryPartAddedPart) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Streaming event for when a reasoning summary part is completed.
+type ResponseObjectStreamResponseReasoningSummaryPartDone struct {
+	// Unique identifier of the output item
+	ItemID string `json:"item_id,required"`
+	// Index position of the output item
+	OutputIndex int64 `json:"output_index,required"`
+	// The completed summary part
+	Part ResponseObjectStreamResponseReasoningSummaryPartDonePart `json:"part,required"`
+	// Sequential number for ordering streaming events
+	SequenceNumber int64 `json:"sequence_number,required"`
+	// Index of the summary part within the reasoning summary
+	SummaryIndex int64 `json:"summary_index,required"`
+	// Event type identifier, always "response.reasoning_summary_part.done"
+	Type constant.ResponseReasoningSummaryPartDone `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ItemID         respjson.Field
+		OutputIndex    respjson.Field
+		Part           respjson.Field
+		SequenceNumber respjson.Field
+		SummaryIndex   respjson.Field
+		Type           respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseReasoningSummaryPartDone) RawJSON() string { return r.JSON.raw }
+func (r *ResponseObjectStreamResponseReasoningSummaryPartDone) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The completed summary part
+type ResponseObjectStreamResponseReasoningSummaryPartDonePart struct {
+	// Summary text
+	Text string `json:"text,required"`
+	// Content part type identifier, always "summary_text"
+	Type constant.SummaryText `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Text        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseReasoningSummaryPartDonePart) RawJSON() string { return r.JSON.raw }
+func (r *ResponseObjectStreamResponseReasoningSummaryPartDonePart) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Streaming event for incremental reasoning summary text updates.
+type ResponseObjectStreamResponseReasoningSummaryTextDelta struct {
+	// Incremental summary text being added
+	Delta string `json:"delta,required"`
+	// Unique identifier of the output item
+	ItemID string `json:"item_id,required"`
+	// Index position of the output item
+	OutputIndex int64 `json:"output_index,required"`
+	// Sequential number for ordering streaming events
+	SequenceNumber int64 `json:"sequence_number,required"`
+	// Index of the summary part within the reasoning summary
+	SummaryIndex int64 `json:"summary_index,required"`
+	// Event type identifier, always "response.reasoning_summary_text.delta"
+	Type constant.ResponseReasoningSummaryTextDelta `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Delta          respjson.Field
+		ItemID         respjson.Field
+		OutputIndex    respjson.Field
+		SequenceNumber respjson.Field
+		SummaryIndex   respjson.Field
+		Type           respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseReasoningSummaryTextDelta) RawJSON() string { return r.JSON.raw }
+func (r *ResponseObjectStreamResponseReasoningSummaryTextDelta) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Streaming event for when reasoning summary text is completed.
+type ResponseObjectStreamResponseReasoningSummaryTextDone struct {
+	// Unique identifier of the output item
+	ItemID string `json:"item_id,required"`
+	// Index position of the output item
+	OutputIndex int64 `json:"output_index,required"`
+	// Sequential number for ordering streaming events
+	SequenceNumber int64 `json:"sequence_number,required"`
+	// Index of the summary part within the reasoning summary
+	SummaryIndex int64 `json:"summary_index,required"`
+	// Final complete summary text
+	Text string `json:"text,required"`
+	// Event type identifier, always "response.reasoning_summary_text.done"
+	Type constant.ResponseReasoningSummaryTextDone `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ItemID         respjson.Field
+		OutputIndex    respjson.Field
+		SequenceNumber respjson.Field
+		SummaryIndex   respjson.Field
+		Text           respjson.Field
+		Type           respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseReasoningSummaryTextDone) RawJSON() string { return r.JSON.raw }
+func (r *ResponseObjectStreamResponseReasoningSummaryTextDone) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Streaming event for incremental refusal text updates.
+type ResponseObjectStreamResponseRefusalDelta struct {
+	// Index position of the content part
+	ContentIndex int64 `json:"content_index,required"`
+	// Incremental refusal text being added
+	Delta string `json:"delta,required"`
+	// Unique identifier of the output item
+	ItemID string `json:"item_id,required"`
+	// Index position of the item in the output list
+	OutputIndex int64 `json:"output_index,required"`
+	// Sequential number for ordering streaming events
+	SequenceNumber int64 `json:"sequence_number,required"`
+	// Event type identifier, always "response.refusal.delta"
+	Type constant.ResponseRefusalDelta `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ContentIndex   respjson.Field
+		Delta          respjson.Field
+		ItemID         respjson.Field
+		OutputIndex    respjson.Field
+		SequenceNumber respjson.Field
+		Type           respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseRefusalDelta) RawJSON() string { return r.JSON.raw }
+func (r *ResponseObjectStreamResponseRefusalDelta) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Streaming event for when refusal text is completed.
+type ResponseObjectStreamResponseRefusalDone struct {
+	// Index position of the content part
+	ContentIndex int64 `json:"content_index,required"`
+	// Unique identifier of the output item
+	ItemID string `json:"item_id,required"`
+	// Index position of the item in the output list
+	OutputIndex int64 `json:"output_index,required"`
+	// Final complete refusal text
+	Refusal string `json:"refusal,required"`
+	// Sequential number for ordering streaming events
+	SequenceNumber int64 `json:"sequence_number,required"`
+	// Event type identifier, always "response.refusal.done"
+	Type constant.ResponseRefusalDone `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ContentIndex   respjson.Field
+		ItemID         respjson.Field
+		OutputIndex    respjson.Field
+		Refusal        respjson.Field
+		SequenceNumber respjson.Field
+		Type           respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseRefusalDone) RawJSON() string { return r.JSON.raw }
+func (r *ResponseObjectStreamResponseRefusalDone) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Streaming event for when an annotation is added to output text.
+type ResponseObjectStreamResponseOutputTextAnnotationAdded struct {
+	// The annotation object being added
+	Annotation ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationUnion `json:"annotation,required"`
+	// Index of the annotation within the content part
+	AnnotationIndex int64 `json:"annotation_index,required"`
+	// Index position of the content part within the output item
+	ContentIndex int64 `json:"content_index,required"`
+	// Unique identifier of the item to which the annotation is being added
+	ItemID string `json:"item_id,required"`
+	// Index position of the output item in the response's output array
+	OutputIndex int64 `json:"output_index,required"`
+	// Sequential number for ordering streaming events
+	SequenceNumber int64 `json:"sequence_number,required"`
+	// Event type identifier, always "response.output_text.annotation.added"
+	Type constant.ResponseOutputTextAnnotationAdded `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Annotation      respjson.Field
+		AnnotationIndex respjson.Field
+		ContentIndex    respjson.Field
+		ItemID          respjson.Field
+		OutputIndex     respjson.Field
+		SequenceNumber  respjson.Field
+		Type            respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseOutputTextAnnotationAdded) RawJSON() string { return r.JSON.raw }
+func (r *ResponseObjectStreamResponseOutputTextAnnotationAdded) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationUnion contains
+// all possible properties and values from
+// [ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationFileCitation],
+// [ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationURLCitation],
+// [ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationContainerFileCitation],
+// [ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationFilePath].
+//
+// Use the
+// [ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationUnion.AsAny]
+// method to switch on the variant.
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationUnion struct {
+	FileID   string `json:"file_id"`
+	Filename string `json:"filename"`
+	Index    int64  `json:"index"`
+	// Any of "file_citation", "url_citation", "container_file_citation", "file_path".
+	Type       string `json:"type"`
+	EndIndex   int64  `json:"end_index"`
+	StartIndex int64  `json:"start_index"`
+	// This field is from variant
+	// [ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationURLCitation].
+	Title string `json:"title"`
+	// This field is from variant
+	// [ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationURLCitation].
+	URL string `json:"url"`
+	// This field is from variant
+	// [ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationContainerFileCitation].
+	ContainerID string `json:"container_id"`
+	JSON        struct {
+		FileID      respjson.Field
+		Filename    respjson.Field
+		Index       respjson.Field
+		Type        respjson.Field
+		EndIndex    respjson.Field
+		StartIndex  respjson.Field
+		Title       respjson.Field
+		URL         respjson.Field
+		ContainerID respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// anyResponseObjectStreamResponseOutputTextAnnotationAddedAnnotation is
+// implemented by each variant of
+// [ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationUnion] to add
+// type safety for the return type of
+// [ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationUnion.AsAny]
+type anyResponseObjectStreamResponseOutputTextAnnotationAddedAnnotation interface {
+	implResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationUnion()
+}
+
+func (ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationFileCitation) implResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationUnion() {
+}
+func (ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationURLCitation) implResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationUnion() {
+}
+func (ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationContainerFileCitation) implResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationUnion() {
+}
+func (ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationFilePath) implResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationUnion() {
+}
+
+// Use the following switch statement to find the correct variant
+//
+//	switch variant := ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationUnion.AsAny().(type) {
+//	case llamastackclient.ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationFileCitation:
+//	case llamastackclient.ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationURLCitation:
+//	case llamastackclient.ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationContainerFileCitation:
+//	case llamastackclient.ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationFilePath:
+//	default:
+//	  fmt.Errorf("no variant present")
+//	}
+func (u ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationUnion) AsAny() anyResponseObjectStreamResponseOutputTextAnnotationAddedAnnotation {
+	switch u.Type {
+	case "file_citation":
+		return u.AsFileCitation()
+	case "url_citation":
+		return u.AsURLCitation()
+	case "container_file_citation":
+		return u.AsContainerFileCitation()
+	case "file_path":
+		return u.AsFilePath()
+	}
+	return nil
+}
+
+func (u ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationUnion) AsFileCitation() (v ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationFileCitation) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationUnion) AsURLCitation() (v ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationURLCitation) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationUnion) AsContainerFileCitation() (v ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationContainerFileCitation) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationUnion) AsFilePath() (v ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationFilePath) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationUnion) RawJSON() string {
+	return u.JSON.raw
+}
+
+func (r *ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// File citation annotation for referencing specific files in response content.
+type ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationFileCitation struct {
+	// Unique identifier of the referenced file
+	FileID string `json:"file_id,required"`
+	// Name of the referenced file
+	Filename string `json:"filename,required"`
+	// Position index of the citation within the content
+	Index int64 `json:"index,required"`
+	// Annotation type identifier, always "file_citation"
+	Type constant.FileCitation `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		FileID      respjson.Field
+		Filename    respjson.Field
+		Index       respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationFileCitation) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationFileCitation) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// URL citation annotation for referencing external web resources.
+type ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationURLCitation struct {
+	// End position of the citation span in the content
+	EndIndex int64 `json:"end_index,required"`
+	// Start position of the citation span in the content
+	StartIndex int64 `json:"start_index,required"`
+	// Title of the referenced web resource
+	Title string `json:"title,required"`
+	// Annotation type identifier, always "url_citation"
+	Type constant.URLCitation `json:"type,required"`
+	// URL of the referenced web resource
+	URL string `json:"url,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		EndIndex    respjson.Field
+		StartIndex  respjson.Field
+		Title       respjson.Field
+		Type        respjson.Field
+		URL         respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationURLCitation) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationURLCitation) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationContainerFileCitation struct {
+	ContainerID string                         `json:"container_id,required"`
+	EndIndex    int64                          `json:"end_index,required"`
+	FileID      string                         `json:"file_id,required"`
+	Filename    string                         `json:"filename,required"`
+	StartIndex  int64                          `json:"start_index,required"`
+	Type        constant.ContainerFileCitation `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ContainerID respjson.Field
+		EndIndex    respjson.Field
+		FileID      respjson.Field
+		Filename    respjson.Field
+		StartIndex  respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationContainerFileCitation) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationContainerFileCitation) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationFilePath struct {
+	FileID string            `json:"file_id,required"`
+	Index  int64             `json:"index,required"`
+	Type   constant.FilePath `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		FileID      respjson.Field
+		Index       respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationFilePath) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationFilePath) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Streaming event for file search calls in progress.
+type ResponseObjectStreamResponseFileSearchCallInProgress struct {
+	// Unique identifier of the file search call
+	ItemID string `json:"item_id,required"`
+	// Index position of the item in the output list
+	OutputIndex int64 `json:"output_index,required"`
+	// Sequential number for ordering streaming events
+	SequenceNumber int64 `json:"sequence_number,required"`
+	// Event type identifier, always "response.file_search_call.in_progress"
+	Type constant.ResponseFileSearchCallInProgress `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ItemID         respjson.Field
+		OutputIndex    respjson.Field
+		SequenceNumber respjson.Field
+		Type           respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseFileSearchCallInProgress) RawJSON() string { return r.JSON.raw }
+func (r *ResponseObjectStreamResponseFileSearchCallInProgress) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Streaming event for file search currently searching.
+type ResponseObjectStreamResponseFileSearchCallSearching struct {
+	// Unique identifier of the file search call
+	ItemID string `json:"item_id,required"`
+	// Index position of the item in the output list
+	OutputIndex int64 `json:"output_index,required"`
+	// Sequential number for ordering streaming events
+	SequenceNumber int64 `json:"sequence_number,required"`
+	// Event type identifier, always "response.file_search_call.searching"
+	Type constant.ResponseFileSearchCallSearching `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ItemID         respjson.Field
+		OutputIndex    respjson.Field
+		SequenceNumber respjson.Field
+		Type           respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseFileSearchCallSearching) RawJSON() string { return r.JSON.raw }
+func (r *ResponseObjectStreamResponseFileSearchCallSearching) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Streaming event for completed file search calls.
+type ResponseObjectStreamResponseFileSearchCallCompleted struct {
+	// Unique identifier of the completed file search call
+	ItemID string `json:"item_id,required"`
+	// Index position of the item in the output list
+	OutputIndex int64 `json:"output_index,required"`
+	// Sequential number for ordering streaming events
+	SequenceNumber int64 `json:"sequence_number,required"`
+	// Event type identifier, always "response.file_search_call.completed"
+	Type constant.ResponseFileSearchCallCompleted `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ItemID         respjson.Field
+		OutputIndex    respjson.Field
+		SequenceNumber respjson.Field
+		Type           respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamResponseFileSearchCallCompleted) RawJSON() string { return r.JSON.raw }
+func (r *ResponseObjectStreamResponseFileSearchCallCompleted) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

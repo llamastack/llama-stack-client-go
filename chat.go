@@ -94,6 +94,8 @@ func (r *ChatCompletionChunkChoice) UnmarshalJSON(data []byte) error {
 type ChatCompletionChunkChoiceDelta struct {
 	// (Optional) The content of the delta
 	Content string `json:"content"`
+	// (Optional) The reasoning content from the model (non-standard, for o1/o3 models)
+	ReasoningContent string `json:"reasoning_content"`
 	// (Optional) The refusal of the delta
 	Refusal string `json:"refusal"`
 	// (Optional) The role of the delta
@@ -102,12 +104,13 @@ type ChatCompletionChunkChoiceDelta struct {
 	ToolCalls []ChatCompletionChunkChoiceDeltaToolCall `json:"tool_calls"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Content     respjson.Field
-		Refusal     respjson.Field
-		Role        respjson.Field
-		ToolCalls   respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		Content          respjson.Field
+		ReasoningContent respjson.Field
+		Refusal          respjson.Field
+		Role             respjson.Field
+		ToolCalls        respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
 	} `json:"-"`
 }
 

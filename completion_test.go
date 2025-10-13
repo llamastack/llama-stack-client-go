@@ -32,7 +32,6 @@ func TestCompletionNewWithOptionalParams(t *testing.T) {
 		BestOf:           llamastackclient.Int(0),
 		Echo:             llamastackclient.Bool(true),
 		FrequencyPenalty: llamastackclient.Float(0),
-		GuidedChoice:     []string{"string"},
 		LogitBias: map[string]float64{
 			"foo": 0,
 		},
@@ -40,7 +39,6 @@ func TestCompletionNewWithOptionalParams(t *testing.T) {
 		MaxTokens:       llamastackclient.Int(0),
 		N:               llamastackclient.Int(0),
 		PresencePenalty: llamastackclient.Float(0),
-		PromptLogprobs:  llamastackclient.Int(0),
 		Seed:            llamastackclient.Int(0),
 		Stop: llamastackclient.CompletionNewParamsStopUnion{
 			OfString: llamastackclient.String("string"),

@@ -30,8 +30,6 @@ func TestVectorStoreNewWithOptionalParams(t *testing.T) {
 				OfBool: llamastackclient.Bool(true),
 			},
 		},
-		EmbeddingDimension: llamastackclient.Int(0),
-		EmbeddingModel:     llamastackclient.String("embedding_model"),
 		ExpiresAfter: map[string]llamastackclient.VectorStoreNewParamsExpiresAfterUnion{
 			"foo": {
 				OfBool: llamastackclient.Bool(true),
@@ -43,8 +41,7 @@ func TestVectorStoreNewWithOptionalParams(t *testing.T) {
 				OfBool: llamastackclient.Bool(true),
 			},
 		},
-		Name:       llamastackclient.String("name"),
-		ProviderID: llamastackclient.String("provider_id"),
+		Name: llamastackclient.String("name"),
 	})
 	if err != nil {
 		var apierr *llamastackclient.Error
