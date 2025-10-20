@@ -53,11 +53,11 @@ import (
 
 func main() {
 	client := llamastackclient.NewClient()
-	page, err := client.Chat.Completions.List(context.TODO(), llamastackclient.ChatCompletionListParams{})
+	models, err := client.Models.List(context.TODO())
 	if err != nil {
 		panic(err.Error())
 	}
-	fmt.Printf("%+v\n", page)
+	fmt.Printf("%+v\n", models)
 }
 
 ```
@@ -263,7 +263,7 @@ client := llamastackclient.NewClient(
 	option.WithHeader("X-Some-Header", "custom_header_info"),
 )
 
-client.Chat.Completions.List(context.TODO(), ...,
+client.Models.List(context.TODO(), ...,
 	// Override the header
 	option.WithHeader("X-Some-Header", "some_other_custom_header_info"),
 	// Add an undocumented field to the request body, using sjson syntax
@@ -281,33 +281,8 @@ This library provides some conveniences for working with paginated list endpoint
 
 You can use `.ListAutoPaging()` methods to iterate through items across all pages:
 
-```go
-iter := client.Chat.Completions.ListAutoPaging(context.TODO(), llamastackclient.ChatCompletionListParams{})
-// Automatically fetches more pages as needed.
-for iter.Next() {
-	chatCompletionListResponse := iter.Current()
-	fmt.Printf("%+v\n", chatCompletionListResponse)
-}
-if err := iter.Err(); err != nil {
-	panic(err.Error())
-}
-```
-
 Or you can use simple `.List()` methods to fetch a single page and receive a standard response object
 with additional helper methods like `.GetNextPage()`, e.g.:
-
-```go
-page, err := client.Chat.Completions.List(context.TODO(), llamastackclient.ChatCompletionListParams{})
-for page != nil {
-	for _, completion := range page.Data {
-		fmt.Printf("%+v\n", completion)
-	}
-	page, err = page.GetNextPage()
-}
-if err != nil {
-	panic(err.Error())
-}
-```
 
 ### Errors
 
@@ -319,14 +294,14 @@ When the API returns a non-success status code, we return an error with type
 To handle errors, we recommend that you use the `errors.As` pattern:
 
 ```go
-_, err := client.Chat.Completions.List(context.TODO(), llamastackclient.ChatCompletionListParams{})
+_, err := client.Models.List(context.TODO())
 if err != nil {
 	var apierr *llamastackclient.Error
 	if errors.As(err, &apierr) {
 		println(string(apierr.DumpRequest(true)))  // Prints the serialized HTTP request
 		println(string(apierr.DumpResponse(true))) // Prints the serialized HTTP response
 	}
-	panic(err.Error()) // GET "/v1/chat/completions": 400 Bad Request { ... }
+	panic(err.Error()) // GET "/v1/models": 400 Bad Request { ... }
 }
 ```
 
@@ -344,9 +319,8 @@ To set a per-retry timeout, use `option.WithRequestTimeout()`.
 // This sets the timeout for the request, including all the retries.
 ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 defer cancel()
-client.Chat.Completions.List(
+client.Models.List(
 	ctx,
-	llamastackclient.ChatCompletionListParams{},
 	// This sets the per-retry timeout
 	option.WithRequestTimeout(20*time.Second),
 )
@@ -401,11 +375,7 @@ client := llamastackclient.NewClient(
 )
 
 // Override per-request:
-client.Chat.Completions.List(
-	context.TODO(),
-	llamastackclient.ChatCompletionListParams{},
-	option.WithMaxRetries(5),
-)
+client.Models.List(context.TODO(), option.WithMaxRetries(5))
 ```
 
 ### Accessing raw response data (e.g. response headers)
@@ -416,15 +386,11 @@ you need to examine response headers, status codes, or other details.
 ```go
 // Create a variable to store the HTTP response
 var response *http.Response
-page, err := client.Chat.Completions.List(
-	context.TODO(),
-	llamastackclient.ChatCompletionListParams{},
-	option.WithResponseInto(&response),
-)
+models, err := client.Models.List(context.TODO(), option.WithResponseInto(&response))
 if err != nil {
 	// handle error
 }
-fmt.Printf("%+v\n", page)
+fmt.Printf("%+v\n", models)
 
 fmt.Printf("Status Code: %d\n", response.StatusCode)
 fmt.Printf("Headers: %+#v\n", response.Header)
