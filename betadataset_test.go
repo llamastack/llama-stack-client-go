@@ -13,7 +13,7 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 )
 
-func TestDatasetGet(t *testing.T) {
+func TestBetaDatasetGet(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -24,7 +24,7 @@ func TestDatasetGet(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Datasets.Get(context.TODO(), "dataset_id")
+	_, err := client.Beta.Datasets.Get(context.TODO(), "dataset_id")
 	if err != nil {
 		var apierr *llamastackclient.Error
 		if errors.As(err, &apierr) {
@@ -34,7 +34,7 @@ func TestDatasetGet(t *testing.T) {
 	}
 }
 
-func TestDatasetList(t *testing.T) {
+func TestBetaDatasetList(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -45,7 +45,7 @@ func TestDatasetList(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Datasets.List(context.TODO())
+	_, err := client.Beta.Datasets.List(context.TODO())
 	if err != nil {
 		var apierr *llamastackclient.Error
 		if errors.As(err, &apierr) {
@@ -55,7 +55,7 @@ func TestDatasetList(t *testing.T) {
 	}
 }
 
-func TestDatasetAppendrows(t *testing.T) {
+func TestBetaDatasetAppendrows(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -66,11 +66,11 @@ func TestDatasetAppendrows(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	err := client.Datasets.Appendrows(
+	err := client.Beta.Datasets.Appendrows(
 		context.TODO(),
 		"dataset_id",
-		llamastackclient.DatasetAppendrowsParams{
-			Rows: []map[string]llamastackclient.DatasetAppendrowsParamsRowUnion{{
+		llamastackclient.BetaDatasetAppendrowsParams{
+			Rows: []map[string]llamastackclient.BetaDatasetAppendrowsParamsRowUnion{{
 				"foo": {
 					OfBool: llamastackclient.Bool(true),
 				},
@@ -86,7 +86,7 @@ func TestDatasetAppendrows(t *testing.T) {
 	}
 }
 
-func TestDatasetIterrowsWithOptionalParams(t *testing.T) {
+func TestBetaDatasetIterrowsWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -97,10 +97,10 @@ func TestDatasetIterrowsWithOptionalParams(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Datasets.Iterrows(
+	_, err := client.Beta.Datasets.Iterrows(
 		context.TODO(),
 		"dataset_id",
-		llamastackclient.DatasetIterrowsParams{
+		llamastackclient.BetaDatasetIterrowsParams{
 			Limit:      llamastackclient.Int(0),
 			StartIndex: llamastackclient.Int(0),
 		},
@@ -114,7 +114,7 @@ func TestDatasetIterrowsWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestDatasetRegisterWithOptionalParams(t *testing.T) {
+func TestBetaDatasetRegisterWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -125,15 +125,15 @@ func TestDatasetRegisterWithOptionalParams(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Datasets.Register(context.TODO(), llamastackclient.DatasetRegisterParams{
-		Purpose: llamastackclient.DatasetRegisterParamsPurposePostTrainingMessages,
-		Source: llamastackclient.DatasetRegisterParamsSourceUnion{
-			OfUri: &llamastackclient.DatasetRegisterParamsSourceUri{
+	_, err := client.Beta.Datasets.Register(context.TODO(), llamastackclient.BetaDatasetRegisterParams{
+		Purpose: llamastackclient.BetaDatasetRegisterParamsPurposePostTrainingMessages,
+		Source: llamastackclient.BetaDatasetRegisterParamsSourceUnion{
+			OfUri: &llamastackclient.BetaDatasetRegisterParamsSourceUri{
 				Uri: "uri",
 			},
 		},
 		DatasetID: llamastackclient.String("dataset_id"),
-		Metadata: map[string]llamastackclient.DatasetRegisterParamsMetadataUnion{
+		Metadata: map[string]llamastackclient.BetaDatasetRegisterParamsMetadataUnion{
 			"foo": {
 				OfBool: llamastackclient.Bool(true),
 			},
@@ -148,7 +148,7 @@ func TestDatasetRegisterWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestDatasetUnregister(t *testing.T) {
+func TestBetaDatasetUnregister(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -159,7 +159,7 @@ func TestDatasetUnregister(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	err := client.Datasets.Unregister(context.TODO(), "dataset_id")
+	err := client.Beta.Datasets.Unregister(context.TODO(), "dataset_id")
 	if err != nil {
 		var apierr *llamastackclient.Error
 		if errors.As(err, &apierr) {
