@@ -23,9 +23,9 @@ func TestUsage(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	page, err := client.Chat.Completions.List(context.TODO(), llamastackclient.ChatCompletionListParams{})
+	models, err := client.Models.List(context.TODO())
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
-	t.Logf("%+v\n", page)
+	t.Logf("%+v\n", models)
 }
