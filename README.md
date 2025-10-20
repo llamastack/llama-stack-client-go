@@ -53,13 +53,11 @@ import (
 
 func main() {
 	client := llamastackclient.NewClient()
-	model, err := client.Models.Register(context.TODO(), llamastackclient.ModelRegisterParams{
-		ModelID: "model_id",
-	})
+	page, err := client.Chat.Completions.List(context.TODO(), llamastackclient.ChatCompletionListParams{})
 	if err != nil {
 		panic(err.Error())
 	}
-	fmt.Printf("%+v\n", model.Identifier)
+	fmt.Printf("%+v\n", page)
 }
 
 ```
