@@ -22,7 +22,6 @@ type Client struct {
 	ToolRuntime             ToolRuntimeService
 	Responses               ResponseService
 	Conversations           ConversationService
-	Datasets                DatasetService
 	Inspect                 InspectService
 	Embeddings              EmbeddingService
 	Chat                    ChatService
@@ -36,11 +35,11 @@ type Client struct {
 	Safety                  SafetyService
 	Shields                 ShieldService
 	SyntheticDataGeneration SyntheticDataGenerationService
-	Telemetry               TelemetryService
 	Scoring                 ScoringService
 	ScoringFunctions        ScoringFunctionService
 	Benchmarks              BenchmarkService
 	Files                   FileService
+	Beta                    BetaService
 	Alpha                   AlphaService
 }
 
@@ -71,7 +70,6 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.ToolRuntime = NewToolRuntimeService(opts...)
 	r.Responses = NewResponseService(opts...)
 	r.Conversations = NewConversationService(opts...)
-	r.Datasets = NewDatasetService(opts...)
 	r.Inspect = NewInspectService(opts...)
 	r.Embeddings = NewEmbeddingService(opts...)
 	r.Chat = NewChatService(opts...)
@@ -85,11 +83,11 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Safety = NewSafetyService(opts...)
 	r.Shields = NewShieldService(opts...)
 	r.SyntheticDataGeneration = NewSyntheticDataGenerationService(opts...)
-	r.Telemetry = NewTelemetryService(opts...)
 	r.Scoring = NewScoringService(opts...)
 	r.ScoringFunctions = NewScoringFunctionService(opts...)
 	r.Benchmarks = NewBenchmarkService(opts...)
 	r.Files = NewFileService(opts...)
+	r.Beta = NewBetaService(opts...)
 	r.Alpha = NewAlphaService(opts...)
 
 	return

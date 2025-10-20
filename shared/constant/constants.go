@@ -66,7 +66,6 @@ type McpCall string                            // Always "mcp_call"
 type McpListTools string                       // Always "mcp_list_tools"
 type MemoryRetrieval string                    // Always "memory_retrieval"
 type Message string                            // Always "message"
-type Metric string                             // Always "metric"
 type Model string                              // Always "model"
 type Number string                             // Always "number"
 type Object string                             // Always "object"
@@ -117,14 +116,11 @@ type Rrf string                                // Always "rrf"
 type ScoringFunction string                    // Always "scoring_function"
 type Shield string                             // Always "shield"
 type ShieldCall string                         // Always "shield_call"
-type SpanEnd string                            // Always "span_end"
-type SpanStart string                          // Always "span_start"
 type Static string                             // Always "static"
 type StepComplete string                       // Always "step_complete"
 type StepProgress string                       // Always "step_progress"
 type StepStart string                          // Always "step_start"
 type String string                             // Always "string"
-type StructuredLog string                      // Always "structured_log"
 type SummaryText string                        // Always "summary_text"
 type System string                             // Always "system"
 type Text string                               // Always "text"
@@ -139,7 +135,6 @@ type TurnAwaitingInput string                  // Always "turn_awaiting_input"
 type TurnComplete string                       // Always "turn_complete"
 type TurnStart string                          // Always "turn_start"
 type Union string                              // Always "union"
-type UnstructuredLog string                    // Always "unstructured_log"
 type Uri string                                // Always "uri"
 type URLCitation string                        // Always "url_citation"
 type User string                               // Always "user"
@@ -194,7 +189,6 @@ func (c McpCall) Default() McpCall                             { return "mcp_cal
 func (c McpListTools) Default() McpListTools                   { return "mcp_list_tools" }
 func (c MemoryRetrieval) Default() MemoryRetrieval             { return "memory_retrieval" }
 func (c Message) Default() Message                             { return "message" }
-func (c Metric) Default() Metric                               { return "metric" }
 func (c Model) Default() Model                                 { return "model" }
 func (c Number) Default() Number                               { return "number" }
 func (c Object) Default() Object                               { return "object" }
@@ -297,14 +291,11 @@ func (c Rrf) Default() Rrf                             { return "rrf" }
 func (c ScoringFunction) Default() ScoringFunction     { return "scoring_function" }
 func (c Shield) Default() Shield                       { return "shield" }
 func (c ShieldCall) Default() ShieldCall               { return "shield_call" }
-func (c SpanEnd) Default() SpanEnd                     { return "span_end" }
-func (c SpanStart) Default() SpanStart                 { return "span_start" }
 func (c Static) Default() Static                       { return "static" }
 func (c StepComplete) Default() StepComplete           { return "step_complete" }
 func (c StepProgress) Default() StepProgress           { return "step_progress" }
 func (c StepStart) Default() StepStart                 { return "step_start" }
 func (c String) Default() String                       { return "string" }
-func (c StructuredLog) Default() StructuredLog         { return "structured_log" }
 func (c SummaryText) Default() SummaryText             { return "summary_text" }
 func (c System) Default() System                       { return "system" }
 func (c Text) Default() Text                           { return "text" }
@@ -319,7 +310,6 @@ func (c TurnAwaitingInput) Default() TurnAwaitingInput { return "turn_awaiting_i
 func (c TurnComplete) Default() TurnComplete           { return "turn_complete" }
 func (c TurnStart) Default() TurnStart                 { return "turn_start" }
 func (c Union) Default() Union                         { return "union" }
-func (c UnstructuredLog) Default() UnstructuredLog     { return "unstructured_log" }
 func (c Uri) Default() Uri                             { return "uri" }
 func (c URLCitation) Default() URLCitation             { return "url_citation" }
 func (c User) Default() User                           { return "user" }
@@ -374,7 +364,6 @@ func (c McpCall) MarshalJSON() ([]byte, error)                            { retu
 func (c McpListTools) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
 func (c MemoryRetrieval) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
 func (c Message) MarshalJSON() ([]byte, error)                            { return marshalString(c) }
-func (c Metric) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
 func (c Model) MarshalJSON() ([]byte, error)                              { return marshalString(c) }
 func (c Number) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
 func (c Object) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
@@ -425,14 +414,11 @@ func (c Rrf) MarshalJSON() ([]byte, error)                                { retu
 func (c ScoringFunction) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
 func (c Shield) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
 func (c ShieldCall) MarshalJSON() ([]byte, error)                         { return marshalString(c) }
-func (c SpanEnd) MarshalJSON() ([]byte, error)                            { return marshalString(c) }
-func (c SpanStart) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
 func (c Static) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
 func (c StepComplete) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
 func (c StepProgress) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
 func (c StepStart) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
 func (c String) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
-func (c StructuredLog) MarshalJSON() ([]byte, error)                      { return marshalString(c) }
 func (c SummaryText) MarshalJSON() ([]byte, error)                        { return marshalString(c) }
 func (c System) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
 func (c Text) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
@@ -447,7 +433,6 @@ func (c TurnAwaitingInput) MarshalJSON() ([]byte, error)                  { retu
 func (c TurnComplete) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
 func (c TurnStart) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
 func (c Union) MarshalJSON() ([]byte, error)                              { return marshalString(c) }
-func (c UnstructuredLog) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
 func (c Uri) MarshalJSON() ([]byte, error)                                { return marshalString(c) }
 func (c URLCitation) MarshalJSON() ([]byte, error)                        { return marshalString(c) }
 func (c User) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
