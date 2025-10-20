@@ -23,9 +23,9 @@ func TestUsage(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	models, err := client.Models.List(context.TODO())
+	healthInfo, err := client.Inspect.Health(context.TODO())
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
-	t.Logf("%+v\n", models)
+	t.Logf("%+v\n", healthInfo.Status)
 }
