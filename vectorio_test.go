@@ -50,8 +50,8 @@ func TestVectorIoInsertWithOptionalParams(t *testing.T) {
 			Embedding:     []float64{0},
 			StoredChunkID: llamastackclient.String("stored_chunk_id"),
 		}},
-		VectorStoreID: "vector_store_id",
-		TtlSeconds:    llamastackclient.Int(0),
+		VectorDBID: "vector_db_id",
+		TtlSeconds: llamastackclient.Int(0),
 	})
 	if err != nil {
 		var apierr *llamastackclient.Error
@@ -77,7 +77,7 @@ func TestVectorIoQueryWithOptionalParams(t *testing.T) {
 		Query: llamastackclient.InterleavedContentUnionParam{
 			OfString: llamastackclient.String("string"),
 		},
-		VectorStoreID: "vector_store_id",
+		VectorDBID: "vector_db_id",
 		Params: map[string]llamastackclient.VectorIoQueryParamsParamUnion{
 			"foo": {
 				OfBool: llamastackclient.Bool(true),

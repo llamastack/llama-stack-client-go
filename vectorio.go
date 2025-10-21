@@ -215,7 +215,7 @@ type VectorIoInsertParams struct {
 	// not provided, it will be computed later.
 	Chunks []VectorIoInsertParamsChunk `json:"chunks,omitzero,required"`
 	// The identifier of the vector database to insert the chunks into.
-	VectorStoreID string `json:"vector_store_id,required"`
+	VectorDBID string `json:"vector_db_id,required"`
 	// The time to live of the chunks.
 	TtlSeconds param.Opt[int64] `json:"ttl_seconds,omitzero"`
 	paramObj
@@ -329,7 +329,7 @@ type VectorIoQueryParams struct {
 	// The query to search for.
 	Query InterleavedContentUnionParam `json:"query,omitzero,required"`
 	// The identifier of the vector database to query.
-	VectorStoreID string `json:"vector_store_id,required"`
+	VectorDBID string `json:"vector_db_id,required"`
 	// The parameters of the query.
 	Params map[string]VectorIoQueryParamsParamUnion `json:"params,omitzero"`
 	paramObj
