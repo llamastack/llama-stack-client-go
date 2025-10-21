@@ -38,7 +38,7 @@ func TestToolRuntimeRagToolInsert(t *testing.T) {
 			},
 			MimeType: llamastackclient.String("mime_type"),
 		}},
-		VectorStoreID: "vector_store_id",
+		VectorDBID: "vector_db_id",
 	})
 	if err != nil {
 		var apierr *llamastackclient.Error
@@ -64,7 +64,7 @@ func TestToolRuntimeRagToolQueryWithOptionalParams(t *testing.T) {
 		Content: llamastackclient.InterleavedContentUnionParam{
 			OfString: llamastackclient.String("string"),
 		},
-		VectorStoreIDs: []string{"string"},
+		VectorDBIDs: []string{"string"},
 		QueryConfig: llamastackclient.QueryConfigParam{
 			ChunkTemplate:      "chunk_template",
 			MaxChunks:          0,
