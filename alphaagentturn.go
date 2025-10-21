@@ -266,8 +266,8 @@ type TurnStepUnion struct {
 	// This field is from variant [MemoryRetrievalStep].
 	InsertedContext InterleavedContentUnion `json:"inserted_context"`
 	// This field is from variant [MemoryRetrievalStep].
-	VectorStoreIDs string `json:"vector_store_ids"`
-	JSON           struct {
+	VectorDBIDs string `json:"vector_db_ids"`
+	JSON        struct {
 		ModelResponse   respjson.Field
 		StepID          respjson.Field
 		StepType        respjson.Field
@@ -278,7 +278,7 @@ type TurnStepUnion struct {
 		ToolResponses   respjson.Field
 		Violation       respjson.Field
 		InsertedContext respjson.Field
-		VectorStoreIDs  respjson.Field
+		VectorDBIDs     respjson.Field
 		raw             string
 	} `json:"-"`
 }
@@ -1033,8 +1033,8 @@ type TurnResponseEventPayloadStepCompleteStepDetailsUnion struct {
 	// This field is from variant [MemoryRetrievalStep].
 	InsertedContext InterleavedContentUnion `json:"inserted_context"`
 	// This field is from variant [MemoryRetrievalStep].
-	VectorStoreIDs string `json:"vector_store_ids"`
-	JSON           struct {
+	VectorDBIDs string `json:"vector_db_ids"`
+	JSON        struct {
 		ModelResponse   respjson.Field
 		StepID          respjson.Field
 		StepType        respjson.Field
@@ -1045,7 +1045,7 @@ type TurnResponseEventPayloadStepCompleteStepDetailsUnion struct {
 		ToolResponses   respjson.Field
 		Violation       respjson.Field
 		InsertedContext respjson.Field
-		VectorStoreIDs  respjson.Field
+		VectorDBIDs     respjson.Field
 		raw             string
 	} `json:"-"`
 }

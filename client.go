@@ -35,12 +35,13 @@ type Client struct {
 	Safety                  SafetyService
 	Shields                 ShieldService
 	SyntheticDataGeneration SyntheticDataGenerationService
+	Telemetry               TelemetryService
 	Scoring                 ScoringService
 	ScoringFunctions        ScoringFunctionService
 	Benchmarks              BenchmarkService
 	Files                   FileService
-	Beta                    BetaService
 	Alpha                   AlphaService
+	Beta                    BetaService
 }
 
 // DefaultClientOptions read from the environment (LLAMA_STACK_CLIENT_API_KEY,
@@ -83,12 +84,13 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Safety = NewSafetyService(opts...)
 	r.Shields = NewShieldService(opts...)
 	r.SyntheticDataGeneration = NewSyntheticDataGenerationService(opts...)
+	r.Telemetry = NewTelemetryService(opts...)
 	r.Scoring = NewScoringService(opts...)
 	r.ScoringFunctions = NewScoringFunctionService(opts...)
 	r.Benchmarks = NewBenchmarkService(opts...)
 	r.Files = NewFileService(opts...)
-	r.Beta = NewBetaService(opts...)
 	r.Alpha = NewAlphaService(opts...)
+	r.Beta = NewBetaService(opts...)
 
 	return
 }
