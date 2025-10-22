@@ -49,7 +49,7 @@ func TestConversationItemNew(t *testing.T) {
 	}
 }
 
-func TestConversationItemList(t *testing.T) {
+func TestConversationItemListWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -64,9 +64,9 @@ func TestConversationItemList(t *testing.T) {
 		context.TODO(),
 		"conversation_id",
 		llamastackclient.ConversationItemListParams{
-			After:   map[string]interface{}{},
-			Include: []string{"code_interpreter_call.outputs"},
-			Limit:   map[string]interface{}{},
+			After:   llamastackclient.String("after"),
+			Include: []string{"web_search_call.action.sources"},
+			Limit:   llamastackclient.Int(0),
 			Order:   llamastackclient.ConversationItemListParamsOrderAsc,
 		},
 	)
