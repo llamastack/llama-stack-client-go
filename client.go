@@ -35,7 +35,6 @@ type Client struct {
 	Safety                  SafetyService
 	Shields                 ShieldService
 	SyntheticDataGeneration SyntheticDataGenerationService
-	Telemetry               TelemetryService
 	Scoring                 ScoringService
 	ScoringFunctions        ScoringFunctionService
 	Benchmarks              BenchmarkService
@@ -84,7 +83,6 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Safety = NewSafetyService(opts...)
 	r.Shields = NewShieldService(opts...)
 	r.SyntheticDataGeneration = NewSyntheticDataGenerationService(opts...)
-	r.Telemetry = NewTelemetryService(opts...)
 	r.Scoring = NewScoringService(opts...)
 	r.ScoringFunctions = NewScoringFunctionService(opts...)
 	r.Benchmarks = NewBenchmarkService(opts...)
