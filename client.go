@@ -37,7 +37,6 @@ type Client struct {
 	SyntheticDataGeneration SyntheticDataGenerationService
 	Scoring                 ScoringService
 	ScoringFunctions        ScoringFunctionService
-	Benchmarks              BenchmarkService
 	Files                   FileService
 	Alpha                   AlphaService
 	Beta                    BetaService
@@ -85,7 +84,6 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.SyntheticDataGeneration = NewSyntheticDataGenerationService(opts...)
 	r.Scoring = NewScoringService(opts...)
 	r.ScoringFunctions = NewScoringFunctionService(opts...)
-	r.Benchmarks = NewBenchmarkService(opts...)
 	r.Files = NewFileService(opts...)
 	r.Alpha = NewAlphaService(opts...)
 	r.Beta = NewBetaService(opts...)

@@ -16,6 +16,7 @@ type AlphaService struct {
 	Options      []option.RequestOption
 	Inference    AlphaInferenceService
 	PostTraining AlphaPostTrainingService
+	Benchmarks   AlphaBenchmarkService
 	Eval         AlphaEvalService
 	Agents       AlphaAgentService
 }
@@ -28,6 +29,7 @@ func NewAlphaService(opts ...option.RequestOption) (r AlphaService) {
 	r.Options = opts
 	r.Inference = NewAlphaInferenceService(opts...)
 	r.PostTraining = NewAlphaPostTrainingService(opts...)
+	r.Benchmarks = NewAlphaBenchmarkService(opts...)
 	r.Eval = NewAlphaEvalService(opts...)
 	r.Agents = NewAlphaAgentService(opts...)
 	return
