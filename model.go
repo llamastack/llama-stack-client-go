@@ -109,7 +109,7 @@ type Model struct {
 	Metadata map[string]ModelMetadataUnion `json:"metadata,required"`
 	// The type of model (LLM or embedding model)
 	//
-	// Any of "llm", "embedding".
+	// Any of "llm", "embedding", "rerank".
 	ModelType ModelModelType `json:"model_type,required"`
 	// ID of the provider that owns this resource
 	ProviderID string `json:"provider_id,required"`
@@ -194,6 +194,7 @@ type ModelModelType string
 const (
 	ModelModelTypeLlm       ModelModelType = "llm"
 	ModelModelTypeEmbedding ModelModelType = "embedding"
+	ModelModelTypeRerank    ModelModelType = "rerank"
 )
 
 type ModelRegisterParams struct {
@@ -207,7 +208,7 @@ type ModelRegisterParams struct {
 	Metadata map[string]ModelRegisterParamsMetadataUnion `json:"metadata,omitzero"`
 	// The type of model to register.
 	//
-	// Any of "llm", "embedding".
+	// Any of "llm", "embedding", "rerank".
 	ModelType ModelRegisterParamsModelType `json:"model_type,omitzero"`
 	paramObj
 }
@@ -257,4 +258,5 @@ type ModelRegisterParamsModelType string
 const (
 	ModelRegisterParamsModelTypeLlm       ModelRegisterParamsModelType = "llm"
 	ModelRegisterParamsModelTypeEmbedding ModelRegisterParamsModelType = "embedding"
+	ModelRegisterParamsModelTypeRerank    ModelRegisterParamsModelType = "rerank"
 )
