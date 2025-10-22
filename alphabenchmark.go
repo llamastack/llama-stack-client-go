@@ -18,27 +18,27 @@ import (
 	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
-// BenchmarkService contains methods and other services that help with interacting
-// with the llama-stack-client API.
+// AlphaBenchmarkService contains methods and other services that help with
+// interacting with the llama-stack-client API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
-// the [NewBenchmarkService] method instead.
-type BenchmarkService struct {
+// the [NewAlphaBenchmarkService] method instead.
+type AlphaBenchmarkService struct {
 	Options []option.RequestOption
 }
 
-// NewBenchmarkService generates a new service that applies the given options to
-// each request. These options are applied after the parent client's options (if
+// NewAlphaBenchmarkService generates a new service that applies the given options
+// to each request. These options are applied after the parent client's options (if
 // there is one), and before any request-specific options.
-func NewBenchmarkService(opts ...option.RequestOption) (r BenchmarkService) {
-	r = BenchmarkService{}
+func NewAlphaBenchmarkService(opts ...option.RequestOption) (r AlphaBenchmarkService) {
+	r = AlphaBenchmarkService{}
 	r.Options = opts
 	return
 }
 
 // Get a benchmark by its ID.
-func (r *BenchmarkService) Get(ctx context.Context, benchmarkID string, opts ...option.RequestOption) (res *Benchmark, err error) {
+func (r *AlphaBenchmarkService) Get(ctx context.Context, benchmarkID string, opts ...option.RequestOption) (res *Benchmark, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if benchmarkID == "" {
 		err = errors.New("missing required benchmark_id parameter")
@@ -50,7 +50,7 @@ func (r *BenchmarkService) Get(ctx context.Context, benchmarkID string, opts ...
 }
 
 // List all benchmarks.
-func (r *BenchmarkService) List(ctx context.Context, opts ...option.RequestOption) (res *[]Benchmark, err error) {
+func (r *AlphaBenchmarkService) List(ctx context.Context, opts ...option.RequestOption) (res *[]Benchmark, err error) {
 	var env ListBenchmarksResponse
 	opts = slices.Concat(r.Options, opts)
 	path := "v1alpha/eval/benchmarks"
@@ -63,7 +63,7 @@ func (r *BenchmarkService) List(ctx context.Context, opts ...option.RequestOptio
 }
 
 // Register a benchmark.
-func (r *BenchmarkService) Register(ctx context.Context, body BenchmarkRegisterParams, opts ...option.RequestOption) (err error) {
+func (r *AlphaBenchmarkService) Register(ctx context.Context, body AlphaBenchmarkRegisterParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
 	path := "v1alpha/eval/benchmarks"
@@ -172,7 +172,7 @@ func (r *ListBenchmarksResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type BenchmarkRegisterParams struct {
+type AlphaBenchmarkRegisterParams struct {
 	// The ID of the benchmark to register.
 	BenchmarkID string `json:"benchmark_id,required"`
 	// The ID of the dataset to use for the benchmark.
@@ -184,22 +184,22 @@ type BenchmarkRegisterParams struct {
 	// The ID of the provider to use for the benchmark.
 	ProviderID param.Opt[string] `json:"provider_id,omitzero"`
 	// The metadata to use for the benchmark.
-	Metadata map[string]BenchmarkRegisterParamsMetadataUnion `json:"metadata,omitzero"`
+	Metadata map[string]AlphaBenchmarkRegisterParamsMetadataUnion `json:"metadata,omitzero"`
 	paramObj
 }
 
-func (r BenchmarkRegisterParams) MarshalJSON() (data []byte, err error) {
-	type shadow BenchmarkRegisterParams
+func (r AlphaBenchmarkRegisterParams) MarshalJSON() (data []byte, err error) {
+	type shadow AlphaBenchmarkRegisterParams
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *BenchmarkRegisterParams) UnmarshalJSON(data []byte) error {
+func (r *AlphaBenchmarkRegisterParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
-type BenchmarkRegisterParamsMetadataUnion struct {
+type AlphaBenchmarkRegisterParamsMetadataUnion struct {
 	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
 	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
 	OfString   param.Opt[string]  `json:",omitzero,inline"`
@@ -207,14 +207,14 @@ type BenchmarkRegisterParamsMetadataUnion struct {
 	paramUnion
 }
 
-func (u BenchmarkRegisterParamsMetadataUnion) MarshalJSON() ([]byte, error) {
+func (u AlphaBenchmarkRegisterParamsMetadataUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
 }
-func (u *BenchmarkRegisterParamsMetadataUnion) UnmarshalJSON(data []byte) error {
+func (u *AlphaBenchmarkRegisterParamsMetadataUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
-func (u *BenchmarkRegisterParamsMetadataUnion) asAny() any {
+func (u *AlphaBenchmarkRegisterParamsMetadataUnion) asAny() any {
 	if !param.IsOmitted(u.OfBool) {
 		return &u.OfBool.Value
 	} else if !param.IsOmitted(u.OfFloat) {

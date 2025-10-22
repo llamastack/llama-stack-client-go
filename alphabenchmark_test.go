@@ -13,7 +13,7 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 )
 
-func TestBenchmarkGet(t *testing.T) {
+func TestAlphaBenchmarkGet(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -24,7 +24,7 @@ func TestBenchmarkGet(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Benchmarks.Get(context.TODO(), "benchmark_id")
+	_, err := client.Alpha.Benchmarks.Get(context.TODO(), "benchmark_id")
 	if err != nil {
 		var apierr *llamastackclient.Error
 		if errors.As(err, &apierr) {
@@ -34,7 +34,7 @@ func TestBenchmarkGet(t *testing.T) {
 	}
 }
 
-func TestBenchmarkList(t *testing.T) {
+func TestAlphaBenchmarkList(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -45,7 +45,7 @@ func TestBenchmarkList(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Benchmarks.List(context.TODO())
+	_, err := client.Alpha.Benchmarks.List(context.TODO())
 	if err != nil {
 		var apierr *llamastackclient.Error
 		if errors.As(err, &apierr) {
@@ -55,7 +55,7 @@ func TestBenchmarkList(t *testing.T) {
 	}
 }
 
-func TestBenchmarkRegisterWithOptionalParams(t *testing.T) {
+func TestAlphaBenchmarkRegisterWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -66,11 +66,11 @@ func TestBenchmarkRegisterWithOptionalParams(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	err := client.Benchmarks.Register(context.TODO(), llamastackclient.BenchmarkRegisterParams{
+	err := client.Alpha.Benchmarks.Register(context.TODO(), llamastackclient.AlphaBenchmarkRegisterParams{
 		BenchmarkID:      "benchmark_id",
 		DatasetID:        "dataset_id",
 		ScoringFunctions: []string{"string"},
-		Metadata: map[string]llamastackclient.BenchmarkRegisterParamsMetadataUnion{
+		Metadata: map[string]llamastackclient.AlphaBenchmarkRegisterParamsMetadataUnion{
 			"foo": {
 				OfBool: llamastackclient.Bool(true),
 			},
