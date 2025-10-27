@@ -55,7 +55,7 @@ type ToolRuntimeRagToolInsertParams struct {
 	// List of documents to index in the RAG system
 	Documents []DocumentParam `json:"documents,omitzero,required"`
 	// ID of the vector database to store the document embeddings
-	VectorDBID string `json:"vector_db_id,required"`
+	VectorStoreID string `json:"vector_store_id,required"`
 	paramObj
 }
 
@@ -71,7 +71,7 @@ type ToolRuntimeRagToolQueryParams struct {
 	// The query content to search for in the indexed documents
 	Content InterleavedContentUnionParam `json:"content,omitzero,required"`
 	// List of vector database IDs to search within
-	VectorDBIDs []string `json:"vector_db_ids,omitzero,required"`
+	VectorStoreIDs []string `json:"vector_store_ids,omitzero,required"`
 	// (Optional) Configuration parameters for the query operation
 	QueryConfig QueryConfigParam `json:"query_config,omitzero"`
 	paramObj
