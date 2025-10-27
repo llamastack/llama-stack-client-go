@@ -13,7 +13,7 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 )
 
-func TestModerationNew(t *testing.T) {
+func TestModerationNewWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -28,7 +28,7 @@ func TestModerationNew(t *testing.T) {
 		Input: llamastackclient.ModerationNewParamsInputUnion{
 			OfString: llamastackclient.String("string"),
 		},
-		Model: "model",
+		Model: llamastackclient.String("model"),
 	})
 	if err != nil {
 		var apierr *llamastackclient.Error
