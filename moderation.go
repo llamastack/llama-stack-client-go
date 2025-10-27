@@ -154,8 +154,8 @@ type ModerationNewParams struct {
 	// Input (or inputs) to classify. Can be a single string, an array of strings, or
 	// an array of multi-modal input objects similar to other models.
 	Input ModerationNewParamsInputUnion `json:"input,omitzero,required"`
-	// The content moderation model you would like to use.
-	Model string `json:"model,required"`
+	// (Optional) The content moderation model you would like to use.
+	Model param.Opt[string] `json:"model,omitzero"`
 	paramObj
 }
 

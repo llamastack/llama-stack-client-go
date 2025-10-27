@@ -131,7 +131,7 @@ type MemoryRetrievalStep struct {
 	// The ID of the turn.
 	TurnID string `json:"turn_id,required"`
 	// The IDs of the vector databases to retrieve context from.
-	VectorDBIDs string `json:"vector_db_ids,required"`
+	VectorStoreIDs string `json:"vector_store_ids,required"`
 	// The time the step completed.
 	CompletedAt time.Time `json:"completed_at" format:"date-time"`
 	// The time the step started.
@@ -142,7 +142,7 @@ type MemoryRetrievalStep struct {
 		StepID          respjson.Field
 		StepType        respjson.Field
 		TurnID          respjson.Field
-		VectorDBIDs     respjson.Field
+		VectorStoreIDs  respjson.Field
 		CompletedAt     respjson.Field
 		StartedAt       respjson.Field
 		ExtraFields     map[string]respjson.Field

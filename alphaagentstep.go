@@ -104,8 +104,8 @@ type AlphaAgentStepGetResponseStepUnion struct {
 	// This field is from variant [MemoryRetrievalStep].
 	InsertedContext InterleavedContentUnion `json:"inserted_context"`
 	// This field is from variant [MemoryRetrievalStep].
-	VectorDBIDs string `json:"vector_db_ids"`
-	JSON        struct {
+	VectorStoreIDs string `json:"vector_store_ids"`
+	JSON           struct {
 		ModelResponse   respjson.Field
 		StepID          respjson.Field
 		StepType        respjson.Field
@@ -116,7 +116,7 @@ type AlphaAgentStepGetResponseStepUnion struct {
 		ToolResponses   respjson.Field
 		Violation       respjson.Field
 		InsertedContext respjson.Field
-		VectorDBIDs     respjson.Field
+		VectorStoreIDs  respjson.Field
 		raw             string
 	} `json:"-"`
 }
