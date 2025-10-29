@@ -13,7 +13,7 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 )
 
-func TestRouteListWithOptionalParams(t *testing.T) {
+func TestRouteList(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -24,9 +24,7 @@ func TestRouteListWithOptionalParams(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Routes.List(context.TODO(), llamastackclient.RouteListParams{
-		APIFilter: llamastackclient.RouteListParamsAPIFilterV1,
-	})
+	_, err := client.Routes.List(context.TODO())
 	if err != nil {
 		var apierr *llamastackclient.Error
 		if errors.As(err, &apierr) {
