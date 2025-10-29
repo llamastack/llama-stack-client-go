@@ -3,13 +3,6 @@
 package llamastackclient
 
 import (
-	"context"
-	"errors"
-	"fmt"
-	"net/http"
-	"slices"
-
-	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
 	"github.com/llamastack/llama-stack-client-go/option"
 )
 
@@ -30,68 +23,4 @@ func NewAlphaEvalJobService(opts ...option.RequestOption) (r AlphaEvalJobService
 	r = AlphaEvalJobService{}
 	r.Options = opts
 	return
-}
-
-// Get the result of a job.
-func (r *AlphaEvalJobService) Get(ctx context.Context, jobID string, query AlphaEvalJobGetParams, opts ...option.RequestOption) (res *EvaluateResponse, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if query.BenchmarkID == "" {
-		err = errors.New("missing required benchmark_id parameter")
-		return
-	}
-	if jobID == "" {
-		err = errors.New("missing required job_id parameter")
-		return
-	}
-	path := fmt.Sprintf("v1alpha/eval/benchmarks/%s/jobs/%s/result", query.BenchmarkID, jobID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
-}
-
-// Cancel a job.
-func (r *AlphaEvalJobService) Cancel(ctx context.Context, jobID string, body AlphaEvalJobCancelParams, opts ...option.RequestOption) (err error) {
-	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
-	if body.BenchmarkID == "" {
-		err = errors.New("missing required benchmark_id parameter")
-		return
-	}
-	if jobID == "" {
-		err = errors.New("missing required job_id parameter")
-		return
-	}
-	path := fmt.Sprintf("v1alpha/eval/benchmarks/%s/jobs/%s", body.BenchmarkID, jobID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
-}
-
-// Get the status of a job.
-func (r *AlphaEvalJobService) Status(ctx context.Context, jobID string, query AlphaEvalJobStatusParams, opts ...option.RequestOption) (res *Job, err error) {
-	opts = slices.Concat(r.Options, opts)
-	if query.BenchmarkID == "" {
-		err = errors.New("missing required benchmark_id parameter")
-		return
-	}
-	if jobID == "" {
-		err = errors.New("missing required job_id parameter")
-		return
-	}
-	path := fmt.Sprintf("v1alpha/eval/benchmarks/%s/jobs/%s", query.BenchmarkID, jobID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
-}
-
-type AlphaEvalJobGetParams struct {
-	BenchmarkID string `path:"benchmark_id,required" json:"-"`
-	paramObj
-}
-
-type AlphaEvalJobCancelParams struct {
-	BenchmarkID string `path:"benchmark_id,required" json:"-"`
-	paramObj
-}
-
-type AlphaEvalJobStatusParams struct {
-	BenchmarkID string `path:"benchmark_id,required" json:"-"`
-	paramObj
 }
