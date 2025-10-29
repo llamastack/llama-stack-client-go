@@ -278,8 +278,7 @@ func (r *ResponseInputItemListResponseDataOpenAIResponseMessageContentUnion) Unm
 // ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemUnion
 // contains all possible properties and values from
 // [ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputText],
-// [ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputImage],
-// [ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputFile].
+// [ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputImage].
 //
 // Use the
 // [ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemUnion.AsAny]
@@ -290,33 +289,19 @@ type ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemUnion
 	// This field is from variant
 	// [ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputText].
 	Text string `json:"text"`
-	// Any of "input_text", "input_image", "input_file".
+	// Any of "input_text", "input_image".
 	Type string `json:"type"`
 	// This field is from variant
 	// [ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputImage].
 	Detail ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputImageDetail `json:"detail"`
-	FileID string                                                                                 `json:"file_id"`
 	// This field is from variant
 	// [ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputImage].
 	ImageURL string `json:"image_url"`
-	// This field is from variant
-	// [ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputFile].
-	FileData string `json:"file_data"`
-	// This field is from variant
-	// [ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputFile].
-	FileURL string `json:"file_url"`
-	// This field is from variant
-	// [ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputFile].
-	Filename string `json:"filename"`
 	JSON     struct {
 		Text     respjson.Field
 		Type     respjson.Field
 		Detail   respjson.Field
-		FileID   respjson.Field
 		ImageURL respjson.Field
-		FileData respjson.Field
-		FileURL  respjson.Field
-		Filename respjson.Field
 		raw      string
 	} `json:"-"`
 }
@@ -334,15 +319,12 @@ func (ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInpu
 }
 func (ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputImage) implResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemUnion() {
 }
-func (ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputFile) implResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemUnion() {
-}
 
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemUnion.AsAny().(type) {
 //	case llamastackclient.ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputText:
 //	case llamastackclient.ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputImage:
-//	case llamastackclient.ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputFile:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -352,8 +334,6 @@ func (u ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemUn
 		return u.AsInputText()
 	case "input_image":
 		return u.AsInputImage()
-	case "input_file":
-		return u.AsInputFile()
 	}
 	return nil
 }
@@ -364,11 +344,6 @@ func (u ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemUn
 }
 
 func (u ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemUnion) AsInputImage() (v ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputImage) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemUnion) AsInputFile() (v ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputFile) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -413,15 +388,12 @@ type ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInput
 	Detail ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputImageDetail `json:"detail,required"`
 	// Content type identifier, always "input_image"
 	Type constant.InputImage `json:"type,required"`
-	// (Optional) The ID of the file to be sent to the model.
-	FileID string `json:"file_id"`
 	// (Optional) URL of the image content
 	ImageURL string `json:"image_url"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Detail      respjson.Field
 		Type        respjson.Field
-		FileID      respjson.Field
 		ImageURL    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -444,38 +416,6 @@ const (
 	ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputImageDetailHigh ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputImageDetail = "high"
 	ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputImageDetailAuto ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputImageDetail = "auto"
 )
-
-// File content for input messages in OpenAI response format.
-type ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputFile struct {
-	// The type of the input item. Always `input_file`.
-	Type constant.InputFile `json:"type,required"`
-	// The data of the file to be sent to the model.
-	FileData string `json:"file_data"`
-	// (Optional) The ID of the file to be sent to the model.
-	FileID string `json:"file_id"`
-	// The URL of the file to be sent to the model.
-	FileURL string `json:"file_url"`
-	// The name of the file to be sent to the model.
-	Filename string `json:"filename"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Type        respjson.Field
-		FileData    respjson.Field
-		FileID      respjson.Field
-		FileURL     respjson.Field
-		Filename    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputFile) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemInputFile) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
 
 // Level of detail for image processing, can be "low", "high", or "auto"
 type ResponseInputItemListResponseDataOpenAIResponseMessageContentArrayItemDetail string
