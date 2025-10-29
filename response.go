@@ -135,8 +135,6 @@ type ResponseObject struct {
 	Instructions string `json:"instructions"`
 	// (Optional) ID of the previous response in a conversation
 	PreviousResponseID string `json:"previous_response_id"`
-	// (Optional) Reference to a prompt template and its variables.
-	Prompt ResponseObjectPrompt `json:"prompt"`
 	// (Optional) Sampling temperature used for generation
 	Temperature float64 `json:"temperature"`
 	// (Optional) An array of tools the model may call while generating a response.
@@ -160,7 +158,6 @@ type ResponseObject struct {
 		Error              respjson.Field
 		Instructions       respjson.Field
 		PreviousResponseID respjson.Field
-		Prompt             respjson.Field
 		Temperature        respjson.Field
 		Tools              respjson.Field
 		TopP               respjson.Field
@@ -394,8 +391,7 @@ func (r *ResponseObjectOutputMessageContentUnion) UnmarshalJSON(data []byte) err
 // ResponseObjectOutputMessageContentArrayItemUnion contains all possible
 // properties and values from
 // [ResponseObjectOutputMessageContentArrayItemInputText],
-// [ResponseObjectOutputMessageContentArrayItemInputImage],
-// [ResponseObjectOutputMessageContentArrayItemInputFile].
+// [ResponseObjectOutputMessageContentArrayItemInputImage].
 //
 // Use the [ResponseObjectOutputMessageContentArrayItemUnion.AsAny] method to
 // switch on the variant.
@@ -405,33 +401,19 @@ type ResponseObjectOutputMessageContentArrayItemUnion struct {
 	// This field is from variant
 	// [ResponseObjectOutputMessageContentArrayItemInputText].
 	Text string `json:"text"`
-	// Any of "input_text", "input_image", "input_file".
+	// Any of "input_text", "input_image".
 	Type string `json:"type"`
 	// This field is from variant
 	// [ResponseObjectOutputMessageContentArrayItemInputImage].
 	Detail ResponseObjectOutputMessageContentArrayItemInputImageDetail `json:"detail"`
-	FileID string                                                      `json:"file_id"`
 	// This field is from variant
 	// [ResponseObjectOutputMessageContentArrayItemInputImage].
 	ImageURL string `json:"image_url"`
-	// This field is from variant
-	// [ResponseObjectOutputMessageContentArrayItemInputFile].
-	FileData string `json:"file_data"`
-	// This field is from variant
-	// [ResponseObjectOutputMessageContentArrayItemInputFile].
-	FileURL string `json:"file_url"`
-	// This field is from variant
-	// [ResponseObjectOutputMessageContentArrayItemInputFile].
-	Filename string `json:"filename"`
 	JSON     struct {
 		Text     respjson.Field
 		Type     respjson.Field
 		Detail   respjson.Field
-		FileID   respjson.Field
 		ImageURL respjson.Field
-		FileData respjson.Field
-		FileURL  respjson.Field
-		Filename respjson.Field
 		raw      string
 	} `json:"-"`
 }
@@ -447,15 +429,12 @@ func (ResponseObjectOutputMessageContentArrayItemInputText) implResponseObjectOu
 }
 func (ResponseObjectOutputMessageContentArrayItemInputImage) implResponseObjectOutputMessageContentArrayItemUnion() {
 }
-func (ResponseObjectOutputMessageContentArrayItemInputFile) implResponseObjectOutputMessageContentArrayItemUnion() {
-}
 
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseObjectOutputMessageContentArrayItemUnion.AsAny().(type) {
 //	case llamastackclient.ResponseObjectOutputMessageContentArrayItemInputText:
 //	case llamastackclient.ResponseObjectOutputMessageContentArrayItemInputImage:
-//	case llamastackclient.ResponseObjectOutputMessageContentArrayItemInputFile:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -465,8 +444,6 @@ func (u ResponseObjectOutputMessageContentArrayItemUnion) AsAny() anyResponseObj
 		return u.AsInputText()
 	case "input_image":
 		return u.AsInputImage()
-	case "input_file":
-		return u.AsInputFile()
 	}
 	return nil
 }
@@ -477,11 +454,6 @@ func (u ResponseObjectOutputMessageContentArrayItemUnion) AsInputText() (v Respo
 }
 
 func (u ResponseObjectOutputMessageContentArrayItemUnion) AsInputImage() (v ResponseObjectOutputMessageContentArrayItemInputImage) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ResponseObjectOutputMessageContentArrayItemUnion) AsInputFile() (v ResponseObjectOutputMessageContentArrayItemInputFile) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -522,15 +494,12 @@ type ResponseObjectOutputMessageContentArrayItemInputImage struct {
 	Detail ResponseObjectOutputMessageContentArrayItemInputImageDetail `json:"detail,required"`
 	// Content type identifier, always "input_image"
 	Type constant.InputImage `json:"type,required"`
-	// (Optional) The ID of the file to be sent to the model.
-	FileID string `json:"file_id"`
 	// (Optional) URL of the image content
 	ImageURL string `json:"image_url"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Detail      respjson.Field
 		Type        respjson.Field
-		FileID      respjson.Field
 		ImageURL    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -551,36 +520,6 @@ const (
 	ResponseObjectOutputMessageContentArrayItemInputImageDetailHigh ResponseObjectOutputMessageContentArrayItemInputImageDetail = "high"
 	ResponseObjectOutputMessageContentArrayItemInputImageDetailAuto ResponseObjectOutputMessageContentArrayItemInputImageDetail = "auto"
 )
-
-// File content for input messages in OpenAI response format.
-type ResponseObjectOutputMessageContentArrayItemInputFile struct {
-	// The type of the input item. Always `input_file`.
-	Type constant.InputFile `json:"type,required"`
-	// The data of the file to be sent to the model.
-	FileData string `json:"file_data"`
-	// (Optional) The ID of the file to be sent to the model.
-	FileID string `json:"file_id"`
-	// The URL of the file to be sent to the model.
-	FileURL string `json:"file_url"`
-	// The name of the file to be sent to the model.
-	Filename string `json:"filename"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Type        respjson.Field
-		FileData    respjson.Field
-		FileID      respjson.Field
-		FileURL     respjson.Field
-		Filename    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ResponseObjectOutputMessageContentArrayItemInputFile) RawJSON() string { return r.JSON.raw }
-func (r *ResponseObjectOutputMessageContentArrayItemInputFile) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
 
 // Level of detail for image processing, can be "low", "high", or "auto"
 type ResponseObjectOutputMessageContentArrayItemDetail string
@@ -1075,222 +1014,6 @@ func (r ResponseObjectError) RawJSON() string { return r.JSON.raw }
 func (r *ResponseObjectError) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
-
-// (Optional) Reference to a prompt template and its variables.
-type ResponseObjectPrompt struct {
-	// Unique identifier of the prompt template
-	ID string `json:"id,required"`
-	// Dictionary of variable names to OpenAIResponseInputMessageContent structure for
-	// template substitution. The substitution values can either be strings, or other
-	// Response input types like images or files.
-	Variables map[string]ResponseObjectPromptVariableUnion `json:"variables"`
-	// Version number of the prompt to use (defaults to latest if not specified)
-	Version string `json:"version"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		Variables   respjson.Field
-		Version     respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ResponseObjectPrompt) RawJSON() string { return r.JSON.raw }
-func (r *ResponseObjectPrompt) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ResponseObjectPromptVariableUnion contains all possible properties and values
-// from [ResponseObjectPromptVariableInputText],
-// [ResponseObjectPromptVariableInputImage],
-// [ResponseObjectPromptVariableInputFile].
-//
-// Use the [ResponseObjectPromptVariableUnion.AsAny] method to switch on the
-// variant.
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-type ResponseObjectPromptVariableUnion struct {
-	// This field is from variant [ResponseObjectPromptVariableInputText].
-	Text string `json:"text"`
-	// Any of "input_text", "input_image", "input_file".
-	Type string `json:"type"`
-	// This field is from variant [ResponseObjectPromptVariableInputImage].
-	Detail ResponseObjectPromptVariableInputImageDetail `json:"detail"`
-	FileID string                                       `json:"file_id"`
-	// This field is from variant [ResponseObjectPromptVariableInputImage].
-	ImageURL string `json:"image_url"`
-	// This field is from variant [ResponseObjectPromptVariableInputFile].
-	FileData string `json:"file_data"`
-	// This field is from variant [ResponseObjectPromptVariableInputFile].
-	FileURL string `json:"file_url"`
-	// This field is from variant [ResponseObjectPromptVariableInputFile].
-	Filename string `json:"filename"`
-	JSON     struct {
-		Text     respjson.Field
-		Type     respjson.Field
-		Detail   respjson.Field
-		FileID   respjson.Field
-		ImageURL respjson.Field
-		FileData respjson.Field
-		FileURL  respjson.Field
-		Filename respjson.Field
-		raw      string
-	} `json:"-"`
-}
-
-// anyResponseObjectPromptVariable is implemented by each variant of
-// [ResponseObjectPromptVariableUnion] to add type safety for the return type of
-// [ResponseObjectPromptVariableUnion.AsAny]
-type anyResponseObjectPromptVariable interface {
-	implResponseObjectPromptVariableUnion()
-}
-
-func (ResponseObjectPromptVariableInputText) implResponseObjectPromptVariableUnion()  {}
-func (ResponseObjectPromptVariableInputImage) implResponseObjectPromptVariableUnion() {}
-func (ResponseObjectPromptVariableInputFile) implResponseObjectPromptVariableUnion()  {}
-
-// Use the following switch statement to find the correct variant
-//
-//	switch variant := ResponseObjectPromptVariableUnion.AsAny().(type) {
-//	case llamastackclient.ResponseObjectPromptVariableInputText:
-//	case llamastackclient.ResponseObjectPromptVariableInputImage:
-//	case llamastackclient.ResponseObjectPromptVariableInputFile:
-//	default:
-//	  fmt.Errorf("no variant present")
-//	}
-func (u ResponseObjectPromptVariableUnion) AsAny() anyResponseObjectPromptVariable {
-	switch u.Type {
-	case "input_text":
-		return u.AsInputText()
-	case "input_image":
-		return u.AsInputImage()
-	case "input_file":
-		return u.AsInputFile()
-	}
-	return nil
-}
-
-func (u ResponseObjectPromptVariableUnion) AsInputText() (v ResponseObjectPromptVariableInputText) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ResponseObjectPromptVariableUnion) AsInputImage() (v ResponseObjectPromptVariableInputImage) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ResponseObjectPromptVariableUnion) AsInputFile() (v ResponseObjectPromptVariableInputFile) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ResponseObjectPromptVariableUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ResponseObjectPromptVariableUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Text content for input messages in OpenAI response format.
-type ResponseObjectPromptVariableInputText struct {
-	// The text content of the input message
-	Text string `json:"text,required"`
-	// Content type identifier, always "input_text"
-	Type constant.InputText `json:"type,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Text        respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ResponseObjectPromptVariableInputText) RawJSON() string { return r.JSON.raw }
-func (r *ResponseObjectPromptVariableInputText) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Image content for input messages in OpenAI response format.
-type ResponseObjectPromptVariableInputImage struct {
-	// Level of detail for image processing, can be "low", "high", or "auto"
-	//
-	// Any of "low", "high", "auto".
-	Detail ResponseObjectPromptVariableInputImageDetail `json:"detail,required"`
-	// Content type identifier, always "input_image"
-	Type constant.InputImage `json:"type,required"`
-	// (Optional) The ID of the file to be sent to the model.
-	FileID string `json:"file_id"`
-	// (Optional) URL of the image content
-	ImageURL string `json:"image_url"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Detail      respjson.Field
-		Type        respjson.Field
-		FileID      respjson.Field
-		ImageURL    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ResponseObjectPromptVariableInputImage) RawJSON() string { return r.JSON.raw }
-func (r *ResponseObjectPromptVariableInputImage) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Level of detail for image processing, can be "low", "high", or "auto"
-type ResponseObjectPromptVariableInputImageDetail string
-
-const (
-	ResponseObjectPromptVariableInputImageDetailLow  ResponseObjectPromptVariableInputImageDetail = "low"
-	ResponseObjectPromptVariableInputImageDetailHigh ResponseObjectPromptVariableInputImageDetail = "high"
-	ResponseObjectPromptVariableInputImageDetailAuto ResponseObjectPromptVariableInputImageDetail = "auto"
-)
-
-// File content for input messages in OpenAI response format.
-type ResponseObjectPromptVariableInputFile struct {
-	// The type of the input item. Always `input_file`.
-	Type constant.InputFile `json:"type,required"`
-	// The data of the file to be sent to the model.
-	FileData string `json:"file_data"`
-	// (Optional) The ID of the file to be sent to the model.
-	FileID string `json:"file_id"`
-	// The URL of the file to be sent to the model.
-	FileURL string `json:"file_url"`
-	// The name of the file to be sent to the model.
-	Filename string `json:"filename"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Type        respjson.Field
-		FileData    respjson.Field
-		FileID      respjson.Field
-		FileURL     respjson.Field
-		Filename    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ResponseObjectPromptVariableInputFile) RawJSON() string { return r.JSON.raw }
-func (r *ResponseObjectPromptVariableInputFile) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Level of detail for image processing, can be "low", "high", or "auto"
-type ResponseObjectPromptVariableDetail string
-
-const (
-	ResponseObjectPromptVariableDetailLow  ResponseObjectPromptVariableDetail = "low"
-	ResponseObjectPromptVariableDetailHigh ResponseObjectPromptVariableDetail = "high"
-	ResponseObjectPromptVariableDetailAuto ResponseObjectPromptVariableDetail = "auto"
-)
 
 // ResponseObjectToolUnion contains all possible properties and values from
 // [ResponseObjectToolOpenAIResponseInputToolWebSearch],
@@ -2755,8 +2478,7 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMessageContentUnion) Unm
 // ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemUnion
 // contains all possible properties and values from
 // [ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputText],
-// [ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputImage],
-// [ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputFile].
+// [ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputImage].
 //
 // Use the
 // [ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemUnion.AsAny]
@@ -2767,33 +2489,19 @@ type ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemUnion
 	// This field is from variant
 	// [ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputText].
 	Text string `json:"text"`
-	// Any of "input_text", "input_image", "input_file".
+	// Any of "input_text", "input_image".
 	Type string `json:"type"`
 	// This field is from variant
 	// [ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputImage].
 	Detail ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputImageDetail `json:"detail"`
-	FileID string                                                                                 `json:"file_id"`
 	// This field is from variant
 	// [ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputImage].
 	ImageURL string `json:"image_url"`
-	// This field is from variant
-	// [ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputFile].
-	FileData string `json:"file_data"`
-	// This field is from variant
-	// [ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputFile].
-	FileURL string `json:"file_url"`
-	// This field is from variant
-	// [ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputFile].
-	Filename string `json:"filename"`
 	JSON     struct {
 		Text     respjson.Field
 		Type     respjson.Field
 		Detail   respjson.Field
-		FileID   respjson.Field
 		ImageURL respjson.Field
-		FileData respjson.Field
-		FileURL  respjson.Field
-		Filename respjson.Field
 		raw      string
 	} `json:"-"`
 }
@@ -2811,15 +2519,12 @@ func (ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInpu
 }
 func (ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputImage) implResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemUnion() {
 }
-func (ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputFile) implResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemUnion() {
-}
 
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemUnion.AsAny().(type) {
 //	case llamastackclient.ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputText:
 //	case llamastackclient.ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputImage:
-//	case llamastackclient.ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputFile:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -2829,8 +2534,6 @@ func (u ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemUn
 		return u.AsInputText()
 	case "input_image":
 		return u.AsInputImage()
-	case "input_file":
-		return u.AsInputFile()
 	}
 	return nil
 }
@@ -2841,11 +2544,6 @@ func (u ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemUn
 }
 
 func (u ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemUnion) AsInputImage() (v ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputImage) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemUnion) AsInputFile() (v ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputFile) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -2890,15 +2588,12 @@ type ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInput
 	Detail ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputImageDetail `json:"detail,required"`
 	// Content type identifier, always "input_image"
 	Type constant.InputImage `json:"type,required"`
-	// (Optional) The ID of the file to be sent to the model.
-	FileID string `json:"file_id"`
 	// (Optional) URL of the image content
 	ImageURL string `json:"image_url"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Detail      respjson.Field
 		Type        respjson.Field
-		FileID      respjson.Field
 		ImageURL    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -2921,38 +2616,6 @@ const (
 	ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputImageDetailHigh ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputImageDetail = "high"
 	ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputImageDetailAuto ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputImageDetail = "auto"
 )
-
-// File content for input messages in OpenAI response format.
-type ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputFile struct {
-	// The type of the input item. Always `input_file`.
-	Type constant.InputFile `json:"type,required"`
-	// The data of the file to be sent to the model.
-	FileData string `json:"file_data"`
-	// (Optional) The ID of the file to be sent to the model.
-	FileID string `json:"file_id"`
-	// The URL of the file to be sent to the model.
-	FileURL string `json:"file_url"`
-	// The name of the file to be sent to the model.
-	Filename string `json:"filename"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Type        respjson.Field
-		FileData    respjson.Field
-		FileID      respjson.Field
-		FileURL     respjson.Field
-		Filename    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputFile) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemInputFile) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
 
 // Level of detail for image processing, can be "low", "high", or "auto"
 type ResponseObjectStreamResponseOutputItemAddedItemMessageContentArrayItemDetail string
@@ -3605,8 +3268,7 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMessageContentUnion) Unma
 // ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemUnion
 // contains all possible properties and values from
 // [ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputText],
-// [ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputImage],
-// [ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputFile].
+// [ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputImage].
 //
 // Use the
 // [ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemUnion.AsAny]
@@ -3617,33 +3279,19 @@ type ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemUnion 
 	// This field is from variant
 	// [ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputText].
 	Text string `json:"text"`
-	// Any of "input_text", "input_image", "input_file".
+	// Any of "input_text", "input_image".
 	Type string `json:"type"`
 	// This field is from variant
 	// [ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputImage].
 	Detail ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputImageDetail `json:"detail"`
-	FileID string                                                                                `json:"file_id"`
 	// This field is from variant
 	// [ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputImage].
 	ImageURL string `json:"image_url"`
-	// This field is from variant
-	// [ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputFile].
-	FileData string `json:"file_data"`
-	// This field is from variant
-	// [ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputFile].
-	FileURL string `json:"file_url"`
-	// This field is from variant
-	// [ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputFile].
-	Filename string `json:"filename"`
 	JSON     struct {
 		Text     respjson.Field
 		Type     respjson.Field
 		Detail   respjson.Field
-		FileID   respjson.Field
 		ImageURL respjson.Field
-		FileData respjson.Field
-		FileURL  respjson.Field
-		Filename respjson.Field
 		raw      string
 	} `json:"-"`
 }
@@ -3661,15 +3309,12 @@ func (ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInput
 }
 func (ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputImage) implResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemUnion() {
 }
-func (ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputFile) implResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemUnion() {
-}
 
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemUnion.AsAny().(type) {
 //	case llamastackclient.ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputText:
 //	case llamastackclient.ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputImage:
-//	case llamastackclient.ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputFile:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -3679,8 +3324,6 @@ func (u ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemUni
 		return u.AsInputText()
 	case "input_image":
 		return u.AsInputImage()
-	case "input_file":
-		return u.AsInputFile()
 	}
 	return nil
 }
@@ -3691,11 +3334,6 @@ func (u ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemUni
 }
 
 func (u ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemUnion) AsInputImage() (v ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputImage) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemUnion) AsInputFile() (v ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputFile) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -3740,15 +3378,12 @@ type ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputI
 	Detail ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputImageDetail `json:"detail,required"`
 	// Content type identifier, always "input_image"
 	Type constant.InputImage `json:"type,required"`
-	// (Optional) The ID of the file to be sent to the model.
-	FileID string `json:"file_id"`
 	// (Optional) URL of the image content
 	ImageURL string `json:"image_url"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Detail      respjson.Field
 		Type        respjson.Field
-		FileID      respjson.Field
 		ImageURL    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -3771,38 +3406,6 @@ const (
 	ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputImageDetailHigh ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputImageDetail = "high"
 	ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputImageDetailAuto ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputImageDetail = "auto"
 )
-
-// File content for input messages in OpenAI response format.
-type ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputFile struct {
-	// The type of the input item. Always `input_file`.
-	Type constant.InputFile `json:"type,required"`
-	// The data of the file to be sent to the model.
-	FileData string `json:"file_data"`
-	// (Optional) The ID of the file to be sent to the model.
-	FileID string `json:"file_id"`
-	// The URL of the file to be sent to the model.
-	FileURL string `json:"file_url"`
-	// The name of the file to be sent to the model.
-	Filename string `json:"filename"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Type        respjson.Field
-		FileData    respjson.Field
-		FileID      respjson.Field
-		FileURL     respjson.Field
-		Filename    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputFile) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemInputFile) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
 
 // Level of detail for image processing, can be "low", "high", or "auto"
 type ResponseObjectStreamResponseOutputItemDoneItemMessageContentArrayItemDetail string
@@ -6260,8 +5863,6 @@ type ResponseListResponse struct {
 	Instructions string `json:"instructions"`
 	// (Optional) ID of the previous response in a conversation
 	PreviousResponseID string `json:"previous_response_id"`
-	// (Optional) Reference to a prompt template and its variables.
-	Prompt ResponseListResponsePrompt `json:"prompt"`
 	// (Optional) Sampling temperature used for generation
 	Temperature float64 `json:"temperature"`
 	// (Optional) An array of tools the model may call while generating a response.
@@ -6286,7 +5887,6 @@ type ResponseListResponse struct {
 		Error              respjson.Field
 		Instructions       respjson.Field
 		PreviousResponseID respjson.Field
-		Prompt             respjson.Field
 		Temperature        respjson.Field
 		Tools              respjson.Field
 		TopP               respjson.Field
@@ -6507,8 +6107,7 @@ func (r *ResponseListResponseInputOpenAIResponseMessageContentUnion) UnmarshalJS
 // ResponseListResponseInputOpenAIResponseMessageContentArrayItemUnion contains all
 // possible properties and values from
 // [ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputText],
-// [ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputImage],
-// [ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputFile].
+// [ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputImage].
 //
 // Use the
 // [ResponseListResponseInputOpenAIResponseMessageContentArrayItemUnion.AsAny]
@@ -6519,33 +6118,19 @@ type ResponseListResponseInputOpenAIResponseMessageContentArrayItemUnion struct 
 	// This field is from variant
 	// [ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputText].
 	Text string `json:"text"`
-	// Any of "input_text", "input_image", "input_file".
+	// Any of "input_text", "input_image".
 	Type string `json:"type"`
 	// This field is from variant
 	// [ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputImage].
 	Detail ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputImageDetail `json:"detail"`
-	FileID string                                                                         `json:"file_id"`
 	// This field is from variant
 	// [ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputImage].
 	ImageURL string `json:"image_url"`
-	// This field is from variant
-	// [ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputFile].
-	FileData string `json:"file_data"`
-	// This field is from variant
-	// [ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputFile].
-	FileURL string `json:"file_url"`
-	// This field is from variant
-	// [ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputFile].
-	Filename string `json:"filename"`
 	JSON     struct {
 		Text     respjson.Field
 		Type     respjson.Field
 		Detail   respjson.Field
-		FileID   respjson.Field
 		ImageURL respjson.Field
-		FileData respjson.Field
-		FileURL  respjson.Field
-		Filename respjson.Field
 		raw      string
 	} `json:"-"`
 }
@@ -6563,15 +6148,12 @@ func (ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputText) i
 }
 func (ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputImage) implResponseListResponseInputOpenAIResponseMessageContentArrayItemUnion() {
 }
-func (ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputFile) implResponseListResponseInputOpenAIResponseMessageContentArrayItemUnion() {
-}
 
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseListResponseInputOpenAIResponseMessageContentArrayItemUnion.AsAny().(type) {
 //	case llamastackclient.ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputText:
 //	case llamastackclient.ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputImage:
-//	case llamastackclient.ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputFile:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -6581,8 +6163,6 @@ func (u ResponseListResponseInputOpenAIResponseMessageContentArrayItemUnion) AsA
 		return u.AsInputText()
 	case "input_image":
 		return u.AsInputImage()
-	case "input_file":
-		return u.AsInputFile()
 	}
 	return nil
 }
@@ -6593,11 +6173,6 @@ func (u ResponseListResponseInputOpenAIResponseMessageContentArrayItemUnion) AsI
 }
 
 func (u ResponseListResponseInputOpenAIResponseMessageContentArrayItemUnion) AsInputImage() (v ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputImage) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ResponseListResponseInputOpenAIResponseMessageContentArrayItemUnion) AsInputFile() (v ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputFile) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -6642,15 +6217,12 @@ type ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputImage st
 	Detail ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputImageDetail `json:"detail,required"`
 	// Content type identifier, always "input_image"
 	Type constant.InputImage `json:"type,required"`
-	// (Optional) The ID of the file to be sent to the model.
-	FileID string `json:"file_id"`
 	// (Optional) URL of the image content
 	ImageURL string `json:"image_url"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Detail      respjson.Field
 		Type        respjson.Field
-		FileID      respjson.Field
 		ImageURL    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -6673,38 +6245,6 @@ const (
 	ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputImageDetailHigh ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputImageDetail = "high"
 	ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputImageDetailAuto ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputImageDetail = "auto"
 )
-
-// File content for input messages in OpenAI response format.
-type ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputFile struct {
-	// The type of the input item. Always `input_file`.
-	Type constant.InputFile `json:"type,required"`
-	// The data of the file to be sent to the model.
-	FileData string `json:"file_data"`
-	// (Optional) The ID of the file to be sent to the model.
-	FileID string `json:"file_id"`
-	// The URL of the file to be sent to the model.
-	FileURL string `json:"file_url"`
-	// The name of the file to be sent to the model.
-	Filename string `json:"filename"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Type        respjson.Field
-		FileData    respjson.Field
-		FileID      respjson.Field
-		FileURL     respjson.Field
-		Filename    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputFile) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ResponseListResponseInputOpenAIResponseMessageContentArrayItemInputFile) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
 
 // Level of detail for image processing, can be "low", "high", or "auto"
 type ResponseListResponseInputOpenAIResponseMessageContentArrayItemDetail string
@@ -7362,8 +6902,7 @@ func (r *ResponseListResponseOutputMessageContentUnion) UnmarshalJSON(data []byt
 // ResponseListResponseOutputMessageContentArrayItemUnion contains all possible
 // properties and values from
 // [ResponseListResponseOutputMessageContentArrayItemInputText],
-// [ResponseListResponseOutputMessageContentArrayItemInputImage],
-// [ResponseListResponseOutputMessageContentArrayItemInputFile].
+// [ResponseListResponseOutputMessageContentArrayItemInputImage].
 //
 // Use the [ResponseListResponseOutputMessageContentArrayItemUnion.AsAny] method to
 // switch on the variant.
@@ -7373,33 +6912,19 @@ type ResponseListResponseOutputMessageContentArrayItemUnion struct {
 	// This field is from variant
 	// [ResponseListResponseOutputMessageContentArrayItemInputText].
 	Text string `json:"text"`
-	// Any of "input_text", "input_image", "input_file".
+	// Any of "input_text", "input_image".
 	Type string `json:"type"`
 	// This field is from variant
 	// [ResponseListResponseOutputMessageContentArrayItemInputImage].
 	Detail ResponseListResponseOutputMessageContentArrayItemInputImageDetail `json:"detail"`
-	FileID string                                                            `json:"file_id"`
 	// This field is from variant
 	// [ResponseListResponseOutputMessageContentArrayItemInputImage].
 	ImageURL string `json:"image_url"`
-	// This field is from variant
-	// [ResponseListResponseOutputMessageContentArrayItemInputFile].
-	FileData string `json:"file_data"`
-	// This field is from variant
-	// [ResponseListResponseOutputMessageContentArrayItemInputFile].
-	FileURL string `json:"file_url"`
-	// This field is from variant
-	// [ResponseListResponseOutputMessageContentArrayItemInputFile].
-	Filename string `json:"filename"`
 	JSON     struct {
 		Text     respjson.Field
 		Type     respjson.Field
 		Detail   respjson.Field
-		FileID   respjson.Field
 		ImageURL respjson.Field
-		FileData respjson.Field
-		FileURL  respjson.Field
-		Filename respjson.Field
 		raw      string
 	} `json:"-"`
 }
@@ -7416,15 +6941,12 @@ func (ResponseListResponseOutputMessageContentArrayItemInputText) implResponseLi
 }
 func (ResponseListResponseOutputMessageContentArrayItemInputImage) implResponseListResponseOutputMessageContentArrayItemUnion() {
 }
-func (ResponseListResponseOutputMessageContentArrayItemInputFile) implResponseListResponseOutputMessageContentArrayItemUnion() {
-}
 
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseListResponseOutputMessageContentArrayItemUnion.AsAny().(type) {
 //	case llamastackclient.ResponseListResponseOutputMessageContentArrayItemInputText:
 //	case llamastackclient.ResponseListResponseOutputMessageContentArrayItemInputImage:
-//	case llamastackclient.ResponseListResponseOutputMessageContentArrayItemInputFile:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -7434,8 +6956,6 @@ func (u ResponseListResponseOutputMessageContentArrayItemUnion) AsAny() anyRespo
 		return u.AsInputText()
 	case "input_image":
 		return u.AsInputImage()
-	case "input_file":
-		return u.AsInputFile()
 	}
 	return nil
 }
@@ -7446,11 +6966,6 @@ func (u ResponseListResponseOutputMessageContentArrayItemUnion) AsInputText() (v
 }
 
 func (u ResponseListResponseOutputMessageContentArrayItemUnion) AsInputImage() (v ResponseListResponseOutputMessageContentArrayItemInputImage) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ResponseListResponseOutputMessageContentArrayItemUnion) AsInputFile() (v ResponseListResponseOutputMessageContentArrayItemInputFile) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -7493,15 +7008,12 @@ type ResponseListResponseOutputMessageContentArrayItemInputImage struct {
 	Detail ResponseListResponseOutputMessageContentArrayItemInputImageDetail `json:"detail,required"`
 	// Content type identifier, always "input_image"
 	Type constant.InputImage `json:"type,required"`
-	// (Optional) The ID of the file to be sent to the model.
-	FileID string `json:"file_id"`
 	// (Optional) URL of the image content
 	ImageURL string `json:"image_url"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Detail      respjson.Field
 		Type        respjson.Field
-		FileID      respjson.Field
 		ImageURL    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -7524,38 +7036,6 @@ const (
 	ResponseListResponseOutputMessageContentArrayItemInputImageDetailHigh ResponseListResponseOutputMessageContentArrayItemInputImageDetail = "high"
 	ResponseListResponseOutputMessageContentArrayItemInputImageDetailAuto ResponseListResponseOutputMessageContentArrayItemInputImageDetail = "auto"
 )
-
-// File content for input messages in OpenAI response format.
-type ResponseListResponseOutputMessageContentArrayItemInputFile struct {
-	// The type of the input item. Always `input_file`.
-	Type constant.InputFile `json:"type,required"`
-	// The data of the file to be sent to the model.
-	FileData string `json:"file_data"`
-	// (Optional) The ID of the file to be sent to the model.
-	FileID string `json:"file_id"`
-	// The URL of the file to be sent to the model.
-	FileURL string `json:"file_url"`
-	// The name of the file to be sent to the model.
-	Filename string `json:"filename"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Type        respjson.Field
-		FileData    respjson.Field
-		FileID      respjson.Field
-		FileURL     respjson.Field
-		Filename    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ResponseListResponseOutputMessageContentArrayItemInputFile) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ResponseListResponseOutputMessageContentArrayItemInputFile) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
 
 // Level of detail for image processing, can be "low", "high", or "auto"
 type ResponseListResponseOutputMessageContentArrayItemDetail string
@@ -8055,222 +7535,6 @@ func (r *ResponseListResponseError) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// (Optional) Reference to a prompt template and its variables.
-type ResponseListResponsePrompt struct {
-	// Unique identifier of the prompt template
-	ID string `json:"id,required"`
-	// Dictionary of variable names to OpenAIResponseInputMessageContent structure for
-	// template substitution. The substitution values can either be strings, or other
-	// Response input types like images or files.
-	Variables map[string]ResponseListResponsePromptVariableUnion `json:"variables"`
-	// Version number of the prompt to use (defaults to latest if not specified)
-	Version string `json:"version"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		Variables   respjson.Field
-		Version     respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ResponseListResponsePrompt) RawJSON() string { return r.JSON.raw }
-func (r *ResponseListResponsePrompt) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ResponseListResponsePromptVariableUnion contains all possible properties and
-// values from [ResponseListResponsePromptVariableInputText],
-// [ResponseListResponsePromptVariableInputImage],
-// [ResponseListResponsePromptVariableInputFile].
-//
-// Use the [ResponseListResponsePromptVariableUnion.AsAny] method to switch on the
-// variant.
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-type ResponseListResponsePromptVariableUnion struct {
-	// This field is from variant [ResponseListResponsePromptVariableInputText].
-	Text string `json:"text"`
-	// Any of "input_text", "input_image", "input_file".
-	Type string `json:"type"`
-	// This field is from variant [ResponseListResponsePromptVariableInputImage].
-	Detail ResponseListResponsePromptVariableInputImageDetail `json:"detail"`
-	FileID string                                             `json:"file_id"`
-	// This field is from variant [ResponseListResponsePromptVariableInputImage].
-	ImageURL string `json:"image_url"`
-	// This field is from variant [ResponseListResponsePromptVariableInputFile].
-	FileData string `json:"file_data"`
-	// This field is from variant [ResponseListResponsePromptVariableInputFile].
-	FileURL string `json:"file_url"`
-	// This field is from variant [ResponseListResponsePromptVariableInputFile].
-	Filename string `json:"filename"`
-	JSON     struct {
-		Text     respjson.Field
-		Type     respjson.Field
-		Detail   respjson.Field
-		FileID   respjson.Field
-		ImageURL respjson.Field
-		FileData respjson.Field
-		FileURL  respjson.Field
-		Filename respjson.Field
-		raw      string
-	} `json:"-"`
-}
-
-// anyResponseListResponsePromptVariable is implemented by each variant of
-// [ResponseListResponsePromptVariableUnion] to add type safety for the return type
-// of [ResponseListResponsePromptVariableUnion.AsAny]
-type anyResponseListResponsePromptVariable interface {
-	implResponseListResponsePromptVariableUnion()
-}
-
-func (ResponseListResponsePromptVariableInputText) implResponseListResponsePromptVariableUnion()  {}
-func (ResponseListResponsePromptVariableInputImage) implResponseListResponsePromptVariableUnion() {}
-func (ResponseListResponsePromptVariableInputFile) implResponseListResponsePromptVariableUnion()  {}
-
-// Use the following switch statement to find the correct variant
-//
-//	switch variant := ResponseListResponsePromptVariableUnion.AsAny().(type) {
-//	case llamastackclient.ResponseListResponsePromptVariableInputText:
-//	case llamastackclient.ResponseListResponsePromptVariableInputImage:
-//	case llamastackclient.ResponseListResponsePromptVariableInputFile:
-//	default:
-//	  fmt.Errorf("no variant present")
-//	}
-func (u ResponseListResponsePromptVariableUnion) AsAny() anyResponseListResponsePromptVariable {
-	switch u.Type {
-	case "input_text":
-		return u.AsInputText()
-	case "input_image":
-		return u.AsInputImage()
-	case "input_file":
-		return u.AsInputFile()
-	}
-	return nil
-}
-
-func (u ResponseListResponsePromptVariableUnion) AsInputText() (v ResponseListResponsePromptVariableInputText) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ResponseListResponsePromptVariableUnion) AsInputImage() (v ResponseListResponsePromptVariableInputImage) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ResponseListResponsePromptVariableUnion) AsInputFile() (v ResponseListResponsePromptVariableInputFile) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ResponseListResponsePromptVariableUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ResponseListResponsePromptVariableUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Text content for input messages in OpenAI response format.
-type ResponseListResponsePromptVariableInputText struct {
-	// The text content of the input message
-	Text string `json:"text,required"`
-	// Content type identifier, always "input_text"
-	Type constant.InputText `json:"type,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Text        respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ResponseListResponsePromptVariableInputText) RawJSON() string { return r.JSON.raw }
-func (r *ResponseListResponsePromptVariableInputText) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Image content for input messages in OpenAI response format.
-type ResponseListResponsePromptVariableInputImage struct {
-	// Level of detail for image processing, can be "low", "high", or "auto"
-	//
-	// Any of "low", "high", "auto".
-	Detail ResponseListResponsePromptVariableInputImageDetail `json:"detail,required"`
-	// Content type identifier, always "input_image"
-	Type constant.InputImage `json:"type,required"`
-	// (Optional) The ID of the file to be sent to the model.
-	FileID string `json:"file_id"`
-	// (Optional) URL of the image content
-	ImageURL string `json:"image_url"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Detail      respjson.Field
-		Type        respjson.Field
-		FileID      respjson.Field
-		ImageURL    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ResponseListResponsePromptVariableInputImage) RawJSON() string { return r.JSON.raw }
-func (r *ResponseListResponsePromptVariableInputImage) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Level of detail for image processing, can be "low", "high", or "auto"
-type ResponseListResponsePromptVariableInputImageDetail string
-
-const (
-	ResponseListResponsePromptVariableInputImageDetailLow  ResponseListResponsePromptVariableInputImageDetail = "low"
-	ResponseListResponsePromptVariableInputImageDetailHigh ResponseListResponsePromptVariableInputImageDetail = "high"
-	ResponseListResponsePromptVariableInputImageDetailAuto ResponseListResponsePromptVariableInputImageDetail = "auto"
-)
-
-// File content for input messages in OpenAI response format.
-type ResponseListResponsePromptVariableInputFile struct {
-	// The type of the input item. Always `input_file`.
-	Type constant.InputFile `json:"type,required"`
-	// The data of the file to be sent to the model.
-	FileData string `json:"file_data"`
-	// (Optional) The ID of the file to be sent to the model.
-	FileID string `json:"file_id"`
-	// The URL of the file to be sent to the model.
-	FileURL string `json:"file_url"`
-	// The name of the file to be sent to the model.
-	Filename string `json:"filename"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Type        respjson.Field
-		FileData    respjson.Field
-		FileID      respjson.Field
-		FileURL     respjson.Field
-		Filename    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ResponseListResponsePromptVariableInputFile) RawJSON() string { return r.JSON.raw }
-func (r *ResponseListResponsePromptVariableInputFile) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Level of detail for image processing, can be "low", "high", or "auto"
-type ResponseListResponsePromptVariableDetail string
-
-const (
-	ResponseListResponsePromptVariableDetailLow  ResponseListResponsePromptVariableDetail = "low"
-	ResponseListResponsePromptVariableDetailHigh ResponseListResponsePromptVariableDetail = "high"
-	ResponseListResponsePromptVariableDetailAuto ResponseListResponsePromptVariableDetail = "auto"
-)
-
 // ResponseListResponseToolUnion contains all possible properties and values from
 // [ResponseListResponseToolOpenAIResponseInputToolWebSearch],
 // [ResponseListResponseToolFileSearch], [ResponseListResponseToolFunction],
@@ -8769,8 +8033,6 @@ type ResponseNewParams struct {
 	Temperature        param.Opt[float64] `json:"temperature,omitzero"`
 	// (Optional) Additional fields to include in the response.
 	Include []string `json:"include,omitzero"`
-	// (Optional) Prompt object with ID, version, and variables.
-	Prompt ResponseNewParamsPrompt `json:"prompt,omitzero"`
 	// Text response configuration for OpenAI responses.
 	Text  ResponseNewParamsText        `json:"text,omitzero"`
 	Tools []ResponseNewParamsToolUnion `json:"tools,omitzero"`
@@ -9128,12 +8390,11 @@ func (u *ResponseNewParamsInputArrayItemOpenAIResponseMessageContentUnion) asAny
 type ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemUnion struct {
 	OfInputText  *ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemInputText  `json:",omitzero,inline"`
 	OfInputImage *ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemInputImage `json:",omitzero,inline"`
-	OfInputFile  *ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemInputFile  `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfInputText, u.OfInputImage, u.OfInputFile)
+	return param.MarshalUnion(u, u.OfInputText, u.OfInputImage)
 }
 func (u *ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -9144,8 +8405,6 @@ func (u *ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemUni
 		return u.OfInputText
 	} else if !param.IsOmitted(u.OfInputImage) {
 		return u.OfInputImage
-	} else if !param.IsOmitted(u.OfInputFile) {
-		return u.OfInputFile
 	}
 	return nil
 }
@@ -9175,47 +8434,11 @@ func (u ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemUnio
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemUnion) GetFileData() *string {
-	if vt := u.OfInputFile; vt != nil && vt.FileData.Valid() {
-		return &vt.FileData.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemUnion) GetFileURL() *string {
-	if vt := u.OfInputFile; vt != nil && vt.FileURL.Valid() {
-		return &vt.FileURL.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemUnion) GetFilename() *string {
-	if vt := u.OfInputFile; vt != nil && vt.Filename.Valid() {
-		return &vt.Filename.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
 func (u ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemUnion) GetType() *string {
 	if vt := u.OfInputText; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfInputImage; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfInputFile; vt != nil {
-		return (*string)(&vt.Type)
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemUnion) GetFileID() *string {
-	if vt := u.OfInputImage; vt != nil && vt.FileID.Valid() {
-		return &vt.FileID.Value
-	} else if vt := u.OfInputFile; vt != nil && vt.FileID.Valid() {
-		return &vt.FileID.Value
 	}
 	return nil
 }
@@ -9225,7 +8448,6 @@ func init() {
 		"type",
 		apijson.Discriminator[ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemInputText]("input_text"),
 		apijson.Discriminator[ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemInputImage]("input_image"),
-		apijson.Discriminator[ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemInputFile]("input_file"),
 	)
 }
 
@@ -9258,8 +8480,6 @@ type ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemInputIm
 	//
 	// Any of "low", "high", "auto".
 	Detail ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemInputImageDetail `json:"detail,omitzero,required"`
-	// (Optional) The ID of the file to be sent to the model.
-	FileID param.Opt[string] `json:"file_id,omitzero"`
 	// (Optional) URL of the image content
 	ImageURL param.Opt[string] `json:"image_url,omitzero"`
 	// Content type identifier, always "input_image"
@@ -9285,33 +8505,6 @@ const (
 	ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemInputImageDetailHigh ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemInputImageDetail = "high"
 	ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemInputImageDetailAuto ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemInputImageDetail = "auto"
 )
-
-// File content for input messages in OpenAI response format.
-//
-// The property Type is required.
-type ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemInputFile struct {
-	// The data of the file to be sent to the model.
-	FileData param.Opt[string] `json:"file_data,omitzero"`
-	// (Optional) The ID of the file to be sent to the model.
-	FileID param.Opt[string] `json:"file_id,omitzero"`
-	// The URL of the file to be sent to the model.
-	FileURL param.Opt[string] `json:"file_url,omitzero"`
-	// The name of the file to be sent to the model.
-	Filename param.Opt[string] `json:"filename,omitzero"`
-	// The type of the input item. Always `input_file`.
-	//
-	// This field can be elided, and will marshal its zero value as "input_file".
-	Type constant.InputFile `json:"type,required"`
-	paramObj
-}
-
-func (r ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemInputFile) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemInputFile
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ResponseNewParamsInputArrayItemOpenAIResponseMessageContentArrayItemInputFile) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
 
 type ResponseNewParamsInputArrayItemOpenAIResponseMessageRole string
 
@@ -9629,220 +8822,6 @@ func (r ResponseNewParamsInputArrayItemOpenAIResponseMcpApprovalResponse) Marsha
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *ResponseNewParamsInputArrayItemOpenAIResponseMcpApprovalResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// (Optional) Prompt object with ID, version, and variables.
-//
-// The property ID is required.
-type ResponseNewParamsPrompt struct {
-	// Unique identifier of the prompt template
-	ID string `json:"id,required"`
-	// Version number of the prompt to use (defaults to latest if not specified)
-	Version param.Opt[string] `json:"version,omitzero"`
-	// Dictionary of variable names to OpenAIResponseInputMessageContent structure for
-	// template substitution. The substitution values can either be strings, or other
-	// Response input types like images or files.
-	Variables map[string]ResponseNewParamsPromptVariableUnion `json:"variables,omitzero"`
-	paramObj
-}
-
-func (r ResponseNewParamsPrompt) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsPrompt
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ResponseNewParamsPrompt) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type ResponseNewParamsPromptVariableUnion struct {
-	OfInputText  *ResponseNewParamsPromptVariableInputText  `json:",omitzero,inline"`
-	OfInputImage *ResponseNewParamsPromptVariableInputImage `json:",omitzero,inline"`
-	OfInputFile  *ResponseNewParamsPromptVariableInputFile  `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u ResponseNewParamsPromptVariableUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfInputText, u.OfInputImage, u.OfInputFile)
-}
-func (u *ResponseNewParamsPromptVariableUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *ResponseNewParamsPromptVariableUnion) asAny() any {
-	if !param.IsOmitted(u.OfInputText) {
-		return u.OfInputText
-	} else if !param.IsOmitted(u.OfInputImage) {
-		return u.OfInputImage
-	} else if !param.IsOmitted(u.OfInputFile) {
-		return u.OfInputFile
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsPromptVariableUnion) GetText() *string {
-	if vt := u.OfInputText; vt != nil {
-		return &vt.Text
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsPromptVariableUnion) GetDetail() *string {
-	if vt := u.OfInputImage; vt != nil {
-		return (*string)(&vt.Detail)
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsPromptVariableUnion) GetImageURL() *string {
-	if vt := u.OfInputImage; vt != nil && vt.ImageURL.Valid() {
-		return &vt.ImageURL.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsPromptVariableUnion) GetFileData() *string {
-	if vt := u.OfInputFile; vt != nil && vt.FileData.Valid() {
-		return &vt.FileData.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsPromptVariableUnion) GetFileURL() *string {
-	if vt := u.OfInputFile; vt != nil && vt.FileURL.Valid() {
-		return &vt.FileURL.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsPromptVariableUnion) GetFilename() *string {
-	if vt := u.OfInputFile; vt != nil && vt.Filename.Valid() {
-		return &vt.Filename.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsPromptVariableUnion) GetType() *string {
-	if vt := u.OfInputText; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfInputImage; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfInputFile; vt != nil {
-		return (*string)(&vt.Type)
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsPromptVariableUnion) GetFileID() *string {
-	if vt := u.OfInputImage; vt != nil && vt.FileID.Valid() {
-		return &vt.FileID.Value
-	} else if vt := u.OfInputFile; vt != nil && vt.FileID.Valid() {
-		return &vt.FileID.Value
-	}
-	return nil
-}
-
-func init() {
-	apijson.RegisterUnion[ResponseNewParamsPromptVariableUnion](
-		"type",
-		apijson.Discriminator[ResponseNewParamsPromptVariableInputText]("input_text"),
-		apijson.Discriminator[ResponseNewParamsPromptVariableInputImage]("input_image"),
-		apijson.Discriminator[ResponseNewParamsPromptVariableInputFile]("input_file"),
-	)
-}
-
-// Text content for input messages in OpenAI response format.
-//
-// The properties Text, Type are required.
-type ResponseNewParamsPromptVariableInputText struct {
-	// The text content of the input message
-	Text string `json:"text,required"`
-	// Content type identifier, always "input_text"
-	//
-	// This field can be elided, and will marshal its zero value as "input_text".
-	Type constant.InputText `json:"type,required"`
-	paramObj
-}
-
-func (r ResponseNewParamsPromptVariableInputText) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsPromptVariableInputText
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ResponseNewParamsPromptVariableInputText) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Image content for input messages in OpenAI response format.
-//
-// The properties Detail, Type are required.
-type ResponseNewParamsPromptVariableInputImage struct {
-	// Level of detail for image processing, can be "low", "high", or "auto"
-	//
-	// Any of "low", "high", "auto".
-	Detail ResponseNewParamsPromptVariableInputImageDetail `json:"detail,omitzero,required"`
-	// (Optional) The ID of the file to be sent to the model.
-	FileID param.Opt[string] `json:"file_id,omitzero"`
-	// (Optional) URL of the image content
-	ImageURL param.Opt[string] `json:"image_url,omitzero"`
-	// Content type identifier, always "input_image"
-	//
-	// This field can be elided, and will marshal its zero value as "input_image".
-	Type constant.InputImage `json:"type,required"`
-	paramObj
-}
-
-func (r ResponseNewParamsPromptVariableInputImage) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsPromptVariableInputImage
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ResponseNewParamsPromptVariableInputImage) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Level of detail for image processing, can be "low", "high", or "auto"
-type ResponseNewParamsPromptVariableInputImageDetail string
-
-const (
-	ResponseNewParamsPromptVariableInputImageDetailLow  ResponseNewParamsPromptVariableInputImageDetail = "low"
-	ResponseNewParamsPromptVariableInputImageDetailHigh ResponseNewParamsPromptVariableInputImageDetail = "high"
-	ResponseNewParamsPromptVariableInputImageDetailAuto ResponseNewParamsPromptVariableInputImageDetail = "auto"
-)
-
-// File content for input messages in OpenAI response format.
-//
-// The property Type is required.
-type ResponseNewParamsPromptVariableInputFile struct {
-	// The data of the file to be sent to the model.
-	FileData param.Opt[string] `json:"file_data,omitzero"`
-	// (Optional) The ID of the file to be sent to the model.
-	FileID param.Opt[string] `json:"file_id,omitzero"`
-	// The URL of the file to be sent to the model.
-	FileURL param.Opt[string] `json:"file_url,omitzero"`
-	// The name of the file to be sent to the model.
-	Filename param.Opt[string] `json:"filename,omitzero"`
-	// The type of the input item. Always `input_file`.
-	//
-	// This field can be elided, and will marshal its zero value as "input_file".
-	Type constant.InputFile `json:"type,required"`
-	paramObj
-}
-
-func (r ResponseNewParamsPromptVariableInputFile) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsPromptVariableInputFile
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ResponseNewParamsPromptVariableInputFile) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

@@ -34,19 +34,8 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 		Instructions:       llamastackclient.String("instructions"),
 		MaxInferIters:      llamastackclient.Int(0),
 		PreviousResponseID: llamastackclient.String("previous_response_id"),
-		Prompt: llamastackclient.ResponseNewParamsPrompt{
-			ID: "id",
-			Variables: map[string]llamastackclient.ResponseNewParamsPromptVariableUnion{
-				"foo": {
-					OfInputText: &llamastackclient.ResponseNewParamsPromptVariableInputText{
-						Text: "text",
-					},
-				},
-			},
-			Version: llamastackclient.String("version"),
-		},
-		Store:       llamastackclient.Bool(true),
-		Temperature: llamastackclient.Float(0),
+		Store:              llamastackclient.Bool(true),
+		Temperature:        llamastackclient.Float(0),
 		Text: llamastackclient.ResponseNewParamsText{
 			Format: llamastackclient.ResponseNewParamsTextFormat{
 				Type:        llamastackclient.ResponseNewParamsTextFormatTypeText,

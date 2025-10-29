@@ -463,12 +463,11 @@ func (u *ConversationNewParamsItemMessageContentUnion) asAny() any {
 type ConversationNewParamsItemMessageContentArrayItemUnion struct {
 	OfInputText  *ConversationNewParamsItemMessageContentArrayItemInputText  `json:",omitzero,inline"`
 	OfInputImage *ConversationNewParamsItemMessageContentArrayItemInputImage `json:",omitzero,inline"`
-	OfInputFile  *ConversationNewParamsItemMessageContentArrayItemInputFile  `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u ConversationNewParamsItemMessageContentArrayItemUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfInputText, u.OfInputImage, u.OfInputFile)
+	return param.MarshalUnion(u, u.OfInputText, u.OfInputImage)
 }
 func (u *ConversationNewParamsItemMessageContentArrayItemUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -479,8 +478,6 @@ func (u *ConversationNewParamsItemMessageContentArrayItemUnion) asAny() any {
 		return u.OfInputText
 	} else if !param.IsOmitted(u.OfInputImage) {
 		return u.OfInputImage
-	} else if !param.IsOmitted(u.OfInputFile) {
-		return u.OfInputFile
 	}
 	return nil
 }
@@ -510,47 +507,11 @@ func (u ConversationNewParamsItemMessageContentArrayItemUnion) GetImageURL() *st
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ConversationNewParamsItemMessageContentArrayItemUnion) GetFileData() *string {
-	if vt := u.OfInputFile; vt != nil && vt.FileData.Valid() {
-		return &vt.FileData.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ConversationNewParamsItemMessageContentArrayItemUnion) GetFileURL() *string {
-	if vt := u.OfInputFile; vt != nil && vt.FileURL.Valid() {
-		return &vt.FileURL.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ConversationNewParamsItemMessageContentArrayItemUnion) GetFilename() *string {
-	if vt := u.OfInputFile; vt != nil && vt.Filename.Valid() {
-		return &vt.Filename.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
 func (u ConversationNewParamsItemMessageContentArrayItemUnion) GetType() *string {
 	if vt := u.OfInputText; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfInputImage; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfInputFile; vt != nil {
-		return (*string)(&vt.Type)
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ConversationNewParamsItemMessageContentArrayItemUnion) GetFileID() *string {
-	if vt := u.OfInputImage; vt != nil && vt.FileID.Valid() {
-		return &vt.FileID.Value
-	} else if vt := u.OfInputFile; vt != nil && vt.FileID.Valid() {
-		return &vt.FileID.Value
 	}
 	return nil
 }
@@ -560,7 +521,6 @@ func init() {
 		"type",
 		apijson.Discriminator[ConversationNewParamsItemMessageContentArrayItemInputText]("input_text"),
 		apijson.Discriminator[ConversationNewParamsItemMessageContentArrayItemInputImage]("input_image"),
-		apijson.Discriminator[ConversationNewParamsItemMessageContentArrayItemInputFile]("input_file"),
 	)
 }
 
@@ -593,8 +553,6 @@ type ConversationNewParamsItemMessageContentArrayItemInputImage struct {
 	//
 	// Any of "low", "high", "auto".
 	Detail ConversationNewParamsItemMessageContentArrayItemInputImageDetail `json:"detail,omitzero,required"`
-	// (Optional) The ID of the file to be sent to the model.
-	FileID param.Opt[string] `json:"file_id,omitzero"`
 	// (Optional) URL of the image content
 	ImageURL param.Opt[string] `json:"image_url,omitzero"`
 	// Content type identifier, always "input_image"
@@ -620,33 +578,6 @@ const (
 	ConversationNewParamsItemMessageContentArrayItemInputImageDetailHigh ConversationNewParamsItemMessageContentArrayItemInputImageDetail = "high"
 	ConversationNewParamsItemMessageContentArrayItemInputImageDetailAuto ConversationNewParamsItemMessageContentArrayItemInputImageDetail = "auto"
 )
-
-// File content for input messages in OpenAI response format.
-//
-// The property Type is required.
-type ConversationNewParamsItemMessageContentArrayItemInputFile struct {
-	// The data of the file to be sent to the model.
-	FileData param.Opt[string] `json:"file_data,omitzero"`
-	// (Optional) The ID of the file to be sent to the model.
-	FileID param.Opt[string] `json:"file_id,omitzero"`
-	// The URL of the file to be sent to the model.
-	FileURL param.Opt[string] `json:"file_url,omitzero"`
-	// The name of the file to be sent to the model.
-	Filename param.Opt[string] `json:"filename,omitzero"`
-	// The type of the input item. Always `input_file`.
-	//
-	// This field can be elided, and will marshal its zero value as "input_file".
-	Type constant.InputFile `json:"type,required"`
-	paramObj
-}
-
-func (r ConversationNewParamsItemMessageContentArrayItemInputFile) MarshalJSON() (data []byte, err error) {
-	type shadow ConversationNewParamsItemMessageContentArrayItemInputFile
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ConversationNewParamsItemMessageContentArrayItemInputFile) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
 
 type ConversationNewParamsItemMessageRole string
 
