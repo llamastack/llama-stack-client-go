@@ -21,6 +21,7 @@ type Client struct {
 	Tools                   ToolService
 	ToolRuntime             ToolRuntimeService
 	Responses               ResponseService
+	Prompts                 PromptService
 	Conversations           ConversationService
 	Inspect                 InspectService
 	Embeddings              EmbeddingService
@@ -68,6 +69,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Tools = NewToolService(opts...)
 	r.ToolRuntime = NewToolRuntimeService(opts...)
 	r.Responses = NewResponseService(opts...)
+	r.Prompts = NewPromptService(opts...)
 	r.Conversations = NewConversationService(opts...)
 	r.Inspect = NewInspectService(opts...)
 	r.Embeddings = NewEmbeddingService(opts...)
