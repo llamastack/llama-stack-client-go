@@ -50,6 +50,7 @@ type Greedy string                             // Always "greedy"
 type Image string                              // Always "image"
 type ImageURL string                           // Always "image_url"
 type Inference string                          // Always "inference"
+type InputFile string                          // Always "input_file"
 type InputImage string                         // Always "input_image"
 type InputText string                          // Always "input_text"
 type Json string                               // Always "json"
@@ -173,6 +174,7 @@ func (c Greedy) Default() Greedy                               { return "greedy"
 func (c Image) Default() Image                                 { return "image" }
 func (c ImageURL) Default() ImageURL                           { return "image_url" }
 func (c Inference) Default() Inference                         { return "inference" }
+func (c InputFile) Default() InputFile                         { return "input_file" }
 func (c InputImage) Default() InputImage                       { return "input_image" }
 func (c InputText) Default() InputText                         { return "input_text" }
 func (c Json) Default() Json                                   { return "json" }
@@ -348,6 +350,7 @@ func (c Greedy) MarshalJSON() ([]byte, error)                             { retu
 func (c Image) MarshalJSON() ([]byte, error)                              { return marshalString(c) }
 func (c ImageURL) MarshalJSON() ([]byte, error)                           { return marshalString(c) }
 func (c Inference) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
+func (c InputFile) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
 func (c InputImage) MarshalJSON() ([]byte, error)                         { return marshalString(c) }
 func (c InputText) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
 func (c Json) MarshalJSON() ([]byte, error)                               { return marshalString(c) }

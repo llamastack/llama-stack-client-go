@@ -26,6 +26,7 @@ func TestVectorIoInsertWithOptionalParams(t *testing.T) {
 	)
 	err := client.VectorIo.Insert(context.TODO(), llamastackclient.VectorIoInsertParams{
 		Chunks: []llamastackclient.VectorIoInsertParamsChunk{{
+			ChunkID: "chunk_id",
 			Content: llamastackclient.InterleavedContentUnionParam{
 				OfString: llamastackclient.String("string"),
 			},
@@ -47,8 +48,7 @@ func TestVectorIoInsertWithOptionalParams(t *testing.T) {
 				Source:                  llamastackclient.String("source"),
 				UpdatedTimestamp:        llamastackclient.Int(0),
 			},
-			Embedding:     []float64{0},
-			StoredChunkID: llamastackclient.String("stored_chunk_id"),
+			Embedding: []float64{0},
 		}},
 		VectorStoreID: "vector_store_id",
 		TtlSeconds:    llamastackclient.Int(0),

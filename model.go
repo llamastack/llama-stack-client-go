@@ -51,11 +51,11 @@ func (r *ModelService) Get(ctx context.Context, modelID string, opts ...option.R
 	return
 }
 
-// List all models.
-func (r *ModelService) List(ctx context.Context, opts ...option.RequestOption) (res *[]Model, err error) {
+// List models using the OpenAI API.
+func (r *ModelService) List(ctx context.Context, opts ...option.RequestOption) (res *[]ListModelsResponseData, err error) {
 	var env ListModelsResponse
 	opts = slices.Concat(r.Options, opts)
-	path := "v1/models"
+	path := "v1/openai/v1/models"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
 	if err != nil {
 		return
@@ -86,7 +86,7 @@ func (r *ModelService) Unregister(ctx context.Context, modelID string, opts ...o
 }
 
 type ListModelsResponse struct {
-	Data []Model `json:"data,required"`
+	Data []ListModelsResponseData `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -98,6 +98,83 @@ type ListModelsResponse struct {
 // Returns the unmodified JSON received from the API
 func (r ListModelsResponse) RawJSON() string { return r.JSON.raw }
 func (r *ListModelsResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A model from OpenAI.
+type ListModelsResponseData struct {
+	ID             string                                               `json:"id,required"`
+	Created        int64                                                `json:"created,required"`
+	Object         constant.Model                                       `json:"object,required"`
+	OwnedBy        string                                               `json:"owned_by,required"`
+	CustomMetadata map[string]ListModelsResponseDataCustomMetadataUnion `json:"custom_metadata"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID             respjson.Field
+		Created        respjson.Field
+		Object         respjson.Field
+		OwnedBy        respjson.Field
+		CustomMetadata respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ListModelsResponseData) RawJSON() string { return r.JSON.raw }
+func (r *ListModelsResponseData) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ListModelsResponseDataCustomMetadataUnion contains all possible properties and
+// values from [bool], [float64], [string], [[]any].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+//
+// If the underlying value is not a json object, one of the following properties
+// will be valid: OfBool OfFloat OfString OfAnyArray]
+type ListModelsResponseDataCustomMetadataUnion struct {
+	// This field will be present if the value is a [bool] instead of an object.
+	OfBool bool `json:",inline"`
+	// This field will be present if the value is a [float64] instead of an object.
+	OfFloat float64 `json:",inline"`
+	// This field will be present if the value is a [string] instead of an object.
+	OfString string `json:",inline"`
+	// This field will be present if the value is a [[]any] instead of an object.
+	OfAnyArray []any `json:",inline"`
+	JSON       struct {
+		OfBool     respjson.Field
+		OfFloat    respjson.Field
+		OfString   respjson.Field
+		OfAnyArray respjson.Field
+		raw        string
+	} `json:"-"`
+}
+
+func (u ListModelsResponseDataCustomMetadataUnion) AsBool() (v bool) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ListModelsResponseDataCustomMetadataUnion) AsFloat() (v float64) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ListModelsResponseDataCustomMetadataUnion) AsString() (v string) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ListModelsResponseDataCustomMetadataUnion) AsAnyArray() (v []any) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u ListModelsResponseDataCustomMetadataUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *ListModelsResponseDataCustomMetadataUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
