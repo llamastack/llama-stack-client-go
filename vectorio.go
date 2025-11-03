@@ -74,6 +74,8 @@ func (r *QueryChunksResponse) UnmarshalJSON(data []byte) error {
 
 // A chunk of content that can be inserted into a vector database.
 type QueryChunksResponseChunk struct {
+	// Unique identifier for the chunk. Must be provided explicitly.
+	ChunkID string `json:"chunk_id,required"`
 	// The content of the chunk, which can be interleaved text, images, or other types.
 	Content InterleavedContentUnion `json:"content,required"`
 	// Metadata associated with the chunk that will be used in the model context during
@@ -84,16 +86,13 @@ type QueryChunksResponseChunk struct {
 	ChunkMetadata QueryChunksResponseChunkChunkMetadata `json:"chunk_metadata"`
 	// Optional embedding for the chunk. If not provided, it will be computed later.
 	Embedding []float64 `json:"embedding"`
-	// The chunk ID that is stored in the vector database. Used for backend
-	// functionality.
-	StoredChunkID string `json:"stored_chunk_id"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		ChunkID       respjson.Field
 		Content       respjson.Field
 		Metadata      respjson.Field
 		ChunkMetadata respjson.Field
 		Embedding     respjson.Field
-		StoredChunkID respjson.Field
 		ExtraFields   map[string]respjson.Field
 		raw           string
 	} `json:"-"`
@@ -231,16 +230,15 @@ func (r *VectorIoInsertParams) UnmarshalJSON(data []byte) error {
 
 // A chunk of content that can be inserted into a vector database.
 //
-// The properties Content, Metadata are required.
+// The properties ChunkID, Content, Metadata are required.
 type VectorIoInsertParamsChunk struct {
+	// Unique identifier for the chunk. Must be provided explicitly.
+	ChunkID string `json:"chunk_id,required"`
 	// The content of the chunk, which can be interleaved text, images, or other types.
 	Content InterleavedContentUnionParam `json:"content,omitzero,required"`
 	// Metadata associated with the chunk that will be used in the model context during
 	// inference.
 	Metadata map[string]VectorIoInsertParamsChunkMetadataUnion `json:"metadata,omitzero,required"`
-	// The chunk ID that is stored in the vector database. Used for backend
-	// functionality.
-	StoredChunkID param.Opt[string] `json:"stored_chunk_id,omitzero"`
 	// Metadata for the chunk that will NOT be used in the context during inference.
 	// The `chunk_metadata` is required backend functionality.
 	ChunkMetadata VectorIoInsertParamsChunkChunkMetadata `json:"chunk_metadata,omitzero"`
