@@ -18,8 +18,6 @@ func ValueOf[T Constant[T]]() T {
 	return t.Default()
 }
 
-type Agent string                              // Always "agent"
-type AgentTurnInput string                     // Always "agent_turn_input"
 type Array string                              // Always "array"
 type Assistant string                          // Always "assistant"
 type Auto string                               // Always "auto"
@@ -45,11 +43,9 @@ type FileSearchCall string                     // Always "file_search_call"
 type Function string                           // Always "function"
 type FunctionCall string                       // Always "function_call"
 type FunctionCallOutput string                 // Always "function_call_output"
-type Grammar string                            // Always "grammar"
 type Greedy string                             // Always "greedy"
 type Image string                              // Always "image"
 type ImageURL string                           // Always "image_url"
-type Inference string                          // Always "inference"
 type InputFile string                          // Always "input_file"
 type InputImage string                         // Always "input_image"
 type InputText string                          // Always "input_text"
@@ -65,7 +61,6 @@ type McpApprovalRequest string                 // Always "mcp_approval_request"
 type McpApprovalResponse string                // Always "mcp_approval_response"
 type McpCall string                            // Always "mcp_call"
 type McpListTools string                       // Always "mcp_list_tools"
-type MemoryRetrieval string                    // Always "memory_retrieval"
 type Message string                            // Always "message"
 type Model string                              // Always "model"
 type Number string                             // Always "number"
@@ -116,25 +111,16 @@ type Rows string                               // Always "rows"
 type Rrf string                                // Always "rrf"
 type ScoringFunction string                    // Always "scoring_function"
 type Shield string                             // Always "shield"
-type ShieldCall string                         // Always "shield_call"
 type Static string                             // Always "static"
-type StepComplete string                       // Always "step_complete"
-type StepProgress string                       // Always "step_progress"
-type StepStart string                          // Always "step_start"
 type String string                             // Always "string"
 type SummaryText string                        // Always "summary_text"
 type System string                             // Always "system"
 type Text string                               // Always "text"
 type TextCompletion string                     // Always "text_completion"
 type Tool string                               // Always "tool"
-type ToolCall string                           // Always "tool_call"
-type ToolExecution string                      // Always "tool_execution"
 type ToolGroup string                          // Always "tool_group"
 type TopK string                               // Always "top_k"
 type TopP string                               // Always "top_p"
-type TurnAwaitingInput string                  // Always "turn_awaiting_input"
-type TurnComplete string                       // Always "turn_complete"
-type TurnStart string                          // Always "turn_start"
 type Union string                              // Always "union"
 type Uri string                                // Always "uri"
 type URLCitation string                        // Always "url_citation"
@@ -142,8 +128,6 @@ type User string                               // Always "user"
 type WebSearchCall string                      // Always "web_search_call"
 type Weighted string                           // Always "weighted"
 
-func (c Agent) Default() Agent                                 { return "agent" }
-func (c AgentTurnInput) Default() AgentTurnInput               { return "agent_turn_input" }
 func (c Array) Default() Array                                 { return "array" }
 func (c Assistant) Default() Assistant                         { return "assistant" }
 func (c Auto) Default() Auto                                   { return "auto" }
@@ -169,11 +153,9 @@ func (c FileSearchCall) Default() FileSearchCall               { return "file_se
 func (c Function) Default() Function                           { return "function" }
 func (c FunctionCall) Default() FunctionCall                   { return "function_call" }
 func (c FunctionCallOutput) Default() FunctionCallOutput       { return "function_call_output" }
-func (c Grammar) Default() Grammar                             { return "grammar" }
 func (c Greedy) Default() Greedy                               { return "greedy" }
 func (c Image) Default() Image                                 { return "image" }
 func (c ImageURL) Default() ImageURL                           { return "image_url" }
-func (c Inference) Default() Inference                         { return "inference" }
 func (c InputFile) Default() InputFile                         { return "input_file" }
 func (c InputImage) Default() InputImage                       { return "input_image" }
 func (c InputText) Default() InputText                         { return "input_text" }
@@ -189,7 +171,6 @@ func (c McpApprovalRequest) Default() McpApprovalRequest       { return "mcp_app
 func (c McpApprovalResponse) Default() McpApprovalResponse     { return "mcp_approval_response" }
 func (c McpCall) Default() McpCall                             { return "mcp_call" }
 func (c McpListTools) Default() McpListTools                   { return "mcp_list_tools" }
-func (c MemoryRetrieval) Default() MemoryRetrieval             { return "memory_retrieval" }
 func (c Message) Default() Message                             { return "message" }
 func (c Model) Default() Model                                 { return "model" }
 func (c Number) Default() Number                               { return "number" }
@@ -288,38 +269,27 @@ func (c ResponseWebSearchCallInProgress) Default() ResponseWebSearchCallInProgre
 func (c ResponseWebSearchCallSearching) Default() ResponseWebSearchCallSearching {
 	return "response.web_search_call.searching"
 }
-func (c Rows) Default() Rows                           { return "rows" }
-func (c Rrf) Default() Rrf                             { return "rrf" }
-func (c ScoringFunction) Default() ScoringFunction     { return "scoring_function" }
-func (c Shield) Default() Shield                       { return "shield" }
-func (c ShieldCall) Default() ShieldCall               { return "shield_call" }
-func (c Static) Default() Static                       { return "static" }
-func (c StepComplete) Default() StepComplete           { return "step_complete" }
-func (c StepProgress) Default() StepProgress           { return "step_progress" }
-func (c StepStart) Default() StepStart                 { return "step_start" }
-func (c String) Default() String                       { return "string" }
-func (c SummaryText) Default() SummaryText             { return "summary_text" }
-func (c System) Default() System                       { return "system" }
-func (c Text) Default() Text                           { return "text" }
-func (c TextCompletion) Default() TextCompletion       { return "text_completion" }
-func (c Tool) Default() Tool                           { return "tool" }
-func (c ToolCall) Default() ToolCall                   { return "tool_call" }
-func (c ToolExecution) Default() ToolExecution         { return "tool_execution" }
-func (c ToolGroup) Default() ToolGroup                 { return "tool_group" }
-func (c TopK) Default() TopK                           { return "top_k" }
-func (c TopP) Default() TopP                           { return "top_p" }
-func (c TurnAwaitingInput) Default() TurnAwaitingInput { return "turn_awaiting_input" }
-func (c TurnComplete) Default() TurnComplete           { return "turn_complete" }
-func (c TurnStart) Default() TurnStart                 { return "turn_start" }
-func (c Union) Default() Union                         { return "union" }
-func (c Uri) Default() Uri                             { return "uri" }
-func (c URLCitation) Default() URLCitation             { return "url_citation" }
-func (c User) Default() User                           { return "user" }
-func (c WebSearchCall) Default() WebSearchCall         { return "web_search_call" }
-func (c Weighted) Default() Weighted                   { return "weighted" }
+func (c Rows) Default() Rows                       { return "rows" }
+func (c Rrf) Default() Rrf                         { return "rrf" }
+func (c ScoringFunction) Default() ScoringFunction { return "scoring_function" }
+func (c Shield) Default() Shield                   { return "shield" }
+func (c Static) Default() Static                   { return "static" }
+func (c String) Default() String                   { return "string" }
+func (c SummaryText) Default() SummaryText         { return "summary_text" }
+func (c System) Default() System                   { return "system" }
+func (c Text) Default() Text                       { return "text" }
+func (c TextCompletion) Default() TextCompletion   { return "text_completion" }
+func (c Tool) Default() Tool                       { return "tool" }
+func (c ToolGroup) Default() ToolGroup             { return "tool_group" }
+func (c TopK) Default() TopK                       { return "top_k" }
+func (c TopP) Default() TopP                       { return "top_p" }
+func (c Union) Default() Union                     { return "union" }
+func (c Uri) Default() Uri                         { return "uri" }
+func (c URLCitation) Default() URLCitation         { return "url_citation" }
+func (c User) Default() User                       { return "user" }
+func (c WebSearchCall) Default() WebSearchCall     { return "web_search_call" }
+func (c Weighted) Default() Weighted               { return "weighted" }
 
-func (c Agent) MarshalJSON() ([]byte, error)                              { return marshalString(c) }
-func (c AgentTurnInput) MarshalJSON() ([]byte, error)                     { return marshalString(c) }
 func (c Array) MarshalJSON() ([]byte, error)                              { return marshalString(c) }
 func (c Assistant) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
 func (c Auto) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
@@ -345,11 +315,9 @@ func (c FileSearchCall) MarshalJSON() ([]byte, error)                     { retu
 func (c Function) MarshalJSON() ([]byte, error)                           { return marshalString(c) }
 func (c FunctionCall) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
 func (c FunctionCallOutput) MarshalJSON() ([]byte, error)                 { return marshalString(c) }
-func (c Grammar) MarshalJSON() ([]byte, error)                            { return marshalString(c) }
 func (c Greedy) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
 func (c Image) MarshalJSON() ([]byte, error)                              { return marshalString(c) }
 func (c ImageURL) MarshalJSON() ([]byte, error)                           { return marshalString(c) }
-func (c Inference) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
 func (c InputFile) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
 func (c InputImage) MarshalJSON() ([]byte, error)                         { return marshalString(c) }
 func (c InputText) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
@@ -365,7 +333,6 @@ func (c McpApprovalRequest) MarshalJSON() ([]byte, error)                 { retu
 func (c McpApprovalResponse) MarshalJSON() ([]byte, error)                { return marshalString(c) }
 func (c McpCall) MarshalJSON() ([]byte, error)                            { return marshalString(c) }
 func (c McpListTools) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
-func (c MemoryRetrieval) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
 func (c Message) MarshalJSON() ([]byte, error)                            { return marshalString(c) }
 func (c Model) MarshalJSON() ([]byte, error)                              { return marshalString(c) }
 func (c Number) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
@@ -416,25 +383,16 @@ func (c Rows) MarshalJSON() ([]byte, error)                               { retu
 func (c Rrf) MarshalJSON() ([]byte, error)                                { return marshalString(c) }
 func (c ScoringFunction) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
 func (c Shield) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
-func (c ShieldCall) MarshalJSON() ([]byte, error)                         { return marshalString(c) }
 func (c Static) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
-func (c StepComplete) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
-func (c StepProgress) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
-func (c StepStart) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
 func (c String) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
 func (c SummaryText) MarshalJSON() ([]byte, error)                        { return marshalString(c) }
 func (c System) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
 func (c Text) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
 func (c TextCompletion) MarshalJSON() ([]byte, error)                     { return marshalString(c) }
 func (c Tool) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
-func (c ToolCall) MarshalJSON() ([]byte, error)                           { return marshalString(c) }
-func (c ToolExecution) MarshalJSON() ([]byte, error)                      { return marshalString(c) }
 func (c ToolGroup) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
 func (c TopK) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
 func (c TopP) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
-func (c TurnAwaitingInput) MarshalJSON() ([]byte, error)                  { return marshalString(c) }
-func (c TurnComplete) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
-func (c TurnStart) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
 func (c Union) MarshalJSON() ([]byte, error)                              { return marshalString(c) }
 func (c Uri) MarshalJSON() ([]byte, error)                                { return marshalString(c) }
 func (c URLCitation) MarshalJSON() ([]byte, error)                        { return marshalString(c) }

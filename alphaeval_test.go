@@ -29,21 +29,19 @@ func TestAlphaEvalEvaluateRowsWithOptionalParams(t *testing.T) {
 		"benchmark_id",
 		llamastackclient.AlphaEvalEvaluateRowsParams{
 			BenchmarkConfig: llamastackclient.BenchmarkConfigParam{
-				EvalCandidate: llamastackclient.BenchmarkConfigEvalCandidateUnionParam{
-					OfModel: &llamastackclient.BenchmarkConfigEvalCandidateModelParam{
-						Model: "model",
-						SamplingParams: llamastackclient.SamplingParams{
-							Strategy: llamastackclient.SamplingParamsStrategyUnion{
-								OfGreedy: &llamastackclient.SamplingParamsStrategyGreedy{},
-							},
-							MaxTokens:         llamastackclient.Int(0),
-							RepetitionPenalty: llamastackclient.Float(0),
-							Stop:              []string{"string"},
+				EvalCandidate: llamastackclient.BenchmarkConfigEvalCandidateParam{
+					Model: "model",
+					SamplingParams: llamastackclient.SamplingParams{
+						Strategy: llamastackclient.SamplingParamsStrategyUnion{
+							OfGreedy: &llamastackclient.SamplingParamsStrategyGreedy{},
 						},
-						SystemMessage: llamastackclient.SystemMessageParam{
-							Content: llamastackclient.InterleavedContentUnionParam{
-								OfString: llamastackclient.String("string"),
-							},
+						MaxTokens:         llamastackclient.Int(0),
+						RepetitionPenalty: llamastackclient.Float(0),
+						Stop:              []string{"string"},
+					},
+					SystemMessage: llamastackclient.SystemMessageParam{
+						Content: llamastackclient.InterleavedContentUnionParam{
+							OfString: llamastackclient.String("string"),
 						},
 					},
 				},
@@ -92,21 +90,19 @@ func TestAlphaEvalEvaluateRowsAlphaWithOptionalParams(t *testing.T) {
 		"benchmark_id",
 		llamastackclient.AlphaEvalEvaluateRowsAlphaParams{
 			BenchmarkConfig: llamastackclient.BenchmarkConfigParam{
-				EvalCandidate: llamastackclient.BenchmarkConfigEvalCandidateUnionParam{
-					OfModel: &llamastackclient.BenchmarkConfigEvalCandidateModelParam{
-						Model: "model",
-						SamplingParams: llamastackclient.SamplingParams{
-							Strategy: llamastackclient.SamplingParamsStrategyUnion{
-								OfGreedy: &llamastackclient.SamplingParamsStrategyGreedy{},
-							},
-							MaxTokens:         llamastackclient.Int(0),
-							RepetitionPenalty: llamastackclient.Float(0),
-							Stop:              []string{"string"},
+				EvalCandidate: llamastackclient.BenchmarkConfigEvalCandidateParam{
+					Model: "model",
+					SamplingParams: llamastackclient.SamplingParams{
+						Strategy: llamastackclient.SamplingParamsStrategyUnion{
+							OfGreedy: &llamastackclient.SamplingParamsStrategyGreedy{},
 						},
-						SystemMessage: llamastackclient.SystemMessageParam{
-							Content: llamastackclient.InterleavedContentUnionParam{
-								OfString: llamastackclient.String("string"),
-							},
+						MaxTokens:         llamastackclient.Int(0),
+						RepetitionPenalty: llamastackclient.Float(0),
+						Stop:              []string{"string"},
+					},
+					SystemMessage: llamastackclient.SystemMessageParam{
+						Content: llamastackclient.InterleavedContentUnionParam{
+							OfString: llamastackclient.String("string"),
 						},
 					},
 				},
@@ -155,21 +151,19 @@ func TestAlphaEvalRunEvalWithOptionalParams(t *testing.T) {
 		"benchmark_id",
 		llamastackclient.AlphaEvalRunEvalParams{
 			BenchmarkConfig: llamastackclient.BenchmarkConfigParam{
-				EvalCandidate: llamastackclient.BenchmarkConfigEvalCandidateUnionParam{
-					OfModel: &llamastackclient.BenchmarkConfigEvalCandidateModelParam{
-						Model: "model",
-						SamplingParams: llamastackclient.SamplingParams{
-							Strategy: llamastackclient.SamplingParamsStrategyUnion{
-								OfGreedy: &llamastackclient.SamplingParamsStrategyGreedy{},
-							},
-							MaxTokens:         llamastackclient.Int(0),
-							RepetitionPenalty: llamastackclient.Float(0),
-							Stop:              []string{"string"},
+				EvalCandidate: llamastackclient.BenchmarkConfigEvalCandidateParam{
+					Model: "model",
+					SamplingParams: llamastackclient.SamplingParams{
+						Strategy: llamastackclient.SamplingParamsStrategyUnion{
+							OfGreedy: &llamastackclient.SamplingParamsStrategyGreedy{},
 						},
-						SystemMessage: llamastackclient.SystemMessageParam{
-							Content: llamastackclient.InterleavedContentUnionParam{
-								OfString: llamastackclient.String("string"),
-							},
+						MaxTokens:         llamastackclient.Int(0),
+						RepetitionPenalty: llamastackclient.Float(0),
+						Stop:              []string{"string"},
+					},
+					SystemMessage: llamastackclient.SystemMessageParam{
+						Content: llamastackclient.InterleavedContentUnionParam{
+							OfString: llamastackclient.String("string"),
 						},
 					},
 				},
@@ -212,21 +206,19 @@ func TestAlphaEvalRunEvalAlphaWithOptionalParams(t *testing.T) {
 		"benchmark_id",
 		llamastackclient.AlphaEvalRunEvalAlphaParams{
 			BenchmarkConfig: llamastackclient.BenchmarkConfigParam{
-				EvalCandidate: llamastackclient.BenchmarkConfigEvalCandidateUnionParam{
-					OfModel: &llamastackclient.BenchmarkConfigEvalCandidateModelParam{
-						Model: "model",
-						SamplingParams: llamastackclient.SamplingParams{
-							Strategy: llamastackclient.SamplingParamsStrategyUnion{
-								OfGreedy: &llamastackclient.SamplingParamsStrategyGreedy{},
-							},
-							MaxTokens:         llamastackclient.Int(0),
-							RepetitionPenalty: llamastackclient.Float(0),
-							Stop:              []string{"string"},
+				EvalCandidate: llamastackclient.BenchmarkConfigEvalCandidateParam{
+					Model: "model",
+					SamplingParams: llamastackclient.SamplingParams{
+						Strategy: llamastackclient.SamplingParamsStrategyUnion{
+							OfGreedy: &llamastackclient.SamplingParamsStrategyGreedy{},
 						},
-						SystemMessage: llamastackclient.SystemMessageParam{
-							Content: llamastackclient.InterleavedContentUnionParam{
-								OfString: llamastackclient.String("string"),
-							},
+						MaxTokens:         llamastackclient.Int(0),
+						RepetitionPenalty: llamastackclient.Float(0),
+						Stop:              []string{"string"},
+					},
+					SystemMessage: llamastackclient.SystemMessageParam{
+						Content: llamastackclient.InterleavedContentUnionParam{
+							OfString: llamastackclient.String("string"),
 						},
 					},
 				},

@@ -1,30 +1,19 @@
 # Shared Params Types
 
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AgentConfigParam">AgentConfigParam</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#DocumentParam">DocumentParam</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#InterleavedContentUnionParam">InterleavedContentUnionParam</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#InterleavedContentItemUnionParam">InterleavedContentItemUnionParam</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#QueryConfigParam">QueryConfigParam</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ResponseFormatUnionParam">ResponseFormatUnionParam</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#SamplingParams">SamplingParams</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#SystemMessageParam">SystemMessageParam</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ToolResponseMessageParam">ToolResponseMessageParam</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#UserMessageParam">UserMessageParam</a>
 
 # Shared Response Types
 
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AgentConfig">AgentConfig</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#CompletionMessage">CompletionMessage</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#InterleavedContentUnion">InterleavedContentUnion</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#InterleavedContentItemUnion">InterleavedContentItemUnion</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#QueryResult">QueryResult</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ResponseFormatUnion">ResponseFormatUnion</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#SafetyViolation">SafetyViolation</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#SamplingParamsResp">SamplingParamsResp</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ScoringResult">ScoringResult</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ToolCall">ToolCall</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ToolResponseMessage">ToolResponseMessage</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#UserMessage">UserMessage</a>
 
 # Toolgroups
 
@@ -48,10 +37,6 @@ Methods:
 - <code title="get /v1/tools/{tool_name}">client.Tools.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ToolService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, toolName <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ToolDef">ToolDef</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # ToolRuntime
-
-Params Types:
-
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ToolDefParam">ToolDefParam</a>
 
 Response Types:
 
@@ -464,69 +449,6 @@ Methods:
 - <code title="get /v1alpha/eval/benchmarks/{benchmark_id}/jobs/{job_id}/result">client.Alpha.Eval.Jobs.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaEvalJobService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, jobID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaEvalJobGetParams">AlphaEvalJobGetParams</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#EvaluateResponse">EvaluateResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="delete /v1alpha/eval/benchmarks/{benchmark_id}/jobs/{job_id}">client.Alpha.Eval.Jobs.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaEvalJobService.Cancel">Cancel</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, jobID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaEvalJobCancelParams">AlphaEvalJobCancelParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
 - <code title="get /v1alpha/eval/benchmarks/{benchmark_id}/jobs/{job_id}">client.Alpha.Eval.Jobs.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaEvalJobService.Status">Status</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, jobID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaEvalJobStatusParams">AlphaEvalJobStatusParams</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Job">Job</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
-## Agents
-
-Params Types:
-
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ToolResponseParam">ToolResponseParam</a>
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#InferenceStep">InferenceStep</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#MemoryRetrievalStep">MemoryRetrievalStep</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ShieldCallStep">ShieldCallStep</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ToolExecutionStep">ToolExecutionStep</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ToolResponse">ToolResponse</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentNewResponse">AlphaAgentNewResponse</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentGetResponse">AlphaAgentGetResponse</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentListResponse">AlphaAgentListResponse</a>
-
-Methods:
-
-- <code title="post /v1alpha/agents">client.Alpha.Agents.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentNewParams">AlphaAgentNewParams</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentNewResponse">AlphaAgentNewResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="get /v1alpha/agents/{agent_id}">client.Alpha.Agents.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, agentID <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentGetResponse">AlphaAgentGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="get /v1alpha/agents">client.Alpha.Agents.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentListParams">AlphaAgentListParams</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentListResponse">AlphaAgentListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="delete /v1alpha/agents/{agent_id}">client.Alpha.Agents.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, agentID <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
-
-### Session
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Session">Session</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentSessionNewResponse">AlphaAgentSessionNewResponse</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentSessionListResponse">AlphaAgentSessionListResponse</a>
-
-Methods:
-
-- <code title="post /v1alpha/agents/{agent_id}/session">client.Alpha.Agents.Session.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentSessionService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, agentID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentSessionNewParams">AlphaAgentSessionNewParams</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentSessionNewResponse">AlphaAgentSessionNewResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="get /v1alpha/agents/{agent_id}/session/{session_id}">client.Alpha.Agents.Session.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentSessionService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, sessionID <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentSessionGetParams">AlphaAgentSessionGetParams</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Session">Session</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="get /v1alpha/agents/{agent_id}/sessions">client.Alpha.Agents.Session.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentSessionService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, agentID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentSessionListParams">AlphaAgentSessionListParams</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentSessionListResponse">AlphaAgentSessionListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="delete /v1alpha/agents/{agent_id}/session/{session_id}">client.Alpha.Agents.Session.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentSessionService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, sessionID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentSessionDeleteParams">AlphaAgentSessionDeleteParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
-
-### Steps
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentStepGetResponse">AlphaAgentStepGetResponse</a>
-
-Methods:
-
-- <code title="get /v1alpha/agents/{agent_id}/session/{session_id}/turn/{turn_id}/step/{step_id}">client.Alpha.Agents.Steps.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentStepService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, stepID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentStepGetParams">AlphaAgentStepGetParams</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentStepGetResponse">AlphaAgentStepGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
-### Turn
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AgentTurnResponseStreamChunk">AgentTurnResponseStreamChunk</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Turn">Turn</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#TurnResponseEvent">TurnResponseEvent</a>
-
-Methods:
-
-- <code title="post /v1alpha/agents/{agent_id}/session/{session_id}/turn">client.Alpha.Agents.Turn.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentTurnService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, sessionID <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentTurnNewParams">AlphaAgentTurnNewParams</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Turn">Turn</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="get /v1alpha/agents/{agent_id}/session/{session_id}/turn/{turn_id}">client.Alpha.Agents.Turn.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentTurnService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, turnID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentTurnGetParams">AlphaAgentTurnGetParams</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Turn">Turn</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="post /v1alpha/agents/{agent_id}/session/{session_id}/turn/{turn_id}/resume">client.Alpha.Agents.Turn.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentTurnService.Resume">Resume</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, turnID <a href="https://pkg.go.dev/builtin#string">string</a>, params <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAgentTurnResumeParams">AlphaAgentTurnResumeParams</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Turn">Turn</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Beta
 

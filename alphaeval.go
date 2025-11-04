@@ -92,7 +92,7 @@ func (r *AlphaEvalService) RunEvalAlpha(ctx context.Context, benchmarkID string,
 // The properties EvalCandidate, ScoringParams are required.
 type BenchmarkConfigParam struct {
 	// The candidate to evaluate.
-	EvalCandidate BenchmarkConfigEvalCandidateUnionParam `json:"eval_candidate,omitzero,required"`
+	EvalCandidate BenchmarkConfigEvalCandidateParam `json:"eval_candidate,omitzero,required"`
 	// Map between scoring function id and parameters for each scoring function you
 	// want to run
 	ScoringParams map[string]ScoringFnParamsUnion `json:"scoring_params,omitzero,required"`
@@ -110,85 +110,10 @@ func (r *BenchmarkConfigParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type BenchmarkConfigEvalCandidateUnionParam struct {
-	OfModel *BenchmarkConfigEvalCandidateModelParam `json:",omitzero,inline"`
-	OfAgent *BenchmarkConfigEvalCandidateAgentParam `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u BenchmarkConfigEvalCandidateUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfModel, u.OfAgent)
-}
-func (u *BenchmarkConfigEvalCandidateUnionParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *BenchmarkConfigEvalCandidateUnionParam) asAny() any {
-	if !param.IsOmitted(u.OfModel) {
-		return u.OfModel
-	} else if !param.IsOmitted(u.OfAgent) {
-		return u.OfAgent
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u BenchmarkConfigEvalCandidateUnionParam) GetModel() *string {
-	if vt := u.OfModel; vt != nil {
-		return &vt.Model
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u BenchmarkConfigEvalCandidateUnionParam) GetSamplingParams() *SamplingParams {
-	if vt := u.OfModel; vt != nil {
-		return &vt.SamplingParams
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u BenchmarkConfigEvalCandidateUnionParam) GetSystemMessage() *SystemMessageParam {
-	if vt := u.OfModel; vt != nil {
-		return &vt.SystemMessage
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u BenchmarkConfigEvalCandidateUnionParam) GetConfig() *AgentConfigParam {
-	if vt := u.OfAgent; vt != nil {
-		return &vt.Config
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u BenchmarkConfigEvalCandidateUnionParam) GetType() *string {
-	if vt := u.OfModel; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfAgent; vt != nil {
-		return (*string)(&vt.Type)
-	}
-	return nil
-}
-
-func init() {
-	apijson.RegisterUnion[BenchmarkConfigEvalCandidateUnionParam](
-		"type",
-		apijson.Discriminator[BenchmarkConfigEvalCandidateModelParam]("model"),
-		apijson.Discriminator[BenchmarkConfigEvalCandidateAgentParam]("agent"),
-	)
-}
-
-// A model candidate for evaluation.
+// The candidate to evaluate.
 //
 // The properties Model, SamplingParams, Type are required.
-type BenchmarkConfigEvalCandidateModelParam struct {
+type BenchmarkConfigEvalCandidateParam struct {
 	// The model ID to evaluate.
 	Model string `json:"model,required"`
 	// The sampling parameters for the model.
@@ -200,30 +125,11 @@ type BenchmarkConfigEvalCandidateModelParam struct {
 	paramObj
 }
 
-func (r BenchmarkConfigEvalCandidateModelParam) MarshalJSON() (data []byte, err error) {
-	type shadow BenchmarkConfigEvalCandidateModelParam
+func (r BenchmarkConfigEvalCandidateParam) MarshalJSON() (data []byte, err error) {
+	type shadow BenchmarkConfigEvalCandidateParam
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *BenchmarkConfigEvalCandidateModelParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// An agent candidate for evaluation.
-//
-// The properties Config, Type are required.
-type BenchmarkConfigEvalCandidateAgentParam struct {
-	// The configuration for the agent candidate.
-	Config AgentConfigParam `json:"config,omitzero,required"`
-	// This field can be elided, and will marshal its zero value as "agent".
-	Type constant.Agent `json:"type,required"`
-	paramObj
-}
-
-func (r BenchmarkConfigEvalCandidateAgentParam) MarshalJSON() (data []byte, err error) {
-	type shadow BenchmarkConfigEvalCandidateAgentParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *BenchmarkConfigEvalCandidateAgentParam) UnmarshalJSON(data []byte) error {
+func (r *BenchmarkConfigEvalCandidateParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
