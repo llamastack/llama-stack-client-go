@@ -32,9 +32,9 @@ func NewModelOpenAIService(opts ...option.RequestOption) (r ModelOpenAIService) 
 	return
 }
 
-// List all models.
+// List models using the OpenAI API.
 func (r *ModelOpenAIService) List(ctx context.Context, opts ...option.RequestOption) (res *[]Model, err error) {
-	var env ModelOpenAIListResponseEnvelope
+	var env ListModelsResponse
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/models"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
@@ -45,7 +45,7 @@ func (r *ModelOpenAIService) List(ctx context.Context, opts ...option.RequestOpt
 	return
 }
 
-type ModelOpenAIListResponseEnvelope struct {
+type ListModelsResponse struct {
 	Data []Model `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -56,7 +56,7 @@ type ModelOpenAIListResponseEnvelope struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r ModelOpenAIListResponseEnvelope) RawJSON() string { return r.JSON.raw }
-func (r *ModelOpenAIListResponseEnvelope) UnmarshalJSON(data []byte) error {
+func (r ListModelsResponse) RawJSON() string { return r.JSON.raw }
+func (r *ListModelsResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }

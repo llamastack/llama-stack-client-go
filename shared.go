@@ -452,15 +452,6 @@ func (r *CompletionMessage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ToParam converts this CompletionMessage to a CompletionMessageParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// CompletionMessageParam.Overrides()
-func (r CompletionMessage) ToParam() CompletionMessageParam {
-	return param.Override[CompletionMessageParam](json.RawMessage(r.RawJSON()))
-}
-
 // Reason why the model stopped generating. Options are: -
 // `StopReason.end_of_turn`: The model finished generating the entire response. -
 // `StopReason.end_of_message`: The model finished generating but generated a
@@ -474,38 +465,6 @@ const (
 	CompletionMessageStopReasonEndOfMessage CompletionMessageStopReason = "end_of_message"
 	CompletionMessageStopReasonOutOfTokens  CompletionMessageStopReason = "out_of_tokens"
 )
-
-// A message containing the model's (assistant) response in a chat conversation.
-//
-// The properties Content, Role, StopReason are required.
-type CompletionMessageParam struct {
-	// The content of the model's response
-	Content InterleavedContentUnionParam `json:"content,omitzero,required"`
-	// Reason why the model stopped generating. Options are: -
-	// `StopReason.end_of_turn`: The model finished generating the entire response. -
-	// `StopReason.end_of_message`: The model finished generating but generated a
-	// partial response -- usually, a tool call. The user may call the tool and
-	// continue the conversation with the tool's response. -
-	// `StopReason.out_of_tokens`: The model ran out of token budget.
-	//
-	// Any of "end_of_turn", "end_of_message", "out_of_tokens".
-	StopReason CompletionMessageStopReason `json:"stop_reason,omitzero,required"`
-	// List of tool calls. Each tool call is a ToolCall object.
-	ToolCalls []ToolCallParam `json:"tool_calls,omitzero"`
-	// Must be "assistant" to identify this as the model's response
-	//
-	// This field can be elided, and will marshal its zero value as "assistant".
-	Role constant.Assistant `json:"role,required"`
-	paramObj
-}
-
-func (r CompletionMessageParam) MarshalJSON() (data []byte, err error) {
-	type shadow CompletionMessageParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *CompletionMessageParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
 
 // A document to be used for document ingestion in the RAG Tool.
 //
@@ -1330,177 +1289,6 @@ func (r InterleavedContentItemTextParam) MarshalJSON() (data []byte, err error) 
 }
 func (r *InterleavedContentItemTextParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-func MessageParamOfUser[
-	T string | InterleavedContentImageContentItemParam | InterleavedContentTextContentItemParam | []InterleavedContentItemUnionParam,
-](content T) MessageUnionParam {
-	var user UserMessageParam
-	switch v := any(content).(type) {
-	case string:
-		user.Content.OfString = param.NewOpt(v)
-	case InterleavedContentImageContentItemParam:
-		user.Content.OfImageContentItem = &v
-	case InterleavedContentTextContentItemParam:
-		user.Content.OfTextContentItem = &v
-	case []InterleavedContentItemUnionParam:
-		user.Content.OfInterleavedContentItemArray = v
-	}
-	return MessageUnionParam{OfUser: &user}
-}
-
-func MessageParamOfSystem[
-	T string | InterleavedContentImageContentItemParam | InterleavedContentTextContentItemParam | []InterleavedContentItemUnionParam,
-](content T) MessageUnionParam {
-	var system SystemMessageParam
-	switch v := any(content).(type) {
-	case string:
-		system.Content.OfString = param.NewOpt(v)
-	case InterleavedContentImageContentItemParam:
-		system.Content.OfImageContentItem = &v
-	case InterleavedContentTextContentItemParam:
-		system.Content.OfTextContentItem = &v
-	case []InterleavedContentItemUnionParam:
-		system.Content.OfInterleavedContentItemArray = v
-	}
-	return MessageUnionParam{OfSystem: &system}
-}
-
-func MessageParamOfTool[
-	T string | InterleavedContentImageContentItemParam | InterleavedContentTextContentItemParam | []InterleavedContentItemUnionParam,
-](callID string, content T) MessageUnionParam {
-	var tool ToolResponseMessageParam
-	tool.CallID = callID
-	switch v := any(content).(type) {
-	case string:
-		tool.Content.OfString = param.NewOpt(v)
-	case InterleavedContentImageContentItemParam:
-		tool.Content.OfImageContentItem = &v
-	case InterleavedContentTextContentItemParam:
-		tool.Content.OfTextContentItem = &v
-	case []InterleavedContentItemUnionParam:
-		tool.Content.OfInterleavedContentItemArray = v
-	}
-	return MessageUnionParam{OfTool: &tool}
-}
-
-func MessageParamOfAssistant[
-	T string | InterleavedContentImageContentItemParam | InterleavedContentTextContentItemParam | []InterleavedContentItemUnionParam,
-](content T, stopReason CompletionMessageStopReason) MessageUnionParam {
-	var assistant CompletionMessageParam
-	switch v := any(content).(type) {
-	case string:
-		assistant.Content.OfString = param.NewOpt(v)
-	case InterleavedContentImageContentItemParam:
-		assistant.Content.OfImageContentItem = &v
-	case InterleavedContentTextContentItemParam:
-		assistant.Content.OfTextContentItem = &v
-	case []InterleavedContentItemUnionParam:
-		assistant.Content.OfInterleavedContentItemArray = v
-	}
-	assistant.StopReason = stopReason
-	return MessageUnionParam{OfAssistant: &assistant}
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type MessageUnionParam struct {
-	OfUser      *UserMessageParam         `json:",omitzero,inline"`
-	OfSystem    *SystemMessageParam       `json:",omitzero,inline"`
-	OfTool      *ToolResponseMessageParam `json:",omitzero,inline"`
-	OfAssistant *CompletionMessageParam   `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u MessageUnionParam) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfUser, u.OfSystem, u.OfTool, u.OfAssistant)
-}
-func (u *MessageUnionParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *MessageUnionParam) asAny() any {
-	if !param.IsOmitted(u.OfUser) {
-		return u.OfUser
-	} else if !param.IsOmitted(u.OfSystem) {
-		return u.OfSystem
-	} else if !param.IsOmitted(u.OfTool) {
-		return u.OfTool
-	} else if !param.IsOmitted(u.OfAssistant) {
-		return u.OfAssistant
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u MessageUnionParam) GetContext() *InterleavedContentUnionParam {
-	if vt := u.OfUser; vt != nil {
-		return &vt.Context
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u MessageUnionParam) GetCallID() *string {
-	if vt := u.OfTool; vt != nil {
-		return &vt.CallID
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u MessageUnionParam) GetStopReason() *string {
-	if vt := u.OfAssistant; vt != nil {
-		return (*string)(&vt.StopReason)
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u MessageUnionParam) GetToolCalls() []ToolCallParam {
-	if vt := u.OfAssistant; vt != nil {
-		return vt.ToolCalls
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u MessageUnionParam) GetRole() *string {
-	if vt := u.OfUser; vt != nil {
-		return (*string)(&vt.Role)
-	} else if vt := u.OfSystem; vt != nil {
-		return (*string)(&vt.Role)
-	} else if vt := u.OfTool; vt != nil {
-		return (*string)(&vt.Role)
-	} else if vt := u.OfAssistant; vt != nil {
-		return (*string)(&vt.Role)
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's Content property, if present.
-func (u MessageUnionParam) GetContent() *InterleavedContentUnionParam {
-	if vt := u.OfUser; vt != nil {
-		return &vt.Content
-	} else if vt := u.OfSystem; vt != nil {
-		return &vt.Content
-	} else if vt := u.OfTool; vt != nil {
-		return &vt.Content
-	} else if vt := u.OfAssistant; vt != nil {
-		return &vt.Content
-	}
-	return nil
-}
-
-func init() {
-	apijson.RegisterUnion[MessageUnionParam](
-		"role",
-		apijson.Discriminator[UserMessageParam]("user"),
-		apijson.Discriminator[SystemMessageParam]("system"),
-		apijson.Discriminator[ToolResponseMessageParam]("tool"),
-		apijson.Discriminator[CompletionMessageParam]("assistant"),
-	)
 }
 
 // Configuration for the RAG query generation.
@@ -2844,15 +2632,6 @@ func (r *ToolCall) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ToParam converts this ToolCall to a ToolCallParam.
-//
-// Warning: the fields of the param type will not be present. ToParam should only
-// be used at the last possible moment before sending a request. Test for this with
-// ToolCallParam.Overrides()
-func (r ToolCall) ToParam() ToolCallParam {
-	return param.Override[ToolCallParam](json.RawMessage(r.RawJSON()))
-}
-
 type ToolCallToolName string
 
 const (
@@ -2861,22 +2640,6 @@ const (
 	ToolCallToolNamePhotogen        ToolCallToolName = "photogen"
 	ToolCallToolNameCodeInterpreter ToolCallToolName = "code_interpreter"
 )
-
-// The properties Arguments, CallID, ToolName are required.
-type ToolCallParam struct {
-	Arguments string           `json:"arguments,required"`
-	CallID    string           `json:"call_id,required"`
-	ToolName  ToolCallToolName `json:"tool_name,omitzero,required"`
-	paramObj
-}
-
-func (r ToolCallParam) MarshalJSON() (data []byte, err error) {
-	type shadow ToolCallParam
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ToolCallParam) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
 
 // A message representing the result of a tool invocation.
 type ToolResponseMessage struct {

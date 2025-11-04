@@ -16,31 +16,30 @@ import (
 // interacting with the llama-stack-client API. You should not instantiate this
 // client directly, and instead use the [NewClient] method instead.
 type Client struct {
-	Options                 []option.RequestOption
-	Toolgroups              ToolgroupService
-	Tools                   ToolService
-	ToolRuntime             ToolRuntimeService
-	Responses               ResponseService
-	Prompts                 PromptService
-	Conversations           ConversationService
-	Inspect                 InspectService
-	Embeddings              EmbeddingService
-	Chat                    ChatService
-	Completions             CompletionService
-	VectorIo                VectorIoService
-	VectorStores            VectorStoreService
-	Models                  ModelService
-	Providers               ProviderService
-	Routes                  RouteService
-	Moderations             ModerationService
-	Safety                  SafetyService
-	Shields                 ShieldService
-	SyntheticDataGeneration SyntheticDataGenerationService
-	Scoring                 ScoringService
-	ScoringFunctions        ScoringFunctionService
-	Files                   FileService
-	Alpha                   AlphaService
-	Beta                    BetaService
+	Options          []option.RequestOption
+	Toolgroups       ToolgroupService
+	Tools            ToolService
+	ToolRuntime      ToolRuntimeService
+	Responses        ResponseService
+	Prompts          PromptService
+	Conversations    ConversationService
+	Inspect          InspectService
+	Embeddings       EmbeddingService
+	Chat             ChatService
+	Completions      CompletionService
+	VectorIo         VectorIoService
+	VectorStores     VectorStoreService
+	Models           ModelService
+	Providers        ProviderService
+	Routes           RouteService
+	Moderations      ModerationService
+	Safety           SafetyService
+	Shields          ShieldService
+	Scoring          ScoringService
+	ScoringFunctions ScoringFunctionService
+	Files            FileService
+	Alpha            AlphaService
+	Beta             BetaService
 }
 
 // DefaultClientOptions read from the environment (LLAMA_STACK_CLIENT_API_KEY,
@@ -83,7 +82,6 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Moderations = NewModerationService(opts...)
 	r.Safety = NewSafetyService(opts...)
 	r.Shields = NewShieldService(opts...)
-	r.SyntheticDataGeneration = NewSyntheticDataGenerationService(opts...)
 	r.Scoring = NewScoringService(opts...)
 	r.ScoringFunctions = NewScoringFunctionService(opts...)
 	r.Files = NewFileService(opts...)

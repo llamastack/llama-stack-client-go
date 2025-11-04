@@ -53,13 +53,13 @@ import (
 
 func main() {
 	client := llamastackclient.NewClient()
-	model, err := client.Models.Register(context.TODO(), llamastackclient.ModelRegisterParams{
+	response, err := client.Models.Register(context.TODO(), llamastackclient.ModelRegisterParams{
 		ModelID: "model_id",
 	})
 	if err != nil {
 		panic(err.Error())
 	}
-	fmt.Printf("%+v\n", model.Identifier)
+	fmt.Printf("%+v\n", response.Identifier)
 }
 
 ```
