@@ -23,11 +23,18 @@ func TestUsage(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	response, err := client.Models.Register(context.TODO(), llamastackclient.ModelRegisterParams{
-		ModelID: "model_id",
+	completion, err := client.Chat.Completions.New(context.TODO(), llamastackclient.ChatCompletionNewParams{
+		Messages: []llamastackclient.ChatCompletionNewParamsMessageUnion{{
+			OfUser: &llamastackclient.ChatCompletionNewParamsMessageUser{
+				Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
+					OfString: llamastackclient.String("string"),
+				},
+			},
+		}},
+		Model: "model",
 	})
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
-	t.Logf("%+v\n", response.Identifier)
+	t.Logf("%+v\n", completion)
 }

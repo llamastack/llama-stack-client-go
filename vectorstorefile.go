@@ -429,22 +429,22 @@ func (r *VectorStoreFileDeleteResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Response from retrieving the contents of a vector store file.
+// Represents the parsed content of a vector store file.
 type VectorStoreFileContentResponse struct {
-	// Key-value attributes associated with the file
-	Attributes map[string]VectorStoreFileContentResponseAttributeUnion `json:"attributes,required"`
-	// List of content items from the file
-	Content []VectorStoreFileContentResponseContent `json:"content,required"`
-	// Unique identifier for the file
-	FileID string `json:"file_id,required"`
-	// Name of the file
-	Filename string `json:"filename,required"`
+	// Parsed content of the file
+	Data []VectorStoreFileContentResponseData `json:"data,required"`
+	// Indicates if there are more content pages to fetch
+	HasMore bool `json:"has_more,required"`
+	// The object type, which is always `vector_store.file_content.page`
+	Object constant.VectorStoreFileContentPage `json:"object,required"`
+	// The token for the next page, if any
+	NextPage string `json:"next_page"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Attributes  respjson.Field
-		Content     respjson.Field
-		FileID      respjson.Field
-		Filename    respjson.Field
+		Data        respjson.Field
+		HasMore     respjson.Field
+		Object      respjson.Field
+		NextPage    respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -456,60 +456,8 @@ func (r *VectorStoreFileContentResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// VectorStoreFileContentResponseAttributeUnion contains all possible properties
-// and values from [bool], [float64], [string], [[]any].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type VectorStoreFileContentResponseAttributeUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
-	} `json:"-"`
-}
-
-func (u VectorStoreFileContentResponseAttributeUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u VectorStoreFileContentResponseAttributeUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u VectorStoreFileContentResponseAttributeUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u VectorStoreFileContentResponseAttributeUnion) AsAnyArray() (v []any) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u VectorStoreFileContentResponseAttributeUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *VectorStoreFileContentResponseAttributeUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // Content item from a vector store file or search result.
-type VectorStoreFileContentResponseContent struct {
+type VectorStoreFileContentResponseData struct {
 	// The actual text content
 	Text string `json:"text,required"`
 	// Content type, currently only "text" is supported
@@ -524,8 +472,8 @@ type VectorStoreFileContentResponseContent struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r VectorStoreFileContentResponseContent) RawJSON() string { return r.JSON.raw }
-func (r *VectorStoreFileContentResponseContent) UnmarshalJSON(data []byte) error {
+func (r VectorStoreFileContentResponseData) RawJSON() string { return r.JSON.raw }
+func (r *VectorStoreFileContentResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

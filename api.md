@@ -1,9 +1,7 @@
 # Shared Params Types
 
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#DocumentParam">DocumentParam</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#InterleavedContentUnionParam">InterleavedContentUnionParam</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#InterleavedContentItemUnionParam">InterleavedContentItemUnionParam</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#QueryConfigParam">QueryConfigParam</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#SamplingParams">SamplingParams</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#SystemMessageParam">SystemMessageParam</a>
 
@@ -11,7 +9,6 @@
 
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#InterleavedContentUnion">InterleavedContentUnion</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#InterleavedContentItemUnion">InterleavedContentItemUnion</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#QueryResult">QueryResult</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#SafetyViolation">SafetyViolation</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ScoringResult">ScoringResult</a>
 
@@ -26,8 +23,6 @@ Methods:
 
 - <code title="get /v1/toolgroups">client.Toolgroups.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ToolgroupService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) ([]<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ToolGroup">ToolGroup</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /v1/toolgroups/{toolgroup_id}">client.Toolgroups.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ToolgroupService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, toolgroupID <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ToolGroup">ToolGroup</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="post /v1/toolgroups">client.Toolgroups.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ToolgroupService.Register">Register</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ToolgroupRegisterParams">ToolgroupRegisterParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
-- <code title="delete /v1/toolgroups/{toolgroup_id}">client.Toolgroups.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ToolgroupService.Unregister">Unregister</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, toolgroupID <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
 
 # Tools
 
@@ -49,11 +44,6 @@ Methods:
 - <code title="get /v1/tool-runtime/list-tools">client.ToolRuntime.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ToolRuntimeService.ListTools">ListTools</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ToolRuntimeListToolsParams">ToolRuntimeListToolsParams</a>) ([]<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ToolDef">ToolDef</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 ## RagTool
-
-Methods:
-
-- <code title="post /v1/tool-runtime/rag-tool/insert">client.ToolRuntime.RagTool.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ToolRuntimeRagToolService.Insert">Insert</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ToolRuntimeRagToolInsertParams">ToolRuntimeRagToolInsertParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
-- <code title="post /v1/tool-runtime/rag-tool/query">client.ToolRuntime.RagTool.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ToolRuntimeRagToolService.Query">Query</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ToolRuntimeRagToolQueryParams">ToolRuntimeRagToolQueryParams</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#QueryResult">QueryResult</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Responses
 
@@ -252,14 +242,11 @@ Response Types:
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ListModelsResponse">ListModelsResponse</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Model">Model</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelGetResponse">ModelGetResponse</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelRegisterResponse">ModelRegisterResponse</a>
 
 Methods:
 
 - <code title="get /v1/models/{model_id}">client.Models.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, modelID <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelGetResponse">ModelGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /v1/models">client.Models.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) ([]<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Model">Model</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="post /v1/models">client.Models.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelService.Register">Register</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelRegisterParams">ModelRegisterParams</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelRegisterResponse">ModelRegisterResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="delete /v1/models/{model_id}">client.Models.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelService.Unregister">Unregister</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, modelID <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
 
 ## OpenAI
 
@@ -319,8 +306,6 @@ Methods:
 
 - <code title="get /v1/shields/{identifier}">client.Shields.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ShieldService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, identifier <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Shield">Shield</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /v1/shields">client.Shields.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ShieldService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) ([]<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Shield">Shield</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="delete /v1/shields/{identifier}">client.Shields.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ShieldService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, identifier <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
-- <code title="post /v1/shields">client.Shields.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ShieldService.Register">Register</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ShieldRegisterParams">ShieldRegisterParams</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Shield">Shield</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Scoring
 
@@ -350,7 +335,6 @@ Methods:
 
 - <code title="get /v1/scoring-functions/{scoring_fn_id}">client.ScoringFunctions.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ScoringFunctionService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, scoringFnID <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ScoringFn">ScoringFn</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /v1/scoring-functions">client.ScoringFunctions.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ScoringFunctionService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) ([]<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ScoringFn">ScoringFn</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="post /v1/scoring-functions">client.ScoringFunctions.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ScoringFunctionService.Register">Register</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ScoringFunctionRegisterParams">ScoringFunctionRegisterParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
 
 # Files
 
