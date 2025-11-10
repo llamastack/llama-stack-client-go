@@ -25,10 +25,8 @@ func TestVectorStoreNewWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.VectorStores.New(context.TODO(), llamastackclient.VectorStoreNewParams{
-		ChunkingStrategy: map[string]llamastackclient.VectorStoreNewParamsChunkingStrategyUnion{
-			"foo": {
-				OfBool: llamastackclient.Bool(true),
-			},
+		ChunkingStrategy: llamastackclient.VectorStoreNewParamsChunkingStrategyUnion{
+			OfAuto: &llamastackclient.VectorStoreNewParamsChunkingStrategyAuto{},
 		},
 		ExpiresAfter: map[string]llamastackclient.VectorStoreNewParamsExpiresAfterUnion{
 			"foo": {

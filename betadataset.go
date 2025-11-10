@@ -98,6 +98,8 @@ func (r *BetaDatasetService) Iterrows(ctx context.Context, datasetID string, que
 }
 
 // Register a new dataset.
+//
+// Deprecated: deprecated
 func (r *BetaDatasetService) Register(ctx context.Context, body BetaDatasetRegisterParams, opts ...option.RequestOption) (res *BetaDatasetRegisterResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1beta/datasets"
@@ -106,6 +108,8 @@ func (r *BetaDatasetService) Register(ctx context.Context, body BetaDatasetRegis
 }
 
 // Unregister a dataset by its ID.
+//
+// Deprecated: deprecated
 func (r *BetaDatasetService) Unregister(ctx context.Context, datasetID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
