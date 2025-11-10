@@ -133,6 +133,9 @@ type ResponseObject struct {
 	Error ResponseObjectError `json:"error"`
 	// (Optional) System message inserted into the model's context
 	Instructions string `json:"instructions"`
+	// (Optional) Max number of total calls to built-in tools that can be processed in
+	// a response
+	MaxToolCalls int64 `json:"max_tool_calls"`
 	// (Optional) ID of the previous response in a conversation
 	PreviousResponseID string `json:"previous_response_id"`
 	// (Optional) Reference to a prompt template and its variables.
@@ -159,6 +162,7 @@ type ResponseObject struct {
 		Text               respjson.Field
 		Error              respjson.Field
 		Instructions       respjson.Field
+		MaxToolCalls       respjson.Field
 		PreviousResponseID respjson.Field
 		Prompt             respjson.Field
 		Temperature        respjson.Field
@@ -1373,7 +1377,8 @@ func (r *ResponseObjectToolUnion) UnmarshalJSON(data []byte) error {
 type ResponseObjectToolOpenAIResponseInputToolWebSearch struct {
 	// Web search tool type variant to use
 	//
-	// Any of "web_search", "web_search_preview", "web_search_preview_2025_03_11".
+	// Any of "web_search", "web_search_preview", "web_search_preview_2025_03_11",
+	// "web_search_2025_08_26".
 	Type ResponseObjectToolOpenAIResponseInputToolWebSearchType `json:"type,required"`
 	// (Optional) Size of search context, must be "low", "medium", or "high"
 	SearchContextSize string `json:"search_context_size"`
@@ -1399,6 +1404,7 @@ const (
 	ResponseObjectToolOpenAIResponseInputToolWebSearchTypeWebSearch                  ResponseObjectToolOpenAIResponseInputToolWebSearchType = "web_search"
 	ResponseObjectToolOpenAIResponseInputToolWebSearchTypeWebSearchPreview           ResponseObjectToolOpenAIResponseInputToolWebSearchType = "web_search_preview"
 	ResponseObjectToolOpenAIResponseInputToolWebSearchTypeWebSearchPreview2025_03_11 ResponseObjectToolOpenAIResponseInputToolWebSearchType = "web_search_preview_2025_03_11"
+	ResponseObjectToolOpenAIResponseInputToolWebSearchTypeWebSearch2025_08_26        ResponseObjectToolOpenAIResponseInputToolWebSearchType = "web_search_2025_08_26"
 )
 
 // File search tool configuration for OpenAI response inputs.
@@ -1672,6 +1678,7 @@ const (
 	ResponseObjectToolTypeWebSearch                  ResponseObjectToolType = "web_search"
 	ResponseObjectToolTypeWebSearchPreview           ResponseObjectToolType = "web_search_preview"
 	ResponseObjectToolTypeWebSearchPreview2025_03_11 ResponseObjectToolType = "web_search_preview_2025_03_11"
+	ResponseObjectToolTypeWebSearch2025_08_26        ResponseObjectToolType = "web_search_2025_08_26"
 	ResponseObjectToolTypeFileSearch                 ResponseObjectToolType = "file_search"
 	ResponseObjectToolTypeFunction                   ResponseObjectToolType = "function"
 	ResponseObjectToolTypeMcp                        ResponseObjectToolType = "mcp"
@@ -6258,6 +6265,9 @@ type ResponseListResponse struct {
 	Error ResponseListResponseError `json:"error"`
 	// (Optional) System message inserted into the model's context
 	Instructions string `json:"instructions"`
+	// (Optional) Max number of total calls to built-in tools that can be processed in
+	// a response
+	MaxToolCalls int64 `json:"max_tool_calls"`
 	// (Optional) ID of the previous response in a conversation
 	PreviousResponseID string `json:"previous_response_id"`
 	// (Optional) Reference to a prompt template and its variables.
@@ -6285,6 +6295,7 @@ type ResponseListResponse struct {
 		Text               respjson.Field
 		Error              respjson.Field
 		Instructions       respjson.Field
+		MaxToolCalls       respjson.Field
 		PreviousResponseID respjson.Field
 		Prompt             respjson.Field
 		Temperature        respjson.Field
@@ -8353,7 +8364,8 @@ func (r *ResponseListResponseToolUnion) UnmarshalJSON(data []byte) error {
 type ResponseListResponseToolOpenAIResponseInputToolWebSearch struct {
 	// Web search tool type variant to use
 	//
-	// Any of "web_search", "web_search_preview", "web_search_preview_2025_03_11".
+	// Any of "web_search", "web_search_preview", "web_search_preview_2025_03_11",
+	// "web_search_2025_08_26".
 	Type ResponseListResponseToolOpenAIResponseInputToolWebSearchType `json:"type,required"`
 	// (Optional) Size of search context, must be "low", "medium", or "high"
 	SearchContextSize string `json:"search_context_size"`
@@ -8379,6 +8391,7 @@ const (
 	ResponseListResponseToolOpenAIResponseInputToolWebSearchTypeWebSearch                  ResponseListResponseToolOpenAIResponseInputToolWebSearchType = "web_search"
 	ResponseListResponseToolOpenAIResponseInputToolWebSearchTypeWebSearchPreview           ResponseListResponseToolOpenAIResponseInputToolWebSearchType = "web_search_preview"
 	ResponseListResponseToolOpenAIResponseInputToolWebSearchTypeWebSearchPreview2025_03_11 ResponseListResponseToolOpenAIResponseInputToolWebSearchType = "web_search_preview_2025_03_11"
+	ResponseListResponseToolOpenAIResponseInputToolWebSearchTypeWebSearch2025_08_26        ResponseListResponseToolOpenAIResponseInputToolWebSearchType = "web_search_2025_08_26"
 )
 
 // File search tool configuration for OpenAI response inputs.
@@ -8655,6 +8668,7 @@ const (
 	ResponseListResponseToolTypeWebSearch                  ResponseListResponseToolType = "web_search"
 	ResponseListResponseToolTypeWebSearchPreview           ResponseListResponseToolType = "web_search_preview"
 	ResponseListResponseToolTypeWebSearchPreview2025_03_11 ResponseListResponseToolType = "web_search_preview_2025_03_11"
+	ResponseListResponseToolTypeWebSearch2025_08_26        ResponseListResponseToolType = "web_search_2025_08_26"
 	ResponseListResponseToolTypeFileSearch                 ResponseListResponseToolType = "file_search"
 	ResponseListResponseToolTypeFunction                   ResponseListResponseToolType = "function"
 	ResponseListResponseToolTypeMcp                        ResponseListResponseToolType = "mcp"
@@ -8761,6 +8775,9 @@ type ResponseNewParams struct {
 	Conversation  param.Opt[string] `json:"conversation,omitzero"`
 	Instructions  param.Opt[string] `json:"instructions,omitzero"`
 	MaxInferIters param.Opt[int64]  `json:"max_infer_iters,omitzero"`
+	// (Optional) Max number of total calls to built-in tools that can be processed in
+	// a response.
+	MaxToolCalls param.Opt[int64] `json:"max_tool_calls,omitzero"`
 	// (Optional) if specified, the new response will be a continuation of the previous
 	// response. This can be used to easily fork-off new responses from existing
 	// responses.
@@ -10093,6 +10110,7 @@ func init() {
 		apijson.Discriminator[ResponseNewParamsToolOpenAIResponseInputToolWebSearch]("web_search"),
 		apijson.Discriminator[ResponseNewParamsToolOpenAIResponseInputToolWebSearch]("web_search_preview"),
 		apijson.Discriminator[ResponseNewParamsToolOpenAIResponseInputToolWebSearch]("web_search_preview_2025_03_11"),
+		apijson.Discriminator[ResponseNewParamsToolOpenAIResponseInputToolWebSearch]("web_search_2025_08_26"),
 		apijson.Discriminator[ResponseNewParamsToolFileSearch]("file_search"),
 		apijson.Discriminator[ResponseNewParamsToolFunction]("function"),
 		apijson.Discriminator[ResponseNewParamsToolMcp]("mcp"),
@@ -10105,7 +10123,8 @@ func init() {
 type ResponseNewParamsToolOpenAIResponseInputToolWebSearch struct {
 	// Web search tool type variant to use
 	//
-	// Any of "web_search", "web_search_preview", "web_search_preview_2025_03_11".
+	// Any of "web_search", "web_search_preview", "web_search_preview_2025_03_11",
+	// "web_search_2025_08_26".
 	Type ResponseNewParamsToolOpenAIResponseInputToolWebSearchType `json:"type,omitzero,required"`
 	// (Optional) Size of search context, must be "low", "medium", or "high"
 	SearchContextSize param.Opt[string] `json:"search_context_size,omitzero"`
@@ -10127,6 +10146,7 @@ const (
 	ResponseNewParamsToolOpenAIResponseInputToolWebSearchTypeWebSearch                  ResponseNewParamsToolOpenAIResponseInputToolWebSearchType = "web_search"
 	ResponseNewParamsToolOpenAIResponseInputToolWebSearchTypeWebSearchPreview           ResponseNewParamsToolOpenAIResponseInputToolWebSearchType = "web_search_preview"
 	ResponseNewParamsToolOpenAIResponseInputToolWebSearchTypeWebSearchPreview2025_03_11 ResponseNewParamsToolOpenAIResponseInputToolWebSearchType = "web_search_preview_2025_03_11"
+	ResponseNewParamsToolOpenAIResponseInputToolWebSearchTypeWebSearch2025_08_26        ResponseNewParamsToolOpenAIResponseInputToolWebSearchType = "web_search_2025_08_26"
 )
 
 // File search tool configuration for OpenAI response inputs.

@@ -370,7 +370,7 @@ type VectorStoreSearchResponse struct {
 	// Object type identifier for the search results page
 	Object string `json:"object,required"`
 	// The original search query that was executed
-	SearchQuery string `json:"search_query,required"`
+	SearchQuery []string `json:"search_query,required"`
 	// (Optional) Token for retrieving the next page of results
 	NextPage string `json:"next_page"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -490,7 +490,7 @@ type VectorStoreNewParams struct {
 	// (Optional) A name for the vector store
 	Name param.Opt[string] `json:"name,omitzero"`
 	// (Optional) Strategy for splitting files into chunks
-	ChunkingStrategy map[string]VectorStoreNewParamsChunkingStrategyUnion `json:"chunking_strategy,omitzero"`
+	ChunkingStrategy VectorStoreNewParamsChunkingStrategyUnion `json:"chunking_strategy,omitzero"`
 	// (Optional) Expiration policy for the vector store
 	ExpiresAfter map[string]VectorStoreNewParamsExpiresAfterUnion `json:"expires_after,omitzero"`
 	// List of file IDs to include in the vector store
@@ -512,31 +512,115 @@ func (r *VectorStoreNewParams) UnmarshalJSON(data []byte) error {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type VectorStoreNewParamsChunkingStrategyUnion struct {
-	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
-	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
-	OfString   param.Opt[string]  `json:",omitzero,inline"`
-	OfAnyArray []any              `json:",omitzero,inline"`
+	OfAuto   *VectorStoreNewParamsChunkingStrategyAuto   `json:",omitzero,inline"`
+	OfStatic *VectorStoreNewParamsChunkingStrategyStatic `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u VectorStoreNewParamsChunkingStrategyUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
+	return param.MarshalUnion(u, u.OfAuto, u.OfStatic)
 }
 func (u *VectorStoreNewParamsChunkingStrategyUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
 func (u *VectorStoreNewParamsChunkingStrategyUnion) asAny() any {
-	if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfAnyArray) {
-		return &u.OfAnyArray
+	if !param.IsOmitted(u.OfAuto) {
+		return u.OfAuto
+	} else if !param.IsOmitted(u.OfStatic) {
+		return u.OfStatic
 	}
 	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u VectorStoreNewParamsChunkingStrategyUnion) GetStatic() *VectorStoreNewParamsChunkingStrategyStaticStatic {
+	if vt := u.OfStatic; vt != nil {
+		return &vt.Static
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u VectorStoreNewParamsChunkingStrategyUnion) GetType() *string {
+	if vt := u.OfAuto; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfStatic; vt != nil {
+		return (*string)(&vt.Type)
+	}
+	return nil
+}
+
+func init() {
+	apijson.RegisterUnion[VectorStoreNewParamsChunkingStrategyUnion](
+		"type",
+		apijson.Discriminator[VectorStoreNewParamsChunkingStrategyAuto]("auto"),
+		apijson.Discriminator[VectorStoreNewParamsChunkingStrategyStatic]("static"),
+	)
+}
+
+func NewVectorStoreNewParamsChunkingStrategyAuto() VectorStoreNewParamsChunkingStrategyAuto {
+	return VectorStoreNewParamsChunkingStrategyAuto{
+		Type: "auto",
+	}
+}
+
+// Automatic chunking strategy for vector store files.
+//
+// This struct has a constant value, construct it with
+// [NewVectorStoreNewParamsChunkingStrategyAuto].
+type VectorStoreNewParamsChunkingStrategyAuto struct {
+	// Strategy type, always "auto" for automatic chunking
+	Type constant.Auto `json:"type,required"`
+	paramObj
+}
+
+func (r VectorStoreNewParamsChunkingStrategyAuto) MarshalJSON() (data []byte, err error) {
+	type shadow VectorStoreNewParamsChunkingStrategyAuto
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *VectorStoreNewParamsChunkingStrategyAuto) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Static chunking strategy with configurable parameters.
+//
+// The properties Static, Type are required.
+type VectorStoreNewParamsChunkingStrategyStatic struct {
+	// Configuration parameters for the static chunking strategy
+	Static VectorStoreNewParamsChunkingStrategyStaticStatic `json:"static,omitzero,required"`
+	// Strategy type, always "static" for static chunking
+	//
+	// This field can be elided, and will marshal its zero value as "static".
+	Type constant.Static `json:"type,required"`
+	paramObj
+}
+
+func (r VectorStoreNewParamsChunkingStrategyStatic) MarshalJSON() (data []byte, err error) {
+	type shadow VectorStoreNewParamsChunkingStrategyStatic
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *VectorStoreNewParamsChunkingStrategyStatic) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Configuration parameters for the static chunking strategy
+//
+// The properties ChunkOverlapTokens, MaxChunkSizeTokens are required.
+type VectorStoreNewParamsChunkingStrategyStaticStatic struct {
+	// Number of tokens to overlap between adjacent chunks
+	ChunkOverlapTokens int64 `json:"chunk_overlap_tokens,required"`
+	// Maximum number of tokens per chunk, must be between 100 and 4096
+	MaxChunkSizeTokens int64 `json:"max_chunk_size_tokens,required"`
+	paramObj
+}
+
+func (r VectorStoreNewParamsChunkingStrategyStaticStatic) MarshalJSON() (data []byte, err error) {
+	type shadow VectorStoreNewParamsChunkingStrategyStaticStatic
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *VectorStoreNewParamsChunkingStrategyStaticStatic) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // Only one field can be non-zero.

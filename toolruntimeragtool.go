@@ -3,14 +3,7 @@
 package llamastackclient
 
 import (
-	"context"
-	"net/http"
-	"slices"
-
-	"github.com/llamastack/llama-stack-client-go/internal/apijson"
-	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
 	"github.com/llamastack/llama-stack-client-go/option"
-	"github.com/llamastack/llama-stack-client-go/packages/param"
 )
 
 // ToolRuntimeRagToolService contains methods and other services that help with
@@ -30,57 +23,4 @@ func NewToolRuntimeRagToolService(opts ...option.RequestOption) (r ToolRuntimeRa
 	r = ToolRuntimeRagToolService{}
 	r.Options = opts
 	return
-}
-
-// Index documents so they can be used by the RAG system.
-func (r *ToolRuntimeRagToolService) Insert(ctx context.Context, body ToolRuntimeRagToolInsertParams, opts ...option.RequestOption) (err error) {
-	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
-	path := "v1/tool-runtime/rag-tool/insert"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
-	return
-}
-
-// Query the RAG system for context; typically invoked by the agent.
-func (r *ToolRuntimeRagToolService) Query(ctx context.Context, body ToolRuntimeRagToolQueryParams, opts ...option.RequestOption) (res *QueryResult, err error) {
-	opts = slices.Concat(r.Options, opts)
-	path := "v1/tool-runtime/rag-tool/query"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
-}
-
-type ToolRuntimeRagToolInsertParams struct {
-	// (Optional) Size in tokens for document chunking during indexing
-	ChunkSizeInTokens int64 `json:"chunk_size_in_tokens,required"`
-	// List of documents to index in the RAG system
-	Documents []DocumentParam `json:"documents,omitzero,required"`
-	// ID of the vector database to store the document embeddings
-	VectorStoreID string `json:"vector_store_id,required"`
-	paramObj
-}
-
-func (r ToolRuntimeRagToolInsertParams) MarshalJSON() (data []byte, err error) {
-	type shadow ToolRuntimeRagToolInsertParams
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ToolRuntimeRagToolInsertParams) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type ToolRuntimeRagToolQueryParams struct {
-	// The query content to search for in the indexed documents
-	Content InterleavedContentUnionParam `json:"content,omitzero,required"`
-	// List of vector database IDs to search within
-	VectorStoreIDs []string `json:"vector_store_ids,omitzero,required"`
-	// (Optional) Configuration parameters for the query operation
-	QueryConfig QueryConfigParam `json:"query_config,omitzero"`
-	paramObj
-}
-
-func (r ToolRuntimeRagToolQueryParams) MarshalJSON() (data []byte, err error) {
-	type shadow ToolRuntimeRagToolQueryParams
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ToolRuntimeRagToolQueryParams) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
 }

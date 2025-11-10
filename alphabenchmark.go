@@ -63,6 +63,8 @@ func (r *AlphaBenchmarkService) List(ctx context.Context, opts ...option.Request
 }
 
 // Register a benchmark.
+//
+// Deprecated: deprecated
 func (r *AlphaBenchmarkService) Register(ctx context.Context, body AlphaBenchmarkRegisterParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
