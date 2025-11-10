@@ -70,7 +70,7 @@ type RouteListParams struct {
 	// Optional filter to control which routes are returned. Can be an API level ('v1',
 	// 'v1alpha', 'v1beta') to show non-deprecated routes at that level, or
 	// 'deprecated' to show deprecated routes across all levels. If not specified,
-	// returns only non-deprecated v1 routes.
+	// returns all non-deprecated routes.
 	//
 	// Any of "v1", "v1alpha", "v1beta", "deprecated".
 	APIFilter RouteListParamsAPIFilter `query:"api_filter,omitzero" json:"-"`
@@ -88,7 +88,7 @@ func (r RouteListParams) URLQuery() (v url.Values, err error) {
 // Optional filter to control which routes are returned. Can be an API level ('v1',
 // 'v1alpha', 'v1beta') to show non-deprecated routes at that level, or
 // 'deprecated' to show deprecated routes across all levels. If not specified,
-// returns only non-deprecated v1 routes.
+// returns all non-deprecated routes.
 type RouteListParamsAPIFilter string
 
 const (
