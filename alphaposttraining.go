@@ -231,6 +231,38 @@ func (r *AlgorithmConfigQatParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type ListPostTrainingJobsResponse struct {
+	Data []ListPostTrainingJobsResponseData `json:"data,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Data        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ListPostTrainingJobsResponse) RawJSON() string { return r.JSON.raw }
+func (r *ListPostTrainingJobsResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ListPostTrainingJobsResponseData struct {
+	JobUuid string `json:"job_uuid,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		JobUuid     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ListPostTrainingJobsResponseData) RawJSON() string { return r.JSON.raw }
+func (r *ListPostTrainingJobsResponseData) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type PostTrainingJob struct {
 	JobUuid string `json:"job_uuid,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].

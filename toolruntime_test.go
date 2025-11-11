@@ -42,7 +42,6 @@ func TestToolRuntimeInvokeTool(t *testing.T) {
 }
 
 func TestToolRuntimeListToolsWithOptionalParams(t *testing.T) {
-	t.Skip("invalid query params unsupported by prism")
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
