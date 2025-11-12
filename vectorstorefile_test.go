@@ -171,7 +171,7 @@ func TestVectorStoreFileDelete(t *testing.T) {
 	}
 }
 
-func TestVectorStoreFileContent(t *testing.T) {
+func TestVectorStoreFileContentWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -186,7 +186,9 @@ func TestVectorStoreFileContent(t *testing.T) {
 		context.TODO(),
 		"file_id",
 		llamastackclient.VectorStoreFileContentParams{
-			VectorStoreID: "vector_store_id",
+			VectorStoreID:     "vector_store_id",
+			IncludeEmbeddings: llamastackclient.Bool(true),
+			IncludeMetadata:   llamastackclient.Bool(true),
 		},
 	)
 	if err != nil {

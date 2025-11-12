@@ -134,9 +134,9 @@ func (r *VectorStoreFileService) Delete(ctx context.Context, fileID string, body
 }
 
 // Retrieves the contents of a vector store file.
-func (r *VectorStoreFileService) Content(ctx context.Context, fileID string, query VectorStoreFileContentParams, opts ...option.RequestOption) (res *VectorStoreFileContentResponse, err error) {
+func (r *VectorStoreFileService) Content(ctx context.Context, fileID string, params VectorStoreFileContentParams, opts ...option.RequestOption) (res *VectorStoreFileContentResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	if query.VectorStoreID == "" {
+	if params.VectorStoreID == "" {
 		err = errors.New("missing required vector_store_id parameter")
 		return
 	}
@@ -144,8 +144,8 @@ func (r *VectorStoreFileService) Content(ctx context.Context, fileID string, que
 		err = errors.New("missing required file_id parameter")
 		return
 	}
-	path := fmt.Sprintf("v1/vector_stores/%s/files/%s/content", query.VectorStoreID, fileID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	path := fmt.Sprintf("v1/vector_stores/%s/files/%s/content", params.VectorStoreID, fileID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
 	return
 }
 
@@ -468,18 +468,128 @@ type VectorStoreFileContentResponseData struct {
 	Text string `json:"text,required"`
 	// Content type, currently only "text" is supported
 	Type constant.Text `json:"type,required"`
+	// Optional chunk metadata
+	ChunkMetadata VectorStoreFileContentResponseDataChunkMetadata `json:"chunk_metadata"`
+	// Optional embedding vector for this content chunk
+	Embedding []float64 `json:"embedding"`
+	// Optional user-defined metadata
+	Metadata map[string]VectorStoreFileContentResponseDataMetadataUnion `json:"metadata"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Text        respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		Text          respjson.Field
+		Type          respjson.Field
+		ChunkMetadata respjson.Field
+		Embedding     respjson.Field
+		Metadata      respjson.Field
+		ExtraFields   map[string]respjson.Field
+		raw           string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
 func (r VectorStoreFileContentResponseData) RawJSON() string { return r.JSON.raw }
 func (r *VectorStoreFileContentResponseData) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Optional chunk metadata
+type VectorStoreFileContentResponseDataChunkMetadata struct {
+	// The dimension of the embedding vector for the chunk.
+	ChunkEmbeddingDimension int64 `json:"chunk_embedding_dimension"`
+	// The embedding model used to create the chunk's embedding.
+	ChunkEmbeddingModel string `json:"chunk_embedding_model"`
+	// The ID of the chunk. If not set, it will be generated based on the document ID
+	// and content.
+	ChunkID string `json:"chunk_id"`
+	// The tokenizer used to create the chunk. Default is Tiktoken.
+	ChunkTokenizer string `json:"chunk_tokenizer"`
+	// The window of the chunk, which can be used to group related chunks together.
+	ChunkWindow string `json:"chunk_window"`
+	// The number of tokens in the content of the chunk.
+	ContentTokenCount int64 `json:"content_token_count"`
+	// An optional timestamp indicating when the chunk was created.
+	CreatedTimestamp int64 `json:"created_timestamp"`
+	// The ID of the document this chunk belongs to.
+	DocumentID string `json:"document_id"`
+	// The number of tokens in the metadata of the chunk.
+	MetadataTokenCount int64 `json:"metadata_token_count"`
+	// The source of the content, such as a URL, file path, or other identifier.
+	Source string `json:"source"`
+	// An optional timestamp indicating when the chunk was last updated.
+	UpdatedTimestamp int64 `json:"updated_timestamp"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ChunkEmbeddingDimension respjson.Field
+		ChunkEmbeddingModel     respjson.Field
+		ChunkID                 respjson.Field
+		ChunkTokenizer          respjson.Field
+		ChunkWindow             respjson.Field
+		ContentTokenCount       respjson.Field
+		CreatedTimestamp        respjson.Field
+		DocumentID              respjson.Field
+		MetadataTokenCount      respjson.Field
+		Source                  respjson.Field
+		UpdatedTimestamp        respjson.Field
+		ExtraFields             map[string]respjson.Field
+		raw                     string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r VectorStoreFileContentResponseDataChunkMetadata) RawJSON() string { return r.JSON.raw }
+func (r *VectorStoreFileContentResponseDataChunkMetadata) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// VectorStoreFileContentResponseDataMetadataUnion contains all possible properties
+// and values from [bool], [float64], [string], [[]any].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+//
+// If the underlying value is not a json object, one of the following properties
+// will be valid: OfBool OfFloat OfString OfAnyArray]
+type VectorStoreFileContentResponseDataMetadataUnion struct {
+	// This field will be present if the value is a [bool] instead of an object.
+	OfBool bool `json:",inline"`
+	// This field will be present if the value is a [float64] instead of an object.
+	OfFloat float64 `json:",inline"`
+	// This field will be present if the value is a [string] instead of an object.
+	OfString string `json:",inline"`
+	// This field will be present if the value is a [[]any] instead of an object.
+	OfAnyArray []any `json:",inline"`
+	JSON       struct {
+		OfBool     respjson.Field
+		OfFloat    respjson.Field
+		OfString   respjson.Field
+		OfAnyArray respjson.Field
+		raw        string
+	} `json:"-"`
+}
+
+func (u VectorStoreFileContentResponseDataMetadataUnion) AsBool() (v bool) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u VectorStoreFileContentResponseDataMetadataUnion) AsFloat() (v float64) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u VectorStoreFileContentResponseDataMetadataUnion) AsString() (v string) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u VectorStoreFileContentResponseDataMetadataUnion) AsAnyArray() (v []any) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u VectorStoreFileContentResponseDataMetadataUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *VectorStoreFileContentResponseDataMetadataUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -744,5 +854,18 @@ type VectorStoreFileDeleteParams struct {
 
 type VectorStoreFileContentParams struct {
 	VectorStoreID string `path:"vector_store_id,required" json:"-"`
+	// Whether to include embedding vectors in the response.
+	IncludeEmbeddings param.Opt[bool] `query:"include_embeddings,omitzero" json:"-"`
+	// Whether to include chunk metadata in the response.
+	IncludeMetadata param.Opt[bool] `query:"include_metadata,omitzero" json:"-"`
 	paramObj
+}
+
+// URLQuery serializes [VectorStoreFileContentParams]'s query parameters as
+// `url.Values`.
+func (r VectorStoreFileContentParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
 }
