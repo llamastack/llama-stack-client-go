@@ -53,20 +53,13 @@ import (
 
 func main() {
 	client := llamastackclient.NewClient()
-	completion, err := client.Chat.Completions.New(context.TODO(), llamastackclient.ChatCompletionNewParams{
-		Messages: []llamastackclient.ChatCompletionNewParamsMessageUnion{{
-			OfUser: &llamastackclient.ChatCompletionNewParamsMessageUser{
-				Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
-					OfString: llamastackclient.String("string"),
-				},
-			},
-		}},
-		Model: "model",
+	response, err := client.Models.Register(context.TODO(), llamastackclient.ModelRegisterParams{
+		ModelID: "model_id",
 	})
 	if err != nil {
 		panic(err.Error())
 	}
-	fmt.Printf("%+v\n", completion)
+	fmt.Printf("%+v\n", response.Identifier)
 }
 
 ```
