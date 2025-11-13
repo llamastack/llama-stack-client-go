@@ -24,12 +24,16 @@ func ValueOf[T Constant[T]]() T {
 	return t.Default()
 }
 
+type Array string                              // Always "array"
 type Assistant string                          // Always "assistant"
 type Auto string                               // Always "auto"
 type Basic string                              // Always "basic"
 type Benchmark string                          // Always "benchmark"
+type Boolean string                            // Always "boolean"
+type ChatCompletionInput string                // Always "chat_completion_input"
 type ChatCompletion string                     // Always "chat.completion"
 type ChatCompletionChunk string                // Always "chat.completion.chunk"
+type CompletionInput string                    // Always "completion_input"
 type ContainerFileCitation string              // Always "container_file_citation"
 type Conversation string                       // Always "conversation"
 type CreatedAt string                          // Always "created_at"
@@ -50,6 +54,7 @@ type ImageURL string                           // Always "image_url"
 type InputFile string                          // Always "input_file"
 type InputImage string                         // Always "input_image"
 type InputText string                          // Always "input_text"
+type Json string                               // Always "json"
 type JsonObject string                         // Always "json_object"
 type JsonSchema string                         // Always "json_schema"
 type List string                               // Always "list"
@@ -62,6 +67,8 @@ type McpCall string                            // Always "mcp_call"
 type McpListTools string                       // Always "mcp_list_tools"
 type Message string                            // Always "message"
 type Model string                              // Always "model"
+type Number string                             // Always "number"
+type Object string                             // Always "object"
 type OutputText string                         // Always "output_text"
 type Qat string                                // Always "QAT"
 type ReasoningText string                      // Always "reasoning_text"
@@ -108,6 +115,7 @@ type Rows string                               // Always "rows"
 type ScoringFunction string                    // Always "scoring_function"
 type Shield string                             // Always "shield"
 type Static string                             // Always "static"
+type String string                             // Always "string"
 type SummaryText string                        // Always "summary_text"
 type System string                             // Always "system"
 type Text string                               // Always "text"
@@ -116,18 +124,23 @@ type Tool string                               // Always "tool"
 type ToolGroup string                          // Always "tool_group"
 type TopK string                               // Always "top_k"
 type TopP string                               // Always "top_p"
+type Union string                              // Always "union"
 type Uri string                                // Always "uri"
 type URLCitation string                        // Always "url_citation"
 type User string                               // Always "user"
 type VectorStoreFileContentPage string         // Always "vector_store.file_content.page"
 type WebSearchCall string                      // Always "web_search_call"
 
+func (c Array) Default() Array                                 { return "array" }
 func (c Assistant) Default() Assistant                         { return "assistant" }
 func (c Auto) Default() Auto                                   { return "auto" }
 func (c Basic) Default() Basic                                 { return "basic" }
 func (c Benchmark) Default() Benchmark                         { return "benchmark" }
+func (c Boolean) Default() Boolean                             { return "boolean" }
+func (c ChatCompletionInput) Default() ChatCompletionInput     { return "chat_completion_input" }
 func (c ChatCompletion) Default() ChatCompletion               { return "chat.completion" }
 func (c ChatCompletionChunk) Default() ChatCompletionChunk     { return "chat.completion.chunk" }
+func (c CompletionInput) Default() CompletionInput             { return "completion_input" }
 func (c ContainerFileCitation) Default() ContainerFileCitation { return "container_file_citation" }
 func (c Conversation) Default() Conversation                   { return "conversation" }
 func (c CreatedAt) Default() CreatedAt                         { return "created_at" }
@@ -148,6 +161,7 @@ func (c ImageURL) Default() ImageURL                           { return "image_u
 func (c InputFile) Default() InputFile                         { return "input_file" }
 func (c InputImage) Default() InputImage                       { return "input_image" }
 func (c InputText) Default() InputText                         { return "input_text" }
+func (c Json) Default() Json                                   { return "json" }
 func (c JsonObject) Default() JsonObject                       { return "json_object" }
 func (c JsonSchema) Default() JsonSchema                       { return "json_schema" }
 func (c List) Default() List                                   { return "list" }
@@ -160,6 +174,8 @@ func (c McpCall) Default() McpCall                             { return "mcp_cal
 func (c McpListTools) Default() McpListTools                   { return "mcp_list_tools" }
 func (c Message) Default() Message                             { return "message" }
 func (c Model) Default() Model                                 { return "model" }
+func (c Number) Default() Number                               { return "number" }
+func (c Object) Default() Object                               { return "object" }
 func (c OutputText) Default() OutputText                       { return "output_text" }
 func (c Qat) Default() Qat                                     { return "QAT" }
 func (c ReasoningText) Default() ReasoningText                 { return "reasoning_text" }
@@ -258,6 +274,7 @@ func (c Rows) Default() Rows                       { return "rows" }
 func (c ScoringFunction) Default() ScoringFunction { return "scoring_function" }
 func (c Shield) Default() Shield                   { return "shield" }
 func (c Static) Default() Static                   { return "static" }
+func (c String) Default() String                   { return "string" }
 func (c SummaryText) Default() SummaryText         { return "summary_text" }
 func (c System) Default() System                   { return "system" }
 func (c Text) Default() Text                       { return "text" }
@@ -266,6 +283,7 @@ func (c Tool) Default() Tool                       { return "tool" }
 func (c ToolGroup) Default() ToolGroup             { return "tool_group" }
 func (c TopK) Default() TopK                       { return "top_k" }
 func (c TopP) Default() TopP                       { return "top_p" }
+func (c Union) Default() Union                     { return "union" }
 func (c Uri) Default() Uri                         { return "uri" }
 func (c URLCitation) Default() URLCitation         { return "url_citation" }
 func (c User) Default() User                       { return "user" }
@@ -274,12 +292,16 @@ func (c VectorStoreFileContentPage) Default() VectorStoreFileContentPage {
 }
 func (c WebSearchCall) Default() WebSearchCall { return "web_search_call" }
 
+func (c Array) MarshalJSON() ([]byte, error)                              { return marshalString(c) }
 func (c Assistant) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
 func (c Auto) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
 func (c Basic) MarshalJSON() ([]byte, error)                              { return marshalString(c) }
 func (c Benchmark) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
+func (c Boolean) MarshalJSON() ([]byte, error)                            { return marshalString(c) }
+func (c ChatCompletionInput) MarshalJSON() ([]byte, error)                { return marshalString(c) }
 func (c ChatCompletion) MarshalJSON() ([]byte, error)                     { return marshalString(c) }
 func (c ChatCompletionChunk) MarshalJSON() ([]byte, error)                { return marshalString(c) }
+func (c CompletionInput) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
 func (c ContainerFileCitation) MarshalJSON() ([]byte, error)              { return marshalString(c) }
 func (c Conversation) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
 func (c CreatedAt) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
@@ -300,6 +322,7 @@ func (c ImageURL) MarshalJSON() ([]byte, error)                           { retu
 func (c InputFile) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
 func (c InputImage) MarshalJSON() ([]byte, error)                         { return marshalString(c) }
 func (c InputText) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
+func (c Json) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
 func (c JsonObject) MarshalJSON() ([]byte, error)                         { return marshalString(c) }
 func (c JsonSchema) MarshalJSON() ([]byte, error)                         { return marshalString(c) }
 func (c List) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
@@ -312,6 +335,8 @@ func (c McpCall) MarshalJSON() ([]byte, error)                            { retu
 func (c McpListTools) MarshalJSON() ([]byte, error)                       { return marshalString(c) }
 func (c Message) MarshalJSON() ([]byte, error)                            { return marshalString(c) }
 func (c Model) MarshalJSON() ([]byte, error)                              { return marshalString(c) }
+func (c Number) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
+func (c Object) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
 func (c OutputText) MarshalJSON() ([]byte, error)                         { return marshalString(c) }
 func (c Qat) MarshalJSON() ([]byte, error)                                { return marshalString(c) }
 func (c ReasoningText) MarshalJSON() ([]byte, error)                      { return marshalString(c) }
@@ -358,6 +383,7 @@ func (c Rows) MarshalJSON() ([]byte, error)                               { retu
 func (c ScoringFunction) MarshalJSON() ([]byte, error)                    { return marshalString(c) }
 func (c Shield) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
 func (c Static) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
+func (c String) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
 func (c SummaryText) MarshalJSON() ([]byte, error)                        { return marshalString(c) }
 func (c System) MarshalJSON() ([]byte, error)                             { return marshalString(c) }
 func (c Text) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
@@ -366,6 +392,7 @@ func (c Tool) MarshalJSON() ([]byte, error)                               { retu
 func (c ToolGroup) MarshalJSON() ([]byte, error)                          { return marshalString(c) }
 func (c TopK) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
 func (c TopP) MarshalJSON() ([]byte, error)                               { return marshalString(c) }
+func (c Union) MarshalJSON() ([]byte, error)                              { return marshalString(c) }
 func (c Uri) MarshalJSON() ([]byte, error)                                { return marshalString(c) }
 func (c URLCitation) MarshalJSON() ([]byte, error)                        { return marshalString(c) }
 func (c User) MarshalJSON() ([]byte, error)                               { return marshalString(c) }

@@ -19,6 +19,7 @@ import (
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
 	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
 	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
@@ -64,6 +65,31 @@ func (r *ShieldService) List(ctx context.Context, opts ...option.RequestOption) 
 		return
 	}
 	res = &env.Data
+	return
+}
+
+// Unregister a shield.
+//
+// Deprecated: deprecated
+func (r *ShieldService) Delete(ctx context.Context, identifier string, opts ...option.RequestOption) (err error) {
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	if identifier == "" {
+		err = errors.New("missing required identifier parameter")
+		return
+	}
+	path := fmt.Sprintf("v1/shields/%s", identifier)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
+	return
+}
+
+// Register a shield.
+//
+// Deprecated: deprecated
+func (r *ShieldService) Register(ctx context.Context, body ShieldRegisterParams, opts ...option.RequestOption) (res *Shield, err error) {
+	opts = slices.Concat(r.Options, opts)
+	path := "v1/shields"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
 	return
 }
 
@@ -160,4 +186,55 @@ func (u ShieldParamUnion) RawJSON() string { return u.JSON.raw }
 
 func (r *ShieldParamUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+type ShieldRegisterParams struct {
+	// The identifier of the shield to register.
+	ShieldID string `json:"shield_id,required"`
+	// The identifier of the provider.
+	ProviderID param.Opt[string] `json:"provider_id,omitzero"`
+	// The identifier of the shield in the provider.
+	ProviderShieldID param.Opt[string] `json:"provider_shield_id,omitzero"`
+	// The parameters of the shield.
+	Params map[string]ShieldRegisterParamsParamUnion `json:"params,omitzero"`
+	paramObj
+}
+
+func (r ShieldRegisterParams) MarshalJSON() (data []byte, err error) {
+	type shadow ShieldRegisterParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ShieldRegisterParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type ShieldRegisterParamsParamUnion struct {
+	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
+	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
+	OfString   param.Opt[string]  `json:",omitzero,inline"`
+	OfAnyArray []any              `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u ShieldRegisterParamsParamUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
+}
+func (u *ShieldRegisterParamsParamUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *ShieldRegisterParamsParamUnion) asAny() any {
+	if !param.IsOmitted(u.OfBool) {
+		return &u.OfBool.Value
+	} else if !param.IsOmitted(u.OfFloat) {
+		return &u.OfFloat.Value
+	} else if !param.IsOmitted(u.OfString) {
+		return &u.OfString.Value
+	} else if !param.IsOmitted(u.OfAnyArray) {
+		return &u.OfAnyArray
+	}
+	return nil
 }
