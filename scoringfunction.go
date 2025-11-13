@@ -68,6 +68,17 @@ func (r *ScoringFunctionService) List(ctx context.Context, opts ...option.Reques
 	return
 }
 
+// Register a scoring function.
+//
+// Deprecated: deprecated
+func (r *ScoringFunctionService) Register(ctx context.Context, body ScoringFunctionRegisterParams, opts ...option.RequestOption) (err error) {
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	path := "v1/scoring-functions"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
+	return
+}
+
 type ListScoringFunctionsResponse struct {
 	Data []ScoringFn `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -552,4 +563,50 @@ func (r ScoringFnParamsBasic) MarshalJSON() (data []byte, err error) {
 }
 func (r *ScoringFnParamsBasic) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+type ScoringFunctionRegisterParams struct {
+	// The description of the scoring function.
+	Description string                                  `json:"description,required"`
+	ReturnType  ScoringFunctionRegisterParamsReturnType `json:"return_type,omitzero,required"`
+	// The ID of the scoring function to register.
+	ScoringFnID string `json:"scoring_fn_id,required"`
+	// The ID of the provider to use for the scoring function.
+	ProviderID param.Opt[string] `json:"provider_id,omitzero"`
+	// The ID of the provider scoring function to use for the scoring function.
+	ProviderScoringFnID param.Opt[string] `json:"provider_scoring_fn_id,omitzero"`
+	// The parameters for the scoring function for benchmark eval, these can be
+	// overridden for app eval.
+	Params ScoringFnParamsUnion `json:"params,omitzero"`
+	paramObj
+}
+
+func (r ScoringFunctionRegisterParams) MarshalJSON() (data []byte, err error) {
+	type shadow ScoringFunctionRegisterParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ScoringFunctionRegisterParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The property Type is required.
+type ScoringFunctionRegisterParamsReturnType struct {
+	// Any of "string", "number", "boolean", "array", "object", "json", "union",
+	// "chat_completion_input", "completion_input", "agent_turn_input".
+	Type string `json:"type,omitzero,required"`
+	paramObj
+}
+
+func (r ScoringFunctionRegisterParamsReturnType) MarshalJSON() (data []byte, err error) {
+	type shadow ScoringFunctionRegisterParamsReturnType
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ScoringFunctionRegisterParamsReturnType) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ScoringFunctionRegisterParamsReturnType](
+		"type", "string", "number", "boolean", "array", "object", "json", "union", "chat_completion_input", "completion_input", "agent_turn_input",
+	)
 }

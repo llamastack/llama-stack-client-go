@@ -19,6 +19,7 @@ import (
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
 	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
 	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
@@ -64,6 +65,32 @@ func (r *ToolgroupService) Get(ctx context.Context, toolgroupID string, opts ...
 	}
 	path := fmt.Sprintf("v1/toolgroups/%s", toolgroupID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return
+}
+
+// Register a tool group.
+//
+// Deprecated: deprecated
+func (r *ToolgroupService) Register(ctx context.Context, body ToolgroupRegisterParams, opts ...option.RequestOption) (err error) {
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	path := "v1/toolgroups"
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
+	return
+}
+
+// Unregister a tool group.
+//
+// Deprecated: deprecated
+func (r *ToolgroupService) Unregister(ctx context.Context, toolgroupID string, opts ...option.RequestOption) (err error) {
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	if toolgroupID == "" {
+		err = errors.New("missing required toolgroup_id parameter")
+		return
+	}
+	path := fmt.Sprintf("v1/toolgroups/%s", toolgroupID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
 	return
 }
 
@@ -182,5 +209,73 @@ type ToolGroupMcpEndpoint struct {
 // Returns the unmodified JSON received from the API
 func (r ToolGroupMcpEndpoint) RawJSON() string { return r.JSON.raw }
 func (r *ToolGroupMcpEndpoint) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ToolgroupRegisterParams struct {
+	// The ID of the provider to use for the tool group.
+	ProviderID string `json:"provider_id,required"`
+	// The ID of the tool group to register.
+	ToolgroupID string `json:"toolgroup_id,required"`
+	// A dictionary of arguments to pass to the tool group.
+	Args map[string]ToolgroupRegisterParamsArgUnion `json:"args,omitzero"`
+	// The MCP endpoint to use for the tool group.
+	McpEndpoint ToolgroupRegisterParamsMcpEndpoint `json:"mcp_endpoint,omitzero"`
+	paramObj
+}
+
+func (r ToolgroupRegisterParams) MarshalJSON() (data []byte, err error) {
+	type shadow ToolgroupRegisterParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ToolgroupRegisterParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type ToolgroupRegisterParamsArgUnion struct {
+	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
+	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
+	OfString   param.Opt[string]  `json:",omitzero,inline"`
+	OfAnyArray []any              `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u ToolgroupRegisterParamsArgUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
+}
+func (u *ToolgroupRegisterParamsArgUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *ToolgroupRegisterParamsArgUnion) asAny() any {
+	if !param.IsOmitted(u.OfBool) {
+		return &u.OfBool.Value
+	} else if !param.IsOmitted(u.OfFloat) {
+		return &u.OfFloat.Value
+	} else if !param.IsOmitted(u.OfString) {
+		return &u.OfString.Value
+	} else if !param.IsOmitted(u.OfAnyArray) {
+		return &u.OfAnyArray
+	}
+	return nil
+}
+
+// The MCP endpoint to use for the tool group.
+//
+// The property Uri is required.
+type ToolgroupRegisterParamsMcpEndpoint struct {
+	// The URL string pointing to the resource
+	Uri string `json:"uri,required"`
+	paramObj
+}
+
+func (r ToolgroupRegisterParamsMcpEndpoint) MarshalJSON() (data []byte, err error) {
+	type shadow ToolgroupRegisterParamsMcpEndpoint
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ToolgroupRegisterParamsMcpEndpoint) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
