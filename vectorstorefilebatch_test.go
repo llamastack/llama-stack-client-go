@@ -35,13 +35,13 @@ func TestVectorStoreFileBatchNewWithOptionalParams(t *testing.T) {
 		"vector_store_id",
 		llamastackclient.VectorStoreFileBatchNewParams{
 			FileIDs: []string{"string"},
-			Attributes: map[string]llamastackclient.VectorStoreFileBatchNewParamsAttributeUnion{
-				"foo": {
-					OfBool: llamastackclient.Bool(true),
-				},
+			Attributes: map[string]any{
+				"foo": "bar",
 			},
 			ChunkingStrategy: llamastackclient.VectorStoreFileBatchNewParamsChunkingStrategyUnion{
-				OfAuto: &llamastackclient.VectorStoreFileBatchNewParamsChunkingStrategyAuto{},
+				OfAuto: &llamastackclient.VectorStoreFileBatchNewParamsChunkingStrategyAuto{
+					Type: "auto",
+				},
 			},
 		},
 	)

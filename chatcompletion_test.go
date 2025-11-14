@@ -37,6 +37,7 @@ func TestChatCompletionNewWithOptionalParams(t *testing.T) {
 					OfString: llamastackclient.String("string"),
 				},
 				Name: llamastackclient.String("name"),
+				Role: "user",
 			},
 		}},
 		Model:            "model",
@@ -44,10 +45,8 @@ func TestChatCompletionNewWithOptionalParams(t *testing.T) {
 		FunctionCall: llamastackclient.ChatCompletionNewParamsFunctionCallUnion{
 			OfString: llamastackclient.String("string"),
 		},
-		Functions: []map[string]llamastackclient.ChatCompletionNewParamsFunctionUnion{{
-			"foo": {
-				OfBool: llamastackclient.Bool(true),
-			},
+		Functions: []map[string]any{{
+			"foo": "bar",
 		}},
 		LogitBias: map[string]float64{
 			"foo": 0,
@@ -59,25 +58,23 @@ func TestChatCompletionNewWithOptionalParams(t *testing.T) {
 		ParallelToolCalls:   llamastackclient.Bool(true),
 		PresencePenalty:     llamastackclient.Float(0),
 		ResponseFormat: llamastackclient.ChatCompletionNewParamsResponseFormatUnion{
-			OfText: &llamastackclient.ChatCompletionNewParamsResponseFormatText{},
+			OfText: &llamastackclient.ChatCompletionNewParamsResponseFormatText{
+				Type: "text",
+			},
 		},
 		Seed: llamastackclient.Int(0),
 		Stop: llamastackclient.ChatCompletionNewParamsStopUnion{
 			OfString: llamastackclient.String("string"),
 		},
-		StreamOptions: map[string]llamastackclient.ChatCompletionNewParamsStreamOptionUnion{
-			"foo": {
-				OfBool: llamastackclient.Bool(true),
-			},
+		StreamOptions: map[string]any{
+			"foo": "bar",
 		},
 		Temperature: llamastackclient.Float(0),
 		ToolChoice: llamastackclient.ChatCompletionNewParamsToolChoiceUnion{
 			OfString: llamastackclient.String("string"),
 		},
-		Tools: []map[string]llamastackclient.ChatCompletionNewParamsToolUnion{{
-			"foo": {
-				OfBool: llamastackclient.Bool(true),
-			},
+		Tools: []map[string]any{{
+			"foo": "bar",
 		}},
 		TopLogprobs: llamastackclient.Int(0),
 		TopP:        llamastackclient.Float(0),

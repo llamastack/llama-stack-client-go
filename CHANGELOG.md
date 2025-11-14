@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.0-alpha.2 (2025-11-14)
+
+Full Changelog: [v0.4.0-alpha.1...v0.4.0-alpha.2](https://github.com/llamastack/llama-stack-client-go/compare/v0.4.0-alpha.1...v0.4.0-alpha.2)
+
+### Chores
+
+* use Pydantic to generate OpenAPI schema ([c7fafed](https://github.com/llamastack/llama-stack-client-go/commit/c7fafed933890ba05c37e6ab54cd5163d00801fc))
+
 ## 0.4.0-alpha.1 (2025-11-14)
 
 Full Changelog: [v0.1.0-alpha.1...v0.4.0-alpha.1](https://github.com/llamastack/llama-stack-client-go/compare/v0.1.0-alpha.1...v0.4.0-alpha.1)

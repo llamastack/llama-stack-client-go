@@ -86,8 +86,8 @@ func TestPromptUpdateWithOptionalParams(t *testing.T) {
 		"prompt_id",
 		llamastackclient.PromptUpdateParams{
 			Prompt:       "prompt",
-			SetAsDefault: true,
 			Version:      0,
+			SetAsDefault: llamastackclient.Bool(true),
 			Variables:    []string{"string"},
 		},
 	)

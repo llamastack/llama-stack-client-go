@@ -69,7 +69,6 @@ func (r *ToolService) Get(ctx context.Context, toolName string, opts ...option.R
 }
 
 type ToolListParams struct {
-	// The ID of the tool group to list tools for.
 	ToolgroupID param.Opt[string] `query:"toolgroup_id,omitzero" json:"-"`
 	paramObj
 }
@@ -84,7 +83,6 @@ func (r ToolListParams) URLQuery() (v url.Values, err error) {
 
 // Response containing a list of tool definitions.
 type ToolListResponseEnvelope struct {
-	// List of tool definitions
 	Data []ToolDef `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {

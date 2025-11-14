@@ -20,7 +20,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
-	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
 // ConversationService contains methods and other services that help with
@@ -44,7 +43,9 @@ func NewConversationService(opts ...option.RequestOption) (r ConversationService
 	return
 }
 
-// Create a conversation. Create a conversation.
+// Create a conversation.
+//
+// Create a conversation.
 func (r *ConversationService) New(ctx context.Context, body ConversationNewParams, opts ...option.RequestOption) (res *ConversationObject, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/conversations"
@@ -52,7 +53,9 @@ func (r *ConversationService) New(ctx context.Context, body ConversationNewParam
 	return
 }
 
-// Retrieve a conversation. Get a conversation with the given ID.
+// Retrieve a conversation.
+//
+// Get a conversation with the given ID.
 func (r *ConversationService) Get(ctx context.Context, conversationID string, opts ...option.RequestOption) (res *ConversationObject, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if conversationID == "" {
@@ -64,7 +67,9 @@ func (r *ConversationService) Get(ctx context.Context, conversationID string, op
 	return
 }
 
-// Update a conversation. Update a conversation's metadata with the given ID.
+// Update a conversation.
+//
+// Update a conversation's metadata with the given ID.
 func (r *ConversationService) Update(ctx context.Context, conversationID string, body ConversationUpdateParams, opts ...option.RequestOption) (res *ConversationObject, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if conversationID == "" {
@@ -76,7 +81,9 @@ func (r *ConversationService) Update(ctx context.Context, conversationID string,
 	return
 }
 
-// Delete a conversation. Delete a conversation with the given ID.
+// Delete a conversation.
+//
+// Delete a conversation with the given ID.
 func (r *ConversationService) Delete(ctx context.Context, conversationID string, opts ...option.RequestOption) (res *ConversationDeleteResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if conversationID == "" {
@@ -90,18 +97,29 @@ func (r *ConversationService) Delete(ctx context.Context, conversationID string,
 
 // OpenAI-compatible conversation object.
 type ConversationObject struct {
-	ID        string                `json:"id,required"`
-	CreatedAt int64                 `json:"created_at,required"`
-	Object    constant.Conversation `json:"object,required"`
-	Items     []any                 `json:"items"`
-	Metadata  map[string]string     `json:"metadata"`
+	// The unique ID of the conversation.
+	ID string `json:"id,required"`
+	// The time at which the conversation was created, measured in seconds since the
+	// Unix epoch.
+	CreatedAt int64 `json:"created_at,required"`
+	// Initial items to include in the conversation context. You may add up to 20 items
+	// at a time.
+	Items []map[string]any `json:"items,nullable"`
+	// Set of 16 key-value pairs that can be attached to an object. This can be useful
+	// for storing additional information about the object in a structured format, and
+	// querying for objects via API or the dashboard.
+	Metadata map[string]string `json:"metadata,nullable"`
+	// The object type, which is always conversation.
+	//
+	// Any of "conversation".
+	Object ConversationObjectObject `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
 		CreatedAt   respjson.Field
-		Object      respjson.Field
 		Items       respjson.Field
 		Metadata    respjson.Field
+		Object      respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -113,11 +131,21 @@ func (r *ConversationObject) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// The object type, which is always conversation.
+type ConversationObjectObject string
+
+const (
+	ConversationObjectObjectConversation ConversationObjectObject = "conversation"
+)
+
 // Response for deleted conversation.
 type ConversationDeleteResponse struct {
-	ID      string `json:"id,required"`
-	Deleted bool   `json:"deleted,required"`
-	Object  string `json:"object,required"`
+	// The deleted conversation identifier
+	ID string `json:"id,required"`
+	// Whether the object was deleted
+	Deleted bool `json:"deleted"`
+	// Object type
+	Object string `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -135,10 +163,8 @@ func (r *ConversationDeleteResponse) UnmarshalJSON(data []byte) error {
 }
 
 type ConversationNewParams struct {
-	// Initial items to include in the conversation context.
-	Items []ConversationNewParamsItemUnion `json:"items,omitzero"`
-	// Set of key-value pairs that can be attached to an object.
-	Metadata map[string]string `json:"metadata,omitzero"`
+	Items    []ConversationNewParamsItemUnion `json:"items,omitzero"`
+	Metadata map[string]string                `json:"metadata,omitzero"`
 	paramObj
 }
 
@@ -215,7 +241,7 @@ func (u ConversationNewParamsItemUnion) GetContent() *ConversationNewParamsItemM
 // Returns a pointer to the underlying variant's property, if present.
 func (u ConversationNewParamsItemUnion) GetRole() *string {
 	if vt := u.OfMessage; vt != nil {
-		return (*string)(&vt.Role)
+		return &vt.Role
 	}
 	return nil
 }
@@ -277,30 +303,6 @@ func (u ConversationNewParamsItemUnion) GetTools() []ConversationNewParamsItemMc
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ConversationNewParamsItemUnion) GetType() *string {
-	if vt := u.OfMessage; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfWebSearchCall; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfFileSearchCall; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfFunctionCall; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfFunctionCallOutput; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfMcpApprovalRequest; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfMcpApprovalResponse; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfMcpCall; vt != nil {
-		return (*string)(&vt.Type)
-	} else if vt := u.OfMcpListTools; vt != nil {
-		return (*string)(&vt.Type)
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
 func (u ConversationNewParamsItemUnion) GetID() *string {
 	if vt := u.OfMessage; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
@@ -336,6 +338,30 @@ func (u ConversationNewParamsItemUnion) GetStatus() *string {
 		return &vt.Status.Value
 	} else if vt := u.OfFunctionCallOutput; vt != nil && vt.Status.Valid() {
 		return &vt.Status.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationNewParamsItemUnion) GetType() *string {
+	if vt := u.OfMessage; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfWebSearchCall; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfFileSearchCall; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfFunctionCall; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfFunctionCallOutput; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfMcpApprovalRequest; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfMcpApprovalResponse; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfMcpCall; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfMcpListTools; vt != nil {
+		return (*string)(&vt.Type)
 	}
 	return nil
 }
@@ -415,15 +441,15 @@ func init() {
 // under one type because the Responses API gives them all the same "type" value,
 // and there is no way to tell them apart in certain scenarios.
 //
-// The properties Content, Role, Type are required.
+// The properties Content, Role are required.
 type ConversationNewParamsItemMessage struct {
 	Content ConversationNewParamsItemMessageContentUnion `json:"content,omitzero,required"`
 	// Any of "system", "developer", "user", "assistant".
-	Role   ConversationNewParamsItemMessageRole `json:"role,omitzero,required"`
-	ID     param.Opt[string]                    `json:"id,omitzero"`
-	Status param.Opt[string]                    `json:"status,omitzero"`
-	// This field can be elided, and will marshal its zero value as "message".
-	Type constant.Message `json:"type,required"`
+	Role   string            `json:"role,omitzero,required"`
+	ID     param.Opt[string] `json:"id,omitzero"`
+	Status param.Opt[string] `json:"status,omitzero"`
+	// Any of "message".
+	Type string `json:"type,omitzero"`
 	paramObj
 }
 
@@ -435,18 +461,27 @@ func (r *ConversationNewParamsItemMessage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+func init() {
+	apijson.RegisterFieldValidator[ConversationNewParamsItemMessage](
+		"role", "system", "developer", "user", "assistant",
+	)
+	apijson.RegisterFieldValidator[ConversationNewParamsItemMessage](
+		"type", "message",
+	)
+}
+
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type ConversationNewParamsItemMessageContentUnion struct {
-	OfString                                  param.Opt[string]                                       `json:",omitzero,inline"`
-	OfConversationNewsItemMessageContentArray []ConversationNewParamsItemMessageContentArrayItemUnion `json:",omitzero,inline"`
-	OfVariant2                                []ConversationNewParamsItemMessageContentArrayItemUnion `json:",omitzero,inline"`
+	OfString                                                                                                               param.Opt[string]                                                                                                                                                      `json:",omitzero,inline"`
+	OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile []ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion `json:",omitzero,inline"`
+	OfListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusal                                     []ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion                                     `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u ConversationNewParamsItemMessageContentUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfString, u.OfConversationNewsItemMessageContentArray, u.OfVariant2)
+	return param.MarshalUnion(u, u.OfString, u.OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile, u.OfListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusal)
 }
 func (u *ConversationNewParamsItemMessageContentUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -455,10 +490,10 @@ func (u *ConversationNewParamsItemMessageContentUnion) UnmarshalJSON(data []byte
 func (u *ConversationNewParamsItemMessageContentUnion) asAny() any {
 	if !param.IsOmitted(u.OfString) {
 		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfConversationNewsItemMessageContentArray) {
-		return &u.OfConversationNewsItemMessageContentArray
-	} else if !param.IsOmitted(u.OfVariant2) {
-		return &u.OfVariant2
+	} else if !param.IsOmitted(u.OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile) {
+		return &u.OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile
+	} else if !param.IsOmitted(u.OfListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusal) {
+		return &u.OfListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusal
 	}
 	return nil
 }
@@ -466,21 +501,21 @@ func (u *ConversationNewParamsItemMessageContentUnion) asAny() any {
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
-type ConversationNewParamsItemMessageContentArrayItemUnion struct {
-	OfInputText  *ConversationNewParamsItemMessageContentArrayItemInputText  `json:",omitzero,inline"`
-	OfInputImage *ConversationNewParamsItemMessageContentArrayItemInputImage `json:",omitzero,inline"`
-	OfInputFile  *ConversationNewParamsItemMessageContentArrayItemInputFile  `json:",omitzero,inline"`
+type ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion struct {
+	OfInputText  *ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText  `json:",omitzero,inline"`
+	OfInputImage *ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage `json:",omitzero,inline"`
+	OfInputFile  *ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile  `json:",omitzero,inline"`
 	paramUnion
 }
 
-func (u ConversationNewParamsItemMessageContentArrayItemUnion) MarshalJSON() ([]byte, error) {
+func (u ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfInputText, u.OfInputImage, u.OfInputFile)
 }
-func (u *ConversationNewParamsItemMessageContentArrayItemUnion) UnmarshalJSON(data []byte) error {
+func (u *ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
-func (u *ConversationNewParamsItemMessageContentArrayItemUnion) asAny() any {
+func (u *ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) asAny() any {
 	if !param.IsOmitted(u.OfInputText) {
 		return u.OfInputText
 	} else if !param.IsOmitted(u.OfInputImage) {
@@ -492,7 +527,7 @@ func (u *ConversationNewParamsItemMessageContentArrayItemUnion) asAny() any {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ConversationNewParamsItemMessageContentArrayItemUnion) GetText() *string {
+func (u ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetText() *string {
 	if vt := u.OfInputText; vt != nil {
 		return &vt.Text
 	}
@@ -500,15 +535,15 @@ func (u ConversationNewParamsItemMessageContentArrayItemUnion) GetText() *string
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ConversationNewParamsItemMessageContentArrayItemUnion) GetDetail() *string {
+func (u ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetDetail() *string {
 	if vt := u.OfInputImage; vt != nil {
-		return (*string)(&vt.Detail)
+		return &vt.Detail
 	}
 	return nil
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ConversationNewParamsItemMessageContentArrayItemUnion) GetImageURL() *string {
+func (u ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetImageURL() *string {
 	if vt := u.OfInputImage; vt != nil && vt.ImageURL.Valid() {
 		return &vt.ImageURL.Value
 	}
@@ -516,7 +551,7 @@ func (u ConversationNewParamsItemMessageContentArrayItemUnion) GetImageURL() *st
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ConversationNewParamsItemMessageContentArrayItemUnion) GetFileData() *string {
+func (u ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetFileData() *string {
 	if vt := u.OfInputFile; vt != nil && vt.FileData.Valid() {
 		return &vt.FileData.Value
 	}
@@ -524,7 +559,7 @@ func (u ConversationNewParamsItemMessageContentArrayItemUnion) GetFileData() *st
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ConversationNewParamsItemMessageContentArrayItemUnion) GetFileURL() *string {
+func (u ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetFileURL() *string {
 	if vt := u.OfInputFile; vt != nil && vt.FileURL.Valid() {
 		return &vt.FileURL.Value
 	}
@@ -532,7 +567,7 @@ func (u ConversationNewParamsItemMessageContentArrayItemUnion) GetFileURL() *str
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ConversationNewParamsItemMessageContentArrayItemUnion) GetFilename() *string {
+func (u ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetFilename() *string {
 	if vt := u.OfInputFile; vt != nil && vt.Filename.Valid() {
 		return &vt.Filename.Value
 	}
@@ -540,7 +575,7 @@ func (u ConversationNewParamsItemMessageContentArrayItemUnion) GetFilename() *st
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ConversationNewParamsItemMessageContentArrayItemUnion) GetType() *string {
+func (u ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetType() *string {
 	if vt := u.OfInputText; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfInputImage; vt != nil {
@@ -552,7 +587,7 @@ func (u ConversationNewParamsItemMessageContentArrayItemUnion) GetType() *string
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ConversationNewParamsItemMessageContentArrayItemUnion) GetFileID() *string {
+func (u ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetFileID() *string {
 	if vt := u.OfInputImage; vt != nil && vt.FileID.Valid() {
 		return &vt.FileID.Value
 	} else if vt := u.OfInputFile; vt != nil && vt.FileID.Valid() {
@@ -562,119 +597,446 @@ func (u ConversationNewParamsItemMessageContentArrayItemUnion) GetFileID() *stri
 }
 
 func init() {
-	apijson.RegisterUnion[ConversationNewParamsItemMessageContentArrayItemUnion](
+	apijson.RegisterUnion[ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion](
 		"type",
-		apijson.Discriminator[ConversationNewParamsItemMessageContentArrayItemInputText]("input_text"),
-		apijson.Discriminator[ConversationNewParamsItemMessageContentArrayItemInputImage]("input_image"),
-		apijson.Discriminator[ConversationNewParamsItemMessageContentArrayItemInputFile]("input_file"),
+		apijson.Discriminator[ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText]("input_text"),
+		apijson.Discriminator[ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage]("input_image"),
+		apijson.Discriminator[ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile]("input_file"),
 	)
 }
 
 // Text content for input messages in OpenAI response format.
 //
-// The properties Text, Type are required.
-type ConversationNewParamsItemMessageContentArrayItemInputText struct {
-	// The text content of the input message
+// The property Text is required.
+type ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText struct {
 	Text string `json:"text,required"`
-	// Content type identifier, always "input_text"
-	//
-	// This field can be elided, and will marshal its zero value as "input_text".
-	Type constant.InputText `json:"type,required"`
+	// Any of "input_text".
+	Type string `json:"type,omitzero"`
 	paramObj
 }
 
-func (r ConversationNewParamsItemMessageContentArrayItemInputText) MarshalJSON() (data []byte, err error) {
-	type shadow ConversationNewParamsItemMessageContentArrayItemInputText
+func (r ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) MarshalJSON() (data []byte, err error) {
+	type shadow ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ConversationNewParamsItemMessageContentArrayItemInputText) UnmarshalJSON(data []byte) error {
+func (r *ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText](
+		"type", "input_text",
+	)
 }
 
 // Image content for input messages in OpenAI response format.
-//
-// The properties Detail, Type are required.
-type ConversationNewParamsItemMessageContentArrayItemInputImage struct {
-	// Level of detail for image processing, can be "low", "high", or "auto"
-	//
-	// Any of "low", "high", "auto".
-	Detail ConversationNewParamsItemMessageContentArrayItemInputImageDetail `json:"detail,omitzero,required"`
-	// (Optional) The ID of the file to be sent to the model.
-	FileID param.Opt[string] `json:"file_id,omitzero"`
-	// (Optional) URL of the image content
+type ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage struct {
+	FileID   param.Opt[string] `json:"file_id,omitzero"`
 	ImageURL param.Opt[string] `json:"image_url,omitzero"`
-	// Content type identifier, always "input_image"
-	//
-	// This field can be elided, and will marshal its zero value as "input_image".
-	Type constant.InputImage `json:"type,required"`
+	// Any of "low", "high", "auto".
+	Detail string `json:"detail,omitzero"`
+	// Any of "input_image".
+	Type string `json:"type,omitzero"`
 	paramObj
 }
 
-func (r ConversationNewParamsItemMessageContentArrayItemInputImage) MarshalJSON() (data []byte, err error) {
-	type shadow ConversationNewParamsItemMessageContentArrayItemInputImage
+func (r ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) MarshalJSON() (data []byte, err error) {
+	type shadow ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ConversationNewParamsItemMessageContentArrayItemInputImage) UnmarshalJSON(data []byte) error {
+func (r *ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Level of detail for image processing, can be "low", "high", or "auto"
-type ConversationNewParamsItemMessageContentArrayItemInputImageDetail string
-
-const (
-	ConversationNewParamsItemMessageContentArrayItemInputImageDetailLow  ConversationNewParamsItemMessageContentArrayItemInputImageDetail = "low"
-	ConversationNewParamsItemMessageContentArrayItemInputImageDetailHigh ConversationNewParamsItemMessageContentArrayItemInputImageDetail = "high"
-	ConversationNewParamsItemMessageContentArrayItemInputImageDetailAuto ConversationNewParamsItemMessageContentArrayItemInputImageDetail = "auto"
-)
+func init() {
+	apijson.RegisterFieldValidator[ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage](
+		"detail", "low", "high", "auto",
+	)
+	apijson.RegisterFieldValidator[ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage](
+		"type", "input_image",
+	)
+}
 
 // File content for input messages in OpenAI response format.
-//
-// The property Type is required.
-type ConversationNewParamsItemMessageContentArrayItemInputFile struct {
-	// The data of the file to be sent to the model.
+type ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
 	FileData param.Opt[string] `json:"file_data,omitzero"`
-	// (Optional) The ID of the file to be sent to the model.
-	FileID param.Opt[string] `json:"file_id,omitzero"`
-	// The URL of the file to be sent to the model.
-	FileURL param.Opt[string] `json:"file_url,omitzero"`
-	// The name of the file to be sent to the model.
+	FileID   param.Opt[string] `json:"file_id,omitzero"`
+	FileURL  param.Opt[string] `json:"file_url,omitzero"`
 	Filename param.Opt[string] `json:"filename,omitzero"`
-	// The type of the input item. Always `input_file`.
-	//
-	// This field can be elided, and will marshal its zero value as "input_file".
-	Type constant.InputFile `json:"type,required"`
+	// Any of "input_file".
+	Type string `json:"type,omitzero"`
 	paramObj
 }
 
-func (r ConversationNewParamsItemMessageContentArrayItemInputFile) MarshalJSON() (data []byte, err error) {
-	type shadow ConversationNewParamsItemMessageContentArrayItemInputFile
+func (r ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) MarshalJSON() (data []byte, err error) {
+	type shadow ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ConversationNewParamsItemMessageContentArrayItemInputFile) UnmarshalJSON(data []byte) error {
+func (r *ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type ConversationNewParamsItemMessageRole string
+func init() {
+	apijson.RegisterFieldValidator[ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile](
+		"type", "input_file",
+	)
+}
 
-const (
-	ConversationNewParamsItemMessageRoleSystem    ConversationNewParamsItemMessageRole = "system"
-	ConversationNewParamsItemMessageRoleDeveloper ConversationNewParamsItemMessageRole = "developer"
-	ConversationNewParamsItemMessageRoleUser      ConversationNewParamsItemMessageRole = "user"
-	ConversationNewParamsItemMessageRoleAssistant ConversationNewParamsItemMessageRole = "assistant"
-)
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion struct {
+	OfOutputText *ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputText `json:",omitzero,inline"`
+	OfRefusal    *ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemRefusal    `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfOutputText, u.OfRefusal)
+}
+func (u *ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion) asAny() any {
+	if !param.IsOmitted(u.OfOutputText) {
+		return u.OfOutputText
+	} else if !param.IsOmitted(u.OfRefusal) {
+		return u.OfRefusal
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion) GetText() *string {
+	if vt := u.OfOutputText; vt != nil {
+		return &vt.Text
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion) GetAnnotations() []ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion {
+	if vt := u.OfOutputText; vt != nil {
+		return vt.Annotations
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion) GetRefusal() *string {
+	if vt := u.OfRefusal; vt != nil {
+		return &vt.Refusal
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion) GetType() *string {
+	if vt := u.OfOutputText; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfRefusal; vt != nil {
+		return (*string)(&vt.Type)
+	}
+	return nil
+}
+
+func init() {
+	apijson.RegisterUnion[ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion](
+		"type",
+		apijson.Discriminator[ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputText]("output_text"),
+		apijson.Discriminator[ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemRefusal]("refusal"),
+	)
+}
+
+// The property Text is required.
+type ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputText struct {
+	Text        string                                                                                                                                                 `json:"text,required"`
+	Annotations []ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion `json:"annotations,omitzero"`
+	// Any of "output_text".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputText) MarshalJSON() (data []byte, err error) {
+	type shadow ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputText
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputText) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputText](
+		"type", "output_text",
+	)
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion struct {
+	OfFileCitation          *ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation          `json:",omitzero,inline"`
+	OfURLCitation           *ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation           `json:",omitzero,inline"`
+	OfContainerFileCitation *ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation `json:",omitzero,inline"`
+	OfFilePath              *ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath              `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfFileCitation, u.OfURLCitation, u.OfContainerFileCitation, u.OfFilePath)
+}
+func (u *ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) asAny() any {
+	if !param.IsOmitted(u.OfFileCitation) {
+		return u.OfFileCitation
+	} else if !param.IsOmitted(u.OfURLCitation) {
+		return u.OfURLCitation
+	} else if !param.IsOmitted(u.OfContainerFileCitation) {
+		return u.OfContainerFileCitation
+	} else if !param.IsOmitted(u.OfFilePath) {
+		return u.OfFilePath
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetTitle() *string {
+	if vt := u.OfURLCitation; vt != nil {
+		return &vt.Title
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetURL() *string {
+	if vt := u.OfURLCitation; vt != nil {
+		return &vt.URL
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetContainerID() *string {
+	if vt := u.OfContainerFileCitation; vt != nil {
+		return &vt.ContainerID
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetFileID() *string {
+	if vt := u.OfFileCitation; vt != nil {
+		return (*string)(&vt.FileID)
+	} else if vt := u.OfContainerFileCitation; vt != nil {
+		return (*string)(&vt.FileID)
+	} else if vt := u.OfFilePath; vt != nil {
+		return (*string)(&vt.FileID)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetFilename() *string {
+	if vt := u.OfFileCitation; vt != nil {
+		return (*string)(&vt.Filename)
+	} else if vt := u.OfContainerFileCitation; vt != nil {
+		return (*string)(&vt.Filename)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetIndex() *int64 {
+	if vt := u.OfFileCitation; vt != nil {
+		return (*int64)(&vt.Index)
+	} else if vt := u.OfFilePath; vt != nil {
+		return (*int64)(&vt.Index)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetType() *string {
+	if vt := u.OfFileCitation; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfURLCitation; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfContainerFileCitation; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfFilePath; vt != nil {
+		return (*string)(&vt.Type)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetEndIndex() *int64 {
+	if vt := u.OfURLCitation; vt != nil {
+		return (*int64)(&vt.EndIndex)
+	} else if vt := u.OfContainerFileCitation; vt != nil {
+		return (*int64)(&vt.EndIndex)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetStartIndex() *int64 {
+	if vt := u.OfURLCitation; vt != nil {
+		return (*int64)(&vt.StartIndex)
+	} else if vt := u.OfContainerFileCitation; vt != nil {
+		return (*int64)(&vt.StartIndex)
+	}
+	return nil
+}
+
+func init() {
+	apijson.RegisterUnion[ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion](
+		"type",
+		apijson.Discriminator[ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation]("file_citation"),
+		apijson.Discriminator[ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation]("url_citation"),
+		apijson.Discriminator[ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation]("container_file_citation"),
+		apijson.Discriminator[ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath]("file_path"),
+	)
+}
+
+// File citation annotation for referencing specific files in response content.
+//
+// The properties FileID, Filename, Index are required.
+type ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation struct {
+	FileID   string `json:"file_id,required"`
+	Filename string `json:"filename,required"`
+	Index    int64  `json:"index,required"`
+	// Any of "file_citation".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation) MarshalJSON() (data []byte, err error) {
+	type shadow ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation](
+		"type", "file_citation",
+	)
+}
+
+// URL citation annotation for referencing external web resources.
+//
+// The properties EndIndex, StartIndex, Title, URL are required.
+type ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation struct {
+	EndIndex   int64  `json:"end_index,required"`
+	StartIndex int64  `json:"start_index,required"`
+	Title      string `json:"title,required"`
+	URL        string `json:"url,required"`
+	// Any of "url_citation".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation) MarshalJSON() (data []byte, err error) {
+	type shadow ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation](
+		"type", "url_citation",
+	)
+}
+
+// The properties ContainerID, EndIndex, FileID, Filename, StartIndex are required.
+type ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation struct {
+	ContainerID string `json:"container_id,required"`
+	EndIndex    int64  `json:"end_index,required"`
+	FileID      string `json:"file_id,required"`
+	Filename    string `json:"filename,required"`
+	StartIndex  int64  `json:"start_index,required"`
+	// Any of "container_file_citation".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation) MarshalJSON() (data []byte, err error) {
+	type shadow ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation](
+		"type", "container_file_citation",
+	)
+}
+
+// The properties FileID, Index are required.
+type ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath struct {
+	FileID string `json:"file_id,required"`
+	Index  int64  `json:"index,required"`
+	// Any of "file_path".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath) MarshalJSON() (data []byte, err error) {
+	type shadow ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath](
+		"type", "file_path",
+	)
+}
+
+// Refusal content within a streamed response part.
+//
+// The property Refusal is required.
+type ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemRefusal struct {
+	Refusal string `json:"refusal,required"`
+	// Any of "refusal".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemRefusal) MarshalJSON() (data []byte, err error) {
+	type shadow ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemRefusal
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemRefusal) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemRefusal](
+		"type", "refusal",
+	)
+}
 
 // Web search tool call output message for OpenAI responses.
 //
-// The properties ID, Status, Type are required.
+// The properties ID, Status are required.
 type ConversationNewParamsItemWebSearchCall struct {
-	// Unique identifier for this tool call
-	ID string `json:"id,required"`
-	// Current status of the web search operation
+	ID     string `json:"id,required"`
 	Status string `json:"status,required"`
-	// Tool call type identifier, always "web_search_call"
-	//
-	// This field can be elided, and will marshal its zero value as "web_search_call".
-	Type constant.WebSearchCall `json:"type,required"`
+	// Any of "web_search_call".
+	Type string `json:"type,omitzero"`
 	paramObj
 }
 
@@ -686,22 +1048,22 @@ func (r *ConversationNewParamsItemWebSearchCall) UnmarshalJSON(data []byte) erro
 	return apijson.UnmarshalRoot(data, r)
 }
 
+func init() {
+	apijson.RegisterFieldValidator[ConversationNewParamsItemWebSearchCall](
+		"type", "web_search_call",
+	)
+}
+
 // File search tool call output message for OpenAI responses.
 //
-// The properties ID, Queries, Status, Type are required.
+// The properties ID, Queries, Status are required.
 type ConversationNewParamsItemFileSearchCall struct {
-	// Unique identifier for this tool call
-	ID string `json:"id,required"`
-	// List of search queries executed
-	Queries []string `json:"queries,omitzero,required"`
-	// Current status of the file search operation
-	Status string `json:"status,required"`
-	// (Optional) Search results returned by the file search operation
+	ID      string                                          `json:"id,required"`
+	Queries []string                                        `json:"queries,omitzero,required"`
+	Status  string                                          `json:"status,required"`
 	Results []ConversationNewParamsItemFileSearchCallResult `json:"results,omitzero"`
-	// Tool call type identifier, always "file_search_call"
-	//
-	// This field can be elided, and will marshal its zero value as "file_search_call".
-	Type constant.FileSearchCall `json:"type,required"`
+	// Any of "file_search_call".
+	Type string `json:"type,omitzero"`
 	paramObj
 }
 
@@ -713,20 +1075,21 @@ func (r *ConversationNewParamsItemFileSearchCall) UnmarshalJSON(data []byte) err
 	return apijson.UnmarshalRoot(data, r)
 }
 
+func init() {
+	apijson.RegisterFieldValidator[ConversationNewParamsItemFileSearchCall](
+		"type", "file_search_call",
+	)
+}
+
 // Search results returned by the file search operation.
 //
 // The properties Attributes, FileID, Filename, Score, Text are required.
 type ConversationNewParamsItemFileSearchCallResult struct {
-	// (Optional) Key-value attributes associated with the file
-	Attributes map[string]ConversationNewParamsItemFileSearchCallResultAttributeUnion `json:"attributes,omitzero,required"`
-	// Unique identifier of the file containing the result
-	FileID string `json:"file_id,required"`
-	// Name of the file containing the result
-	Filename string `json:"filename,required"`
-	// Relevance score for this search result (between 0 and 1)
-	Score float64 `json:"score,required"`
-	// Text content of the search result
-	Text string `json:"text,required"`
+	Attributes map[string]any `json:"attributes,omitzero,required"`
+	FileID     string         `json:"file_id,required"`
+	Filename   string         `json:"filename,required"`
+	Score      float64        `json:"score,required"`
+	Text       string         `json:"text,required"`
 	paramObj
 }
 
@@ -738,55 +1101,17 @@ func (r *ConversationNewParamsItemFileSearchCallResult) UnmarshalJSON(data []byt
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type ConversationNewParamsItemFileSearchCallResultAttributeUnion struct {
-	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
-	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
-	OfString   param.Opt[string]  `json:",omitzero,inline"`
-	OfAnyArray []any              `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u ConversationNewParamsItemFileSearchCallResultAttributeUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
-}
-func (u *ConversationNewParamsItemFileSearchCallResultAttributeUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *ConversationNewParamsItemFileSearchCallResultAttributeUnion) asAny() any {
-	if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfAnyArray) {
-		return &u.OfAnyArray
-	}
-	return nil
-}
-
 // Function tool call output message for OpenAI responses.
 //
-// The properties Arguments, CallID, Name, Type are required.
+// The properties Arguments, CallID, Name are required.
 type ConversationNewParamsItemFunctionCall struct {
-	// JSON string containing the function arguments
-	Arguments string `json:"arguments,required"`
-	// Unique identifier for the function call
-	CallID string `json:"call_id,required"`
-	// Name of the function being called
-	Name string `json:"name,required"`
-	// (Optional) Additional identifier for the tool call
-	ID param.Opt[string] `json:"id,omitzero"`
-	// (Optional) Current status of the function call execution
-	Status param.Opt[string] `json:"status,omitzero"`
-	// Tool call type identifier, always "function_call"
-	//
-	// This field can be elided, and will marshal its zero value as "function_call".
-	Type constant.FunctionCall `json:"type,required"`
+	Arguments string            `json:"arguments,required"`
+	CallID    string            `json:"call_id,required"`
+	Name      string            `json:"name,required"`
+	ID        param.Opt[string] `json:"id,omitzero"`
+	Status    param.Opt[string] `json:"status,omitzero"`
+	// Any of "function_call".
+	Type string `json:"type,omitzero"`
 	paramObj
 }
 
@@ -798,18 +1123,23 @@ func (r *ConversationNewParamsItemFunctionCall) UnmarshalJSON(data []byte) error
 	return apijson.UnmarshalRoot(data, r)
 }
 
+func init() {
+	apijson.RegisterFieldValidator[ConversationNewParamsItemFunctionCall](
+		"type", "function_call",
+	)
+}
+
 // This represents the output of a function call that gets passed back to the
 // model.
 //
-// The properties CallID, Output, Type are required.
+// The properties CallID, Output are required.
 type ConversationNewParamsItemFunctionCallOutput struct {
 	CallID string            `json:"call_id,required"`
 	Output string            `json:"output,required"`
 	ID     param.Opt[string] `json:"id,omitzero"`
 	Status param.Opt[string] `json:"status,omitzero"`
-	// This field can be elided, and will marshal its zero value as
-	// "function_call_output".
-	Type constant.FunctionCallOutput `json:"type,required"`
+	// Any of "function_call_output".
+	Type string `json:"type,omitzero"`
 	paramObj
 }
 
@@ -821,17 +1151,22 @@ func (r *ConversationNewParamsItemFunctionCallOutput) UnmarshalJSON(data []byte)
 	return apijson.UnmarshalRoot(data, r)
 }
 
+func init() {
+	apijson.RegisterFieldValidator[ConversationNewParamsItemFunctionCallOutput](
+		"type", "function_call_output",
+	)
+}
+
 // A request for human approval of a tool invocation.
 //
-// The properties ID, Arguments, Name, ServerLabel, Type are required.
+// The properties ID, Arguments, Name, ServerLabel are required.
 type ConversationNewParamsItemMcpApprovalRequest struct {
 	ID          string `json:"id,required"`
 	Arguments   string `json:"arguments,required"`
 	Name        string `json:"name,required"`
 	ServerLabel string `json:"server_label,required"`
-	// This field can be elided, and will marshal its zero value as
-	// "mcp_approval_request".
-	Type constant.McpApprovalRequest `json:"type,required"`
+	// Any of "mcp_approval_request".
+	Type string `json:"type,omitzero"`
 	paramObj
 }
 
@@ -843,17 +1178,22 @@ func (r *ConversationNewParamsItemMcpApprovalRequest) UnmarshalJSON(data []byte)
 	return apijson.UnmarshalRoot(data, r)
 }
 
+func init() {
+	apijson.RegisterFieldValidator[ConversationNewParamsItemMcpApprovalRequest](
+		"type", "mcp_approval_request",
+	)
+}
+
 // A response to an MCP approval request.
 //
-// The properties ApprovalRequestID, Approve, Type are required.
+// The properties ApprovalRequestID, Approve are required.
 type ConversationNewParamsItemMcpApprovalResponse struct {
 	ApprovalRequestID string            `json:"approval_request_id,required"`
 	Approve           bool              `json:"approve,required"`
 	ID                param.Opt[string] `json:"id,omitzero"`
 	Reason            param.Opt[string] `json:"reason,omitzero"`
-	// This field can be elided, and will marshal its zero value as
-	// "mcp_approval_response".
-	Type constant.McpApprovalResponse `json:"type,required"`
+	// Any of "mcp_approval_response".
+	Type string `json:"type,omitzero"`
 	paramObj
 }
 
@@ -865,26 +1205,24 @@ func (r *ConversationNewParamsItemMcpApprovalResponse) UnmarshalJSON(data []byte
 	return apijson.UnmarshalRoot(data, r)
 }
 
+func init() {
+	apijson.RegisterFieldValidator[ConversationNewParamsItemMcpApprovalResponse](
+		"type", "mcp_approval_response",
+	)
+}
+
 // Model Context Protocol (MCP) call output message for OpenAI responses.
 //
-// The properties ID, Arguments, Name, ServerLabel, Type are required.
+// The properties ID, Arguments, Name, ServerLabel are required.
 type ConversationNewParamsItemMcpCall struct {
-	// Unique identifier for this MCP call
-	ID string `json:"id,required"`
-	// JSON string containing the MCP call arguments
-	Arguments string `json:"arguments,required"`
-	// Name of the MCP method being called
-	Name string `json:"name,required"`
-	// Label identifying the MCP server handling the call
-	ServerLabel string `json:"server_label,required"`
-	// (Optional) Error message if the MCP call failed
-	Error param.Opt[string] `json:"error,omitzero"`
-	// (Optional) Output result from the successful MCP call
-	Output param.Opt[string] `json:"output,omitzero"`
-	// Tool call type identifier, always "mcp_call"
-	//
-	// This field can be elided, and will marshal its zero value as "mcp_call".
-	Type constant.McpCall `json:"type,required"`
+	ID          string            `json:"id,required"`
+	Arguments   string            `json:"arguments,required"`
+	Name        string            `json:"name,required"`
+	ServerLabel string            `json:"server_label,required"`
+	Error       param.Opt[string] `json:"error,omitzero"`
+	Output      param.Opt[string] `json:"output,omitzero"`
+	// Any of "mcp_call".
+	Type string `json:"type,omitzero"`
 	paramObj
 }
 
@@ -896,20 +1234,21 @@ func (r *ConversationNewParamsItemMcpCall) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+func init() {
+	apijson.RegisterFieldValidator[ConversationNewParamsItemMcpCall](
+		"type", "mcp_call",
+	)
+}
+
 // MCP list tools output message containing available tools from an MCP server.
 //
-// The properties ID, ServerLabel, Tools, Type are required.
+// The properties ID, ServerLabel, Tools are required.
 type ConversationNewParamsItemMcpListTools struct {
-	// Unique identifier for this MCP list tools operation
-	ID string `json:"id,required"`
-	// Label identifying the MCP server providing the tools
-	ServerLabel string `json:"server_label,required"`
-	// List of available tools provided by the MCP server
-	Tools []ConversationNewParamsItemMcpListToolsTool `json:"tools,omitzero,required"`
-	// Tool call type identifier, always "mcp_list_tools"
-	//
-	// This field can be elided, and will marshal its zero value as "mcp_list_tools".
-	Type constant.McpListTools `json:"type,required"`
+	ID          string                                      `json:"id,required"`
+	ServerLabel string                                      `json:"server_label,required"`
+	Tools       []ConversationNewParamsItemMcpListToolsTool `json:"tools,omitzero,required"`
+	// Any of "mcp_list_tools".
+	Type string `json:"type,omitzero"`
 	paramObj
 }
 
@@ -921,15 +1260,18 @@ func (r *ConversationNewParamsItemMcpListTools) UnmarshalJSON(data []byte) error
 	return apijson.UnmarshalRoot(data, r)
 }
 
+func init() {
+	apijson.RegisterFieldValidator[ConversationNewParamsItemMcpListTools](
+		"type", "mcp_list_tools",
+	)
+}
+
 // Tool definition returned by MCP list tools operation.
 //
 // The properties InputSchema, Name are required.
 type ConversationNewParamsItemMcpListToolsTool struct {
-	// JSON schema defining the tool's input parameters
-	InputSchema map[string]ConversationNewParamsItemMcpListToolsToolInputSchemaUnion `json:"input_schema,omitzero,required"`
-	// Name of the tool
-	Name string `json:"name,required"`
-	// (Optional) Description of what the tool does
+	InputSchema map[string]any    `json:"input_schema,omitzero,required"`
+	Name        string            `json:"name,required"`
 	Description param.Opt[string] `json:"description,omitzero"`
 	paramObj
 }
@@ -942,39 +1284,7 @@ func (r *ConversationNewParamsItemMcpListToolsTool) UnmarshalJSON(data []byte) e
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type ConversationNewParamsItemMcpListToolsToolInputSchemaUnion struct {
-	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
-	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
-	OfString   param.Opt[string]  `json:",omitzero,inline"`
-	OfAnyArray []any              `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u ConversationNewParamsItemMcpListToolsToolInputSchemaUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
-}
-func (u *ConversationNewParamsItemMcpListToolsToolInputSchemaUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *ConversationNewParamsItemMcpListToolsToolInputSchemaUnion) asAny() any {
-	if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfAnyArray) {
-		return &u.OfAnyArray
-	}
-	return nil
-}
-
 type ConversationUpdateParams struct {
-	// Set of key-value pairs that can be attached to an object.
 	Metadata map[string]string `json:"metadata,omitzero,required"`
 	paramObj
 }
