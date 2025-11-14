@@ -10,7 +10,6 @@ package llamastackclient
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
 	"slices"
 
@@ -40,8 +39,9 @@ func NewModerationService(opts ...option.RequestOption) (r ModerationService) {
 	return
 }
 
-// Create moderation. Classifies if text and/or image inputs are potentially
-// harmful.
+// Create moderation.
+//
+// Classifies if text and/or image inputs are potentially harmful.
 func (r *ModerationService) New(ctx context.Context, body ModerationNewParams, opts ...option.RequestOption) (res *CreateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/moderations"
@@ -51,11 +51,8 @@ func (r *ModerationService) New(ctx context.Context, body ModerationNewParams, o
 
 // A moderation object.
 type CreateResponse struct {
-	// The unique identifier for the moderation request.
-	ID string `json:"id,required"`
-	// The model used to generate the moderation results.
-	Model string `json:"model,required"`
-	// A list of moderation objects
+	ID      string                 `json:"id,required"`
+	Model   string                 `json:"model,required"`
 	Results []CreateResponseResult `json:"results,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -75,23 +72,19 @@ func (r *CreateResponse) UnmarshalJSON(data []byte) error {
 
 // A moderation object.
 type CreateResponseResult struct {
-	// Whether any of the below categories are flagged.
-	Flagged  bool                                         `json:"flagged,required"`
-	Metadata map[string]CreateResponseResultMetadataUnion `json:"metadata,required"`
-	// A list of the categories, and whether they are flagged or not.
-	Categories map[string]bool `json:"categories"`
-	// A list of the categories along with the input type(s) that the score applies to.
-	CategoryAppliedInputTypes map[string][]string `json:"category_applied_input_types"`
-	// A list of the categories along with their scores as predicted by model.
-	CategoryScores map[string]float64 `json:"category_scores"`
-	UserMessage    string             `json:"user_message"`
+	Flagged                   bool                `json:"flagged,required"`
+	Categories                map[string]bool     `json:"categories,nullable"`
+	CategoryAppliedInputTypes map[string][]string `json:"category_applied_input_types,nullable"`
+	CategoryScores            map[string]float64  `json:"category_scores,nullable"`
+	Metadata                  map[string]any      `json:"metadata"`
+	UserMessage               string              `json:"user_message,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Flagged                   respjson.Field
-		Metadata                  respjson.Field
 		Categories                respjson.Field
 		CategoryAppliedInputTypes respjson.Field
 		CategoryScores            respjson.Field
+		Metadata                  respjson.Field
 		UserMessage               respjson.Field
 		ExtraFields               map[string]respjson.Field
 		raw                       string
@@ -104,64 +97,9 @@ func (r *CreateResponseResult) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// CreateResponseResultMetadataUnion contains all possible properties and values
-// from [bool], [float64], [string], [[]any].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type CreateResponseResultMetadataUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
-	} `json:"-"`
-}
-
-func (u CreateResponseResultMetadataUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u CreateResponseResultMetadataUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u CreateResponseResultMetadataUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u CreateResponseResultMetadataUnion) AsAnyArray() (v []any) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u CreateResponseResultMetadataUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *CreateResponseResultMetadataUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type ModerationNewParams struct {
-	// Input (or inputs) to classify. Can be a single string, an array of strings, or
-	// an array of multi-modal input objects similar to other models.
 	Input ModerationNewParamsInputUnion `json:"input,omitzero,required"`
-	// (Optional) The content moderation model you would like to use.
-	Model param.Opt[string] `json:"model,omitzero"`
+	Model param.Opt[string]             `json:"model,omitzero"`
 	paramObj
 }
 
@@ -177,13 +115,13 @@ func (r *ModerationNewParams) UnmarshalJSON(data []byte) error {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type ModerationNewParamsInputUnion struct {
-	OfString      param.Opt[string] `json:",omitzero,inline"`
-	OfStringArray []string          `json:",omitzero,inline"`
+	OfString     param.Opt[string] `json:",omitzero,inline"`
+	OfListString []string          `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u ModerationNewParamsInputUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfString, u.OfStringArray)
+	return param.MarshalUnion(u, u.OfString, u.OfListString)
 }
 func (u *ModerationNewParamsInputUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -192,8 +130,8 @@ func (u *ModerationNewParamsInputUnion) UnmarshalJSON(data []byte) error {
 func (u *ModerationNewParamsInputUnion) asAny() any {
 	if !param.IsOmitted(u.OfString) {
 		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfStringArray) {
-		return &u.OfStringArray
+	} else if !param.IsOmitted(u.OfListString) {
+		return &u.OfListString
 	}
 	return nil
 }

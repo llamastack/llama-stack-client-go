@@ -74,10 +74,8 @@ func TestModelRegisterWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Models.Register(context.TODO(), llamastackclient.ModelRegisterParams{
 		ModelID: "model_id",
-		Metadata: map[string]llamastackclient.ModelRegisterParamsMetadataUnion{
-			"foo": {
-				OfBool: llamastackclient.Bool(true),
-			},
+		Metadata: map[string]any{
+			"foo": "bar",
 		},
 		ModelType:       llamastackclient.ModelRegisterParamsModelTypeLlm,
 		ProviderID:      llamastackclient.String("provider_id"),

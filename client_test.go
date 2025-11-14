@@ -50,6 +50,7 @@ func TestUserAgentHeader(t *testing.T) {
 				Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
 					OfString: llamastackclient.String("string"),
 				},
+				Role: "user",
 			},
 		}},
 		Model: "model",
@@ -82,6 +83,7 @@ func TestRetryAfter(t *testing.T) {
 				Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
 					OfString: llamastackclient.String("string"),
 				},
+				Role: "user",
 			},
 		}},
 		Model: "model",
@@ -125,6 +127,7 @@ func TestDeleteRetryCountHeader(t *testing.T) {
 				Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
 					OfString: llamastackclient.String("string"),
 				},
+				Role: "user",
 			},
 		}},
 		Model: "model",
@@ -163,6 +166,7 @@ func TestOverwriteRetryCountHeader(t *testing.T) {
 				Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
 					OfString: llamastackclient.String("string"),
 				},
+				Role: "user",
 			},
 		}},
 		Model: "model",
@@ -200,6 +204,7 @@ func TestRetryAfterMs(t *testing.T) {
 				Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
 					OfString: llamastackclient.String("string"),
 				},
+				Role: "user",
 			},
 		}},
 		Model: "model",
@@ -231,6 +236,7 @@ func TestContextCancel(t *testing.T) {
 				Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
 					OfString: llamastackclient.String("string"),
 				},
+				Role: "user",
 			},
 		}},
 		Model: "model",
@@ -259,6 +265,7 @@ func TestContextCancelDelay(t *testing.T) {
 				Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
 					OfString: llamastackclient.String("string"),
 				},
+				Role: "user",
 			},
 		}},
 		Model: "model",
@@ -293,6 +300,7 @@ func TestContextDeadline(t *testing.T) {
 					Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
 						OfString: llamastackclient.String("string"),
 					},
+					Role: "user",
 				},
 			}},
 			Model: "model",
@@ -346,6 +354,7 @@ func TestContextDeadlineStreaming(t *testing.T) {
 					Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
 						OfString: llamastackclient.String("string"),
 					},
+					Role: "user",
 				},
 			}},
 			Model: "model",
@@ -401,6 +410,7 @@ func TestContextDeadlineStreamingWithRequestTimeout(t *testing.T) {
 						Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
 							OfString: llamastackclient.String("string"),
 						},
+						Role: "user",
 					},
 				}},
 				Model: "model",

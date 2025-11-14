@@ -76,10 +76,8 @@ func TestBetaDatasetAppendrows(t *testing.T) {
 		context.TODO(),
 		"dataset_id",
 		llamastackclient.BetaDatasetAppendrowsParams{
-			Rows: []map[string]llamastackclient.BetaDatasetAppendrowsParamsRowUnion{{
-				"foo": {
-					OfBool: llamastackclient.Bool(true),
-				},
+			Rows: []map[string]any{{
+				"foo": "bar",
 			}},
 		},
 	)
@@ -132,18 +130,10 @@ func TestBetaDatasetRegisterWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Beta.Datasets.Register(context.TODO(), llamastackclient.BetaDatasetRegisterParams{
-		Purpose: llamastackclient.BetaDatasetRegisterParamsPurposePostTrainingMessages,
-		Source: llamastackclient.BetaDatasetRegisterParamsSourceUnion{
-			OfUri: &llamastackclient.BetaDatasetRegisterParamsSourceUri{
-				Uri: "uri",
-			},
-		},
-		DatasetID: llamastackclient.String("dataset_id"),
-		Metadata: map[string]llamastackclient.BetaDatasetRegisterParamsMetadataUnion{
-			"foo": {
-				OfBool: llamastackclient.Bool(true),
-			},
-		},
+		Purpose:   map[string]interface{}{},
+		Source:    map[string]interface{}{},
+		DatasetID: map[string]interface{}{},
+		Metadata:  map[string]interface{}{},
 	})
 	if err != nil {
 		var apierr *llamastackclient.Error

@@ -17,11 +17,11 @@ import (
 	"slices"
 
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
+	shimjson "github.com/llamastack/llama-stack-client-go/internal/encoding/json"
 	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
 	"github.com/llamastack/llama-stack-client-go/option"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
-	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
 // AlphaEvalService contains methods and other services that help with interacting
@@ -95,16 +95,16 @@ func (r *AlphaEvalService) RunEvalAlpha(ctx context.Context, benchmarkID string,
 
 // A benchmark configuration for evaluation.
 //
-// The properties EvalCandidate, ScoringParams are required.
+// The property EvalCandidate is required.
 type BenchmarkConfigParam struct {
-	// The candidate to evaluate.
+	// A model candidate for evaluation.
 	EvalCandidate BenchmarkConfigEvalCandidateParam `json:"eval_candidate,omitzero,required"`
+	// Number of examples to evaluate (useful for testing), if not provided, all
+	// examples in the dataset will be evaluated
+	NumExamples param.Opt[int64] `json:"num_examples,omitzero"`
 	// Map between scoring function id and parameters for each scoring function you
 	// want to run
-	ScoringParams map[string]ScoringFnParamsUnion `json:"scoring_params,omitzero,required"`
-	// (Optional) The number of examples to evaluate. If not provided, all examples in
-	// the dataset will be evaluated
-	NumExamples param.Opt[int64] `json:"num_examples,omitzero"`
+	ScoringParams map[string]BenchmarkConfigScoringParamUnionParam `json:"scoring_params,omitzero"`
 	paramObj
 }
 
@@ -116,18 +116,17 @@ func (r *BenchmarkConfigParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The candidate to evaluate.
+// A model candidate for evaluation.
 //
-// The properties Model, SamplingParams, Type are required.
+// The properties Model, SamplingParams are required.
 type BenchmarkConfigEvalCandidateParam struct {
-	// The model ID to evaluate.
 	Model string `json:"model,required"`
-	// The sampling parameters for the model.
+	// Sampling parameters.
 	SamplingParams SamplingParams `json:"sampling_params,omitzero,required"`
-	// (Optional) The system message providing instructions or context to the model.
+	// A system message providing instructions or context to the model.
 	SystemMessage SystemMessageParam `json:"system_message,omitzero"`
-	// This field can be elided, and will marshal its zero value as "model".
-	Type constant.Model `json:"type,required"`
+	// Any of "model".
+	Type string `json:"type,omitzero"`
 	paramObj
 }
 
@@ -139,12 +138,193 @@ func (r *BenchmarkConfigEvalCandidateParam) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+func init() {
+	apijson.RegisterFieldValidator[BenchmarkConfigEvalCandidateParam](
+		"type", "model",
+	)
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type BenchmarkConfigScoringParamUnionParam struct {
+	OfLlmAsJudge  *BenchmarkConfigScoringParamLlmAsJudgeParam  `json:",omitzero,inline"`
+	OfRegexParser *BenchmarkConfigScoringParamRegexParserParam `json:",omitzero,inline"`
+	OfBasic       *BenchmarkConfigScoringParamBasicParam       `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u BenchmarkConfigScoringParamUnionParam) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfLlmAsJudge, u.OfRegexParser, u.OfBasic)
+}
+func (u *BenchmarkConfigScoringParamUnionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *BenchmarkConfigScoringParamUnionParam) asAny() any {
+	if !param.IsOmitted(u.OfLlmAsJudge) {
+		return u.OfLlmAsJudge
+	} else if !param.IsOmitted(u.OfRegexParser) {
+		return u.OfRegexParser
+	} else if !param.IsOmitted(u.OfBasic) {
+		return u.OfBasic
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u BenchmarkConfigScoringParamUnionParam) GetJudgeModel() *string {
+	if vt := u.OfLlmAsJudge; vt != nil {
+		return &vt.JudgeModel
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u BenchmarkConfigScoringParamUnionParam) GetJudgeScoreRegexes() []string {
+	if vt := u.OfLlmAsJudge; vt != nil {
+		return vt.JudgeScoreRegexes
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u BenchmarkConfigScoringParamUnionParam) GetPromptTemplate() *string {
+	if vt := u.OfLlmAsJudge; vt != nil && vt.PromptTemplate.Valid() {
+		return &vt.PromptTemplate.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u BenchmarkConfigScoringParamUnionParam) GetParsingRegexes() []string {
+	if vt := u.OfRegexParser; vt != nil {
+		return vt.ParsingRegexes
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u BenchmarkConfigScoringParamUnionParam) GetType() *string {
+	if vt := u.OfLlmAsJudge; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfRegexParser; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfBasic; vt != nil {
+		return (*string)(&vt.Type)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's AggregationFunctions property, if
+// present.
+func (u BenchmarkConfigScoringParamUnionParam) GetAggregationFunctions() []string {
+	if vt := u.OfLlmAsJudge; vt != nil {
+		return vt.AggregationFunctions
+	} else if vt := u.OfRegexParser; vt != nil {
+		return vt.AggregationFunctions
+	} else if vt := u.OfBasic; vt != nil {
+		return vt.AggregationFunctions
+	}
+	return nil
+}
+
+func init() {
+	apijson.RegisterUnion[BenchmarkConfigScoringParamUnionParam](
+		"type",
+		apijson.Discriminator[BenchmarkConfigScoringParamLlmAsJudgeParam]("llm_as_judge"),
+		apijson.Discriminator[BenchmarkConfigScoringParamRegexParserParam]("regex_parser"),
+		apijson.Discriminator[BenchmarkConfigScoringParamBasicParam]("basic"),
+	)
+}
+
+// Parameters for LLM-as-judge scoring function configuration.
+//
+// The property JudgeModel is required.
+type BenchmarkConfigScoringParamLlmAsJudgeParam struct {
+	JudgeModel     string            `json:"judge_model,required"`
+	PromptTemplate param.Opt[string] `json:"prompt_template,omitzero"`
+	// Aggregation functions to apply to the scores of each row
+	//
+	// Any of "average", "weighted_average", "median", "categorical_count", "accuracy".
+	AggregationFunctions []string `json:"aggregation_functions,omitzero"`
+	// Regexes to extract the answer from generated response
+	JudgeScoreRegexes []string `json:"judge_score_regexes,omitzero"`
+	// Any of "llm_as_judge".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r BenchmarkConfigScoringParamLlmAsJudgeParam) MarshalJSON() (data []byte, err error) {
+	type shadow BenchmarkConfigScoringParamLlmAsJudgeParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *BenchmarkConfigScoringParamLlmAsJudgeParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[BenchmarkConfigScoringParamLlmAsJudgeParam](
+		"type", "llm_as_judge",
+	)
+}
+
+// Parameters for regex parser scoring function configuration.
+type BenchmarkConfigScoringParamRegexParserParam struct {
+	// Aggregation functions to apply to the scores of each row
+	//
+	// Any of "average", "weighted_average", "median", "categorical_count", "accuracy".
+	AggregationFunctions []string `json:"aggregation_functions,omitzero"`
+	// Regex to extract the answer from generated response
+	ParsingRegexes []string `json:"parsing_regexes,omitzero"`
+	// Any of "regex_parser".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r BenchmarkConfigScoringParamRegexParserParam) MarshalJSON() (data []byte, err error) {
+	type shadow BenchmarkConfigScoringParamRegexParserParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *BenchmarkConfigScoringParamRegexParserParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[BenchmarkConfigScoringParamRegexParserParam](
+		"type", "regex_parser",
+	)
+}
+
+// Parameters for basic scoring function configuration.
+type BenchmarkConfigScoringParamBasicParam struct {
+	// Aggregation functions to apply to the scores of each row
+	//
+	// Any of "average", "weighted_average", "median", "categorical_count", "accuracy".
+	AggregationFunctions []string `json:"aggregation_functions,omitzero"`
+	// Any of "basic".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r BenchmarkConfigScoringParamBasicParam) MarshalJSON() (data []byte, err error) {
+	type shadow BenchmarkConfigScoringParamBasicParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *BenchmarkConfigScoringParamBasicParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[BenchmarkConfigScoringParamBasicParam](
+		"type", "basic",
+	)
+}
+
 // The response from an evaluation.
 type EvaluateResponse struct {
-	// The generations from the evaluation.
-	Generations []map[string]EvaluateResponseGenerationUnion `json:"generations,required"`
-	// The scores from the evaluation.
-	Scores map[string]ScoringResult `json:"scores,required"`
+	Generations []map[string]any         `json:"generations,required"`
+	Scores      map[string]ScoringResult `json:"scores,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Generations respjson.Field
@@ -160,63 +340,10 @@ func (r *EvaluateResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// EvaluateResponseGenerationUnion contains all possible properties and values from
-// [bool], [float64], [string], [[]any].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type EvaluateResponseGenerationUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
-	} `json:"-"`
-}
-
-func (u EvaluateResponseGenerationUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u EvaluateResponseGenerationUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u EvaluateResponseGenerationUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u EvaluateResponseGenerationUnion) AsAnyArray() (v []any) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u EvaluateResponseGenerationUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *EvaluateResponseGenerationUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // A job execution instance with status tracking.
 type Job struct {
-	// Unique identifier for the job
 	JobID string `json:"job_id,required"`
-	// Current execution status of the job
+	// Status of a job execution.
 	//
 	// Any of "completed", "in_progress", "failed", "scheduled", "cancelled".
 	Status JobStatus `json:"status,required"`
@@ -235,7 +362,7 @@ func (r *Job) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Current execution status of the job
+// Status of a job execution.
 type JobStatus string
 
 const (
@@ -247,12 +374,10 @@ const (
 )
 
 type AlphaEvalEvaluateRowsParams struct {
-	// The configuration for the benchmark.
-	BenchmarkConfig BenchmarkConfigParam `json:"benchmark_config,omitzero,required"`
-	// The rows to evaluate.
-	InputRows []map[string]AlphaEvalEvaluateRowsParamsInputRowUnion `json:"input_rows,omitzero,required"`
-	// The scoring functions to use for the evaluation.
-	ScoringFunctions []string `json:"scoring_functions,omitzero,required"`
+	// A benchmark configuration for evaluation.
+	BenchmarkConfig  BenchmarkConfigParam `json:"benchmark_config,omitzero,required"`
+	InputRows        []map[string]any     `json:"input_rows,omitzero,required"`
+	ScoringFunctions []string             `json:"scoring_functions,omitzero,required"`
 	paramObj
 }
 
@@ -264,44 +389,11 @@ func (r *AlphaEvalEvaluateRowsParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type AlphaEvalEvaluateRowsParamsInputRowUnion struct {
-	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
-	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
-	OfString   param.Opt[string]  `json:",omitzero,inline"`
-	OfAnyArray []any              `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u AlphaEvalEvaluateRowsParamsInputRowUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
-}
-func (u *AlphaEvalEvaluateRowsParamsInputRowUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *AlphaEvalEvaluateRowsParamsInputRowUnion) asAny() any {
-	if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfAnyArray) {
-		return &u.OfAnyArray
-	}
-	return nil
-}
-
 type AlphaEvalEvaluateRowsAlphaParams struct {
-	// The configuration for the benchmark.
-	BenchmarkConfig BenchmarkConfigParam `json:"benchmark_config,omitzero,required"`
-	// The rows to evaluate.
-	InputRows []map[string]AlphaEvalEvaluateRowsAlphaParamsInputRowUnion `json:"input_rows,omitzero,required"`
-	// The scoring functions to use for the evaluation.
-	ScoringFunctions []string `json:"scoring_functions,omitzero,required"`
+	// A benchmark configuration for evaluation.
+	BenchmarkConfig  BenchmarkConfigParam `json:"benchmark_config,omitzero,required"`
+	InputRows        []map[string]any     `json:"input_rows,omitzero,required"`
+	ScoringFunctions []string             `json:"scoring_functions,omitzero,required"`
 	paramObj
 }
 
@@ -313,61 +405,28 @@ func (r *AlphaEvalEvaluateRowsAlphaParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type AlphaEvalEvaluateRowsAlphaParamsInputRowUnion struct {
-	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
-	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
-	OfString   param.Opt[string]  `json:",omitzero,inline"`
-	OfAnyArray []any              `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u AlphaEvalEvaluateRowsAlphaParamsInputRowUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
-}
-func (u *AlphaEvalEvaluateRowsAlphaParamsInputRowUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *AlphaEvalEvaluateRowsAlphaParamsInputRowUnion) asAny() any {
-	if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfAnyArray) {
-		return &u.OfAnyArray
-	}
-	return nil
-}
-
 type AlphaEvalRunEvalParams struct {
-	// The configuration for the benchmark.
-	BenchmarkConfig BenchmarkConfigParam `json:"benchmark_config,omitzero,required"`
+	// A benchmark configuration for evaluation.
+	BenchmarkConfig BenchmarkConfigParam
 	paramObj
 }
 
 func (r AlphaEvalRunEvalParams) MarshalJSON() (data []byte, err error) {
-	type shadow AlphaEvalRunEvalParams
-	return param.MarshalObject(r, (*shadow)(&r))
+	return shimjson.Marshal(r.BenchmarkConfig)
 }
 func (r *AlphaEvalRunEvalParams) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
+	return json.Unmarshal(data, &r.BenchmarkConfig)
 }
 
 type AlphaEvalRunEvalAlphaParams struct {
-	// The configuration for the benchmark.
-	BenchmarkConfig BenchmarkConfigParam `json:"benchmark_config,omitzero,required"`
+	// A benchmark configuration for evaluation.
+	BenchmarkConfig BenchmarkConfigParam
 	paramObj
 }
 
 func (r AlphaEvalRunEvalAlphaParams) MarshalJSON() (data []byte, err error) {
-	type shadow AlphaEvalRunEvalAlphaParams
-	return param.MarshalObject(r, (*shadow)(&r))
+	return shimjson.Marshal(r.BenchmarkConfig)
 }
 func (r *AlphaEvalRunEvalAlphaParams) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
+	return json.Unmarshal(data, &r.BenchmarkConfig)
 }
