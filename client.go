@@ -44,6 +44,7 @@ type Client struct {
 	Scoring          ScoringService
 	ScoringFunctions ScoringFunctionService
 	Files            FileService
+	Batches          BatchService
 	Alpha            AlphaService
 	Beta             BetaService
 }
@@ -91,6 +92,7 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Scoring = NewScoringService(opts...)
 	r.ScoringFunctions = NewScoringFunctionService(opts...)
 	r.Files = NewFileService(opts...)
+	r.Batches = NewBatchService(opts...)
 	r.Alpha = NewAlphaService(opts...)
 	r.Beta = NewBetaService(opts...)
 

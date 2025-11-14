@@ -73,22 +73,34 @@ func TestScoringFunctionRegisterWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	err := client.ScoringFunctions.Register(context.TODO(), llamastackclient.ScoringFunctionRegisterParams{
-		Description: "description",
-		ReturnType: llamastackclient.ScoringFunctionRegisterParamsReturnType{
-			Type: "string",
-		},
-		ScoringFnID: "scoring_fn_id",
-		Params: llamastackclient.ScoringFnParamsUnion{
-			OfLlmAsJudge: &llamastackclient.ScoringFnParamsLlmAsJudge{
-				AggregationFunctions: []string{"average"},
-				JudgeModel:           "judge_model",
-				JudgeScoreRegexes:    []string{"string"},
-				PromptTemplate:       llamastackclient.String("prompt_template"),
-			},
-		},
-		ProviderID:          llamastackclient.String("provider_id"),
-		ProviderScoringFnID: llamastackclient.String("provider_scoring_fn_id"),
+		Description:         map[string]interface{}{},
+		ReturnType:          map[string]interface{}{},
+		ScoringFnID:         map[string]interface{}{},
+		Params:              map[string]interface{}{},
+		ProviderID:          map[string]interface{}{},
+		ProviderScoringFnID: map[string]interface{}{},
 	})
+	if err != nil {
+		var apierr *llamastackclient.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestScoringFunctionUnregister(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := llamastackclient.NewClient(
+		option.WithBaseURL(baseURL),
+	)
+	err := client.ScoringFunctions.Unregister(context.TODO(), "scoring_fn_id")
 	if err != nil {
 		var apierr *llamastackclient.Error
 		if errors.As(err, &apierr) {
