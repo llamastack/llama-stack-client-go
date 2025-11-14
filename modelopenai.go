@@ -50,19 +50,3 @@ func (r *ModelOpenAIService) List(ctx context.Context, opts ...option.RequestOpt
 	res = &env.Data
 	return
 }
-
-type ListModelsResponse struct {
-	Data []Model `json:"data,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ListModelsResponse) RawJSON() string { return r.JSON.raw }
-func (r *ListModelsResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
