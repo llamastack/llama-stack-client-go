@@ -15,10 +15,8 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/llamastack/llama-stack-client-go/internal/apijson"
 	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
 	"github.com/llamastack/llama-stack-client-go/option"
-	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 )
 
 // PromptVersionService contains methods and other services that help with
