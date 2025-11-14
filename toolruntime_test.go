@@ -31,10 +31,8 @@ func TestToolRuntimeInvokeToolWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.ToolRuntime.InvokeTool(context.TODO(), llamastackclient.ToolRuntimeInvokeToolParams{
-		Kwargs: map[string]llamastackclient.ToolRuntimeInvokeToolParamsKwargUnion{
-			"foo": {
-				OfBool: llamastackclient.Bool(true),
-			},
+		Kwargs: map[string]any{
+			"foo": "bar",
 		},
 		ToolName:      "tool_name",
 		Authorization: llamastackclient.String("authorization"),

@@ -10,7 +10,6 @@ package llamastackclient
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -21,7 +20,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
-	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
 // ToolgroupService contains methods and other services that help with interacting
@@ -96,7 +94,6 @@ func (r *ToolgroupService) Unregister(ctx context.Context, toolgroupID string, o
 
 // Response containing a list of tool groups.
 type ListToolGroupsResponse struct {
-	// List of tool groups
 	Data []ToolGroup `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -114,23 +111,25 @@ func (r *ListToolGroupsResponse) UnmarshalJSON(data []byte) error {
 
 // A group of related tools managed together.
 type ToolGroup struct {
+	// Unique identifier for this resource in llama stack
 	Identifier string `json:"identifier,required"`
-	ProviderID string `json:"provider_id,required"`
-	// Type of resource, always 'tool_group'
-	Type constant.ToolGroup `json:"type,required"`
-	// (Optional) Additional arguments for the tool group
-	Args map[string]ToolGroupArgUnion `json:"args"`
-	// (Optional) Model Context Protocol endpoint for remote tools
-	McpEndpoint        ToolGroupMcpEndpoint `json:"mcp_endpoint"`
-	ProviderResourceID string               `json:"provider_resource_id"`
+	// ID of the provider that owns this resource
+	ProviderID string         `json:"provider_id,required"`
+	Args       map[string]any `json:"args,nullable"`
+	// A URL reference to external content.
+	McpEndpoint ToolGroupMcpEndpoint `json:"mcp_endpoint,nullable"`
+	// Unique identifier for this resource in the provider
+	ProviderResourceID string `json:"provider_resource_id,nullable"`
+	// Any of "tool_group".
+	Type ToolGroupType `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Identifier         respjson.Field
 		ProviderID         respjson.Field
-		Type               respjson.Field
 		Args               respjson.Field
 		McpEndpoint        respjson.Field
 		ProviderResourceID respjson.Field
+		Type               respjson.Field
 		ExtraFields        map[string]respjson.Field
 		raw                string
 	} `json:"-"`
@@ -142,61 +141,8 @@ func (r *ToolGroup) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ToolGroupArgUnion contains all possible properties and values from [bool],
-// [float64], [string], [[]any].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type ToolGroupArgUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
-	} `json:"-"`
-}
-
-func (u ToolGroupArgUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ToolGroupArgUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ToolGroupArgUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ToolGroupArgUnion) AsAnyArray() (v []any) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ToolGroupArgUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ToolGroupArgUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// (Optional) Model Context Protocol endpoint for remote tools
+// A URL reference to external content.
 type ToolGroupMcpEndpoint struct {
-	// The URL string pointing to the resource
 	Uri string `json:"uri,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -212,14 +158,17 @@ func (r *ToolGroupMcpEndpoint) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type ToolGroupType string
+
+const (
+	ToolGroupTypeToolGroup ToolGroupType = "tool_group"
+)
+
 type ToolgroupRegisterParams struct {
-	// The ID of the provider to use for the tool group.
-	ProviderID string `json:"provider_id,required"`
-	// The ID of the tool group to register.
-	ToolgroupID string `json:"toolgroup_id,required"`
-	// A dictionary of arguments to pass to the tool group.
-	Args map[string]ToolgroupRegisterParamsArgUnion `json:"args,omitzero"`
-	// The MCP endpoint to use for the tool group.
+	ProviderID  string         `json:"provider_id,required"`
+	ToolgroupID string         `json:"toolgroup_id,required"`
+	Args        map[string]any `json:"args,omitzero"`
+	// A URL reference to external content.
 	McpEndpoint ToolgroupRegisterParamsMcpEndpoint `json:"mcp_endpoint,omitzero"`
 	paramObj
 }
@@ -232,42 +181,10 @@ func (r *ToolgroupRegisterParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type ToolgroupRegisterParamsArgUnion struct {
-	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
-	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
-	OfString   param.Opt[string]  `json:",omitzero,inline"`
-	OfAnyArray []any              `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u ToolgroupRegisterParamsArgUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
-}
-func (u *ToolgroupRegisterParamsArgUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *ToolgroupRegisterParamsArgUnion) asAny() any {
-	if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfAnyArray) {
-		return &u.OfAnyArray
-	}
-	return nil
-}
-
-// The MCP endpoint to use for the tool group.
+// A URL reference to external content.
 //
 // The property Uri is required.
 type ToolgroupRegisterParamsMcpEndpoint struct {
-	// The URL string pointing to the resource
 	Uri string `json:"uri,required"`
 	paramObj
 }

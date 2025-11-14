@@ -19,7 +19,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 	"github.com/llamastack/llama-stack-client-go/packages/ssestream"
-	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
 // CompletionService contains methods and other services that help with interacting
@@ -41,8 +40,10 @@ func NewCompletionService(opts ...option.RequestOption) (r CompletionService) {
 	return
 }
 
-// Create completion. Generate an OpenAI-compatible completion for the given prompt
-// using the specified model.
+// Create completion.
+//
+// Generate an OpenAI-compatible completion for the given prompt using the
+// specified model.
 func (r *CompletionService) New(ctx context.Context, body CompletionNewParams, opts ...option.RequestOption) (res *CompletionNewResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/completions"
@@ -50,8 +51,10 @@ func (r *CompletionService) New(ctx context.Context, body CompletionNewParams, o
 	return
 }
 
-// Create completion. Generate an OpenAI-compatible completion for the given prompt
-// using the specified model.
+// Create completion.
+//
+// Generate an OpenAI-compatible completion for the given prompt using the
+// specified model.
 func (r *CompletionService) NewStreaming(ctx context.Context, body CompletionNewParams, opts ...option.RequestOption) (stream *ssestream.Stream[CompletionNewResponse]) {
 	var (
 		raw *http.Response
@@ -65,12 +68,18 @@ func (r *CompletionService) NewStreaming(ctx context.Context, body CompletionNew
 }
 
 // Response from an OpenAI-compatible completion request.
+//
+// :id: The ID of the completion :choices: List of choices :created: The Unix
+// timestamp in seconds when the completion was created :model: The model that was
+// used to generate the completion :object: The object type, which will be
+// "text_completion"
 type CompletionNewResponse struct {
 	ID      string                        `json:"id,required"`
 	Choices []CompletionNewResponseChoice `json:"choices,required"`
 	Created int64                         `json:"created,required"`
 	Model   string                        `json:"model,required"`
-	Object  constant.TextCompletion       `json:"object,required"`
+	// Any of "text_completion".
+	Object CompletionNewResponseObject `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -90,13 +99,17 @@ func (r *CompletionNewResponse) UnmarshalJSON(data []byte) error {
 }
 
 // A choice from an OpenAI-compatible completion response.
+//
+// :finish_reason: The reason the model stopped generating :text: The text of the
+// choice :index: The index of the choice :logprobs: (Optional) The log
+// probabilities for the tokens in the choice
 type CompletionNewResponseChoice struct {
 	FinishReason string `json:"finish_reason,required"`
 	Index        int64  `json:"index,required"`
 	Text         string `json:"text,required"`
 	// The log probabilities for the tokens in the message from an OpenAI-compatible
 	// chat completion response.
-	Logprobs CompletionNewResponseChoiceLogprobs `json:"logprobs"`
+	Logprobs CompletionNewResponseChoiceLogprobs `json:"logprobs,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		FinishReason respjson.Field
@@ -117,10 +130,8 @@ func (r *CompletionNewResponseChoice) UnmarshalJSON(data []byte) error {
 // The log probabilities for the tokens in the message from an OpenAI-compatible
 // chat completion response.
 type CompletionNewResponseChoiceLogprobs struct {
-	// (Optional) The log probabilities for the tokens in the message
-	Content []CompletionNewResponseChoiceLogprobsContent `json:"content"`
-	// (Optional) The log probabilities for the tokens in the message
-	Refusal []CompletionNewResponseChoiceLogprobsRefusal `json:"refusal"`
+	Content []CompletionNewResponseChoiceLogprobsContent `json:"content,nullable"`
+	Refusal []CompletionNewResponseChoiceLogprobsRefusal `json:"refusal,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Content     respjson.Field
@@ -138,11 +149,14 @@ func (r *CompletionNewResponseChoiceLogprobs) UnmarshalJSON(data []byte) error {
 
 // The log probability for a token from an OpenAI-compatible chat completion
 // response.
+//
+// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
+// probability of the token :top_logprobs: The top log probabilities for the token
 type CompletionNewResponseChoiceLogprobsContent struct {
 	Token       string                                                 `json:"token,required"`
 	Logprob     float64                                                `json:"logprob,required"`
 	TopLogprobs []CompletionNewResponseChoiceLogprobsContentTopLogprob `json:"top_logprobs,required"`
-	Bytes       []int64                                                `json:"bytes"`
+	Bytes       []int64                                                `json:"bytes,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -162,10 +176,13 @@ func (r *CompletionNewResponseChoiceLogprobsContent) UnmarshalJSON(data []byte) 
 
 // The top log probability for a token from an OpenAI-compatible chat completion
 // response.
+//
+// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
+// probability of the token
 type CompletionNewResponseChoiceLogprobsContentTopLogprob struct {
 	Token   string  `json:"token,required"`
 	Logprob float64 `json:"logprob,required"`
-	Bytes   []int64 `json:"bytes"`
+	Bytes   []int64 `json:"bytes,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -184,11 +201,14 @@ func (r *CompletionNewResponseChoiceLogprobsContentTopLogprob) UnmarshalJSON(dat
 
 // The log probability for a token from an OpenAI-compatible chat completion
 // response.
+//
+// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
+// probability of the token :top_logprobs: The top log probabilities for the token
 type CompletionNewResponseChoiceLogprobsRefusal struct {
 	Token       string                                                 `json:"token,required"`
 	Logprob     float64                                                `json:"logprob,required"`
 	TopLogprobs []CompletionNewResponseChoiceLogprobsRefusalTopLogprob `json:"top_logprobs,required"`
-	Bytes       []int64                                                `json:"bytes"`
+	Bytes       []int64                                                `json:"bytes,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -208,10 +228,13 @@ func (r *CompletionNewResponseChoiceLogprobsRefusal) UnmarshalJSON(data []byte) 
 
 // The top log probability for a token from an OpenAI-compatible chat completion
 // response.
+//
+// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
+// probability of the token
 type CompletionNewResponseChoiceLogprobsRefusalTopLogprob struct {
 	Token   string  `json:"token,required"`
 	Logprob float64 `json:"logprob,required"`
-	Bytes   []int64 `json:"bytes"`
+	Bytes   []int64 `json:"bytes,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -228,42 +251,30 @@ func (r *CompletionNewResponseChoiceLogprobsRefusalTopLogprob) UnmarshalJSON(dat
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type CompletionNewResponseObject string
+
+const (
+	CompletionNewResponseObjectTextCompletion CompletionNewResponseObject = "text_completion"
+)
+
 type CompletionNewParams struct {
-	// The identifier of the model to use. The model must be registered with Llama
-	// Stack and available via the /models endpoint.
-	Model string `json:"model,required"`
-	// The prompt to generate a completion for.
-	Prompt CompletionNewParamsPromptUnion `json:"prompt,omitzero,required"`
-	// (Optional) The number of completions to generate.
-	BestOf param.Opt[int64] `json:"best_of,omitzero"`
-	// (Optional) Whether to echo the prompt.
-	Echo param.Opt[bool] `json:"echo,omitzero"`
-	// (Optional) The penalty for repeated tokens.
-	FrequencyPenalty param.Opt[float64] `json:"frequency_penalty,omitzero"`
-	// (Optional) The log probabilities to use.
-	Logprobs param.Opt[bool] `json:"logprobs,omitzero"`
-	// (Optional) The maximum number of tokens to generate.
-	MaxTokens param.Opt[int64] `json:"max_tokens,omitzero"`
-	// (Optional) The number of completions to generate.
-	N param.Opt[int64] `json:"n,omitzero"`
-	// (Optional) The penalty for repeated tokens.
-	PresencePenalty param.Opt[float64] `json:"presence_penalty,omitzero"`
-	// (Optional) The seed to use.
-	Seed param.Opt[int64] `json:"seed,omitzero"`
-	// (Optional) The suffix that should be appended to the completion.
-	Suffix param.Opt[string] `json:"suffix,omitzero"`
-	// (Optional) The temperature to use.
-	Temperature param.Opt[float64] `json:"temperature,omitzero"`
-	// (Optional) The top p to use.
-	TopP param.Opt[float64] `json:"top_p,omitzero"`
-	// (Optional) The user to use.
-	User param.Opt[string] `json:"user,omitzero"`
-	// (Optional) The logit bias to use.
-	LogitBias map[string]float64 `json:"logit_bias,omitzero"`
-	// (Optional) The stop tokens to use.
-	Stop CompletionNewParamsStopUnion `json:"stop,omitzero"`
-	// (Optional) The stream options to use.
-	StreamOptions map[string]CompletionNewParamsStreamOptionUnion `json:"stream_options,omitzero"`
+	Model            string                         `json:"model,required"`
+	Prompt           CompletionNewParamsPromptUnion `json:"prompt,omitzero,required"`
+	BestOf           param.Opt[int64]               `json:"best_of,omitzero"`
+	Echo             param.Opt[bool]                `json:"echo,omitzero"`
+	FrequencyPenalty param.Opt[float64]             `json:"frequency_penalty,omitzero"`
+	Logprobs         param.Opt[bool]                `json:"logprobs,omitzero"`
+	MaxTokens        param.Opt[int64]               `json:"max_tokens,omitzero"`
+	N                param.Opt[int64]               `json:"n,omitzero"`
+	PresencePenalty  param.Opt[float64]             `json:"presence_penalty,omitzero"`
+	Seed             param.Opt[int64]               `json:"seed,omitzero"`
+	Suffix           param.Opt[string]              `json:"suffix,omitzero"`
+	Temperature      param.Opt[float64]             `json:"temperature,omitzero"`
+	TopP             param.Opt[float64]             `json:"top_p,omitzero"`
+	User             param.Opt[string]              `json:"user,omitzero"`
+	LogitBias        map[string]float64             `json:"logit_bias,omitzero"`
+	Stop             CompletionNewParamsStopUnion   `json:"stop,omitzero"`
+	StreamOptions    map[string]any                 `json:"stream_options,omitzero"`
 	paramObj
 }
 
@@ -279,15 +290,15 @@ func (r *CompletionNewParams) UnmarshalJSON(data []byte) error {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type CompletionNewParamsPromptUnion struct {
-	OfString          param.Opt[string] `json:",omitzero,inline"`
-	OfStringArray     []string          `json:",omitzero,inline"`
-	OfIntArray        []int64           `json:",omitzero,inline"`
-	OfArrayOfIntArray [][]int64         `json:",omitzero,inline"`
+	OfString      param.Opt[string] `json:",omitzero,inline"`
+	OfListString  []string          `json:",omitzero,inline"`
+	OfListInteger []int64           `json:",omitzero,inline"`
+	OfListArray   [][]int64         `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u CompletionNewParamsPromptUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfString, u.OfStringArray, u.OfIntArray, u.OfArrayOfIntArray)
+	return param.MarshalUnion(u, u.OfString, u.OfListString, u.OfListInteger, u.OfListArray)
 }
 func (u *CompletionNewParamsPromptUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -296,12 +307,12 @@ func (u *CompletionNewParamsPromptUnion) UnmarshalJSON(data []byte) error {
 func (u *CompletionNewParamsPromptUnion) asAny() any {
 	if !param.IsOmitted(u.OfString) {
 		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfStringArray) {
-		return &u.OfStringArray
-	} else if !param.IsOmitted(u.OfIntArray) {
-		return &u.OfIntArray
-	} else if !param.IsOmitted(u.OfArrayOfIntArray) {
-		return &u.OfArrayOfIntArray
+	} else if !param.IsOmitted(u.OfListString) {
+		return &u.OfListString
+	} else if !param.IsOmitted(u.OfListInteger) {
+		return &u.OfListInteger
+	} else if !param.IsOmitted(u.OfListArray) {
+		return &u.OfListArray
 	}
 	return nil
 }
@@ -310,13 +321,13 @@ func (u *CompletionNewParamsPromptUnion) asAny() any {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type CompletionNewParamsStopUnion struct {
-	OfString      param.Opt[string] `json:",omitzero,inline"`
-	OfStringArray []string          `json:",omitzero,inline"`
+	OfString     param.Opt[string] `json:",omitzero,inline"`
+	OfListString []string          `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u CompletionNewParamsStopUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfString, u.OfStringArray)
+	return param.MarshalUnion(u, u.OfString, u.OfListString)
 }
 func (u *CompletionNewParamsStopUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -325,39 +336,8 @@ func (u *CompletionNewParamsStopUnion) UnmarshalJSON(data []byte) error {
 func (u *CompletionNewParamsStopUnion) asAny() any {
 	if !param.IsOmitted(u.OfString) {
 		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfStringArray) {
-		return &u.OfStringArray
-	}
-	return nil
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type CompletionNewParamsStreamOptionUnion struct {
-	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
-	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
-	OfString   param.Opt[string]  `json:",omitzero,inline"`
-	OfAnyArray []any              `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u CompletionNewParamsStreamOptionUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
-}
-func (u *CompletionNewParamsStreamOptionUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *CompletionNewParamsStreamOptionUnion) asAny() any {
-	if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfAnyArray) {
-		return &u.OfAnyArray
+	} else if !param.IsOmitted(u.OfListString) {
+		return &u.OfListString
 	}
 	return nil
 }
