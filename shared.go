@@ -17,12 +17,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
-// aliased to make [param.APIUnion] private when embedding
-type paramUnion = param.APIUnion
-
-// aliased to make [param.APIObject] private when embedding
-type paramObj = param.APIObject
-
 // InterleavedContentUnion contains all possible properties and values from
 // [string], [InterleavedContentImageContentItem],
 // [InterleavedContentTextContentItem], [[]InterleavedContentItemUnion].
