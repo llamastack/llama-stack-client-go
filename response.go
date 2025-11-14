@@ -10089,6 +10089,14 @@ func (u ResponseNewParamsToolUnion) GetAllowedTools() *ResponseNewParamsToolMcpA
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u ResponseNewParamsToolUnion) GetAuthorization() *string {
+	if vt := u.OfMcp; vt != nil && vt.Authorization.Valid() {
+		return &vt.Authorization.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u ResponseNewParamsToolUnion) GetHeaders() map[string]ResponseNewParamsToolMcpHeaderUnion {
 	if vt := u.OfMcp; vt != nil {
 		return vt.Headers
@@ -10298,6 +10306,8 @@ type ResponseNewParamsToolMcp struct {
 	ServerLabel string `json:"server_label,required"`
 	// URL endpoint of the MCP server
 	ServerURL string `json:"server_url,required"`
+	// (Optional) OAuth access token for authenticating with the MCP server
+	Authorization param.Opt[string] `json:"authorization,omitzero"`
 	// (Optional) Restriction on which tools can be used from this server
 	AllowedTools ResponseNewParamsToolMcpAllowedToolsUnion `json:"allowed_tools,omitzero"`
 	// (Optional) HTTP headers to include when connecting to the server
