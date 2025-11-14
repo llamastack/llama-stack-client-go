@@ -19,7 +19,7 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 )
 
-func TestToolRuntimeInvokeTool(t *testing.T) {
+func TestToolRuntimeInvokeToolWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -36,7 +36,8 @@ func TestToolRuntimeInvokeTool(t *testing.T) {
 				OfBool: llamastackclient.Bool(true),
 			},
 		},
-		ToolName: "tool_name",
+		ToolName:      "tool_name",
+		Authorization: llamastackclient.String("authorization"),
 	})
 	if err != nil {
 		var apierr *llamastackclient.Error
@@ -59,6 +60,7 @@ func TestToolRuntimeListToolsWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.ToolRuntime.ListTools(context.TODO(), llamastackclient.ToolRuntimeListToolsParams{
+		Authorization: llamastackclient.String("authorization"),
 		McpEndpoint: llamastackclient.ToolRuntimeListToolsParamsMcpEndpoint{
 			Uri: "uri",
 		},

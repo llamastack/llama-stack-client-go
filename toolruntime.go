@@ -338,6 +338,8 @@ type ToolRuntimeInvokeToolParams struct {
 	Kwargs map[string]ToolRuntimeInvokeToolParamsKwargUnion `json:"kwargs,omitzero,required"`
 	// The name of the tool to invoke.
 	ToolName string `json:"tool_name,required"`
+	// (Optional) OAuth access token for authenticating with the MCP server.
+	Authorization param.Opt[string] `json:"authorization,omitzero"`
 	paramObj
 }
 
@@ -381,6 +383,8 @@ func (u *ToolRuntimeInvokeToolParamsKwargUnion) asAny() any {
 }
 
 type ToolRuntimeListToolsParams struct {
+	// (Optional) OAuth access token for authenticating with the MCP server.
+	Authorization param.Opt[string] `query:"authorization,omitzero" json:"-"`
 	// The ID of the tool group to list tools for.
 	ToolGroupID param.Opt[string] `query:"tool_group_id,omitzero" json:"-"`
 	// The MCP endpoint to use for the tool group.
