@@ -10,14 +10,12 @@ package llamastackclient
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
 	"slices"
 
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
-	shimjson "github.com/llamastack/llama-stack-client-go/internal/encoding/json"
 	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
 	"github.com/llamastack/llama-stack-client-go/option"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
@@ -407,26 +405,28 @@ func (r *AlphaEvalEvaluateRowsAlphaParams) UnmarshalJSON(data []byte) error {
 
 type AlphaEvalRunEvalParams struct {
 	// A benchmark configuration for evaluation.
-	BenchmarkConfig BenchmarkConfigParam
+	BenchmarkConfig BenchmarkConfigParam `json:"benchmark_config,omitzero,required"`
 	paramObj
 }
 
 func (r AlphaEvalRunEvalParams) MarshalJSON() (data []byte, err error) {
-	return shimjson.Marshal(r.BenchmarkConfig)
+	type shadow AlphaEvalRunEvalParams
+	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *AlphaEvalRunEvalParams) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &r.BenchmarkConfig)
+	return apijson.UnmarshalRoot(data, r)
 }
 
 type AlphaEvalRunEvalAlphaParams struct {
 	// A benchmark configuration for evaluation.
-	BenchmarkConfig BenchmarkConfigParam
+	BenchmarkConfig BenchmarkConfigParam `json:"benchmark_config,omitzero,required"`
 	paramObj
 }
 
 func (r AlphaEvalRunEvalAlphaParams) MarshalJSON() (data []byte, err error) {
-	return shimjson.Marshal(r.BenchmarkConfig)
+	type shadow AlphaEvalRunEvalAlphaParams
+	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *AlphaEvalRunEvalAlphaParams) UnmarshalJSON(data []byte) error {
-	return json.Unmarshal(data, &r.BenchmarkConfig)
+	return apijson.UnmarshalRoot(data, r)
 }

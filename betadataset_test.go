@@ -130,10 +130,17 @@ func TestBetaDatasetRegisterWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Beta.Datasets.Register(context.TODO(), llamastackclient.BetaDatasetRegisterParams{
-		Purpose:   map[string]interface{}{},
-		Source:    map[string]interface{}{},
-		DatasetID: map[string]interface{}{},
-		Metadata:  map[string]interface{}{},
+		Purpose: llamastackclient.BetaDatasetRegisterParamsPurposePostTrainingMessages,
+		Source: llamastackclient.BetaDatasetRegisterParamsSourceUnion{
+			OfUriDataSource: &llamastackclient.BetaDatasetRegisterParamsSourceUriDataSource{
+				Uri:  "uri",
+				Type: "uri",
+			},
+		},
+		DatasetID: llamastackclient.String("dataset_id"),
+		Metadata: map[string]any{
+			"foo": "bar",
+		},
 	})
 	if err != nil {
 		var apierr *llamastackclient.Error
