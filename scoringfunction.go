@@ -334,12 +334,13 @@ const (
 )
 
 type ScoringFunctionRegisterParams struct {
-	Description         any `json:"description,omitzero,required"`
-	ReturnType          any `json:"return_type,omitzero,required"`
-	ScoringFnID         any `json:"scoring_fn_id,omitzero,required"`
-	Params              any `json:"params,omitzero"`
-	ProviderID          any `json:"provider_id,omitzero"`
-	ProviderScoringFnID any `json:"provider_scoring_fn_id,omitzero"`
+	Description         string                                  `json:"description,required"`
+	ReturnType          ScoringFunctionRegisterParamsReturnType `json:"return_type,omitzero,required"`
+	ScoringFnID         string                                  `json:"scoring_fn_id,required"`
+	ProviderID          param.Opt[string]                       `json:"provider_id,omitzero"`
+	ProviderScoringFnID param.Opt[string]                       `json:"provider_scoring_fn_id,omitzero"`
+	// Parameters for LLM-as-judge scoring function configuration.
+	Params ScoringFunctionRegisterParamsParamsUnion `json:"params,omitzero"`
 	paramObj
 }
 
@@ -349,4 +350,203 @@ func (r ScoringFunctionRegisterParams) MarshalJSON() (data []byte, err error) {
 }
 func (r *ScoringFunctionRegisterParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+// The property Type is required.
+type ScoringFunctionRegisterParamsReturnType struct {
+	// Any of "string", "number", "boolean", "array", "object", "json", "union",
+	// "chat_completion_input", "completion_input", "agent_turn_input".
+	Type string `json:"type,omitzero,required"`
+	paramObj
+}
+
+func (r ScoringFunctionRegisterParamsReturnType) MarshalJSON() (data []byte, err error) {
+	type shadow ScoringFunctionRegisterParamsReturnType
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ScoringFunctionRegisterParamsReturnType) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ScoringFunctionRegisterParamsReturnType](
+		"type", "string", "number", "boolean", "array", "object", "json", "union", "chat_completion_input", "completion_input", "agent_turn_input",
+	)
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type ScoringFunctionRegisterParamsParamsUnion struct {
+	OfLlmAsJudge  *ScoringFunctionRegisterParamsParamsLlmAsJudge  `json:",omitzero,inline"`
+	OfRegexParser *ScoringFunctionRegisterParamsParamsRegexParser `json:",omitzero,inline"`
+	OfBasic       *ScoringFunctionRegisterParamsParamsBasic       `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u ScoringFunctionRegisterParamsParamsUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfLlmAsJudge, u.OfRegexParser, u.OfBasic)
+}
+func (u *ScoringFunctionRegisterParamsParamsUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *ScoringFunctionRegisterParamsParamsUnion) asAny() any {
+	if !param.IsOmitted(u.OfLlmAsJudge) {
+		return u.OfLlmAsJudge
+	} else if !param.IsOmitted(u.OfRegexParser) {
+		return u.OfRegexParser
+	} else if !param.IsOmitted(u.OfBasic) {
+		return u.OfBasic
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ScoringFunctionRegisterParamsParamsUnion) GetJudgeModel() *string {
+	if vt := u.OfLlmAsJudge; vt != nil {
+		return &vt.JudgeModel
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ScoringFunctionRegisterParamsParamsUnion) GetJudgeScoreRegexes() []string {
+	if vt := u.OfLlmAsJudge; vt != nil {
+		return vt.JudgeScoreRegexes
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ScoringFunctionRegisterParamsParamsUnion) GetPromptTemplate() *string {
+	if vt := u.OfLlmAsJudge; vt != nil && vt.PromptTemplate.Valid() {
+		return &vt.PromptTemplate.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ScoringFunctionRegisterParamsParamsUnion) GetParsingRegexes() []string {
+	if vt := u.OfRegexParser; vt != nil {
+		return vt.ParsingRegexes
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ScoringFunctionRegisterParamsParamsUnion) GetType() *string {
+	if vt := u.OfLlmAsJudge; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfRegexParser; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfBasic; vt != nil {
+		return (*string)(&vt.Type)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's AggregationFunctions property, if
+// present.
+func (u ScoringFunctionRegisterParamsParamsUnion) GetAggregationFunctions() []string {
+	if vt := u.OfLlmAsJudge; vt != nil {
+		return vt.AggregationFunctions
+	} else if vt := u.OfRegexParser; vt != nil {
+		return vt.AggregationFunctions
+	} else if vt := u.OfBasic; vt != nil {
+		return vt.AggregationFunctions
+	}
+	return nil
+}
+
+func init() {
+	apijson.RegisterUnion[ScoringFunctionRegisterParamsParamsUnion](
+		"type",
+		apijson.Discriminator[ScoringFunctionRegisterParamsParamsLlmAsJudge]("llm_as_judge"),
+		apijson.Discriminator[ScoringFunctionRegisterParamsParamsRegexParser]("regex_parser"),
+		apijson.Discriminator[ScoringFunctionRegisterParamsParamsBasic]("basic"),
+	)
+}
+
+// Parameters for LLM-as-judge scoring function configuration.
+//
+// The property JudgeModel is required.
+type ScoringFunctionRegisterParamsParamsLlmAsJudge struct {
+	JudgeModel     string            `json:"judge_model,required"`
+	PromptTemplate param.Opt[string] `json:"prompt_template,omitzero"`
+	// Aggregation functions to apply to the scores of each row
+	//
+	// Any of "average", "weighted_average", "median", "categorical_count", "accuracy".
+	AggregationFunctions []string `json:"aggregation_functions,omitzero"`
+	// Regexes to extract the answer from generated response
+	JudgeScoreRegexes []string `json:"judge_score_regexes,omitzero"`
+	// Any of "llm_as_judge".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ScoringFunctionRegisterParamsParamsLlmAsJudge) MarshalJSON() (data []byte, err error) {
+	type shadow ScoringFunctionRegisterParamsParamsLlmAsJudge
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ScoringFunctionRegisterParamsParamsLlmAsJudge) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ScoringFunctionRegisterParamsParamsLlmAsJudge](
+		"type", "llm_as_judge",
+	)
+}
+
+// Parameters for regex parser scoring function configuration.
+type ScoringFunctionRegisterParamsParamsRegexParser struct {
+	// Aggregation functions to apply to the scores of each row
+	//
+	// Any of "average", "weighted_average", "median", "categorical_count", "accuracy".
+	AggregationFunctions []string `json:"aggregation_functions,omitzero"`
+	// Regex to extract the answer from generated response
+	ParsingRegexes []string `json:"parsing_regexes,omitzero"`
+	// Any of "regex_parser".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ScoringFunctionRegisterParamsParamsRegexParser) MarshalJSON() (data []byte, err error) {
+	type shadow ScoringFunctionRegisterParamsParamsRegexParser
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ScoringFunctionRegisterParamsParamsRegexParser) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ScoringFunctionRegisterParamsParamsRegexParser](
+		"type", "regex_parser",
+	)
+}
+
+// Parameters for basic scoring function configuration.
+type ScoringFunctionRegisterParamsParamsBasic struct {
+	// Aggregation functions to apply to the scores of each row
+	//
+	// Any of "average", "weighted_average", "median", "categorical_count", "accuracy".
+	AggregationFunctions []string `json:"aggregation_functions,omitzero"`
+	// Any of "basic".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ScoringFunctionRegisterParamsParamsBasic) MarshalJSON() (data []byte, err error) {
+	type shadow ScoringFunctionRegisterParamsParamsBasic
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ScoringFunctionRegisterParamsParamsBasic) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ScoringFunctionRegisterParamsParamsBasic](
+		"type", "basic",
+	)
 }

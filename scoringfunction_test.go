@@ -73,12 +73,22 @@ func TestScoringFunctionRegisterWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	err := client.ScoringFunctions.Register(context.TODO(), llamastackclient.ScoringFunctionRegisterParams{
-		Description:         map[string]interface{}{},
-		ReturnType:          map[string]interface{}{},
-		ScoringFnID:         map[string]interface{}{},
-		Params:              map[string]interface{}{},
-		ProviderID:          map[string]interface{}{},
-		ProviderScoringFnID: map[string]interface{}{},
+		Description: "description",
+		ReturnType: llamastackclient.ScoringFunctionRegisterParamsReturnType{
+			Type: "string",
+		},
+		ScoringFnID: "scoring_fn_id",
+		Params: llamastackclient.ScoringFunctionRegisterParamsParamsUnion{
+			OfLlmAsJudge: &llamastackclient.ScoringFunctionRegisterParamsParamsLlmAsJudge{
+				JudgeModel:           "judge_model",
+				AggregationFunctions: []string{"average"},
+				JudgeScoreRegexes:    []string{"string"},
+				PromptTemplate:       llamastackclient.String("prompt_template"),
+				Type:                 "llm_as_judge",
+			},
+		},
+		ProviderID:          llamastackclient.String("provider_id"),
+		ProviderScoringFnID: llamastackclient.String("provider_scoring_fn_id"),
 	})
 	if err != nil {
 		var apierr *llamastackclient.Error

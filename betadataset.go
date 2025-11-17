@@ -662,10 +662,14 @@ func (r BetaDatasetIterrowsParams) URLQuery() (v url.Values, err error) {
 }
 
 type BetaDatasetRegisterParams struct {
-	Purpose   any `json:"purpose,omitzero,required"`
-	Source    any `json:"source,omitzero,required"`
-	DatasetID any `json:"dataset_id,omitzero"`
-	Metadata  any `json:"metadata,omitzero"`
+	// Purpose of the dataset. Each purpose has a required input data schema.
+	//
+	// Any of "post-training/messages", "eval/question-answer", "eval/messages-answer".
+	Purpose BetaDatasetRegisterParamsPurpose `json:"purpose,omitzero,required"`
+	// A dataset that can be obtained from a URI.
+	Source    BetaDatasetRegisterParamsSourceUnion `json:"source,omitzero,required"`
+	DatasetID param.Opt[string]                    `json:"dataset_id,omitzero"`
+	Metadata  map[string]any                       `json:"metadata,omitzero"`
 	paramObj
 }
 
@@ -675,4 +679,112 @@ func (r BetaDatasetRegisterParams) MarshalJSON() (data []byte, err error) {
 }
 func (r *BetaDatasetRegisterParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+// Purpose of the dataset. Each purpose has a required input data schema.
+type BetaDatasetRegisterParamsPurpose string
+
+const (
+	BetaDatasetRegisterParamsPurposePostTrainingMessages BetaDatasetRegisterParamsPurpose = "post-training/messages"
+	BetaDatasetRegisterParamsPurposeEvalQuestionAnswer   BetaDatasetRegisterParamsPurpose = "eval/question-answer"
+	BetaDatasetRegisterParamsPurposeEvalMessagesAnswer   BetaDatasetRegisterParamsPurpose = "eval/messages-answer"
+)
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type BetaDatasetRegisterParamsSourceUnion struct {
+	OfUriDataSource  *BetaDatasetRegisterParamsSourceUriDataSource  `json:",omitzero,inline"`
+	OfRowsDataSource *BetaDatasetRegisterParamsSourceRowsDataSource `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u BetaDatasetRegisterParamsSourceUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfUriDataSource, u.OfRowsDataSource)
+}
+func (u *BetaDatasetRegisterParamsSourceUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *BetaDatasetRegisterParamsSourceUnion) asAny() any {
+	if !param.IsOmitted(u.OfUriDataSource) {
+		return u.OfUriDataSource
+	} else if !param.IsOmitted(u.OfRowsDataSource) {
+		return u.OfRowsDataSource
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u BetaDatasetRegisterParamsSourceUnion) GetUri() *string {
+	if vt := u.OfUriDataSource; vt != nil {
+		return &vt.Uri
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u BetaDatasetRegisterParamsSourceUnion) GetRows() []map[string]any {
+	if vt := u.OfRowsDataSource; vt != nil {
+		return vt.Rows
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u BetaDatasetRegisterParamsSourceUnion) GetType() *string {
+	if vt := u.OfUriDataSource; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfRowsDataSource; vt != nil {
+		return (*string)(&vt.Type)
+	}
+	return nil
+}
+
+// A dataset that can be obtained from a URI.
+//
+// The property Uri is required.
+type BetaDatasetRegisterParamsSourceUriDataSource struct {
+	Uri string `json:"uri,required"`
+	// Any of "uri".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r BetaDatasetRegisterParamsSourceUriDataSource) MarshalJSON() (data []byte, err error) {
+	type shadow BetaDatasetRegisterParamsSourceUriDataSource
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *BetaDatasetRegisterParamsSourceUriDataSource) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[BetaDatasetRegisterParamsSourceUriDataSource](
+		"type", "uri",
+	)
+}
+
+// A dataset stored in rows.
+//
+// The property Rows is required.
+type BetaDatasetRegisterParamsSourceRowsDataSource struct {
+	Rows []map[string]any `json:"rows,omitzero,required"`
+	// Any of "rows".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r BetaDatasetRegisterParamsSourceRowsDataSource) MarshalJSON() (data []byte, err error) {
+	type shadow BetaDatasetRegisterParamsSourceRowsDataSource
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *BetaDatasetRegisterParamsSourceRowsDataSource) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[BetaDatasetRegisterParamsSourceRowsDataSource](
+		"type", "rows",
+	)
 }
