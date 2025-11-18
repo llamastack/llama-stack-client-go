@@ -129,7 +129,7 @@ type ResponseObject struct {
 	MaxToolCalls int64               `json:"max_tool_calls,nullable"`
 	// Any of "response".
 	Object             ResponseObjectObject `json:"object"`
-	ParallelToolCalls  bool                 `json:"parallel_tool_calls"`
+	ParallelToolCalls  bool                 `json:"parallel_tool_calls,nullable"`
 	PreviousResponseID string               `json:"previous_response_id,nullable"`
 	// OpenAI compatible Prompt object that is used in OpenAI responses.
 	Prompt      ResponseObjectPrompt `json:"prompt,nullable"`
@@ -6275,7 +6275,7 @@ type ResponseListResponse struct {
 	MaxToolCalls int64                     `json:"max_tool_calls,nullable"`
 	// Any of "response".
 	Object             ResponseListResponseObject `json:"object"`
-	ParallelToolCalls  bool                       `json:"parallel_tool_calls"`
+	ParallelToolCalls  bool                       `json:"parallel_tool_calls,nullable"`
 	PreviousResponseID string                     `json:"previous_response_id,nullable"`
 	// OpenAI compatible Prompt object that is used in OpenAI responses.
 	Prompt      ResponseListResponsePrompt `json:"prompt,nullable"`
@@ -8894,6 +8894,7 @@ type ResponseNewParams struct {
 	Instructions       param.Opt[string]           `json:"instructions,omitzero"`
 	MaxInferIters      param.Opt[int64]            `json:"max_infer_iters,omitzero"`
 	MaxToolCalls       param.Opt[int64]            `json:"max_tool_calls,omitzero"`
+	ParallelToolCalls  param.Opt[bool]             `json:"parallel_tool_calls,omitzero"`
 	PreviousResponseID param.Opt[string]           `json:"previous_response_id,omitzero"`
 	Store              param.Opt[bool]             `json:"store,omitzero"`
 	Temperature        param.Opt[float64]          `json:"temperature,omitzero"`
