@@ -40,6 +40,7 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 		Instructions:       llamastackclient.String("instructions"),
 		MaxInferIters:      llamastackclient.Int(0),
 		MaxToolCalls:       llamastackclient.Int(0),
+		ParallelToolCalls:  llamastackclient.Bool(true),
 		PreviousResponseID: llamastackclient.String("previous_response_id"),
 		Prompt: llamastackclient.ResponseNewParamsPrompt{
 			ID: "id",
@@ -47,6 +48,7 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 				"foo": {
 					OfInputText: &llamastackclient.ResponseNewParamsPromptVariableInputText{
 						Text: "text",
+						Type: "input_text",
 					},
 				},
 			},
@@ -56,21 +58,19 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 		Temperature: llamastackclient.Float(0),
 		Text: llamastackclient.ResponseNewParamsText{
 			Format: llamastackclient.ResponseNewParamsTextFormat{
-				Type:        llamastackclient.ResponseNewParamsTextFormatTypeText,
 				Description: llamastackclient.String("description"),
 				Name:        llamastackclient.String("name"),
-				Schema: map[string]llamastackclient.ResponseNewParamsTextFormatSchemaUnion{
-					"foo": {
-						OfBool: llamastackclient.Bool(true),
-					},
+				Schema: map[string]any{
+					"foo": "bar",
 				},
 				Strict: llamastackclient.Bool(true),
+				Type:   "text",
 			},
 		},
 		Tools: []llamastackclient.ResponseNewParamsToolUnion{{
 			OfOpenAIResponseInputToolWebSearch: &llamastackclient.ResponseNewParamsToolOpenAIResponseInputToolWebSearch{
-				Type:              llamastackclient.ResponseNewParamsToolOpenAIResponseInputToolWebSearchTypeWebSearch,
-				SearchContextSize: llamastackclient.String("search_context_size"),
+				SearchContextSize: llamastackclient.String("S?oC\"high"),
+				Type:              "web_search",
 			},
 		}},
 	})

@@ -39,9 +39,10 @@ func TestConversationItemNew(t *testing.T) {
 					Content: llamastackclient.ConversationItemNewParamsItemMessageContentUnion{
 						OfString: llamastackclient.String("string"),
 					},
-					Role:   llamastackclient.ConversationItemNewParamsItemMessageRoleSystem,
+					Role:   "system",
 					ID:     llamastackclient.String("id"),
 					Status: llamastackclient.String("status"),
+					Type:   "message",
 				},
 			}},
 		},
@@ -74,6 +75,33 @@ func TestConversationItemListWithOptionalParams(t *testing.T) {
 			Include: []string{"web_search_call.action.sources"},
 			Limit:   llamastackclient.Int(0),
 			Order:   llamastackclient.ConversationItemListParamsOrderAsc,
+		},
+	)
+	if err != nil {
+		var apierr *llamastackclient.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestConversationItemDelete(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := llamastackclient.NewClient(
+		option.WithBaseURL(baseURL),
+	)
+	_, err := client.Conversations.Items.Delete(
+		context.TODO(),
+		"item_id",
+		llamastackclient.ConversationItemDeleteParams{
+			ConversationID: "conversation_id",
 		},
 	)
 	if err != nil {

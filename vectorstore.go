@@ -50,8 +50,9 @@ func NewVectorStoreService(opts ...option.RequestOption) (r VectorStoreService) 
 	return
 }
 
-// Creates a vector store. Generate an OpenAI-compatible vector store with the
-// given parameters.
+// Creates a vector store.
+//
+// Generate an OpenAI-compatible vector store with the given parameters.
 func (r *VectorStoreService) New(ctx context.Context, body VectorStoreNewParams, opts ...option.RequestOption) (res *VectorStore, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/vector_stores"
@@ -118,8 +119,10 @@ func (r *VectorStoreService) Delete(ctx context.Context, vectorStoreID string, o
 	return
 }
 
-// Search for chunks in a vector store. Searches a vector store for relevant chunks
-// based on a query and optional file attribute filters.
+// Search for chunks in a vector store.
+//
+// Searches a vector store for relevant chunks based on a query and optional file
+// attribute filters.
 func (r *VectorStoreService) Search(ctx context.Context, vectorStoreID string, body VectorStoreSearchParams, opts ...option.RequestOption) (res *VectorStoreSearchResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if vectorStoreID == "" {
@@ -133,23 +136,18 @@ func (r *VectorStoreService) Search(ctx context.Context, vectorStoreID string, b
 
 // Response from listing vector stores.
 type ListVectorStoresResponse struct {
-	// List of vector store objects
-	Data []VectorStore `json:"data,required"`
-	// Whether there are more vector stores available beyond this page
-	HasMore bool `json:"has_more,required"`
-	// Object type identifier, always "list"
-	Object string `json:"object,required"`
-	// (Optional) ID of the first vector store in the list for pagination
-	FirstID string `json:"first_id"`
-	// (Optional) ID of the last vector store in the list for pagination
-	LastID string `json:"last_id"`
+	Data    []VectorStore `json:"data,required"`
+	FirstID string        `json:"first_id,nullable"`
+	HasMore bool          `json:"has_more"`
+	LastID  string        `json:"last_id,nullable"`
+	Object  string        `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
-		HasMore     respjson.Field
-		Object      respjson.Field
 		FirstID     respjson.Field
+		HasMore     respjson.Field
 		LastID      respjson.Field
+		Object      respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -163,41 +161,31 @@ func (r *ListVectorStoresResponse) UnmarshalJSON(data []byte) error {
 
 // OpenAI Vector Store object.
 type VectorStore struct {
-	// Unique identifier for the vector store
-	ID string `json:"id,required"`
-	// Timestamp when the vector store was created
-	CreatedAt int64 `json:"created_at,required"`
-	// File processing status counts for the vector store
-	FileCounts VectorStoreFileCounts `json:"file_counts,required"`
-	// Set of key-value pairs that can be attached to the vector store
-	Metadata map[string]VectorStoreMetadataUnion `json:"metadata,required"`
-	// Object type identifier, always "vector_store"
-	Object string `json:"object,required"`
-	// Current status of the vector store
-	Status string `json:"status,required"`
-	// Storage space used by the vector store in bytes
-	UsageBytes int64 `json:"usage_bytes,required"`
-	// (Optional) Expiration policy for the vector store
-	ExpiresAfter map[string]VectorStoreExpiresAfterUnion `json:"expires_after"`
-	// (Optional) Timestamp when the vector store will expire
-	ExpiresAt int64 `json:"expires_at"`
-	// (Optional) Timestamp of last activity on the vector store
-	LastActiveAt int64 `json:"last_active_at"`
-	// (Optional) Name of the vector store
-	Name string `json:"name"`
+	ID        string `json:"id,required"`
+	CreatedAt int64  `json:"created_at,required"`
+	// File processing status counts for a vector store.
+	FileCounts   VectorStoreFileCounts `json:"file_counts,required"`
+	ExpiresAfter map[string]any        `json:"expires_after,nullable"`
+	ExpiresAt    int64                 `json:"expires_at,nullable"`
+	LastActiveAt int64                 `json:"last_active_at,nullable"`
+	Metadata     map[string]any        `json:"metadata"`
+	Name         string                `json:"name,nullable"`
+	Object       string                `json:"object"`
+	Status       string                `json:"status"`
+	UsageBytes   int64                 `json:"usage_bytes"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID           respjson.Field
 		CreatedAt    respjson.Field
 		FileCounts   respjson.Field
-		Metadata     respjson.Field
-		Object       respjson.Field
-		Status       respjson.Field
-		UsageBytes   respjson.Field
 		ExpiresAfter respjson.Field
 		ExpiresAt    respjson.Field
 		LastActiveAt respjson.Field
+		Metadata     respjson.Field
 		Name         respjson.Field
+		Object       respjson.Field
+		Status       respjson.Field
+		UsageBytes   respjson.Field
 		ExtraFields  map[string]respjson.Field
 		raw          string
 	} `json:"-"`
@@ -209,18 +197,13 @@ func (r *VectorStore) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// File processing status counts for the vector store
+// File processing status counts for a vector store.
 type VectorStoreFileCounts struct {
-	// Number of files that had their processing cancelled
-	Cancelled int64 `json:"cancelled,required"`
-	// Number of files that have been successfully processed
-	Completed int64 `json:"completed,required"`
-	// Number of files that failed to process
-	Failed int64 `json:"failed,required"`
-	// Number of files currently being processed
+	Cancelled  int64 `json:"cancelled,required"`
+	Completed  int64 `json:"completed,required"`
+	Failed     int64 `json:"failed,required"`
 	InProgress int64 `json:"in_progress,required"`
-	// Total number of files in the vector store
-	Total int64 `json:"total,required"`
+	Total      int64 `json:"total,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Cancelled   respjson.Field
@@ -239,118 +222,11 @@ func (r *VectorStoreFileCounts) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// VectorStoreMetadataUnion contains all possible properties and values from
-// [bool], [float64], [string], [[]any].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type VectorStoreMetadataUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
-	} `json:"-"`
-}
-
-func (u VectorStoreMetadataUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u VectorStoreMetadataUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u VectorStoreMetadataUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u VectorStoreMetadataUnion) AsAnyArray() (v []any) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u VectorStoreMetadataUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *VectorStoreMetadataUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// VectorStoreExpiresAfterUnion contains all possible properties and values from
-// [bool], [float64], [string], [[]any].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type VectorStoreExpiresAfterUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
-	} `json:"-"`
-}
-
-func (u VectorStoreExpiresAfterUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u VectorStoreExpiresAfterUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u VectorStoreExpiresAfterUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u VectorStoreExpiresAfterUnion) AsAnyArray() (v []any) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u VectorStoreExpiresAfterUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *VectorStoreExpiresAfterUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // Response from deleting a vector store.
 type VectorStoreDeleteResponse struct {
-	// Unique identifier of the deleted vector store
-	ID string `json:"id,required"`
-	// Whether the deletion operation was successful
-	Deleted bool `json:"deleted,required"`
-	// Object type identifier for the deletion response
-	Object string `json:"object,required"`
+	ID      string `json:"id,required"`
+	Deleted bool   `json:"deleted"`
+	Object  string `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -369,23 +245,18 @@ func (r *VectorStoreDeleteResponse) UnmarshalJSON(data []byte) error {
 
 // Paginated response from searching a vector store.
 type VectorStoreSearchResponse struct {
-	// List of search result objects
-	Data []VectorStoreSearchResponseData `json:"data,required"`
-	// Whether there are more results available beyond this page
-	HasMore bool `json:"has_more,required"`
-	// Object type identifier for the search results page
-	Object string `json:"object,required"`
-	// The original search query that was executed
-	SearchQuery []string `json:"search_query,required"`
-	// (Optional) Token for retrieving the next page of results
-	NextPage string `json:"next_page"`
+	Data        []VectorStoreSearchResponseData `json:"data,required"`
+	SearchQuery []string                        `json:"search_query,required"`
+	HasMore     bool                            `json:"has_more"`
+	NextPage    string                          `json:"next_page,nullable"`
+	Object      string                          `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
-		HasMore     respjson.Field
-		Object      respjson.Field
 		SearchQuery respjson.Field
+		HasMore     respjson.Field
 		NextPage    respjson.Field
+		Object      respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -399,16 +270,11 @@ func (r *VectorStoreSearchResponse) UnmarshalJSON(data []byte) error {
 
 // Response from searching a vector store.
 type VectorStoreSearchResponseData struct {
-	// List of content items matching the search query
-	Content []VectorStoreSearchResponseDataContent `json:"content,required"`
-	// Unique identifier of the file containing the result
-	FileID string `json:"file_id,required"`
-	// Name of the file containing the result
-	Filename string `json:"filename,required"`
-	// Relevance score for this search result
-	Score float64 `json:"score,required"`
-	// (Optional) Key-value attributes associated with the file
-	Attributes map[string]VectorStoreSearchResponseDataAttributeUnion `json:"attributes"`
+	Content    []VectorStoreSearchResponseDataContent                 `json:"content,required"`
+	FileID     string                                                 `json:"file_id,required"`
+	Filename   string                                                 `json:"filename,required"`
+	Score      float64                                                `json:"score,required"`
+	Attributes map[string]VectorStoreSearchResponseDataAttributeUnion `json:"attributes,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Content     respjson.Field
@@ -429,16 +295,17 @@ func (r *VectorStoreSearchResponseData) UnmarshalJSON(data []byte) error {
 
 // Content item from a vector store file or search result.
 type VectorStoreSearchResponseDataContent struct {
-	// The actual text content
-	Text string `json:"text,required"`
-	// Content type, currently only "text" is supported
+	Text string        `json:"text,required"`
 	Type constant.Text `json:"type,required"`
-	// Optional chunk metadata
-	ChunkMetadata VectorStoreSearchResponseDataContentChunkMetadata `json:"chunk_metadata"`
-	// Optional embedding vector for this content chunk
-	Embedding []float64 `json:"embedding"`
-	// Optional user-defined metadata
-	Metadata map[string]VectorStoreSearchResponseDataContentMetadataUnion `json:"metadata"`
+	// `ChunkMetadata` is backend metadata for a `Chunk` that is used to store
+	// additional information about the chunk that will not be used in the context
+	// during inference, but is required for backend functionality. The `ChunkMetadata`
+	// is set during chunk creation in `MemoryToolRuntimeImpl().insert()`and is not
+	// expected to change after. Use `Chunk.metadata` for metadata that will be used in
+	// the context during inference.
+	ChunkMetadata VectorStoreSearchResponseDataContentChunkMetadata `json:"chunk_metadata,nullable"`
+	Embedding     []float64                                         `json:"embedding,nullable"`
+	Metadata      map[string]any                                    `json:"metadata,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Text          respjson.Field
@@ -457,31 +324,24 @@ func (r *VectorStoreSearchResponseDataContent) UnmarshalJSON(data []byte) error 
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Optional chunk metadata
+// `ChunkMetadata` is backend metadata for a `Chunk` that is used to store
+// additional information about the chunk that will not be used in the context
+// during inference, but is required for backend functionality. The `ChunkMetadata`
+// is set during chunk creation in `MemoryToolRuntimeImpl().insert()`and is not
+// expected to change after. Use `Chunk.metadata` for metadata that will be used in
+// the context during inference.
 type VectorStoreSearchResponseDataContentChunkMetadata struct {
-	// The dimension of the embedding vector for the chunk.
-	ChunkEmbeddingDimension int64 `json:"chunk_embedding_dimension"`
-	// The embedding model used to create the chunk's embedding.
-	ChunkEmbeddingModel string `json:"chunk_embedding_model"`
-	// The ID of the chunk. If not set, it will be generated based on the document ID
-	// and content.
-	ChunkID string `json:"chunk_id"`
-	// The tokenizer used to create the chunk. Default is Tiktoken.
-	ChunkTokenizer string `json:"chunk_tokenizer"`
-	// The window of the chunk, which can be used to group related chunks together.
-	ChunkWindow string `json:"chunk_window"`
-	// The number of tokens in the content of the chunk.
-	ContentTokenCount int64 `json:"content_token_count"`
-	// An optional timestamp indicating when the chunk was created.
-	CreatedTimestamp int64 `json:"created_timestamp"`
-	// The ID of the document this chunk belongs to.
-	DocumentID string `json:"document_id"`
-	// The number of tokens in the metadata of the chunk.
-	MetadataTokenCount int64 `json:"metadata_token_count"`
-	// The source of the content, such as a URL, file path, or other identifier.
-	Source string `json:"source"`
-	// An optional timestamp indicating when the chunk was last updated.
-	UpdatedTimestamp int64 `json:"updated_timestamp"`
+	ChunkEmbeddingDimension int64  `json:"chunk_embedding_dimension,nullable"`
+	ChunkEmbeddingModel     string `json:"chunk_embedding_model,nullable"`
+	ChunkID                 string `json:"chunk_id,nullable"`
+	ChunkTokenizer          string `json:"chunk_tokenizer,nullable"`
+	ChunkWindow             string `json:"chunk_window,nullable"`
+	ContentTokenCount       int64  `json:"content_token_count,nullable"`
+	CreatedTimestamp        int64  `json:"created_timestamp,nullable"`
+	DocumentID              string `json:"document_id,nullable"`
+	MetadataTokenCount      int64  `json:"metadata_token_count,nullable"`
+	Source                  string `json:"source,nullable"`
+	UpdatedTimestamp        int64  `json:"updated_timestamp,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ChunkEmbeddingDimension respjson.Field
@@ -503,58 +363,6 @@ type VectorStoreSearchResponseDataContentChunkMetadata struct {
 // Returns the unmodified JSON received from the API
 func (r VectorStoreSearchResponseDataContentChunkMetadata) RawJSON() string { return r.JSON.raw }
 func (r *VectorStoreSearchResponseDataContentChunkMetadata) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// VectorStoreSearchResponseDataContentMetadataUnion contains all possible
-// properties and values from [bool], [float64], [string], [[]any].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type VectorStoreSearchResponseDataContentMetadataUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
-	} `json:"-"`
-}
-
-func (u VectorStoreSearchResponseDataContentMetadataUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u VectorStoreSearchResponseDataContentMetadataUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u VectorStoreSearchResponseDataContentMetadataUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u VectorStoreSearchResponseDataContentMetadataUnion) AsAnyArray() (v []any) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u VectorStoreSearchResponseDataContentMetadataUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *VectorStoreSearchResponseDataContentMetadataUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -603,16 +411,12 @@ func (r *VectorStoreSearchResponseDataAttributeUnion) UnmarshalJSON(data []byte)
 }
 
 type VectorStoreNewParams struct {
-	// (Optional) A name for the vector store
 	Name param.Opt[string] `json:"name,omitzero"`
-	// (Optional) Strategy for splitting files into chunks
+	// Automatic chunking strategy for vector store files.
 	ChunkingStrategy VectorStoreNewParamsChunkingStrategyUnion `json:"chunking_strategy,omitzero"`
-	// (Optional) Expiration policy for the vector store
-	ExpiresAfter map[string]VectorStoreNewParamsExpiresAfterUnion `json:"expires_after,omitzero"`
-	// List of file IDs to include in the vector store
-	FileIDs []string `json:"file_ids,omitzero"`
-	// Set of key-value pairs that can be attached to the vector store
-	Metadata map[string]VectorStoreNewParamsMetadataUnion `json:"metadata,omitzero"`
+	ExpiresAfter     map[string]any                            `json:"expires_after,omitzero"`
+	FileIDs          []string                                  `json:"file_ids,omitzero"`
+	Metadata         map[string]any                            `json:"metadata,omitzero"`
 	paramObj
 }
 
@@ -675,19 +479,10 @@ func init() {
 	)
 }
 
-func NewVectorStoreNewParamsChunkingStrategyAuto() VectorStoreNewParamsChunkingStrategyAuto {
-	return VectorStoreNewParamsChunkingStrategyAuto{
-		Type: "auto",
-	}
-}
-
 // Automatic chunking strategy for vector store files.
-//
-// This struct has a constant value, construct it with
-// [NewVectorStoreNewParamsChunkingStrategyAuto].
 type VectorStoreNewParamsChunkingStrategyAuto struct {
-	// Strategy type, always "auto" for automatic chunking
-	Type constant.Auto `json:"type,required"`
+	// Any of "auto".
+	Type string `json:"type,omitzero"`
 	paramObj
 }
 
@@ -699,16 +494,20 @@ func (r *VectorStoreNewParamsChunkingStrategyAuto) UnmarshalJSON(data []byte) er
 	return apijson.UnmarshalRoot(data, r)
 }
 
+func init() {
+	apijson.RegisterFieldValidator[VectorStoreNewParamsChunkingStrategyAuto](
+		"type", "auto",
+	)
+}
+
 // Static chunking strategy with configurable parameters.
 //
-// The properties Static, Type are required.
+// The property Static is required.
 type VectorStoreNewParamsChunkingStrategyStatic struct {
-	// Configuration parameters for the static chunking strategy
+	// Configuration for static chunking strategy.
 	Static VectorStoreNewParamsChunkingStrategyStaticStatic `json:"static,omitzero,required"`
-	// Strategy type, always "static" for static chunking
-	//
-	// This field can be elided, and will marshal its zero value as "static".
-	Type constant.Static `json:"type,required"`
+	// Any of "static".
+	Type string `json:"type,omitzero"`
 	paramObj
 }
 
@@ -720,14 +519,16 @@ func (r *VectorStoreNewParamsChunkingStrategyStatic) UnmarshalJSON(data []byte) 
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Configuration parameters for the static chunking strategy
-//
-// The properties ChunkOverlapTokens, MaxChunkSizeTokens are required.
+func init() {
+	apijson.RegisterFieldValidator[VectorStoreNewParamsChunkingStrategyStatic](
+		"type", "static",
+	)
+}
+
+// Configuration for static chunking strategy.
 type VectorStoreNewParamsChunkingStrategyStaticStatic struct {
-	// Number of tokens to overlap between adjacent chunks
-	ChunkOverlapTokens int64 `json:"chunk_overlap_tokens,required"`
-	// Maximum number of tokens per chunk, must be between 100 and 4096
-	MaxChunkSizeTokens int64 `json:"max_chunk_size_tokens,required"`
+	ChunkOverlapTokens param.Opt[int64] `json:"chunk_overlap_tokens,omitzero"`
+	MaxChunkSizeTokens param.Opt[int64] `json:"max_chunk_size_tokens,omitzero"`
 	paramObj
 }
 
@@ -739,75 +540,10 @@ func (r *VectorStoreNewParamsChunkingStrategyStaticStatic) UnmarshalJSON(data []
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type VectorStoreNewParamsExpiresAfterUnion struct {
-	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
-	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
-	OfString   param.Opt[string]  `json:",omitzero,inline"`
-	OfAnyArray []any              `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u VectorStoreNewParamsExpiresAfterUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
-}
-func (u *VectorStoreNewParamsExpiresAfterUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *VectorStoreNewParamsExpiresAfterUnion) asAny() any {
-	if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfAnyArray) {
-		return &u.OfAnyArray
-	}
-	return nil
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type VectorStoreNewParamsMetadataUnion struct {
-	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
-	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
-	OfString   param.Opt[string]  `json:",omitzero,inline"`
-	OfAnyArray []any              `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u VectorStoreNewParamsMetadataUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
-}
-func (u *VectorStoreNewParamsMetadataUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *VectorStoreNewParamsMetadataUnion) asAny() any {
-	if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfAnyArray) {
-		return &u.OfAnyArray
-	}
-	return nil
-}
-
 type VectorStoreUpdateParams struct {
-	// The name of the vector store.
-	Name param.Opt[string] `json:"name,omitzero"`
-	// The expiration policy for a vector store.
-	ExpiresAfter map[string]VectorStoreUpdateParamsExpiresAfterUnion `json:"expires_after,omitzero"`
-	// Set of 16 key-value pairs that can be attached to an object.
-	Metadata map[string]VectorStoreUpdateParamsMetadataUnion `json:"metadata,omitzero"`
+	Name         param.Opt[string] `json:"name,omitzero"`
+	ExpiresAfter map[string]any    `json:"expires_after,omitzero"`
+	Metadata     map[string]any    `json:"metadata,omitzero"`
 	paramObj
 }
 
@@ -819,81 +555,11 @@ func (r *VectorStoreUpdateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type VectorStoreUpdateParamsExpiresAfterUnion struct {
-	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
-	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
-	OfString   param.Opt[string]  `json:",omitzero,inline"`
-	OfAnyArray []any              `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u VectorStoreUpdateParamsExpiresAfterUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
-}
-func (u *VectorStoreUpdateParamsExpiresAfterUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *VectorStoreUpdateParamsExpiresAfterUnion) asAny() any {
-	if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfAnyArray) {
-		return &u.OfAnyArray
-	}
-	return nil
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type VectorStoreUpdateParamsMetadataUnion struct {
-	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
-	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
-	OfString   param.Opt[string]  `json:",omitzero,inline"`
-	OfAnyArray []any              `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u VectorStoreUpdateParamsMetadataUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
-}
-func (u *VectorStoreUpdateParamsMetadataUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *VectorStoreUpdateParamsMetadataUnion) asAny() any {
-	if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfAnyArray) {
-		return &u.OfAnyArray
-	}
-	return nil
-}
-
 type VectorStoreListParams struct {
-	// A cursor for use in pagination. `after` is an object ID that defines your place
-	// in the list.
-	After param.Opt[string] `query:"after,omitzero" json:"-"`
-	// A cursor for use in pagination. `before` is an object ID that defines your place
-	// in the list.
+	After  param.Opt[string] `query:"after,omitzero" json:"-"`
 	Before param.Opt[string] `query:"before,omitzero" json:"-"`
-	// A limit on the number of objects to be returned. Limit can range between 1 and
-	// 100, and the default is 20.
-	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	// Sort order by the `created_at` timestamp of the objects. `asc` for ascending
-	// order and `desc` for descending order.
-	Order param.Opt[string] `query:"order,omitzero" json:"-"`
+	Limit  param.Opt[int64]  `query:"limit,omitzero" json:"-"`
+	Order  param.Opt[string] `query:"order,omitzero" json:"-"`
 	paramObj
 }
 
@@ -906,17 +572,12 @@ func (r VectorStoreListParams) URLQuery() (v url.Values, err error) {
 }
 
 type VectorStoreSearchParams struct {
-	// The query string or array for performing the search.
-	Query VectorStoreSearchParamsQueryUnion `json:"query,omitzero,required"`
-	// Maximum number of results to return (1 to 50 inclusive, default 10).
-	MaxNumResults param.Opt[int64] `json:"max_num_results,omitzero"`
-	// Whether to rewrite the natural language query for vector search (default false)
-	RewriteQuery param.Opt[bool] `json:"rewrite_query,omitzero"`
-	// The search mode to use - "keyword", "vector", or "hybrid" (default "vector")
-	SearchMode param.Opt[string] `json:"search_mode,omitzero"`
-	// Filters based on file attributes to narrow the search results.
-	Filters map[string]VectorStoreSearchParamsFilterUnion `json:"filters,omitzero"`
-	// Ranking options for fine-tuning the search results.
+	Query         VectorStoreSearchParamsQueryUnion `json:"query,omitzero,required"`
+	MaxNumResults param.Opt[int64]                  `json:"max_num_results,omitzero"`
+	RewriteQuery  param.Opt[bool]                   `json:"rewrite_query,omitzero"`
+	SearchMode    param.Opt[string]                 `json:"search_mode,omitzero"`
+	Filters       map[string]any                    `json:"filters,omitzero"`
+	// Options for ranking and filtering search results.
 	RankingOptions VectorStoreSearchParamsRankingOptions `json:"ranking_options,omitzero"`
 	paramObj
 }
@@ -933,13 +594,13 @@ func (r *VectorStoreSearchParams) UnmarshalJSON(data []byte) error {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type VectorStoreSearchParamsQueryUnion struct {
-	OfString      param.Opt[string] `json:",omitzero,inline"`
-	OfStringArray []string          `json:",omitzero,inline"`
+	OfString     param.Opt[string] `json:",omitzero,inline"`
+	OfListString []string          `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u VectorStoreSearchParamsQueryUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfString, u.OfStringArray)
+	return param.MarshalUnion(u, u.OfString, u.OfListString)
 }
 func (u *VectorStoreSearchParamsQueryUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -948,48 +609,15 @@ func (u *VectorStoreSearchParamsQueryUnion) UnmarshalJSON(data []byte) error {
 func (u *VectorStoreSearchParamsQueryUnion) asAny() any {
 	if !param.IsOmitted(u.OfString) {
 		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfStringArray) {
-		return &u.OfStringArray
+	} else if !param.IsOmitted(u.OfListString) {
+		return &u.OfListString
 	}
 	return nil
 }
 
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type VectorStoreSearchParamsFilterUnion struct {
-	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
-	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
-	OfString   param.Opt[string]  `json:",omitzero,inline"`
-	OfAnyArray []any              `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u VectorStoreSearchParamsFilterUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
-}
-func (u *VectorStoreSearchParamsFilterUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *VectorStoreSearchParamsFilterUnion) asAny() any {
-	if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfAnyArray) {
-		return &u.OfAnyArray
-	}
-	return nil
-}
-
-// Ranking options for fine-tuning the search results.
+// Options for ranking and filtering search results.
 type VectorStoreSearchParamsRankingOptions struct {
-	// (Optional) Name of the ranking algorithm to use
-	Ranker param.Opt[string] `json:"ranker,omitzero"`
-	// (Optional) Minimum relevance score threshold for results
+	Ranker         param.Opt[string]  `json:"ranker,omitzero"`
 	ScoreThreshold param.Opt[float64] `json:"score_threshold,omitzero"`
 	paramObj
 }

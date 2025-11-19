@@ -32,18 +32,16 @@ func TestVectorStoreNewWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.VectorStores.New(context.TODO(), llamastackclient.VectorStoreNewParams{
 		ChunkingStrategy: llamastackclient.VectorStoreNewParamsChunkingStrategyUnion{
-			OfAuto: &llamastackclient.VectorStoreNewParamsChunkingStrategyAuto{},
-		},
-		ExpiresAfter: map[string]llamastackclient.VectorStoreNewParamsExpiresAfterUnion{
-			"foo": {
-				OfBool: llamastackclient.Bool(true),
+			OfAuto: &llamastackclient.VectorStoreNewParamsChunkingStrategyAuto{
+				Type: "auto",
 			},
+		},
+		ExpiresAfter: map[string]any{
+			"foo": "bar",
 		},
 		FileIDs: []string{"string"},
-		Metadata: map[string]llamastackclient.VectorStoreNewParamsMetadataUnion{
-			"foo": {
-				OfBool: llamastackclient.Bool(true),
-			},
+		Metadata: map[string]any{
+			"foo": "bar",
 		},
 		Name: llamastackclient.String("name"),
 	})
@@ -92,15 +90,11 @@ func TestVectorStoreUpdateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"vector_store_id",
 		llamastackclient.VectorStoreUpdateParams{
-			ExpiresAfter: map[string]llamastackclient.VectorStoreUpdateParamsExpiresAfterUnion{
-				"foo": {
-					OfBool: llamastackclient.Bool(true),
-				},
+			ExpiresAfter: map[string]any{
+				"foo": "bar",
 			},
-			Metadata: map[string]llamastackclient.VectorStoreUpdateParamsMetadataUnion{
-				"foo": {
-					OfBool: llamastackclient.Bool(true),
-				},
+			Metadata: map[string]any{
+				"foo": "bar",
 			},
 			Name: llamastackclient.String("name"),
 		},
@@ -179,10 +173,8 @@ func TestVectorStoreSearchWithOptionalParams(t *testing.T) {
 			Query: llamastackclient.VectorStoreSearchParamsQueryUnion{
 				OfString: llamastackclient.String("string"),
 			},
-			Filters: map[string]llamastackclient.VectorStoreSearchParamsFilterUnion{
-				"foo": {
-					OfBool: llamastackclient.Bool(true),
-				},
+			Filters: map[string]any{
+				"foo": "bar",
 			},
 			MaxNumResults: llamastackclient.Int(0),
 			RankingOptions: llamastackclient.VectorStoreSearchParamsRankingOptions{
