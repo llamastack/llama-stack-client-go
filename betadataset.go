@@ -72,7 +72,7 @@ func (r *BetaDatasetService) List(ctx context.Context, opts ...option.RequestOpt
 // Append rows to a dataset.
 func (r *BetaDatasetService) Appendrows(ctx context.Context, datasetID string, body BetaDatasetAppendrowsParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if datasetID == "" {
 		err = errors.New("missing required dataset_id parameter")
 		return
@@ -119,7 +119,7 @@ func (r *BetaDatasetService) Register(ctx context.Context, body BetaDatasetRegis
 // Deprecated: deprecated
 func (r *BetaDatasetService) Unregister(ctx context.Context, datasetID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if datasetID == "" {
 		err = errors.New("missing required dataset_id parameter")
 		return
