@@ -158,7 +158,12 @@ type VectorStoreFile struct {
 	// Any of "completed", "in_progress", "cancelled", "failed".
 	Status        VectorStoreFileStatus `json:"status,required"`
 	VectorStoreID string                `json:"vector_store_id,required"`
-	Attributes    map[string]any        `json:"attributes"`
+	// Set of 16 key-value pairs that can be attached to an object. This can be useful
+	// for storing additional information about the object in a structured format, and
+	// querying for objects via API or the dashboard. Keys are strings with a maximum
+	// length of 64 characters. Values are strings with a maximum length of 512
+	// characters, booleans, or numbers.
+	Attributes map[string]VectorStoreFileAttributeUnion `json:"attributes"`
 	// Error information for failed vector store file processing.
 	LastError  VectorStoreFileLastError `json:"last_error,nullable"`
 	Object     string                   `json:"object"`
@@ -316,6 +321,50 @@ const (
 	VectorStoreFileStatusCancelled  VectorStoreFileStatus = "cancelled"
 	VectorStoreFileStatusFailed     VectorStoreFileStatus = "failed"
 )
+
+// VectorStoreFileAttributeUnion contains all possible properties and values from
+// [string], [float64], [bool].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+//
+// If the underlying value is not a json object, one of the following properties
+// will be valid: OfString OfFloat OfBool]
+type VectorStoreFileAttributeUnion struct {
+	// This field will be present if the value is a [string] instead of an object.
+	OfString string `json:",inline"`
+	// This field will be present if the value is a [float64] instead of an object.
+	OfFloat float64 `json:",inline"`
+	// This field will be present if the value is a [bool] instead of an object.
+	OfBool bool `json:",inline"`
+	JSON   struct {
+		OfString respjson.Field
+		OfFloat  respjson.Field
+		OfBool   respjson.Field
+		raw      string
+	} `json:"-"`
+}
+
+func (u VectorStoreFileAttributeUnion) AsString() (v string) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u VectorStoreFileAttributeUnion) AsFloat() (v float64) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u VectorStoreFileAttributeUnion) AsBool() (v bool) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u VectorStoreFileAttributeUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *VectorStoreFileAttributeUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // Error information for failed vector store file processing.
 type VectorStoreFileLastError struct {
