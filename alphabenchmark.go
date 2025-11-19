@@ -71,7 +71,7 @@ func (r *AlphaBenchmarkService) List(ctx context.Context, opts ...option.Request
 // Deprecated: deprecated
 func (r *AlphaBenchmarkService) Register(ctx context.Context, body AlphaBenchmarkRegisterParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	path := "v1alpha/eval/benchmarks"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
 	return
@@ -82,7 +82,7 @@ func (r *AlphaBenchmarkService) Register(ctx context.Context, body AlphaBenchmar
 // Deprecated: deprecated
 func (r *AlphaBenchmarkService) Unregister(ctx context.Context, benchmarkID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if benchmarkID == "" {
 		err = errors.New("missing required benchmark_id parameter")
 		return

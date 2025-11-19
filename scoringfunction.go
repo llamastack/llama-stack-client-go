@@ -72,7 +72,7 @@ func (r *ScoringFunctionService) List(ctx context.Context, opts ...option.Reques
 // Deprecated: deprecated
 func (r *ScoringFunctionService) Register(ctx context.Context, body ScoringFunctionRegisterParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	path := "v1/scoring-functions"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
 	return
@@ -83,7 +83,7 @@ func (r *ScoringFunctionService) Register(ctx context.Context, body ScoringFunct
 // Deprecated: deprecated
 func (r *ScoringFunctionService) Unregister(ctx context.Context, scoringFnID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if scoringFnID == "" {
 		err = errors.New("missing required scoring_fn_id parameter")
 		return

@@ -101,7 +101,7 @@ func (r *PromptService) List(ctx context.Context, opts ...option.RequestOption) 
 // Delete a prompt.
 func (r *PromptService) Delete(ctx context.Context, promptID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if promptID == "" {
 		err = errors.New("missing required prompt_id parameter")
 		return
