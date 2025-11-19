@@ -71,7 +71,7 @@ func (r *ShieldService) List(ctx context.Context, opts ...option.RequestOption) 
 // Deprecated: deprecated
 func (r *ShieldService) Delete(ctx context.Context, identifier string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if identifier == "" {
 		err = errors.New("missing required identifier parameter")
 		return

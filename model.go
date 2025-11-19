@@ -89,7 +89,7 @@ func (r *ModelService) Register(ctx context.Context, body ModelRegisterParams, o
 // Deprecated: deprecated
 func (r *ModelService) Unregister(ctx context.Context, modelID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if modelID == "" {
 		err = errors.New("missing required model_id parameter")
 		return

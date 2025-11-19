@@ -66,7 +66,7 @@ func (r *AlphaPostTrainingJobService) Artifacts(ctx context.Context, query Alpha
 // Cancel a training job.
 func (r *AlphaPostTrainingJobService) Cancel(ctx context.Context, body AlphaPostTrainingJobCancelParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	path := "v1alpha/post-training/job/cancel"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
 	return

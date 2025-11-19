@@ -71,7 +71,7 @@ func (r *ToolgroupService) Get(ctx context.Context, toolgroupID string, opts ...
 // Deprecated: deprecated
 func (r *ToolgroupService) Register(ctx context.Context, body ToolgroupRegisterParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	path := "v1/toolgroups"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
 	return
@@ -82,7 +82,7 @@ func (r *ToolgroupService) Register(ctx context.Context, body ToolgroupRegisterP
 // Deprecated: deprecated
 func (r *ToolgroupService) Unregister(ctx context.Context, toolgroupID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if toolgroupID == "" {
 		err = errors.New("missing required toolgroup_id parameter")
 		return
