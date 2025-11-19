@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.4.0-alpha.2 (2025-11-19)
+
+Full Changelog: [v0.4.0-alpha.1...v0.4.0-alpha.2](https://github.com/llamastack/llama-stack-client-go/compare/v0.4.0-alpha.1...v0.4.0-alpha.2)
+
+### Features
+
+* Wire through parallel_tool_calls to Responses API ([1090be9](https://github.com/llamastack/llama-stack-client-go/commit/1090be93ae142c74365868350c435380a63679ba))
+
+
+### Bug Fixes
+
+* **client:** correctly specify Accept header with */* instead of empty ([3037900](https://github.com/llamastack/llama-stack-client-go/commit/303790079c138c442eb492fd9457b60dade84198))
+* **openapi:** restore embedded request wrappers ([7da5f07](https://github.com/llamastack/llama-stack-client-go/commit/7da5f07a1b07166105173d8263b95b59e06735fd))
+* Pydantic validation error with list-type metadata in vector search ([#3797](https://github.com/llamastack/llama-stack-client-go/issues/3797)) ([d0dd1c2](https://github.com/llamastack/llama-stack-client-go/commit/d0dd1c22471bbb6f9912c401921f1a708410574f))
+
+
+### Chores
+
+* use Pydantic to generate OpenAPI schema ([c7fafed](https://github.com/llamastack/llama-stack-client-go/commit/c7fafed933890ba05c37e6ab54cd5163d00801fc))
+
 ## 0.4.0-alpha.1 (2025-11-14)
 
 Full Changelog: [v0.1.0-alpha.1...v0.4.0-alpha.1](https://github.com/llamastack/llama-stack-client-go/compare/v0.1.0-alpha.1...v0.4.0-alpha.1)
