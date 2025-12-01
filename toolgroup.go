@@ -42,6 +42,8 @@ func NewToolgroupService(opts ...option.RequestOption) (r ToolgroupService) {
 }
 
 // List tool groups with optional provider.
+//
+// Deprecated: deprecated
 func (r *ToolgroupService) List(ctx context.Context, opts ...option.RequestOption) (res *[]ToolGroup, err error) {
 	var env ListToolGroupsResponse
 	opts = slices.Concat(r.Options, opts)
@@ -55,6 +57,8 @@ func (r *ToolgroupService) List(ctx context.Context, opts ...option.RequestOptio
 }
 
 // Get a tool group by its ID.
+//
+// Deprecated: deprecated
 func (r *ToolgroupService) Get(ctx context.Context, toolgroupID string, opts ...option.RequestOption) (res *ToolGroup, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if toolgroupID == "" {

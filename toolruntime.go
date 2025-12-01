@@ -43,6 +43,8 @@ func NewToolRuntimeService(opts ...option.RequestOption) (r ToolRuntimeService) 
 }
 
 // Run a tool with the given arguments.
+//
+// Deprecated: deprecated
 func (r *ToolRuntimeService) InvokeTool(ctx context.Context, body ToolRuntimeInvokeToolParams, opts ...option.RequestOption) (res *ToolInvocationResult, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/tool-runtime/invoke"
@@ -51,6 +53,8 @@ func (r *ToolRuntimeService) InvokeTool(ctx context.Context, body ToolRuntimeInv
 }
 
 // List all tools in the runtime.
+//
+// Deprecated: deprecated
 func (r *ToolRuntimeService) ListTools(ctx context.Context, query ToolRuntimeListToolsParams, opts ...option.RequestOption) (res *[]ToolDef, err error) {
 	var env ToolRuntimeListToolsResponseEnvelope
 	opts = slices.Concat(r.Options, opts)
