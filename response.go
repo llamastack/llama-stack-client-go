@@ -127,6 +127,7 @@ type ResponseObject struct {
 	Error        ResponseObjectError `json:"error,nullable"`
 	Instructions string              `json:"instructions,nullable"`
 	MaxToolCalls int64               `json:"max_tool_calls,nullable"`
+	Metadata     map[string]string   `json:"metadata,nullable"`
 	// Any of "response".
 	Object             ResponseObjectObject `json:"object"`
 	ParallelToolCalls  bool                 `json:"parallel_tool_calls,nullable"`
@@ -151,6 +152,7 @@ type ResponseObject struct {
 		Error              respjson.Field
 		Instructions       respjson.Field
 		MaxToolCalls       respjson.Field
+		Metadata           respjson.Field
 		Object             respjson.Field
 		ParallelToolCalls  respjson.Field
 		PreviousResponseID respjson.Field
@@ -6273,6 +6275,7 @@ type ResponseListResponse struct {
 	Error        ResponseListResponseError `json:"error,nullable"`
 	Instructions string                    `json:"instructions,nullable"`
 	MaxToolCalls int64                     `json:"max_tool_calls,nullable"`
+	Metadata     map[string]string         `json:"metadata,nullable"`
 	// Any of "response".
 	Object             ResponseListResponseObject `json:"object"`
 	ParallelToolCalls  bool                       `json:"parallel_tool_calls,nullable"`
@@ -6298,6 +6301,7 @@ type ResponseListResponse struct {
 		Error              respjson.Field
 		Instructions       respjson.Field
 		MaxToolCalls       respjson.Field
+		Metadata           respjson.Field
 		Object             respjson.Field
 		ParallelToolCalls  respjson.Field
 		PreviousResponseID respjson.Field
@@ -8899,6 +8903,7 @@ type ResponseNewParams struct {
 	Store              param.Opt[bool]             `json:"store,omitzero"`
 	Temperature        param.Opt[float64]          `json:"temperature,omitzero"`
 	Include            []string                    `json:"include,omitzero"`
+	Metadata           map[string]string           `json:"metadata,omitzero"`
 	// OpenAI compatible Prompt object that is used in OpenAI responses.
 	Prompt ResponseNewParamsPrompt `json:"prompt,omitzero"`
 	// Text response configuration for OpenAI responses.

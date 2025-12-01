@@ -34,12 +34,15 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 		Input: llamastackclient.ResponseNewParamsInputUnion{
 			OfString: llamastackclient.String("string"),
 		},
-		Model:              "model",
-		Conversation:       llamastackclient.String("conversation"),
-		Include:            []string{"string"},
-		Instructions:       llamastackclient.String("instructions"),
-		MaxInferIters:      llamastackclient.Int(0),
-		MaxToolCalls:       llamastackclient.Int(0),
+		Model:         "model",
+		Conversation:  llamastackclient.String("conversation"),
+		Include:       []string{"string"},
+		Instructions:  llamastackclient.String("instructions"),
+		MaxInferIters: llamastackclient.Int(0),
+		MaxToolCalls:  llamastackclient.Int(0),
+		Metadata: map[string]string{
+			"foo": "string",
+		},
 		ParallelToolCalls:  llamastackclient.Bool(true),
 		PreviousResponseID: llamastackclient.String("previous_response_id"),
 		Prompt: llamastackclient.ResponseNewParamsPrompt{
