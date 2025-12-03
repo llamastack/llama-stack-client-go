@@ -1,3 +1,9 @@
+// Copyright (c) Meta Platforms, Inc. and affiliates.
+// All rights reserved.
+//
+// This source code is licensed under the terms described in the LICENSE file in
+// the root directory of this source tree.
+
 // This package provides shims over Go 1.2{2,3} APIs
 // which are missing from Go 1.22, and used by the Go 1.24 encoding/json package.
 //

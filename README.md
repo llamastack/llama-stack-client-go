@@ -543,3 +543,7 @@ We are keen for your feedback; please open an [issue](https://www.github.com/lla
 ## Contributing
 
 See [the contributing documentation](./CONTRIBUTING.md).
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
