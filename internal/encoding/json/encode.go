@@ -1,3 +1,9 @@
+// Copyright (c) Meta Platforms, Inc. and affiliates.
+// All rights reserved.
+//
+// This source code is licensed under the terms described in the LICENSE file in
+// the root directory of this source tree.
+
 // Vendored from Go 1.24.0-pre-release
 // To find alterations, check package shims, and comments beginning in SHIM().
 //
