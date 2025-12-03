@@ -885,10 +885,16 @@ func (r *BatchCancelResponseUsageOutputTokensDetails) UnmarshalJSON(data []byte)
 }
 
 type BatchNewParams struct {
-	Endpoint       string            `json:"endpoint,required"`
-	InputFileID    string            `json:"input_file_id,required"`
+	// The endpoint to be used for all requests in the batch.
+	Endpoint string `json:"endpoint,required"`
+	// The ID of an uploaded file containing requests for the batch.
+	InputFileID string `json:"input_file_id,required"`
+	// Optional idempotency key. When provided, enables idempotent behavior.
 	IdempotencyKey param.Opt[string] `json:"idempotency_key,omitzero"`
-	Metadata       map[string]string `json:"metadata,omitzero"`
+	// Optional metadata for the batch.
+	Metadata map[string]string `json:"metadata,omitzero"`
+	// The time window within which the batch should be processed.
+	//
 	// This field can be elided, and will marshal its zero value as "24h".
 	CompletionWindow constant.String24h `json:"completion_window,required"`
 	paramObj
@@ -903,8 +909,10 @@ func (r *BatchNewParams) UnmarshalJSON(data []byte) error {
 }
 
 type BatchListParams struct {
+	// Optional cursor for pagination. Returns batches after this ID.
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
-	Limit param.Opt[int64]  `query:"limit,omitzero" json:"-"`
+	// Maximum number of batches to return. Defaults to 20.
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	paramObj
 }
 
