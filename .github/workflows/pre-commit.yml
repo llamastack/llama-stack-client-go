@@ -2,23 +2,17 @@ name: Pre-commit checks
 
 on:
   push:
-    branches-ignore:
-      - 'generated'
-      - 'codegen/**'
-      - 'integrated/**'
-      - 'stl-preview-head/**'
-      - 'stl-preview-base/**'
+    branches:
+      - main
+      - generated
+      - next
   pull_request:
-    branches-ignore:
-      - 'stl-preview-head/**'
-      - 'stl-preview-base/**'
 
 jobs:
   pre-commit:
     timeout-minutes: 10
     name: Pre-commit hooks
     runs-on: ${{ github.repository == 'stainless-sdks/llama-stack-client-go' && 'depot-ubuntu-24.04' || 'ubuntu-latest' }}
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.fork
 
     steps:
       - uses: actions/checkout@v4
