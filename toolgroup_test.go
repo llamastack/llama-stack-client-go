@@ -75,10 +75,8 @@ func TestToolgroupRegisterWithOptionalParams(t *testing.T) {
 	err := client.Toolgroups.Register(context.TODO(), llamastackclient.ToolgroupRegisterParams{
 		ProviderID:  "provider_id",
 		ToolgroupID: "toolgroup_id",
-		Args: map[string]llamastackclient.ToolgroupRegisterParamsArgUnion{
-			"foo": {
-				OfBool: llamastackclient.Bool(true),
-			},
+		Args: map[string]any{
+			"foo": "bar",
 		},
 		McpEndpoint: llamastackclient.ToolgroupRegisterParamsMcpEndpoint{
 			Uri: "uri",

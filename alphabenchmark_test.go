@@ -76,14 +76,33 @@ func TestAlphaBenchmarkRegisterWithOptionalParams(t *testing.T) {
 		BenchmarkID:      "benchmark_id",
 		DatasetID:        "dataset_id",
 		ScoringFunctions: []string{"string"},
-		Metadata: map[string]llamastackclient.AlphaBenchmarkRegisterParamsMetadataUnion{
-			"foo": {
-				OfBool: llamastackclient.Bool(true),
-			},
+		Metadata: map[string]any{
+			"foo": "bar",
 		},
 		ProviderBenchmarkID: llamastackclient.String("provider_benchmark_id"),
 		ProviderID:          llamastackclient.String("provider_id"),
 	})
+	if err != nil {
+		var apierr *llamastackclient.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestAlphaBenchmarkUnregister(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := llamastackclient.NewClient(
+		option.WithBaseURL(baseURL),
+	)
+	err := client.Alpha.Benchmarks.Unregister(context.TODO(), "benchmark_id")
 	if err != nil {
 		var apierr *llamastackclient.Error
 		if errors.As(err, &apierr) {

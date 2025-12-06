@@ -37,12 +37,11 @@ func TestSafetyRunShield(t *testing.T) {
 					OfString: llamastackclient.String("string"),
 				},
 				Name: llamastackclient.String("name"),
+				Role: "user",
 			},
 		}},
-		Params: map[string]llamastackclient.SafetyRunShieldParamsParamUnion{
-			"foo": {
-				OfBool: llamastackclient.Bool(true),
-			},
+		Params: map[string]any{
+			"foo": "bar",
 		},
 		ShieldID: "shield_id",
 	})

@@ -44,6 +44,8 @@ func NewToolService(opts ...option.RequestOption) (r ToolService) {
 }
 
 // List tools with optional tool group.
+//
+// Deprecated: deprecated
 func (r *ToolService) List(ctx context.Context, query ToolListParams, opts ...option.RequestOption) (res *[]ToolDef, err error) {
 	var env ToolListResponseEnvelope
 	opts = slices.Concat(r.Options, opts)
@@ -57,6 +59,8 @@ func (r *ToolService) List(ctx context.Context, query ToolListParams, opts ...op
 }
 
 // Get a tool by its name.
+//
+// Deprecated: deprecated
 func (r *ToolService) Get(ctx context.Context, toolName string, opts ...option.RequestOption) (res *ToolDef, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if toolName == "" {
@@ -69,7 +73,6 @@ func (r *ToolService) Get(ctx context.Context, toolName string, opts ...option.R
 }
 
 type ToolListParams struct {
-	// The ID of the tool group to list tools for.
 	ToolgroupID param.Opt[string] `query:"toolgroup_id,omitzero" json:"-"`
 	paramObj
 }
@@ -84,7 +87,6 @@ func (r ToolListParams) URLQuery() (v url.Values, err error) {
 
 // Response containing a list of tool definitions.
 type ToolListResponseEnvelope struct {
-	// List of tool definitions
 	Data []ToolDef `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {

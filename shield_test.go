@@ -95,10 +95,8 @@ func TestShieldRegisterWithOptionalParams(t *testing.T) {
 	)
 	_, err := client.Shields.Register(context.TODO(), llamastackclient.ShieldRegisterParams{
 		ShieldID: "shield_id",
-		Params: map[string]llamastackclient.ShieldRegisterParamsParamUnion{
-			"foo": {
-				OfBool: llamastackclient.Bool(true),
-			},
+		Params: map[string]any{
+			"foo": "bar",
 		},
 		ProviderID:       llamastackclient.String("provider_id"),
 		ProviderShieldID: llamastackclient.String("provider_shield_id"),
