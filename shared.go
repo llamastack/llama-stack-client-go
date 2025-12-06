@@ -14,12 +14,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 )
 
-// aliased to make [param.APIUnion] private when embedding
-type paramUnion = param.APIUnion
-
-// aliased to make [param.APIObject] private when embedding
-type paramObj = param.APIObject
-
 // Details of a safety violation detected by content moderation.
 type SafetyViolation struct {
 	// Severity level of a safety violation.
