@@ -385,6 +385,7 @@ Methods:
 
 Response Types:
 
+- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ListPostTrainingJobsResponse">ListPostTrainingJobsResponse</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#PostTrainingJob">PostTrainingJob</a>
 
 Methods:
@@ -396,7 +397,6 @@ Methods:
 
 Response Types:
 
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ListPostTrainingJobsResponse">ListPostTrainingJobsResponse</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaPostTrainingJobArtifactsResponse">AlphaPostTrainingJobArtifactsResponse</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaPostTrainingJobStatusResponse">AlphaPostTrainingJobStatusResponse</a>
 

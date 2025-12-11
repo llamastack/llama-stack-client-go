@@ -80,22 +80,6 @@ func (r *AlphaPostTrainingJobService) Status(ctx context.Context, query AlphaPos
 	return
 }
 
-type ListPostTrainingJobsResponse struct {
-	Data []PostTrainingJob `json:"data,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ListPostTrainingJobsResponse) RawJSON() string { return r.JSON.raw }
-func (r *ListPostTrainingJobsResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // Artifacts of a finetuning job.
 type AlphaPostTrainingJobArtifactsResponse struct {
 	JobUuid     string                                            `json:"job_uuid,required"`
@@ -261,6 +245,22 @@ func (r AlphaPostTrainingJobStatusResponseCheckpointTrainingMetrics) RawJSON() s
 	return r.JSON.raw
 }
 func (r *AlphaPostTrainingJobStatusResponseCheckpointTrainingMetrics) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ListPostTrainingJobsResponse struct {
+	Data []PostTrainingJob `json:"data,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Data        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ListPostTrainingJobsResponse) RawJSON() string { return r.JSON.raw }
+func (r *ListPostTrainingJobsResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
