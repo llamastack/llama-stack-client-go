@@ -36,7 +36,7 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 		},
 		Model:         "model",
 		Conversation:  llamastackclient.String("conversation"),
-		Include:       []string{"string"},
+		Include:       []string{"web_search_call.action.sources"},
 		Instructions:  llamastackclient.String("instructions"),
 		MaxInferIters: llamastackclient.Int(0),
 		MaxToolCalls:  llamastackclient.Int(0),

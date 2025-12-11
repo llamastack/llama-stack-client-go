@@ -155,14 +155,14 @@ func (r *CompletionNewResponseChoiceLogprobs) UnmarshalJSON(data []byte) error {
 type CompletionNewResponseChoiceLogprobsContent struct {
 	Token       string                                                 `json:"token,required"`
 	Logprob     float64                                                `json:"logprob,required"`
-	TopLogprobs []CompletionNewResponseChoiceLogprobsContentTopLogprob `json:"top_logprobs,required"`
 	Bytes       []int64                                                `json:"bytes,nullable"`
+	TopLogprobs []CompletionNewResponseChoiceLogprobsContentTopLogprob `json:"top_logprobs,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
 		Logprob     respjson.Field
-		TopLogprobs respjson.Field
 		Bytes       respjson.Field
+		TopLogprobs respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -207,14 +207,14 @@ func (r *CompletionNewResponseChoiceLogprobsContentTopLogprob) UnmarshalJSON(dat
 type CompletionNewResponseChoiceLogprobsRefusal struct {
 	Token       string                                                 `json:"token,required"`
 	Logprob     float64                                                `json:"logprob,required"`
-	TopLogprobs []CompletionNewResponseChoiceLogprobsRefusalTopLogprob `json:"top_logprobs,required"`
 	Bytes       []int64                                                `json:"bytes,nullable"`
+	TopLogprobs []CompletionNewResponseChoiceLogprobsRefusalTopLogprob `json:"top_logprobs,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
 		Logprob     respjson.Field
-		TopLogprobs respjson.Field
 		Bytes       respjson.Field
+		TopLogprobs respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
