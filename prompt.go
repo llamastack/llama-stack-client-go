@@ -45,7 +45,9 @@ func NewPromptService(opts ...option.RequestOption) (r PromptService) {
 	return
 }
 
-// Create prompt. Create a new prompt.
+// Create prompt.
+//
+// Create a new prompt.
 func (r *PromptService) New(ctx context.Context, body PromptNewParams, opts ...option.RequestOption) (res *Prompt, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/prompts"
@@ -53,7 +55,9 @@ func (r *PromptService) New(ctx context.Context, body PromptNewParams, opts ...o
 	return
 }
 
-// Get prompt. Get a prompt by its identifier and optional version.
+// Get prompt.
+//
+// Get a prompt by its identifier and optional version.
 func (r *PromptService) Get(ctx context.Context, promptID string, query PromptGetParams, opts ...option.RequestOption) (res *Prompt, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if promptID == "" {
@@ -65,7 +69,9 @@ func (r *PromptService) Get(ctx context.Context, promptID string, query PromptGe
 	return
 }
 
-// Update prompt. Update an existing prompt (increments version).
+// Update prompt.
+//
+// Update an existing prompt (increments version).
 func (r *PromptService) Update(ctx context.Context, promptID string, body PromptUpdateParams, opts ...option.RequestOption) (res *Prompt, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if promptID == "" {
@@ -90,10 +96,12 @@ func (r *PromptService) List(ctx context.Context, opts ...option.RequestOption) 
 	return
 }
 
-// Delete prompt. Delete a prompt.
+// Delete prompt.
+//
+// Delete a prompt.
 func (r *PromptService) Delete(ctx context.Context, promptID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if promptID == "" {
 		err = errors.New("missing required prompt_id parameter")
 		return
@@ -103,8 +111,9 @@ func (r *PromptService) Delete(ctx context.Context, promptID string, opts ...opt
 	return
 }
 
-// Set prompt version. Set which version of a prompt should be the default in
-// get_prompt (latest).
+// Set prompt version.
+//
+// Set which version of a prompt should be the default in get_prompt (latest).
 func (r *PromptService) SetDefaultVersion(ctx context.Context, promptID string, body PromptSetDefaultVersionParams, opts ...option.RequestOption) (res *Prompt, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if promptID == "" {
@@ -136,24 +145,23 @@ func (r *ListPromptsResponse) UnmarshalJSON(data []byte) error {
 // A prompt resource representing a stored OpenAI Compatible prompt template in
 // Llama Stack.
 type Prompt struct {
-	// Boolean indicating whether this version is the default version for this prompt
-	IsDefault bool `json:"is_default,required"`
-	// Unique identifier formatted as 'pmpt\_<48-digit-hash>'
+	// Unique identifier in format 'pmpt\_<48-digit-hash>'
 	PromptID string `json:"prompt_id,required"`
-	// List of prompt variable names that can be used in the prompt template
-	Variables []string `json:"variables,required"`
 	// Version (integer starting at 1, incremented on save)
 	Version int64 `json:"version,required"`
-	// The system prompt text with variable placeholders. Variables are only supported
-	// when using the Responses API.
-	Prompt string `json:"prompt"`
+	// Boolean indicating whether this version is the default version
+	IsDefault bool `json:"is_default"`
+	// The system prompt with variable placeholders
+	Prompt string `json:"prompt,nullable"`
+	// List of variable names that can be used in the prompt template
+	Variables []string `json:"variables"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		IsDefault   respjson.Field
 		PromptID    respjson.Field
-		Variables   respjson.Field
 		Version     respjson.Field
+		IsDefault   respjson.Field
 		Prompt      respjson.Field
+		Variables   respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -166,9 +174,7 @@ func (r *Prompt) UnmarshalJSON(data []byte) error {
 }
 
 type PromptNewParams struct {
-	// The prompt text content with variable placeholders.
-	Prompt string `json:"prompt,required"`
-	// List of variable names that can be used in the prompt template.
+	Prompt    string   `json:"prompt,required"`
 	Variables []string `json:"variables,omitzero"`
 	paramObj
 }
@@ -182,7 +188,6 @@ func (r *PromptNewParams) UnmarshalJSON(data []byte) error {
 }
 
 type PromptGetParams struct {
-	// The version of the prompt to get (defaults to latest).
 	Version param.Opt[int64] `query:"version,omitzero" json:"-"`
 	paramObj
 }
@@ -196,14 +201,10 @@ func (r PromptGetParams) URLQuery() (v url.Values, err error) {
 }
 
 type PromptUpdateParams struct {
-	// The updated prompt text content.
-	Prompt string `json:"prompt,required"`
-	// Set the new version as the default (default=True).
-	SetAsDefault bool `json:"set_as_default,required"`
-	// The current version of the prompt being updated.
-	Version int64 `json:"version,required"`
-	// Updated list of variable names that can be used in the prompt template.
-	Variables []string `json:"variables,omitzero"`
+	Prompt       string          `json:"prompt,required"`
+	Version      int64           `json:"version,required"`
+	SetAsDefault param.Opt[bool] `json:"set_as_default,omitzero"`
+	Variables    []string        `json:"variables,omitzero"`
 	paramObj
 }
 
@@ -216,7 +217,6 @@ func (r *PromptUpdateParams) UnmarshalJSON(data []byte) error {
 }
 
 type PromptSetDefaultVersionParams struct {
-	// The version to set as default.
 	Version int64 `json:"version,required"`
 	paramObj
 }

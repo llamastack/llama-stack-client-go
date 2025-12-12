@@ -36,9 +36,10 @@ func TestConversationNewWithOptionalParams(t *testing.T) {
 				Content: llamastackclient.ConversationNewParamsItemMessageContentUnion{
 					OfString: llamastackclient.String("string"),
 				},
-				Role:   llamastackclient.ConversationNewParamsItemMessageRoleSystem,
+				Role:   "system",
 				ID:     llamastackclient.String("id"),
 				Status: llamastackclient.String("status"),
+				Type:   "message",
 			},
 		}},
 		Metadata: map[string]string{

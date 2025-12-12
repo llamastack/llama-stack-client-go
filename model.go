@@ -10,7 +10,6 @@ package llamastackclient
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -21,7 +20,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
-	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
 // ModelService contains methods and other services that help with interacting with
@@ -45,7 +43,9 @@ func NewModelService(opts ...option.RequestOption) (r ModelService) {
 	return
 }
 
-// Get model. Get a model by its identifier.
+// Get model.
+//
+// Get a model by its identifier.
 func (r *ModelService) Get(ctx context.Context, modelID string, opts ...option.RequestOption) (res *ModelGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if modelID == "" {
@@ -70,7 +70,9 @@ func (r *ModelService) List(ctx context.Context, opts ...option.RequestOption) (
 	return
 }
 
-// Register model. Register a model.
+// Register model.
+//
+// Register a model.
 //
 // Deprecated: deprecated
 func (r *ModelService) Register(ctx context.Context, body ModelRegisterParams, opts ...option.RequestOption) (res *ModelRegisterResponse, err error) {
@@ -80,12 +82,14 @@ func (r *ModelService) Register(ctx context.Context, body ModelRegisterParams, o
 	return
 }
 
-// Unregister model. Unregister a model.
+// Unregister model.
+//
+// Unregister a model.
 //
 // Deprecated: deprecated
 func (r *ModelService) Unregister(ctx context.Context, modelID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if modelID == "" {
 		err = errors.New("missing required model_id parameter")
 		return
@@ -112,19 +116,25 @@ func (r *ListModelsResponse) UnmarshalJSON(data []byte) error {
 }
 
 // A model from OpenAI.
+//
+// :id: The ID of the model :object: The object type, which will be "model"
+// :created: The Unix timestamp in seconds when the model was created :owned_by:
+// The owner of the model :custom_metadata: Llama Stack-specific metadata including
+// model_type, provider info, and additional metadata
 type Model struct {
-	ID             string                              `json:"id,required"`
-	Created        int64                               `json:"created,required"`
-	Object         constant.Model                      `json:"object,required"`
-	OwnedBy        string                              `json:"owned_by,required"`
-	CustomMetadata map[string]ModelCustomMetadataUnion `json:"custom_metadata"`
+	ID             string         `json:"id,required"`
+	Created        int64          `json:"created,required"`
+	OwnedBy        string         `json:"owned_by,required"`
+	CustomMetadata map[string]any `json:"custom_metadata,nullable"`
+	// Any of "model".
+	Object ModelObject `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID             respjson.Field
 		Created        respjson.Field
-		Object         respjson.Field
 		OwnedBy        respjson.Field
 		CustomMetadata respjson.Field
+		Object         respjson.Field
 		ExtraFields    map[string]respjson.Field
 		raw            string
 	} `json:"-"`
@@ -136,82 +146,36 @@ func (r *Model) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ModelCustomMetadataUnion contains all possible properties and values from
-// [bool], [float64], [string], [[]any].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type ModelCustomMetadataUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
-	} `json:"-"`
-}
+type ModelObject string
 
-func (u ModelCustomMetadataUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ModelCustomMetadataUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ModelCustomMetadataUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ModelCustomMetadataUnion) AsAnyArray() (v []any) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ModelCustomMetadataUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ModelCustomMetadataUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
+const (
+	ModelObjectModel ModelObject = "model"
+)
 
 // A model resource representing an AI model registered in Llama Stack.
 type ModelGetResponse struct {
 	// Unique identifier for this resource in llama stack
 	Identifier string `json:"identifier,required"`
-	// Any additional metadata for this model
-	Metadata map[string]ModelGetResponseMetadataUnion `json:"metadata,required"`
-	// The type of model (LLM or embedding model)
-	//
-	// Any of "llm", "embedding", "rerank".
-	ModelType ModelGetResponseModelType `json:"model_type,required"`
 	// ID of the provider that owns this resource
 	ProviderID string `json:"provider_id,required"`
-	// The resource type, always 'model' for model resources
-	Type constant.Model `json:"type,required"`
+	// Any additional metadata for this model
+	Metadata map[string]any `json:"metadata"`
+	// Enumeration of supported model types in Llama Stack.
+	//
+	// Any of "llm", "embedding", "rerank".
+	ModelType ModelGetResponseModelType `json:"model_type"`
 	// Unique identifier for this resource in the provider
-	ProviderResourceID string `json:"provider_resource_id"`
+	ProviderResourceID string `json:"provider_resource_id,nullable"`
+	// Any of "model".
+	Type ModelGetResponseType `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Identifier         respjson.Field
+		ProviderID         respjson.Field
 		Metadata           respjson.Field
 		ModelType          respjson.Field
-		ProviderID         respjson.Field
-		Type               respjson.Field
 		ProviderResourceID respjson.Field
+		Type               respjson.Field
 		ExtraFields        map[string]respjson.Field
 		raw                string
 	} `json:"-"`
@@ -223,59 +187,7 @@ func (r *ModelGetResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ModelGetResponseMetadataUnion contains all possible properties and values from
-// [bool], [float64], [string], [[]any].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type ModelGetResponseMetadataUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
-	} `json:"-"`
-}
-
-func (u ModelGetResponseMetadataUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ModelGetResponseMetadataUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ModelGetResponseMetadataUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ModelGetResponseMetadataUnion) AsAnyArray() (v []any) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ModelGetResponseMetadataUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ModelGetResponseMetadataUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The type of model (LLM or embedding model)
+// Enumeration of supported model types in Llama Stack.
 type ModelGetResponseModelType string
 
 const (
@@ -284,30 +196,36 @@ const (
 	ModelGetResponseModelTypeRerank    ModelGetResponseModelType = "rerank"
 )
 
+type ModelGetResponseType string
+
+const (
+	ModelGetResponseTypeModel ModelGetResponseType = "model"
+)
+
 // A model resource representing an AI model registered in Llama Stack.
 type ModelRegisterResponse struct {
 	// Unique identifier for this resource in llama stack
 	Identifier string `json:"identifier,required"`
-	// Any additional metadata for this model
-	Metadata map[string]ModelRegisterResponseMetadataUnion `json:"metadata,required"`
-	// The type of model (LLM or embedding model)
-	//
-	// Any of "llm", "embedding", "rerank".
-	ModelType ModelRegisterResponseModelType `json:"model_type,required"`
 	// ID of the provider that owns this resource
 	ProviderID string `json:"provider_id,required"`
-	// The resource type, always 'model' for model resources
-	Type constant.Model `json:"type,required"`
+	// Any additional metadata for this model
+	Metadata map[string]any `json:"metadata"`
+	// Enumeration of supported model types in Llama Stack.
+	//
+	// Any of "llm", "embedding", "rerank".
+	ModelType ModelRegisterResponseModelType `json:"model_type"`
 	// Unique identifier for this resource in the provider
-	ProviderResourceID string `json:"provider_resource_id"`
+	ProviderResourceID string `json:"provider_resource_id,nullable"`
+	// Any of "model".
+	Type ModelRegisterResponseType `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Identifier         respjson.Field
+		ProviderID         respjson.Field
 		Metadata           respjson.Field
 		ModelType          respjson.Field
-		ProviderID         respjson.Field
-		Type               respjson.Field
 		ProviderResourceID respjson.Field
+		Type               respjson.Field
 		ExtraFields        map[string]respjson.Field
 		raw                string
 	} `json:"-"`
@@ -319,59 +237,7 @@ func (r *ModelRegisterResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ModelRegisterResponseMetadataUnion contains all possible properties and values
-// from [bool], [float64], [string], [[]any].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type ModelRegisterResponseMetadataUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
-	} `json:"-"`
-}
-
-func (u ModelRegisterResponseMetadataUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ModelRegisterResponseMetadataUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ModelRegisterResponseMetadataUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ModelRegisterResponseMetadataUnion) AsAnyArray() (v []any) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ModelRegisterResponseMetadataUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ModelRegisterResponseMetadataUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// The type of model (LLM or embedding model)
+// Enumeration of supported model types in Llama Stack.
 type ModelRegisterResponseModelType string
 
 const (
@@ -380,16 +246,18 @@ const (
 	ModelRegisterResponseModelTypeRerank    ModelRegisterResponseModelType = "rerank"
 )
 
+type ModelRegisterResponseType string
+
+const (
+	ModelRegisterResponseTypeModel ModelRegisterResponseType = "model"
+)
+
 type ModelRegisterParams struct {
-	// The identifier of the model to register.
-	ModelID string `json:"model_id,required"`
-	// The identifier of the provider.
-	ProviderID param.Opt[string] `json:"provider_id,omitzero"`
-	// The identifier of the model in the provider.
+	ModelID         string            `json:"model_id,required"`
+	ProviderID      param.Opt[string] `json:"provider_id,omitzero"`
 	ProviderModelID param.Opt[string] `json:"provider_model_id,omitzero"`
-	// Any additional metadata for this model.
-	Metadata map[string]ModelRegisterParamsMetadataUnion `json:"metadata,omitzero"`
-	// The type of model to register.
+	Metadata        map[string]any    `json:"metadata,omitzero"`
+	// Enumeration of supported model types in Llama Stack.
 	//
 	// Any of "llm", "embedding", "rerank".
 	ModelType ModelRegisterParamsModelType `json:"model_type,omitzero"`
@@ -404,38 +272,7 @@ func (r *ModelRegisterParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type ModelRegisterParamsMetadataUnion struct {
-	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
-	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
-	OfString   param.Opt[string]  `json:",omitzero,inline"`
-	OfAnyArray []any              `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u ModelRegisterParamsMetadataUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
-}
-func (u *ModelRegisterParamsMetadataUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *ModelRegisterParamsMetadataUnion) asAny() any {
-	if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfAnyArray) {
-		return &u.OfAnyArray
-	}
-	return nil
-}
-
-// The type of model to register.
+// Enumeration of supported model types in Llama Stack.
 type ModelRegisterParamsModelType string
 
 const (

@@ -57,7 +57,7 @@ func (r *AlphaEvalJobService) Get(ctx context.Context, jobID string, query Alpha
 // Cancel a job.
 func (r *AlphaEvalJobService) Cancel(ctx context.Context, jobID string, body AlphaEvalJobCancelParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if body.BenchmarkID == "" {
 		err = errors.New("missing required benchmark_id parameter")
 		return

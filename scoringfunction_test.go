@@ -78,17 +78,39 @@ func TestScoringFunctionRegisterWithOptionalParams(t *testing.T) {
 			Type: "string",
 		},
 		ScoringFnID: "scoring_fn_id",
-		Params: llamastackclient.ScoringFnParamsUnion{
-			OfLlmAsJudge: &llamastackclient.ScoringFnParamsLlmAsJudge{
-				AggregationFunctions: []string{"average"},
+		Params: llamastackclient.ScoringFunctionRegisterParamsParamsUnion{
+			OfLlmAsJudge: &llamastackclient.ScoringFunctionRegisterParamsParamsLlmAsJudge{
 				JudgeModel:           "judge_model",
+				AggregationFunctions: []string{"average"},
 				JudgeScoreRegexes:    []string{"string"},
 				PromptTemplate:       llamastackclient.String("prompt_template"),
+				Type:                 "llm_as_judge",
 			},
 		},
 		ProviderID:          llamastackclient.String("provider_id"),
 		ProviderScoringFnID: llamastackclient.String("provider_scoring_fn_id"),
 	})
+	if err != nil {
+		var apierr *llamastackclient.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestScoringFunctionUnregister(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := llamastackclient.NewClient(
+		option.WithBaseURL(baseURL),
+	)
+	err := client.ScoringFunctions.Unregister(context.TODO(), "scoring_fn_id")
 	if err != nil {
 		var apierr *llamastackclient.Error
 		if errors.As(err, &apierr) {

@@ -129,6 +129,18 @@ type StructUnion struct {
 	param.APIUnion
 }
 
+type MultipartMarshalerParent struct {
+	Middle MultipartMarshalerMiddleNext `form:"middle"`
+}
+
+type MultipartMarshalerMiddleNext struct {
+	MiddleNext MultipartMarshalerMiddle `form:"middleNext"`
+}
+
+type MultipartMarshalerMiddle struct {
+	Child int `form:"child"`
+}
+
 var tests = map[string]struct {
 	buf string
 	val any
@@ -372,6 +384,19 @@ true
 			},
 		},
 	},
+	"recursive_struct,brackets": {
+		`--xxx
+Content-Disposition: form-data; name="child[name]"
+
+Alex
+--xxx
+Content-Disposition: form-data; name="name"
+
+Robert
+--xxx--
+`,
+		Recursive{Name: "Robert", Child: &Recursive{Name: "Alex"}},
+	},
 
 	"recursive_struct": {
 		`--xxx
@@ -535,6 +560,30 @@ Content-Disposition: form-data; name="union"
 			Union: UnionTime(time.Date(2010, 05, 23, 0, 0, 0, 0, time.UTC)),
 		},
 	},
+	"deeply-nested-struct,brackets": {
+		`--xxx
+Content-Disposition: form-data; name="middle[middleNext][child]"
+
+10
+--xxx--
+`,
+		MultipartMarshalerParent{
+			Middle: MultipartMarshalerMiddleNext{
+				MiddleNext: MultipartMarshalerMiddle{
+					Child: 10,
+				},
+			},
+		},
+	},
+	"deeply-nested-map,brackets": {
+		`--xxx
+Content-Disposition: form-data; name="middle[middleNext][child]"
+
+10
+--xxx--
+`,
+		map[string]any{"middle": map[string]any{"middleNext": map[string]any{"child": 10}}},
+	},
 }
 
 func TestEncode(t *testing.T) {
@@ -559,7 +608,7 @@ func TestEncode(t *testing.T) {
 			}
 			raw := buf.Bytes()
 			if string(raw) != strings.ReplaceAll(test.buf, "\n", "\r\n") {
-				t.Errorf("expected %+#v to serialize to '%s' but got '%s'", test.val, test.buf, string(raw))
+				t.Errorf("expected %+#v to serialize to '%s' but got '%s' (with format %s)", test.val, test.buf, string(raw), arrayFmt)
 			}
 		})
 	}

@@ -36,21 +36,15 @@ func TestAlphaPostTrainingPreferenceOptimizeWithOptionalParams(t *testing.T) {
 			LossType: "sigmoid",
 		},
 		FinetunedModel: "finetuned_model",
-		HyperparamSearchConfig: map[string]llamastackclient.AlphaPostTrainingPreferenceOptimizeParamsHyperparamSearchConfigUnion{
-			"foo": {
-				OfBool: llamastackclient.Bool(true),
-			},
+		HyperparamSearchConfig: map[string]any{
+			"foo": "bar",
 		},
 		JobUuid: "job_uuid",
-		LoggerConfig: map[string]llamastackclient.AlphaPostTrainingPreferenceOptimizeParamsLoggerConfigUnion{
-			"foo": {
-				OfBool: llamastackclient.Bool(true),
-			},
+		LoggerConfig: map[string]any{
+			"foo": "bar",
 		},
 		TrainingConfig: llamastackclient.AlphaPostTrainingPreferenceOptimizeParamsTrainingConfig{
-			GradientAccumulationSteps: 0,
-			MaxStepsPerEpoch:          0,
-			NEpochs:                   0,
+			NEpochs: 0,
 			DataConfig: llamastackclient.AlphaPostTrainingPreferenceOptimizeParamsTrainingConfigDataConfig{
 				BatchSize:           0,
 				DataFormat:          "instruct",
@@ -67,7 +61,9 @@ func TestAlphaPostTrainingPreferenceOptimizeWithOptionalParams(t *testing.T) {
 				FsdpCPUOffload:                llamastackclient.Bool(true),
 				MemoryEfficientFsdpWrap:       llamastackclient.Bool(true),
 			},
-			MaxValidationSteps: llamastackclient.Int(0),
+			GradientAccumulationSteps: llamastackclient.Int(0),
+			MaxStepsPerEpoch:          llamastackclient.Int(0),
+			MaxValidationSteps:        llamastackclient.Int(0),
 			OptimizerConfig: llamastackclient.AlphaPostTrainingPreferenceOptimizeParamsTrainingConfigOptimizerConfig{
 				Lr:             0,
 				NumWarmupSteps: 0,
@@ -97,21 +93,15 @@ func TestAlphaPostTrainingSupervisedFineTuneWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Alpha.PostTraining.SupervisedFineTune(context.TODO(), llamastackclient.AlphaPostTrainingSupervisedFineTuneParams{
-		HyperparamSearchConfig: map[string]llamastackclient.AlphaPostTrainingSupervisedFineTuneParamsHyperparamSearchConfigUnion{
-			"foo": {
-				OfBool: llamastackclient.Bool(true),
-			},
+		HyperparamSearchConfig: map[string]any{
+			"foo": "bar",
 		},
 		JobUuid: "job_uuid",
-		LoggerConfig: map[string]llamastackclient.AlphaPostTrainingSupervisedFineTuneParamsLoggerConfigUnion{
-			"foo": {
-				OfBool: llamastackclient.Bool(true),
-			},
+		LoggerConfig: map[string]any{
+			"foo": "bar",
 		},
 		TrainingConfig: llamastackclient.AlphaPostTrainingSupervisedFineTuneParamsTrainingConfig{
-			GradientAccumulationSteps: 0,
-			MaxStepsPerEpoch:          0,
-			NEpochs:                   0,
+			NEpochs: 0,
 			DataConfig: llamastackclient.AlphaPostTrainingSupervisedFineTuneParamsTrainingConfigDataConfig{
 				BatchSize:           0,
 				DataFormat:          "instruct",
@@ -128,7 +118,9 @@ func TestAlphaPostTrainingSupervisedFineTuneWithOptionalParams(t *testing.T) {
 				FsdpCPUOffload:                llamastackclient.Bool(true),
 				MemoryEfficientFsdpWrap:       llamastackclient.Bool(true),
 			},
-			MaxValidationSteps: llamastackclient.Int(0),
+			GradientAccumulationSteps: llamastackclient.Int(0),
+			MaxStepsPerEpoch:          llamastackclient.Int(0),
+			MaxValidationSteps:        llamastackclient.Int(0),
 			OptimizerConfig: llamastackclient.AlphaPostTrainingSupervisedFineTuneParamsTrainingConfigOptimizerConfig{
 				Lr:             0,
 				NumWarmupSteps: 0,
@@ -136,14 +128,15 @@ func TestAlphaPostTrainingSupervisedFineTuneWithOptionalParams(t *testing.T) {
 				WeightDecay:    0,
 			},
 		},
-		AlgorithmConfig: llamastackclient.AlgorithmConfigUnionParam{
-			OfLoRa: &llamastackclient.AlgorithmConfigLoRaParam{
+		AlgorithmConfig: llamastackclient.AlphaPostTrainingSupervisedFineTuneParamsAlgorithmConfigUnion{
+			OfLoRa: &llamastackclient.AlphaPostTrainingSupervisedFineTuneParamsAlgorithmConfigLoRa{
 				Alpha:             0,
 				ApplyLoraToMlp:    true,
 				ApplyLoraToOutput: true,
 				LoraAttnModules:   []string{"string"},
 				Rank:              0,
 				QuantizeBase:      llamastackclient.Bool(true),
+				Type:              "LoRA",
 				UseDora:           llamastackclient.Bool(true),
 			},
 		},
