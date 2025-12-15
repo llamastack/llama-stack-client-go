@@ -136,10 +136,12 @@ type ResponseObject struct {
 	Prompt      ResponseObjectPrompt `json:"prompt,nullable"`
 	Temperature float64              `json:"temperature,nullable"`
 	// Text response configuration for OpenAI responses.
-	Text       ResponseObjectText        `json:"text"`
-	Tools      []ResponseObjectToolUnion `json:"tools,nullable"`
-	TopP       float64                   `json:"top_p,nullable"`
-	Truncation string                    `json:"truncation,nullable"`
+	Text ResponseObjectText `json:"text"`
+	// Constrains the tools available to the model to a pre-defined set.
+	ToolChoice ResponseObjectToolChoiceUnion `json:"tool_choice,nullable"`
+	Tools      []ResponseObjectToolUnion     `json:"tools,nullable"`
+	TopP       float64                       `json:"top_p,nullable"`
+	Truncation string                        `json:"truncation,nullable"`
 	// Usage information for OpenAI response.
 	Usage ResponseObjectUsage `json:"usage,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -159,6 +161,7 @@ type ResponseObject struct {
 		Prompt             respjson.Field
 		Temperature        respjson.Field
 		Text               respjson.Field
+		ToolChoice         respjson.Field
 		Tools              respjson.Field
 		TopP               respjson.Field
 		Truncation         respjson.Field
@@ -1443,6 +1446,227 @@ type ResponseObjectTextFormat struct {
 // Returns the unmodified JSON received from the API
 func (r ResponseObjectTextFormat) RawJSON() string { return r.JSON.raw }
 func (r *ResponseObjectTextFormat) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ResponseObjectToolChoiceUnion contains all possible properties and values from
+// [string], [ResponseObjectToolChoiceOpenAIResponseInputToolChoiceAllowedTools],
+// [ResponseObjectToolChoiceOpenAIResponseInputToolChoiceFileSearch],
+// [ResponseObjectToolChoiceOpenAIResponseInputToolChoiceWebSearch],
+// [ResponseObjectToolChoiceOpenAIResponseInputToolChoiceFunctionTool],
+// [ResponseObjectToolChoiceOpenAIResponseInputToolChoiceMcpTool],
+// [ResponseObjectToolChoiceOpenAIResponseInputToolChoiceCustomTool].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+//
+// If the underlying value is not a json object, one of the following properties
+// will be valid: OfOpenAIResponseInputToolChoiceMode]
+type ResponseObjectToolChoiceUnion struct {
+	// This field will be present if the value is a [string] instead of an object.
+	OfOpenAIResponseInputToolChoiceMode string `json:",inline"`
+	// This field is from variant
+	// [ResponseObjectToolChoiceOpenAIResponseInputToolChoiceAllowedTools].
+	Tools []map[string]string `json:"tools"`
+	// This field is from variant
+	// [ResponseObjectToolChoiceOpenAIResponseInputToolChoiceAllowedTools].
+	Mode string `json:"mode"`
+	Type string `json:"type"`
+	Name string `json:"name"`
+	// This field is from variant
+	// [ResponseObjectToolChoiceOpenAIResponseInputToolChoiceMcpTool].
+	ServerLabel string `json:"server_label"`
+	JSON        struct {
+		OfOpenAIResponseInputToolChoiceMode respjson.Field
+		Tools                               respjson.Field
+		Mode                                respjson.Field
+		Type                                respjson.Field
+		Name                                respjson.Field
+		ServerLabel                         respjson.Field
+		raw                                 string
+	} `json:"-"`
+}
+
+func (u ResponseObjectToolChoiceUnion) AsOpenAIResponseInputToolChoiceMode() (v string) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectToolChoiceUnion) AsOpenAIResponseInputToolChoiceAllowedTools() (v ResponseObjectToolChoiceOpenAIResponseInputToolChoiceAllowedTools) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectToolChoiceUnion) AsOpenAIResponseInputToolChoiceFileSearch() (v ResponseObjectToolChoiceOpenAIResponseInputToolChoiceFileSearch) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectToolChoiceUnion) AsOpenAIResponseInputToolChoiceWebSearch() (v ResponseObjectToolChoiceOpenAIResponseInputToolChoiceWebSearch) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectToolChoiceUnion) AsOpenAIResponseInputToolChoiceFunctionTool() (v ResponseObjectToolChoiceOpenAIResponseInputToolChoiceFunctionTool) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectToolChoiceUnion) AsOpenAIResponseInputToolChoiceMcpTool() (v ResponseObjectToolChoiceOpenAIResponseInputToolChoiceMcpTool) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectToolChoiceUnion) AsOpenAIResponseInputToolChoiceCustomTool() (v ResponseObjectToolChoiceOpenAIResponseInputToolChoiceCustomTool) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u ResponseObjectToolChoiceUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *ResponseObjectToolChoiceUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ResponseObjectToolChoiceOpenAIResponseInputToolChoiceMode string
+
+const (
+	ResponseObjectToolChoiceOpenAIResponseInputToolChoiceModeAuto     ResponseObjectToolChoiceOpenAIResponseInputToolChoiceMode = "auto"
+	ResponseObjectToolChoiceOpenAIResponseInputToolChoiceModeRequired ResponseObjectToolChoiceOpenAIResponseInputToolChoiceMode = "required"
+	ResponseObjectToolChoiceOpenAIResponseInputToolChoiceModeNone     ResponseObjectToolChoiceOpenAIResponseInputToolChoiceMode = "none"
+)
+
+// Constrains the tools available to the model to a pre-defined set.
+type ResponseObjectToolChoiceOpenAIResponseInputToolChoiceAllowedTools struct {
+	Tools []map[string]string `json:"tools,required"`
+	// Any of "auto", "required".
+	Mode string `json:"mode"`
+	// Any of "allowed_tools".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Tools       respjson.Field
+		Mode        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectToolChoiceOpenAIResponseInputToolChoiceAllowedTools) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseObjectToolChoiceOpenAIResponseInputToolChoiceAllowedTools) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Indicates that the model should use file search to generate a response.
+type ResponseObjectToolChoiceOpenAIResponseInputToolChoiceFileSearch struct {
+	// Any of "file_search".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectToolChoiceOpenAIResponseInputToolChoiceFileSearch) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseObjectToolChoiceOpenAIResponseInputToolChoiceFileSearch) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Indicates that the model should use web search to generate a response
+type ResponseObjectToolChoiceOpenAIResponseInputToolChoiceWebSearch struct {
+	// Any of "web_search", "web_search_preview", "web_search_preview_2025_03_11",
+	// "web_search_2025_08_26".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectToolChoiceOpenAIResponseInputToolChoiceWebSearch) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseObjectToolChoiceOpenAIResponseInputToolChoiceWebSearch) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Forces the model to call a specific function.
+type ResponseObjectToolChoiceOpenAIResponseInputToolChoiceFunctionTool struct {
+	Name string `json:"name,required"`
+	// Any of "function".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Name        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectToolChoiceOpenAIResponseInputToolChoiceFunctionTool) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseObjectToolChoiceOpenAIResponseInputToolChoiceFunctionTool) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Forces the model to call a specific tool on a remote MCP server
+type ResponseObjectToolChoiceOpenAIResponseInputToolChoiceMcpTool struct {
+	ServerLabel string `json:"server_label,required"`
+	Name        string `json:"name,nullable"`
+	// Any of "mcp".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ServerLabel respjson.Field
+		Name        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectToolChoiceOpenAIResponseInputToolChoiceMcpTool) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseObjectToolChoiceOpenAIResponseInputToolChoiceMcpTool) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Forces the model to call a custom tool.
+type ResponseObjectToolChoiceOpenAIResponseInputToolChoiceCustomTool struct {
+	Name string `json:"name,required"`
+	// Any of "custom".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Name        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectToolChoiceOpenAIResponseInputToolChoiceCustomTool) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseObjectToolChoiceOpenAIResponseInputToolChoiceCustomTool) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -6675,10 +6899,12 @@ type ResponseListResponse struct {
 	Prompt      ResponseListResponsePrompt `json:"prompt,nullable"`
 	Temperature float64                    `json:"temperature,nullable"`
 	// Text response configuration for OpenAI responses.
-	Text       ResponseListResponseText        `json:"text"`
-	Tools      []ResponseListResponseToolUnion `json:"tools,nullable"`
-	TopP       float64                         `json:"top_p,nullable"`
-	Truncation string                          `json:"truncation,nullable"`
+	Text ResponseListResponseText `json:"text"`
+	// Constrains the tools available to the model to a pre-defined set.
+	ToolChoice ResponseListResponseToolChoiceUnion `json:"tool_choice,nullable"`
+	Tools      []ResponseListResponseToolUnion     `json:"tools,nullable"`
+	TopP       float64                             `json:"top_p,nullable"`
+	Truncation string                              `json:"truncation,nullable"`
 	// Usage information for OpenAI response.
 	Usage ResponseListResponseUsage `json:"usage,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6699,6 +6925,7 @@ type ResponseListResponse struct {
 		Prompt             respjson.Field
 		Temperature        respjson.Field
 		Text               respjson.Field
+		ToolChoice         respjson.Field
 		Tools              respjson.Field
 		TopP               respjson.Field
 		Truncation         respjson.Field
@@ -9066,6 +9293,228 @@ func (r *ResponseListResponseTextFormat) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// ResponseListResponseToolChoiceUnion contains all possible properties and values
+// from [string],
+// [ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceAllowedTools],
+// [ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceFileSearch],
+// [ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceWebSearch],
+// [ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceFunctionTool],
+// [ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceMcpTool],
+// [ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceCustomTool].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+//
+// If the underlying value is not a json object, one of the following properties
+// will be valid: OfOpenAIResponseInputToolChoiceMode]
+type ResponseListResponseToolChoiceUnion struct {
+	// This field will be present if the value is a [string] instead of an object.
+	OfOpenAIResponseInputToolChoiceMode string `json:",inline"`
+	// This field is from variant
+	// [ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceAllowedTools].
+	Tools []map[string]string `json:"tools"`
+	// This field is from variant
+	// [ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceAllowedTools].
+	Mode string `json:"mode"`
+	Type string `json:"type"`
+	Name string `json:"name"`
+	// This field is from variant
+	// [ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceMcpTool].
+	ServerLabel string `json:"server_label"`
+	JSON        struct {
+		OfOpenAIResponseInputToolChoiceMode respjson.Field
+		Tools                               respjson.Field
+		Mode                                respjson.Field
+		Type                                respjson.Field
+		Name                                respjson.Field
+		ServerLabel                         respjson.Field
+		raw                                 string
+	} `json:"-"`
+}
+
+func (u ResponseListResponseToolChoiceUnion) AsOpenAIResponseInputToolChoiceMode() (v string) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseListResponseToolChoiceUnion) AsOpenAIResponseInputToolChoiceAllowedTools() (v ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceAllowedTools) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseListResponseToolChoiceUnion) AsOpenAIResponseInputToolChoiceFileSearch() (v ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceFileSearch) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseListResponseToolChoiceUnion) AsOpenAIResponseInputToolChoiceWebSearch() (v ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceWebSearch) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseListResponseToolChoiceUnion) AsOpenAIResponseInputToolChoiceFunctionTool() (v ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceFunctionTool) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseListResponseToolChoiceUnion) AsOpenAIResponseInputToolChoiceMcpTool() (v ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceMcpTool) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseListResponseToolChoiceUnion) AsOpenAIResponseInputToolChoiceCustomTool() (v ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceCustomTool) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u ResponseListResponseToolChoiceUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *ResponseListResponseToolChoiceUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceMode string
+
+const (
+	ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceModeAuto     ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceMode = "auto"
+	ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceModeRequired ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceMode = "required"
+	ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceModeNone     ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceMode = "none"
+)
+
+// Constrains the tools available to the model to a pre-defined set.
+type ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceAllowedTools struct {
+	Tools []map[string]string `json:"tools,required"`
+	// Any of "auto", "required".
+	Mode string `json:"mode"`
+	// Any of "allowed_tools".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Tools       respjson.Field
+		Mode        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceAllowedTools) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceAllowedTools) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Indicates that the model should use file search to generate a response.
+type ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceFileSearch struct {
+	// Any of "file_search".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceFileSearch) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceFileSearch) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Indicates that the model should use web search to generate a response
+type ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceWebSearch struct {
+	// Any of "web_search", "web_search_preview", "web_search_preview_2025_03_11",
+	// "web_search_2025_08_26".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceWebSearch) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceWebSearch) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Forces the model to call a specific function.
+type ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceFunctionTool struct {
+	Name string `json:"name,required"`
+	// Any of "function".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Name        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceFunctionTool) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceFunctionTool) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Forces the model to call a specific tool on a remote MCP server
+type ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceMcpTool struct {
+	ServerLabel string `json:"server_label,required"`
+	Name        string `json:"name,nullable"`
+	// Any of "mcp".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ServerLabel respjson.Field
+		Name        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceMcpTool) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceMcpTool) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Forces the model to call a custom tool.
+type ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceCustomTool struct {
+	Name string `json:"name,required"`
+	// Any of "custom".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Name        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceCustomTool) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceCustomTool) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // ResponseListResponseToolUnion contains all possible properties and values from
 // [ResponseListResponseToolOpenAIResponseInputToolWebSearch],
 // [ResponseListResponseToolFileSearch], [ResponseListResponseToolFunction],
@@ -9426,8 +9875,10 @@ type ResponseNewParams struct {
 	// OpenAI compatible Prompt object that is used in OpenAI responses.
 	Prompt ResponseNewParamsPrompt `json:"prompt,omitzero"`
 	// Text response configuration for OpenAI responses.
-	Text  ResponseNewParamsText        `json:"text,omitzero"`
-	Tools []ResponseNewParamsToolUnion `json:"tools,omitzero"`
+	Text ResponseNewParamsText `json:"text,omitzero"`
+	// Constrains the tools available to the model to a pre-defined set.
+	ToolChoice ResponseNewParamsToolChoiceUnion `json:"tool_choice,omitzero"`
+	Tools      []ResponseNewParamsToolUnion     `json:"tools,omitzero"`
 	paramObj
 }
 
@@ -10864,6 +11315,261 @@ func (r *ResponseNewParamsTextFormat) UnmarshalJSON(data []byte) error {
 func init() {
 	apijson.RegisterFieldValidator[ResponseNewParamsTextFormat](
 		"type", "text", "json_schema", "json_object",
+	)
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type ResponseNewParamsToolChoiceUnion struct {
+	// Check if union is this variant with
+	// !param.IsOmitted(union.OfOpenAIResponseInputToolChoiceMode)
+	OfOpenAIResponseInputToolChoiceMode         param.Opt[string]                                                     `json:",omitzero,inline"`
+	OfOpenAIResponseInputToolChoiceAllowedTools *ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceAllowedTools `json:",omitzero,inline"`
+	OfOpenAIResponseInputToolChoiceFileSearch   *ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceFileSearch   `json:",omitzero,inline"`
+	OfOpenAIResponseInputToolChoiceWebSearch    *ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceWebSearch    `json:",omitzero,inline"`
+	OfOpenAIResponseInputToolChoiceFunctionTool *ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceFunctionTool `json:",omitzero,inline"`
+	OfOpenAIResponseInputToolChoiceMcpTool      *ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceMcpTool      `json:",omitzero,inline"`
+	OfOpenAIResponseInputToolChoiceCustomTool   *ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceCustomTool   `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u ResponseNewParamsToolChoiceUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfOpenAIResponseInputToolChoiceMode,
+		u.OfOpenAIResponseInputToolChoiceAllowedTools,
+		u.OfOpenAIResponseInputToolChoiceFileSearch,
+		u.OfOpenAIResponseInputToolChoiceWebSearch,
+		u.OfOpenAIResponseInputToolChoiceFunctionTool,
+		u.OfOpenAIResponseInputToolChoiceMcpTool,
+		u.OfOpenAIResponseInputToolChoiceCustomTool)
+}
+func (u *ResponseNewParamsToolChoiceUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *ResponseNewParamsToolChoiceUnion) asAny() any {
+	if !param.IsOmitted(u.OfOpenAIResponseInputToolChoiceMode) {
+		return &u.OfOpenAIResponseInputToolChoiceMode
+	} else if !param.IsOmitted(u.OfOpenAIResponseInputToolChoiceAllowedTools) {
+		return u.OfOpenAIResponseInputToolChoiceAllowedTools
+	} else if !param.IsOmitted(u.OfOpenAIResponseInputToolChoiceFileSearch) {
+		return u.OfOpenAIResponseInputToolChoiceFileSearch
+	} else if !param.IsOmitted(u.OfOpenAIResponseInputToolChoiceWebSearch) {
+		return u.OfOpenAIResponseInputToolChoiceWebSearch
+	} else if !param.IsOmitted(u.OfOpenAIResponseInputToolChoiceFunctionTool) {
+		return u.OfOpenAIResponseInputToolChoiceFunctionTool
+	} else if !param.IsOmitted(u.OfOpenAIResponseInputToolChoiceMcpTool) {
+		return u.OfOpenAIResponseInputToolChoiceMcpTool
+	} else if !param.IsOmitted(u.OfOpenAIResponseInputToolChoiceCustomTool) {
+		return u.OfOpenAIResponseInputToolChoiceCustomTool
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ResponseNewParamsToolChoiceUnion) GetTools() []map[string]string {
+	if vt := u.OfOpenAIResponseInputToolChoiceAllowedTools; vt != nil {
+		return vt.Tools
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ResponseNewParamsToolChoiceUnion) GetMode() *string {
+	if vt := u.OfOpenAIResponseInputToolChoiceAllowedTools; vt != nil {
+		return &vt.Mode
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ResponseNewParamsToolChoiceUnion) GetServerLabel() *string {
+	if vt := u.OfOpenAIResponseInputToolChoiceMcpTool; vt != nil {
+		return &vt.ServerLabel
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ResponseNewParamsToolChoiceUnion) GetType() *string {
+	if vt := u.OfOpenAIResponseInputToolChoiceAllowedTools; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfOpenAIResponseInputToolChoiceFileSearch; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfOpenAIResponseInputToolChoiceWebSearch; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfOpenAIResponseInputToolChoiceFunctionTool; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfOpenAIResponseInputToolChoiceMcpTool; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfOpenAIResponseInputToolChoiceCustomTool; vt != nil {
+		return (*string)(&vt.Type)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ResponseNewParamsToolChoiceUnion) GetName() *string {
+	if vt := u.OfOpenAIResponseInputToolChoiceFunctionTool; vt != nil {
+		return (*string)(&vt.Name)
+	} else if vt := u.OfOpenAIResponseInputToolChoiceMcpTool; vt != nil && vt.Name.Valid() {
+		return &vt.Name.Value
+	} else if vt := u.OfOpenAIResponseInputToolChoiceCustomTool; vt != nil {
+		return (*string)(&vt.Name)
+	}
+	return nil
+}
+
+type ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceMode string
+
+const (
+	ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceModeAuto     ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceMode = "auto"
+	ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceModeRequired ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceMode = "required"
+	ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceModeNone     ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceMode = "none"
+)
+
+// Constrains the tools available to the model to a pre-defined set.
+//
+// The property Tools is required.
+type ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceAllowedTools struct {
+	Tools []map[string]string `json:"tools,omitzero,required"`
+	// Any of "auto", "required".
+	Mode string `json:"mode,omitzero"`
+	// Any of "allowed_tools".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceAllowedTools) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceAllowedTools
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceAllowedTools) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceAllowedTools](
+		"mode", "auto", "required",
+	)
+	apijson.RegisterFieldValidator[ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceAllowedTools](
+		"type", "allowed_tools",
+	)
+}
+
+// Indicates that the model should use file search to generate a response.
+type ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceFileSearch struct {
+	// Any of "file_search".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceFileSearch) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceFileSearch
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceFileSearch) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceFileSearch](
+		"type", "file_search",
+	)
+}
+
+// Indicates that the model should use web search to generate a response
+type ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceWebSearch struct {
+	// Any of "web_search", "web_search_preview", "web_search_preview_2025_03_11",
+	// "web_search_2025_08_26".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceWebSearch) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceWebSearch
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceWebSearch) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceWebSearch](
+		"type", "web_search", "web_search_preview", "web_search_preview_2025_03_11", "web_search_2025_08_26",
+	)
+}
+
+// Forces the model to call a specific function.
+//
+// The property Name is required.
+type ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceFunctionTool struct {
+	Name string `json:"name,required"`
+	// Any of "function".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceFunctionTool) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceFunctionTool
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceFunctionTool) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceFunctionTool](
+		"type", "function",
+	)
+}
+
+// Forces the model to call a specific tool on a remote MCP server
+//
+// The property ServerLabel is required.
+type ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceMcpTool struct {
+	ServerLabel string            `json:"server_label,required"`
+	Name        param.Opt[string] `json:"name,omitzero"`
+	// Any of "mcp".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceMcpTool) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceMcpTool
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceMcpTool) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceMcpTool](
+		"type", "mcp",
+	)
+}
+
+// Forces the model to call a custom tool.
+//
+// The property Name is required.
+type ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceCustomTool struct {
+	Name string `json:"name,required"`
+	// Any of "custom".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceCustomTool) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceCustomTool
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceCustomTool) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceCustomTool](
+		"type", "custom",
 	)
 }
 

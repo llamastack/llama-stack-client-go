@@ -70,6 +70,9 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 				Type:   "text",
 			},
 		},
+		ToolChoice: llamastackclient.ResponseNewParamsToolChoiceUnion{
+			OfOpenAIResponseInputToolChoiceMode: llamastackclient.String("auto"),
+		},
 		Tools: []llamastackclient.ResponseNewParamsToolUnion{{
 			OfOpenAIResponseInputToolWebSearch: &llamastackclient.ResponseNewParamsToolOpenAIResponseInputToolWebSearch{
 				SearchContextSize: llamastackclient.String("S?oC\"high"),
