@@ -131,6 +131,7 @@ func (r *BetaDatasetService) Unregister(ctx context.Context, datasetID string, o
 
 // Response from listing datasets.
 type ListDatasetsResponse struct {
+	// List of datasets
 	Data []ListDatasetsResponseData `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -152,16 +153,18 @@ type ListDatasetsResponseData struct {
 	Identifier string `json:"identifier,required"`
 	// ID of the provider that owns this resource
 	ProviderID string `json:"provider_id,required"`
-	// Purpose of the dataset. Each purpose has a required input data schema.
+	// Purpose of the dataset indicating its intended use
 	//
 	// Any of "post-training/messages", "eval/question-answer", "eval/messages-answer".
 	Purpose string `json:"purpose,required"`
-	// A dataset that can be obtained from a URI.
+	// Data source configuration for the dataset
 	Source ListDatasetsResponseDataSourceUnion `json:"source,required"`
 	// Any additional metadata for this dataset
 	Metadata map[string]any `json:"metadata"`
 	// Unique identifier for this resource in the provider
 	ProviderResourceID string `json:"provider_resource_id,nullable"`
+	// Type of resource, always 'dataset' for datasets
+	//
 	// Any of "dataset".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -253,7 +256,12 @@ func (r *ListDatasetsResponseDataSourceUnion) UnmarshalJSON(data []byte) error {
 
 // A dataset that can be obtained from a URI.
 type ListDatasetsResponseDataSourceUri struct {
+	// The dataset can be obtained from a URI. E.g.
+	// "https://mywebsite.com/mydata.jsonl", "lsfs://mydata.jsonl",
+	// "data:csv;base64,{base64_content}"
 	Uri string `json:"uri,required"`
+	// The type of data source.
+	//
 	// Any of "uri".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -273,7 +281,11 @@ func (r *ListDatasetsResponseDataSourceUri) UnmarshalJSON(data []byte) error {
 
 // A dataset stored in rows.
 type ListDatasetsResponseDataSourceRows struct {
+	// The dataset is stored in rows. E.g. [{"messages": [{"role": "user", "content":
+	// "Hello, world!"}, {"role": "assistant", "content": "Hello, world!"}]}]
 	Rows []map[string]any `json:"rows,required"`
+	// The type of data source.
+	//
 	// Any of "rows".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -297,16 +309,18 @@ type BetaDatasetGetResponse struct {
 	Identifier string `json:"identifier,required"`
 	// ID of the provider that owns this resource
 	ProviderID string `json:"provider_id,required"`
-	// Purpose of the dataset. Each purpose has a required input data schema.
+	// Purpose of the dataset indicating its intended use
 	//
 	// Any of "post-training/messages", "eval/question-answer", "eval/messages-answer".
 	Purpose BetaDatasetGetResponsePurpose `json:"purpose,required"`
-	// A dataset that can be obtained from a URI.
+	// Data source configuration for the dataset
 	Source BetaDatasetGetResponseSourceUnion `json:"source,required"`
 	// Any additional metadata for this dataset
 	Metadata map[string]any `json:"metadata"`
 	// Unique identifier for this resource in the provider
 	ProviderResourceID string `json:"provider_resource_id,nullable"`
+	// Type of resource, always 'dataset' for datasets
+	//
 	// Any of "dataset".
 	Type BetaDatasetGetResponseType `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -329,7 +343,7 @@ func (r *BetaDatasetGetResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Purpose of the dataset. Each purpose has a required input data schema.
+// Purpose of the dataset indicating its intended use
 type BetaDatasetGetResponsePurpose string
 
 const (
@@ -407,7 +421,12 @@ func (r *BetaDatasetGetResponseSourceUnion) UnmarshalJSON(data []byte) error {
 
 // A dataset that can be obtained from a URI.
 type BetaDatasetGetResponseSourceUri struct {
+	// The dataset can be obtained from a URI. E.g.
+	// "https://mywebsite.com/mydata.jsonl", "lsfs://mydata.jsonl",
+	// "data:csv;base64,{base64_content}"
 	Uri string `json:"uri,required"`
+	// The type of data source.
+	//
 	// Any of "uri".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -427,7 +446,11 @@ func (r *BetaDatasetGetResponseSourceUri) UnmarshalJSON(data []byte) error {
 
 // A dataset stored in rows.
 type BetaDatasetGetResponseSourceRows struct {
+	// The dataset is stored in rows. E.g. [{"messages": [{"role": "user", "content":
+	// "Hello, world!"}, {"role": "assistant", "content": "Hello, world!"}]}]
 	Rows []map[string]any `json:"rows,required"`
+	// The type of data source.
+	//
 	// Any of "rows".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -445,6 +468,7 @@ func (r *BetaDatasetGetResponseSourceRows) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Type of resource, always 'dataset' for datasets
 type BetaDatasetGetResponseType string
 
 const (
@@ -478,16 +502,18 @@ type BetaDatasetRegisterResponse struct {
 	Identifier string `json:"identifier,required"`
 	// ID of the provider that owns this resource
 	ProviderID string `json:"provider_id,required"`
-	// Purpose of the dataset. Each purpose has a required input data schema.
+	// Purpose of the dataset indicating its intended use
 	//
 	// Any of "post-training/messages", "eval/question-answer", "eval/messages-answer".
 	Purpose BetaDatasetRegisterResponsePurpose `json:"purpose,required"`
-	// A dataset that can be obtained from a URI.
+	// Data source configuration for the dataset
 	Source BetaDatasetRegisterResponseSourceUnion `json:"source,required"`
 	// Any additional metadata for this dataset
 	Metadata map[string]any `json:"metadata"`
 	// Unique identifier for this resource in the provider
 	ProviderResourceID string `json:"provider_resource_id,nullable"`
+	// Type of resource, always 'dataset' for datasets
+	//
 	// Any of "dataset".
 	Type BetaDatasetRegisterResponseType `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -510,7 +536,7 @@ func (r *BetaDatasetRegisterResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Purpose of the dataset. Each purpose has a required input data schema.
+// Purpose of the dataset indicating its intended use
 type BetaDatasetRegisterResponsePurpose string
 
 const (
@@ -589,7 +615,12 @@ func (r *BetaDatasetRegisterResponseSourceUnion) UnmarshalJSON(data []byte) erro
 
 // A dataset that can be obtained from a URI.
 type BetaDatasetRegisterResponseSourceUri struct {
+	// The dataset can be obtained from a URI. E.g.
+	// "https://mywebsite.com/mydata.jsonl", "lsfs://mydata.jsonl",
+	// "data:csv;base64,{base64_content}"
 	Uri string `json:"uri,required"`
+	// The type of data source.
+	//
 	// Any of "uri".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -609,7 +640,11 @@ func (r *BetaDatasetRegisterResponseSourceUri) UnmarshalJSON(data []byte) error 
 
 // A dataset stored in rows.
 type BetaDatasetRegisterResponseSourceRows struct {
+	// The dataset is stored in rows. E.g. [{"messages": [{"role": "user", "content":
+	// "Hello, world!"}, {"role": "assistant", "content": "Hello, world!"}]}]
 	Rows []map[string]any `json:"rows,required"`
+	// The type of data source.
+	//
 	// Any of "rows".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -627,6 +662,7 @@ func (r *BetaDatasetRegisterResponseSourceRows) UnmarshalJSON(data []byte) error
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Type of resource, always 'dataset' for datasets
 type BetaDatasetRegisterResponseType string
 
 const (
@@ -662,14 +698,16 @@ func (r BetaDatasetIterrowsParams) URLQuery() (v url.Values, err error) {
 }
 
 type BetaDatasetRegisterParams struct {
-	// Purpose of the dataset. Each purpose has a required input data schema.
+	// The purpose of the dataset.
 	//
 	// Any of "post-training/messages", "eval/question-answer", "eval/messages-answer".
 	Purpose BetaDatasetRegisterParamsPurpose `json:"purpose,omitzero,required"`
-	// A dataset that can be obtained from a URI.
-	Source    BetaDatasetRegisterParamsSourceUnion `json:"source,omitzero,required"`
-	DatasetID param.Opt[string]                    `json:"dataset_id,omitzero"`
-	Metadata  map[string]any                       `json:"metadata,omitzero"`
+	// The data source of the dataset.
+	Source BetaDatasetRegisterParamsSourceUnion `json:"source,omitzero,required"`
+	// The ID of the dataset. If not provided, an ID will be generated.
+	DatasetID param.Opt[string] `json:"dataset_id,omitzero"`
+	// The metadata for the dataset.
+	Metadata map[string]any `json:"metadata,omitzero"`
 	paramObj
 }
 
@@ -681,7 +719,7 @@ func (r *BetaDatasetRegisterParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Purpose of the dataset. Each purpose has a required input data schema.
+// The purpose of the dataset.
 type BetaDatasetRegisterParamsPurpose string
 
 const (
@@ -694,30 +732,30 @@ const (
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type BetaDatasetRegisterParamsSourceUnion struct {
-	OfUriDataSource  *BetaDatasetRegisterParamsSourceUriDataSource  `json:",omitzero,inline"`
-	OfRowsDataSource *BetaDatasetRegisterParamsSourceRowsDataSource `json:",omitzero,inline"`
+	OfUri  *BetaDatasetRegisterParamsSourceUri  `json:",omitzero,inline"`
+	OfRows *BetaDatasetRegisterParamsSourceRows `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u BetaDatasetRegisterParamsSourceUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfUriDataSource, u.OfRowsDataSource)
+	return param.MarshalUnion(u, u.OfUri, u.OfRows)
 }
 func (u *BetaDatasetRegisterParamsSourceUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
 func (u *BetaDatasetRegisterParamsSourceUnion) asAny() any {
-	if !param.IsOmitted(u.OfUriDataSource) {
-		return u.OfUriDataSource
-	} else if !param.IsOmitted(u.OfRowsDataSource) {
-		return u.OfRowsDataSource
+	if !param.IsOmitted(u.OfUri) {
+		return u.OfUri
+	} else if !param.IsOmitted(u.OfRows) {
+		return u.OfRows
 	}
 	return nil
 }
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u BetaDatasetRegisterParamsSourceUnion) GetUri() *string {
-	if vt := u.OfUriDataSource; vt != nil {
+	if vt := u.OfUri; vt != nil {
 		return &vt.Uri
 	}
 	return nil
@@ -725,7 +763,7 @@ func (u BetaDatasetRegisterParamsSourceUnion) GetUri() *string {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u BetaDatasetRegisterParamsSourceUnion) GetRows() []map[string]any {
-	if vt := u.OfRowsDataSource; vt != nil {
+	if vt := u.OfRows; vt != nil {
 		return vt.Rows
 	}
 	return nil
@@ -733,34 +771,47 @@ func (u BetaDatasetRegisterParamsSourceUnion) GetRows() []map[string]any {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u BetaDatasetRegisterParamsSourceUnion) GetType() *string {
-	if vt := u.OfUriDataSource; vt != nil {
+	if vt := u.OfUri; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfRowsDataSource; vt != nil {
+	} else if vt := u.OfRows; vt != nil {
 		return (*string)(&vt.Type)
 	}
 	return nil
 }
 
+func init() {
+	apijson.RegisterUnion[BetaDatasetRegisterParamsSourceUnion](
+		"type",
+		apijson.Discriminator[BetaDatasetRegisterParamsSourceUri]("uri"),
+		apijson.Discriminator[BetaDatasetRegisterParamsSourceRows]("rows"),
+	)
+}
+
 // A dataset that can be obtained from a URI.
 //
 // The property Uri is required.
-type BetaDatasetRegisterParamsSourceUriDataSource struct {
+type BetaDatasetRegisterParamsSourceUri struct {
+	// The dataset can be obtained from a URI. E.g.
+	// "https://mywebsite.com/mydata.jsonl", "lsfs://mydata.jsonl",
+	// "data:csv;base64,{base64_content}"
 	Uri string `json:"uri,required"`
+	// The type of data source.
+	//
 	// Any of "uri".
 	Type string `json:"type,omitzero"`
 	paramObj
 }
 
-func (r BetaDatasetRegisterParamsSourceUriDataSource) MarshalJSON() (data []byte, err error) {
-	type shadow BetaDatasetRegisterParamsSourceUriDataSource
+func (r BetaDatasetRegisterParamsSourceUri) MarshalJSON() (data []byte, err error) {
+	type shadow BetaDatasetRegisterParamsSourceUri
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *BetaDatasetRegisterParamsSourceUriDataSource) UnmarshalJSON(data []byte) error {
+func (r *BetaDatasetRegisterParamsSourceUri) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[BetaDatasetRegisterParamsSourceUriDataSource](
+	apijson.RegisterFieldValidator[BetaDatasetRegisterParamsSourceUri](
 		"type", "uri",
 	)
 }
@@ -768,23 +819,27 @@ func init() {
 // A dataset stored in rows.
 //
 // The property Rows is required.
-type BetaDatasetRegisterParamsSourceRowsDataSource struct {
+type BetaDatasetRegisterParamsSourceRows struct {
+	// The dataset is stored in rows. E.g. [{"messages": [{"role": "user", "content":
+	// "Hello, world!"}, {"role": "assistant", "content": "Hello, world!"}]}]
 	Rows []map[string]any `json:"rows,omitzero,required"`
+	// The type of data source.
+	//
 	// Any of "rows".
 	Type string `json:"type,omitzero"`
 	paramObj
 }
 
-func (r BetaDatasetRegisterParamsSourceRowsDataSource) MarshalJSON() (data []byte, err error) {
-	type shadow BetaDatasetRegisterParamsSourceRowsDataSource
+func (r BetaDatasetRegisterParamsSourceRows) MarshalJSON() (data []byte, err error) {
+	type shadow BetaDatasetRegisterParamsSourceRows
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *BetaDatasetRegisterParamsSourceRowsDataSource) UnmarshalJSON(data []byte) error {
+func (r *BetaDatasetRegisterParamsSourceRows) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[BetaDatasetRegisterParamsSourceRowsDataSource](
+	apijson.RegisterFieldValidator[BetaDatasetRegisterParamsSourceRows](
 		"type", "rows",
 	)
 }
