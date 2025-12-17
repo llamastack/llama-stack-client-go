@@ -87,11 +87,16 @@ const (
 // Information about a registered provider including its configuration and health
 // status.
 type ProviderInfo struct {
-	API          string         `json:"api,required"`
-	Config       map[string]any `json:"config,required"`
-	Health       map[string]any `json:"health,required"`
-	ProviderID   string         `json:"provider_id,required"`
-	ProviderType string         `json:"provider_type,required"`
+	// The API name this provider implements
+	API string `json:"api,required"`
+	// Configuration parameters for the provider
+	Config map[string]any `json:"config,required"`
+	// Current health status of the provider
+	Health map[string]any `json:"health,required"`
+	// Unique identifier for the provider
+	ProviderID string `json:"provider_id,required"`
+	// The type of provider implementation
+	ProviderType string `json:"provider_type,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		API          respjson.Field

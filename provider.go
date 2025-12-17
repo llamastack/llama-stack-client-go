@@ -40,8 +40,6 @@ func NewProviderService(opts ...option.RequestOption) (r ProviderService) {
 	return
 }
 
-// Get provider.
-//
 // Get detailed information about a specific provider.
 func (r *ProviderService) Get(ctx context.Context, providerID string, opts ...option.RequestOption) (res *ProviderInfo, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -54,8 +52,6 @@ func (r *ProviderService) Get(ctx context.Context, providerID string, opts ...op
 	return
 }
 
-// List providers.
-//
 // List all available providers.
 func (r *ProviderService) List(ctx context.Context, opts ...option.RequestOption) (res *[]ProviderInfo, err error) {
 	var env ListProvidersResponse
@@ -71,6 +67,7 @@ func (r *ProviderService) List(ctx context.Context, opts ...option.RequestOption
 
 // Response containing a list of all available providers.
 type ListProvidersResponse struct {
+	// List of provider information objects
 	Data []ProviderInfo `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
