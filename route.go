@@ -40,8 +40,6 @@ func NewRouteService(opts ...option.RequestOption) (r RouteService) {
 	return
 }
 
-// List routes.
-//
 // List all available API routes with their methods and implementing providers.
 func (r *RouteService) List(ctx context.Context, query RouteListParams, opts ...option.RequestOption) (res *[]RouteInfo, err error) {
 	var env ListRoutesResponse
@@ -57,6 +55,7 @@ func (r *RouteService) List(ctx context.Context, query RouteListParams, opts ...
 
 // Response containing a list of all available API routes.
 type ListRoutesResponse struct {
+	// List of available API routes
 	Data []RouteInfo `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -73,6 +72,11 @@ func (r *ListRoutesResponse) UnmarshalJSON(data []byte) error {
 }
 
 type RouteListParams struct {
+	// Optional filter to control which routes are returned. Can be an API level ('v1',
+	// 'v1alpha', 'v1beta') to show non-deprecated routes at that level, or
+	// 'deprecated' to show deprecated routes across all levels. If not specified,
+	// returns all non-deprecated routes.
+	//
 	// Any of "v1", "v1alpha", "v1beta", "deprecated".
 	APIFilter RouteListParamsAPIFilter `query:"api_filter,omitzero" json:"-"`
 	paramObj
@@ -86,6 +90,10 @@ func (r RouteListParams) URLQuery() (v url.Values, err error) {
 	})
 }
 
+// Optional filter to control which routes are returned. Can be an API level ('v1',
+// 'v1alpha', 'v1beta') to show non-deprecated routes at that level, or
+// 'deprecated' to show deprecated routes across all levels. If not specified,
+// returns all non-deprecated routes.
 type RouteListParamsAPIFilter string
 
 const (

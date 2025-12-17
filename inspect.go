@@ -38,8 +38,6 @@ func NewInspectService(opts ...option.RequestOption) (r InspectService) {
 	return
 }
 
-// Get health status.
-//
 // Get the current health status of the service.
 func (r *InspectService) Health(ctx context.Context, opts ...option.RequestOption) (res *HealthInfo, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -48,8 +46,6 @@ func (r *InspectService) Health(ctx context.Context, opts ...option.RequestOptio
 	return
 }
 
-// Get version.
-//
 // Get the version of the service.
 func (r *InspectService) Version(ctx context.Context, opts ...option.RequestOption) (res *VersionInfo, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -60,6 +56,8 @@ func (r *InspectService) Version(ctx context.Context, opts ...option.RequestOpti
 
 // Health status information for the service.
 type HealthInfo struct {
+	// The health status of the service
+	//
 	// Any of "OK", "Error", "Not Implemented".
 	Status HealthInfoStatus `json:"status,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -76,6 +74,7 @@ func (r *HealthInfo) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// The health status of the service
 type HealthInfoStatus string
 
 const (
@@ -118,9 +117,12 @@ func (r *ProviderInfo) UnmarshalJSON(data []byte) error {
 // Information about an API route including its path, method, and implementing
 // providers.
 type RouteInfo struct {
-	Method        string   `json:"method,required"`
+	// The HTTP method for the route
+	Method string `json:"method,required"`
+	// List of provider types implementing this route
 	ProviderTypes []string `json:"provider_types,required"`
-	Route         string   `json:"route,required"`
+	// The API route path
+	Route string `json:"route,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Method        respjson.Field
@@ -139,6 +141,7 @@ func (r *RouteInfo) UnmarshalJSON(data []byte) error {
 
 // Version information for the service.
 type VersionInfo struct {
+	// The version string of the service
 	Version string `json:"version,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
