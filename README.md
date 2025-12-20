@@ -281,8 +281,33 @@ This library provides some conveniences for working with paginated list endpoint
 
 You can use `.ListAutoPaging()` methods to iterate through items across all pages:
 
+```go
+iter := client.Responses.ListAutoPaging(context.TODO(), llamastackclient.ResponseListParams{})
+// Automatically fetches more pages as needed.
+for iter.Next() {
+	responseListResponse := iter.Current()
+	fmt.Printf("%+v\n", responseListResponse)
+}
+if err := iter.Err(); err != nil {
+	panic(err.Error())
+}
+```
+
 Or you can use simple `.List()` methods to fetch a single page and receive a standard response object
 with additional helper methods like `.GetNextPage()`, e.g.:
+
+```go
+page, err := client.Responses.List(context.TODO(), llamastackclient.ResponseListParams{})
+for page != nil {
+	for _, response := range page.Data {
+		fmt.Printf("%+v\n", response)
+	}
+	page, err = page.GetNextPage()
+}
+if err != nil {
+	panic(err.Error())
+}
+```
 
 ### Errors
 
