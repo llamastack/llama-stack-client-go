@@ -53,24 +53,6 @@ func (r *RouteService) List(ctx context.Context, query RouteListParams, opts ...
 	return
 }
 
-// Response containing a list of all available API routes.
-type ListRoutesResponse struct {
-	// List of available API routes
-	Data []RouteInfo `json:"data,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ListRoutesResponse) RawJSON() string { return r.JSON.raw }
-func (r *ListRoutesResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type RouteListParams struct {
 	// Optional filter to control which routes are returned. Can be an API level ('v1',
 	// 'v1alpha', 'v1beta') to show non-deprecated routes at that level, or
@@ -102,3 +84,21 @@ const (
 	RouteListParamsAPIFilterV1beta     RouteListParamsAPIFilter = "v1beta"
 	RouteListParamsAPIFilterDeprecated RouteListParamsAPIFilter = "deprecated"
 )
+
+// Response containing a list of all available API routes.
+type ListRoutesResponse struct {
+	// List of available API routes
+	Data []RouteInfo `json:"data,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Data        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ListRoutesResponse) RawJSON() string { return r.JSON.raw }
+func (r *ListRoutesResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
