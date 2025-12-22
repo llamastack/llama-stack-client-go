@@ -14,6 +14,127 @@ import (
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 )
 
+// Health status information for the service.
+type HealthInfo struct {
+	// The health status of the service
+	//
+	// Any of "OK", "Error", "Not Implemented".
+	Status HealthInfoStatus `json:"status,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Status      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r HealthInfo) RawJSON() string { return r.JSON.raw }
+func (r *HealthInfo) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// The health status of the service
+type HealthInfoStatus string
+
+const (
+	HealthInfoStatusOk             HealthInfoStatus = "OK"
+	HealthInfoStatusError          HealthInfoStatus = "Error"
+	HealthInfoStatusNotImplemented HealthInfoStatus = "Not Implemented"
+)
+
+// Response containing a list of all available providers.
+type ListProvidersResponse struct {
+	// List of provider information objects
+	Data []ProviderInfo `json:"data,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Data        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ListProvidersResponse) RawJSON() string { return r.JSON.raw }
+func (r *ListProvidersResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Response containing a list of all available API routes.
+type ListRoutesResponse struct {
+	// List of available API routes
+	Data []RouteInfo `json:"data,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Data        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ListRoutesResponse) RawJSON() string { return r.JSON.raw }
+func (r *ListRoutesResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Information about a registered provider including its configuration and health
+// status.
+type ProviderInfo struct {
+	// The API name this provider implements
+	API string `json:"api,required"`
+	// Configuration parameters for the provider
+	Config map[string]any `json:"config,required"`
+	// Current health status of the provider
+	Health map[string]any `json:"health,required"`
+	// Unique identifier for the provider
+	ProviderID string `json:"provider_id,required"`
+	// The type of provider implementation
+	ProviderType string `json:"provider_type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		API          respjson.Field
+		Config       respjson.Field
+		Health       respjson.Field
+		ProviderID   respjson.Field
+		ProviderType respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ProviderInfo) RawJSON() string { return r.JSON.raw }
+func (r *ProviderInfo) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Information about an API route including its path, method, and implementing
+// providers.
+type RouteInfo struct {
+	// The HTTP method for the route
+	Method string `json:"method,required"`
+	// List of provider types implementing this route
+	ProviderTypes []string `json:"provider_types,required"`
+	// The API route path
+	Route string `json:"route,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Method        respjson.Field
+		ProviderTypes respjson.Field
+		Route         respjson.Field
+		ExtraFields   map[string]respjson.Field
+		raw           string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r RouteInfo) RawJSON() string { return r.JSON.raw }
+func (r *RouteInfo) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // Details of a safety violation detected by content moderation.
 type SafetyViolation struct {
 	// Severity level of a safety violation.
@@ -532,3 +653,21 @@ type SystemMessageRole string
 const (
 	SystemMessageRoleSystem SystemMessageRole = "system"
 )
+
+// Version information for the service.
+type VersionInfo struct {
+	// The version string of the service
+	Version string `json:"version,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Version     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r VersionInfo) RawJSON() string { return r.JSON.raw }
+func (r *VersionInfo) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}

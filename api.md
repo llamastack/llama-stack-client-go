@@ -5,8 +5,14 @@
 
 # Shared Response Types
 
+- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#HealthInfo">HealthInfo</a>
+- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ListProvidersResponse">ListProvidersResponse</a>
+- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ListRoutesResponse">ListRoutesResponse</a>
+- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ProviderInfo">ProviderInfo</a>
+- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#RouteInfo">RouteInfo</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#SafetyViolation">SafetyViolation</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ScoringResult">ScoringResult</a>
+- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#VersionInfo">VersionInfo</a>
 
 # Toolgroups
 
@@ -120,13 +126,6 @@ Methods:
 - <code title="get /v1/conversations/{conversation_id}/items/{item_id}">client.Conversations.Items.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ConversationItemService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, itemID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ConversationItemGetParams">ConversationItemGetParams</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ConversationItemGetResponse">ConversationItemGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Inspect
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#HealthInfo">HealthInfo</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ProviderInfo">ProviderInfo</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#RouteInfo">RouteInfo</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#VersionInfo">VersionInfo</a>
 
 Methods:
 
@@ -257,20 +256,12 @@ Methods:
 
 # Providers
 
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ListProvidersResponse">ListProvidersResponse</a>
-
 Methods:
 
 - <code title="get /v1/providers/{provider_id}">client.Providers.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ProviderService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, providerID <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ProviderInfo">ProviderInfo</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /v1/providers">client.Providers.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ProviderService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) ([]<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ProviderInfo">ProviderInfo</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Routes
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ListRoutesResponse">ListRoutesResponse</a>
 
 Methods:
 
@@ -446,6 +437,16 @@ Methods:
 - <code title="get /v1alpha/eval/benchmarks/{benchmark_id}/jobs/{job_id}/result">client.Alpha.Eval.Jobs.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaEvalJobService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, jobID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaEvalJobGetParams">AlphaEvalJobGetParams</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#EvaluateResponse">EvaluateResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="delete /v1alpha/eval/benchmarks/{benchmark_id}/jobs/{job_id}">client.Alpha.Eval.Jobs.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaEvalJobService.Cancel">Cancel</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, jobID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaEvalJobCancelParams">AlphaEvalJobCancelParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
 - <code title="get /v1alpha/eval/benchmarks/{benchmark_id}/jobs/{job_id}">client.Alpha.Eval.Jobs.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaEvalJobService.Status">Status</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, jobID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaEvalJobStatusParams">AlphaEvalJobStatusParams</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Job">Job</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
+## Admin
+
+Methods:
+
+- <code title="get /v1alpha/admin/health">client.Alpha.Admin.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAdminService.Health">Health</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#HealthInfo">HealthInfo</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /v1alpha/admin/providers/{provider_id}">client.Alpha.Admin.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAdminService.InspectProvider">InspectProvider</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, providerID <a href="https://pkg.go.dev/builtin#string">string</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ProviderInfo">ProviderInfo</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /v1alpha/admin/providers">client.Alpha.Admin.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAdminService.ListProviders">ListProviders</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) ([]<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ProviderInfo">ProviderInfo</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /v1alpha/admin/inspect/routes">client.Alpha.Admin.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAdminService.ListRoutes">ListRoutes</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAdminListRoutesParams">AlphaAdminListRoutesParams</a>) ([]<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#RouteInfo">RouteInfo</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /v1alpha/admin/version">client.Alpha.Admin.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaAdminService.Version">Version</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#VersionInfo">VersionInfo</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Beta
 
