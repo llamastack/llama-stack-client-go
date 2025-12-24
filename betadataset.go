@@ -23,7 +23,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
-	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
 // BetaDatasetService contains methods and other services that help with
@@ -73,7 +72,7 @@ func (r *BetaDatasetService) List(ctx context.Context, opts ...option.RequestOpt
 // Append rows to a dataset.
 func (r *BetaDatasetService) Appendrows(ctx context.Context, datasetID string, body BetaDatasetAppendrowsParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if datasetID == "" {
 		err = errors.New("missing required dataset_id parameter")
 		return
@@ -83,7 +82,9 @@ func (r *BetaDatasetService) Appendrows(ctx context.Context, datasetID string, b
 	return
 }
 
-// Get a paginated list of rows from a dataset. Uses offset-based pagination where:
+// Get a paginated list of rows from a dataset.
+//
+// Uses offset-based pagination where:
 //
 // - start_index: The starting index (0-based). If None, starts from beginning.
 // - limit: Number of items to return. If None or -1, returns all items.
@@ -118,7 +119,7 @@ func (r *BetaDatasetService) Register(ctx context.Context, body BetaDatasetRegis
 // Deprecated: deprecated
 func (r *BetaDatasetService) Unregister(ctx context.Context, datasetID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if datasetID == "" {
 		err = errors.New("missing required dataset_id parameter")
 		return
@@ -148,28 +149,33 @@ func (r *ListDatasetsResponse) UnmarshalJSON(data []byte) error {
 
 // Dataset resource for storing and accessing training or evaluation data.
 type ListDatasetsResponseData struct {
+	// Unique identifier for this resource in llama stack
 	Identifier string `json:"identifier,required"`
-	// Additional metadata for the dataset
-	Metadata   map[string]ListDatasetsResponseDataMetadataUnion `json:"metadata,required"`
-	ProviderID string                                           `json:"provider_id,required"`
+	// ID of the provider that owns this resource
+	ProviderID string `json:"provider_id,required"`
 	// Purpose of the dataset indicating its intended use
 	//
 	// Any of "post-training/messages", "eval/question-answer", "eval/messages-answer".
 	Purpose string `json:"purpose,required"`
 	// Data source configuration for the dataset
 	Source ListDatasetsResponseDataSourceUnion `json:"source,required"`
+	// Any additional metadata for this dataset
+	Metadata map[string]any `json:"metadata"`
+	// Unique identifier for this resource in the provider
+	ProviderResourceID string `json:"provider_resource_id,nullable"`
 	// Type of resource, always 'dataset' for datasets
-	Type               constant.Dataset `json:"type,required"`
-	ProviderResourceID string           `json:"provider_resource_id"`
+	//
+	// Any of "dataset".
+	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Identifier         respjson.Field
-		Metadata           respjson.Field
 		ProviderID         respjson.Field
 		Purpose            respjson.Field
 		Source             respjson.Field
-		Type               respjson.Field
+		Metadata           respjson.Field
 		ProviderResourceID respjson.Field
+		Type               respjson.Field
 		ExtraFields        map[string]respjson.Field
 		raw                string
 	} `json:"-"`
@@ -181,58 +187,6 @@ func (r *ListDatasetsResponseData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ListDatasetsResponseDataMetadataUnion contains all possible properties and
-// values from [bool], [float64], [string], [[]any].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type ListDatasetsResponseDataMetadataUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
-	} `json:"-"`
-}
-
-func (u ListDatasetsResponseDataMetadataUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ListDatasetsResponseDataMetadataUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ListDatasetsResponseDataMetadataUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ListDatasetsResponseDataMetadataUnion) AsAnyArray() (v []any) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ListDatasetsResponseDataMetadataUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ListDatasetsResponseDataMetadataUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // ListDatasetsResponseDataSourceUnion contains all possible properties and values
 // from [ListDatasetsResponseDataSourceUri], [ListDatasetsResponseDataSourceRows].
 //
@@ -241,15 +195,15 @@ func (r *ListDatasetsResponseDataMetadataUnion) UnmarshalJSON(data []byte) error
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type ListDatasetsResponseDataSourceUnion struct {
-	// Any of "uri", "rows".
-	Type string `json:"type"`
 	// This field is from variant [ListDatasetsResponseDataSourceUri].
 	Uri string `json:"uri"`
+	// Any of "uri", "rows".
+	Type string `json:"type"`
 	// This field is from variant [ListDatasetsResponseDataSourceRows].
-	Rows []map[string]ListDatasetsResponseDataSourceRowsRowUnion `json:"rows"`
+	Rows []map[string]any `json:"rows"`
 	JSON struct {
-		Type respjson.Field
 		Uri  respjson.Field
+		Type respjson.Field
 		Rows respjson.Field
 		raw  string
 	} `json:"-"`
@@ -302,15 +256,18 @@ func (r *ListDatasetsResponseDataSourceUnion) UnmarshalJSON(data []byte) error {
 
 // A dataset that can be obtained from a URI.
 type ListDatasetsResponseDataSourceUri struct {
-	Type constant.Uri `json:"type,required"`
-	// The dataset can be obtained from a URI. E.g. -
-	// "https://mywebsite.com/mydata.jsonl" - "lsfs://mydata.jsonl" -
+	// The dataset can be obtained from a URI. E.g.
+	// "https://mywebsite.com/mydata.jsonl", "lsfs://mydata.jsonl",
 	// "data:csv;base64,{base64_content}"
 	Uri string `json:"uri,required"`
+	// The type of data source.
+	//
+	// Any of "uri".
+	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Type        respjson.Field
 		Uri         respjson.Field
+		Type        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -324,11 +281,13 @@ func (r *ListDatasetsResponseDataSourceUri) UnmarshalJSON(data []byte) error {
 
 // A dataset stored in rows.
 type ListDatasetsResponseDataSourceRows struct {
-	// The dataset is stored in rows. E.g. - [ {"messages": [{"role": "user",
-	// "content": "Hello, world!"}, {"role": "assistant", "content": "Hello, world!"}]}
-	// ]
-	Rows []map[string]ListDatasetsResponseDataSourceRowsRowUnion `json:"rows,required"`
-	Type constant.Rows                                           `json:"type,required"`
+	// The dataset is stored in rows. E.g. [{"messages": [{"role": "user", "content":
+	// "Hello, world!"}, {"role": "assistant", "content": "Hello, world!"}]}]
+	Rows []map[string]any `json:"rows,required"`
+	// The type of data source.
+	//
+	// Any of "rows".
+	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Rows        respjson.Field
@@ -344,82 +303,35 @@ func (r *ListDatasetsResponseDataSourceRows) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ListDatasetsResponseDataSourceRowsRowUnion contains all possible properties and
-// values from [bool], [float64], [string], [[]any].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type ListDatasetsResponseDataSourceRowsRowUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
-	} `json:"-"`
-}
-
-func (u ListDatasetsResponseDataSourceRowsRowUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ListDatasetsResponseDataSourceRowsRowUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ListDatasetsResponseDataSourceRowsRowUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ListDatasetsResponseDataSourceRowsRowUnion) AsAnyArray() (v []any) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ListDatasetsResponseDataSourceRowsRowUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ListDatasetsResponseDataSourceRowsRowUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // Dataset resource for storing and accessing training or evaluation data.
 type BetaDatasetGetResponse struct {
+	// Unique identifier for this resource in llama stack
 	Identifier string `json:"identifier,required"`
-	// Additional metadata for the dataset
-	Metadata   map[string]BetaDatasetGetResponseMetadataUnion `json:"metadata,required"`
-	ProviderID string                                         `json:"provider_id,required"`
+	// ID of the provider that owns this resource
+	ProviderID string `json:"provider_id,required"`
 	// Purpose of the dataset indicating its intended use
 	//
 	// Any of "post-training/messages", "eval/question-answer", "eval/messages-answer".
 	Purpose BetaDatasetGetResponsePurpose `json:"purpose,required"`
 	// Data source configuration for the dataset
 	Source BetaDatasetGetResponseSourceUnion `json:"source,required"`
+	// Any additional metadata for this dataset
+	Metadata map[string]any `json:"metadata"`
+	// Unique identifier for this resource in the provider
+	ProviderResourceID string `json:"provider_resource_id,nullable"`
 	// Type of resource, always 'dataset' for datasets
-	Type               constant.Dataset `json:"type,required"`
-	ProviderResourceID string           `json:"provider_resource_id"`
+	//
+	// Any of "dataset".
+	Type BetaDatasetGetResponseType `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Identifier         respjson.Field
-		Metadata           respjson.Field
 		ProviderID         respjson.Field
 		Purpose            respjson.Field
 		Source             respjson.Field
-		Type               respjson.Field
+		Metadata           respjson.Field
 		ProviderResourceID respjson.Field
+		Type               respjson.Field
 		ExtraFields        map[string]respjson.Field
 		raw                string
 	} `json:"-"`
@@ -428,58 +340,6 @@ type BetaDatasetGetResponse struct {
 // Returns the unmodified JSON received from the API
 func (r BetaDatasetGetResponse) RawJSON() string { return r.JSON.raw }
 func (r *BetaDatasetGetResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// BetaDatasetGetResponseMetadataUnion contains all possible properties and values
-// from [bool], [float64], [string], [[]any].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type BetaDatasetGetResponseMetadataUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
-	} `json:"-"`
-}
-
-func (u BetaDatasetGetResponseMetadataUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u BetaDatasetGetResponseMetadataUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u BetaDatasetGetResponseMetadataUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u BetaDatasetGetResponseMetadataUnion) AsAnyArray() (v []any) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u BetaDatasetGetResponseMetadataUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *BetaDatasetGetResponseMetadataUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -500,15 +360,15 @@ const (
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type BetaDatasetGetResponseSourceUnion struct {
-	// Any of "uri", "rows".
-	Type string `json:"type"`
 	// This field is from variant [BetaDatasetGetResponseSourceUri].
 	Uri string `json:"uri"`
+	// Any of "uri", "rows".
+	Type string `json:"type"`
 	// This field is from variant [BetaDatasetGetResponseSourceRows].
-	Rows []map[string]BetaDatasetGetResponseSourceRowsRowUnion `json:"rows"`
+	Rows []map[string]any `json:"rows"`
 	JSON struct {
-		Type respjson.Field
 		Uri  respjson.Field
+		Type respjson.Field
 		Rows respjson.Field
 		raw  string
 	} `json:"-"`
@@ -561,15 +421,18 @@ func (r *BetaDatasetGetResponseSourceUnion) UnmarshalJSON(data []byte) error {
 
 // A dataset that can be obtained from a URI.
 type BetaDatasetGetResponseSourceUri struct {
-	Type constant.Uri `json:"type,required"`
-	// The dataset can be obtained from a URI. E.g. -
-	// "https://mywebsite.com/mydata.jsonl" - "lsfs://mydata.jsonl" -
+	// The dataset can be obtained from a URI. E.g.
+	// "https://mywebsite.com/mydata.jsonl", "lsfs://mydata.jsonl",
 	// "data:csv;base64,{base64_content}"
 	Uri string `json:"uri,required"`
+	// The type of data source.
+	//
+	// Any of "uri".
+	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Type        respjson.Field
 		Uri         respjson.Field
+		Type        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -583,11 +446,13 @@ func (r *BetaDatasetGetResponseSourceUri) UnmarshalJSON(data []byte) error {
 
 // A dataset stored in rows.
 type BetaDatasetGetResponseSourceRows struct {
-	// The dataset is stored in rows. E.g. - [ {"messages": [{"role": "user",
-	// "content": "Hello, world!"}, {"role": "assistant", "content": "Hello, world!"}]}
-	// ]
-	Rows []map[string]BetaDatasetGetResponseSourceRowsRowUnion `json:"rows,required"`
-	Type constant.Rows                                         `json:"type,required"`
+	// The dataset is stored in rows. E.g. [{"messages": [{"role": "user", "content":
+	// "Hello, world!"}, {"role": "assistant", "content": "Hello, world!"}]}]
+	Rows []map[string]any `json:"rows,required"`
+	// The type of data source.
+	//
+	// Any of "rows".
+	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Rows        respjson.Field
@@ -603,66 +468,18 @@ func (r *BetaDatasetGetResponseSourceRows) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// BetaDatasetGetResponseSourceRowsRowUnion contains all possible properties and
-// values from [bool], [float64], [string], [[]any].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type BetaDatasetGetResponseSourceRowsRowUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
-	} `json:"-"`
-}
+// Type of resource, always 'dataset' for datasets
+type BetaDatasetGetResponseType string
 
-func (u BetaDatasetGetResponseSourceRowsRowUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u BetaDatasetGetResponseSourceRowsRowUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u BetaDatasetGetResponseSourceRowsRowUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u BetaDatasetGetResponseSourceRowsRowUnion) AsAnyArray() (v []any) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u BetaDatasetGetResponseSourceRowsRowUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *BetaDatasetGetResponseSourceRowsRowUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
+const (
+	BetaDatasetGetResponseTypeDataset BetaDatasetGetResponseType = "dataset"
+)
 
 // A generic paginated response that follows a simple format.
 type BetaDatasetIterrowsResponse struct {
-	// The list of items for the current page
-	Data []map[string]BetaDatasetIterrowsResponseDataUnion `json:"data,required"`
-	// Whether there are more items available after this set
-	HasMore bool `json:"has_more,required"`
-	// The URL for accessing this list
-	URL string `json:"url"`
+	Data    []map[string]any `json:"data,required"`
+	HasMore bool             `json:"has_more,required"`
+	URL     string           `json:"url,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -679,82 +496,35 @@ func (r *BetaDatasetIterrowsResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// BetaDatasetIterrowsResponseDataUnion contains all possible properties and values
-// from [bool], [float64], [string], [[]any].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type BetaDatasetIterrowsResponseDataUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
-	} `json:"-"`
-}
-
-func (u BetaDatasetIterrowsResponseDataUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u BetaDatasetIterrowsResponseDataUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u BetaDatasetIterrowsResponseDataUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u BetaDatasetIterrowsResponseDataUnion) AsAnyArray() (v []any) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u BetaDatasetIterrowsResponseDataUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *BetaDatasetIterrowsResponseDataUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // Dataset resource for storing and accessing training or evaluation data.
 type BetaDatasetRegisterResponse struct {
+	// Unique identifier for this resource in llama stack
 	Identifier string `json:"identifier,required"`
-	// Additional metadata for the dataset
-	Metadata   map[string]BetaDatasetRegisterResponseMetadataUnion `json:"metadata,required"`
-	ProviderID string                                              `json:"provider_id,required"`
+	// ID of the provider that owns this resource
+	ProviderID string `json:"provider_id,required"`
 	// Purpose of the dataset indicating its intended use
 	//
 	// Any of "post-training/messages", "eval/question-answer", "eval/messages-answer".
 	Purpose BetaDatasetRegisterResponsePurpose `json:"purpose,required"`
 	// Data source configuration for the dataset
 	Source BetaDatasetRegisterResponseSourceUnion `json:"source,required"`
+	// Any additional metadata for this dataset
+	Metadata map[string]any `json:"metadata"`
+	// Unique identifier for this resource in the provider
+	ProviderResourceID string `json:"provider_resource_id,nullable"`
 	// Type of resource, always 'dataset' for datasets
-	Type               constant.Dataset `json:"type,required"`
-	ProviderResourceID string           `json:"provider_resource_id"`
+	//
+	// Any of "dataset".
+	Type BetaDatasetRegisterResponseType `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Identifier         respjson.Field
-		Metadata           respjson.Field
 		ProviderID         respjson.Field
 		Purpose            respjson.Field
 		Source             respjson.Field
-		Type               respjson.Field
+		Metadata           respjson.Field
 		ProviderResourceID respjson.Field
+		Type               respjson.Field
 		ExtraFields        map[string]respjson.Field
 		raw                string
 	} `json:"-"`
@@ -763,58 +533,6 @@ type BetaDatasetRegisterResponse struct {
 // Returns the unmodified JSON received from the API
 func (r BetaDatasetRegisterResponse) RawJSON() string { return r.JSON.raw }
 func (r *BetaDatasetRegisterResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// BetaDatasetRegisterResponseMetadataUnion contains all possible properties and
-// values from [bool], [float64], [string], [[]any].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type BetaDatasetRegisterResponseMetadataUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
-	} `json:"-"`
-}
-
-func (u BetaDatasetRegisterResponseMetadataUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u BetaDatasetRegisterResponseMetadataUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u BetaDatasetRegisterResponseMetadataUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u BetaDatasetRegisterResponseMetadataUnion) AsAnyArray() (v []any) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u BetaDatasetRegisterResponseMetadataUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *BetaDatasetRegisterResponseMetadataUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -836,15 +554,15 @@ const (
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type BetaDatasetRegisterResponseSourceUnion struct {
-	// Any of "uri", "rows".
-	Type string `json:"type"`
 	// This field is from variant [BetaDatasetRegisterResponseSourceUri].
 	Uri string `json:"uri"`
+	// Any of "uri", "rows".
+	Type string `json:"type"`
 	// This field is from variant [BetaDatasetRegisterResponseSourceRows].
-	Rows []map[string]BetaDatasetRegisterResponseSourceRowsRowUnion `json:"rows"`
+	Rows []map[string]any `json:"rows"`
 	JSON struct {
-		Type respjson.Field
 		Uri  respjson.Field
+		Type respjson.Field
 		Rows respjson.Field
 		raw  string
 	} `json:"-"`
@@ -897,15 +615,18 @@ func (r *BetaDatasetRegisterResponseSourceUnion) UnmarshalJSON(data []byte) erro
 
 // A dataset that can be obtained from a URI.
 type BetaDatasetRegisterResponseSourceUri struct {
-	Type constant.Uri `json:"type,required"`
-	// The dataset can be obtained from a URI. E.g. -
-	// "https://mywebsite.com/mydata.jsonl" - "lsfs://mydata.jsonl" -
+	// The dataset can be obtained from a URI. E.g.
+	// "https://mywebsite.com/mydata.jsonl", "lsfs://mydata.jsonl",
 	// "data:csv;base64,{base64_content}"
 	Uri string `json:"uri,required"`
+	// The type of data source.
+	//
+	// Any of "uri".
+	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Type        respjson.Field
 		Uri         respjson.Field
+		Type        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -919,11 +640,13 @@ func (r *BetaDatasetRegisterResponseSourceUri) UnmarshalJSON(data []byte) error 
 
 // A dataset stored in rows.
 type BetaDatasetRegisterResponseSourceRows struct {
-	// The dataset is stored in rows. E.g. - [ {"messages": [{"role": "user",
-	// "content": "Hello, world!"}, {"role": "assistant", "content": "Hello, world!"}]}
-	// ]
-	Rows []map[string]BetaDatasetRegisterResponseSourceRowsRowUnion `json:"rows,required"`
-	Type constant.Rows                                              `json:"type,required"`
+	// The dataset is stored in rows. E.g. [{"messages": [{"role": "user", "content":
+	// "Hello, world!"}, {"role": "assistant", "content": "Hello, world!"}]}]
+	Rows []map[string]any `json:"rows,required"`
+	// The type of data source.
+	//
+	// Any of "rows".
+	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Rows        respjson.Field
@@ -939,61 +662,15 @@ func (r *BetaDatasetRegisterResponseSourceRows) UnmarshalJSON(data []byte) error
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// BetaDatasetRegisterResponseSourceRowsRowUnion contains all possible properties
-// and values from [bool], [float64], [string], [[]any].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type BetaDatasetRegisterResponseSourceRowsRowUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
-	} `json:"-"`
-}
+// Type of resource, always 'dataset' for datasets
+type BetaDatasetRegisterResponseType string
 
-func (u BetaDatasetRegisterResponseSourceRowsRowUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u BetaDatasetRegisterResponseSourceRowsRowUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u BetaDatasetRegisterResponseSourceRowsRowUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u BetaDatasetRegisterResponseSourceRowsRowUnion) AsAnyArray() (v []any) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u BetaDatasetRegisterResponseSourceRowsRowUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *BetaDatasetRegisterResponseSourceRowsRowUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
+const (
+	BetaDatasetRegisterResponseTypeDataset BetaDatasetRegisterResponseType = "dataset"
+)
 
 type BetaDatasetAppendrowsParams struct {
-	// The rows to append to the dataset.
-	Rows []map[string]BetaDatasetAppendrowsParamsRowUnion `json:"rows,omitzero,required"`
+	Rows []map[string]any `json:"rows,omitzero,required"`
 	paramObj
 }
 
@@ -1005,41 +682,8 @@ func (r *BetaDatasetAppendrowsParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type BetaDatasetAppendrowsParamsRowUnion struct {
-	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
-	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
-	OfString   param.Opt[string]  `json:",omitzero,inline"`
-	OfAnyArray []any              `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u BetaDatasetAppendrowsParamsRowUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
-}
-func (u *BetaDatasetAppendrowsParamsRowUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *BetaDatasetAppendrowsParamsRowUnion) asAny() any {
-	if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfAnyArray) {
-		return &u.OfAnyArray
-	}
-	return nil
-}
-
 type BetaDatasetIterrowsParams struct {
-	// The number of rows to get.
-	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	// Index into dataset for the first row to get. Get all rows if None.
+	Limit      param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	StartIndex param.Opt[int64] `query:"start_index,omitzero" json:"-"`
 	paramObj
 }
@@ -1054,33 +698,16 @@ func (r BetaDatasetIterrowsParams) URLQuery() (v url.Values, err error) {
 }
 
 type BetaDatasetRegisterParams struct {
-	// The purpose of the dataset. One of: - "post-training/messages": The dataset
-	// contains a messages column with list of messages for post-training. {
-	// "messages": [ {"role": "user", "content": "Hello, world!"}, {"role":
-	// "assistant", "content": "Hello, world!"}, ] } - "eval/question-answer": The
-	// dataset contains a question column and an answer column for evaluation. {
-	// "question": "What is the capital of France?", "answer": "Paris" } -
-	// "eval/messages-answer": The dataset contains a messages column with list of
-	// messages and an answer column for evaluation. { "messages": [ {"role": "user",
-	// "content": "Hello, my name is John Doe."}, {"role": "assistant", "content":
-	// "Hello, John Doe. How can I help you today?"}, {"role": "user", "content":
-	// "What's my name?"}, ], "answer": "John Doe" }
+	// The purpose of the dataset.
 	//
 	// Any of "post-training/messages", "eval/question-answer", "eval/messages-answer".
 	Purpose BetaDatasetRegisterParamsPurpose `json:"purpose,omitzero,required"`
-	// The data source of the dataset. Ensure that the data source schema is compatible
-	// with the purpose of the dataset. Examples: - { "type": "uri", "uri":
-	// "https://mywebsite.com/mydata.jsonl" } - { "type": "uri", "uri":
-	// "lsfs://mydata.jsonl" } - { "type": "uri", "uri":
-	// "data:csv;base64,{base64_content}" } - { "type": "uri", "uri":
-	// "huggingface://llamastack/simpleqa?split=train" } - { "type": "rows", "rows": [
-	// { "messages": [ {"role": "user", "content": "Hello, world!"}, {"role":
-	// "assistant", "content": "Hello, world!"}, ] } ] }
+	// The data source of the dataset.
 	Source BetaDatasetRegisterParamsSourceUnion `json:"source,omitzero,required"`
 	// The ID of the dataset. If not provided, an ID will be generated.
 	DatasetID param.Opt[string] `json:"dataset_id,omitzero"`
-	// The metadata for the dataset. - E.g. {"description": "My dataset"}.
-	Metadata map[string]BetaDatasetRegisterParamsMetadataUnion `json:"metadata,omitzero"`
+	// The metadata for the dataset.
+	Metadata map[string]any `json:"metadata,omitzero"`
 	paramObj
 }
 
@@ -1092,17 +719,7 @@ func (r *BetaDatasetRegisterParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The purpose of the dataset. One of: - "post-training/messages": The dataset
-// contains a messages column with list of messages for post-training. {
-// "messages": [ {"role": "user", "content": "Hello, world!"}, {"role":
-// "assistant", "content": "Hello, world!"}, ] } - "eval/question-answer": The
-// dataset contains a question column and an answer column for evaluation. {
-// "question": "What is the capital of France?", "answer": "Paris" } -
-// "eval/messages-answer": The dataset contains a messages column with list of
-// messages and an answer column for evaluation. { "messages": [ {"role": "user",
-// "content": "Hello, my name is John Doe."}, {"role": "assistant", "content":
-// "Hello, John Doe. How can I help you today?"}, {"role": "user", "content":
-// "What's my name?"}, ], "answer": "John Doe" }
+// The purpose of the dataset.
 type BetaDatasetRegisterParamsPurpose string
 
 const (
@@ -1145,7 +762,7 @@ func (u BetaDatasetRegisterParamsSourceUnion) GetUri() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u BetaDatasetRegisterParamsSourceUnion) GetRows() []map[string]BetaDatasetRegisterParamsSourceRowsRowUnion {
+func (u BetaDatasetRegisterParamsSourceUnion) GetRows() []map[string]any {
 	if vt := u.OfRows; vt != nil {
 		return vt.Rows
 	}
@@ -1172,14 +789,16 @@ func init() {
 
 // A dataset that can be obtained from a URI.
 //
-// The properties Type, Uri are required.
+// The property Uri is required.
 type BetaDatasetRegisterParamsSourceUri struct {
-	// The dataset can be obtained from a URI. E.g. -
-	// "https://mywebsite.com/mydata.jsonl" - "lsfs://mydata.jsonl" -
+	// The dataset can be obtained from a URI. E.g.
+	// "https://mywebsite.com/mydata.jsonl", "lsfs://mydata.jsonl",
 	// "data:csv;base64,{base64_content}"
 	Uri string `json:"uri,required"`
-	// This field can be elided, and will marshal its zero value as "uri".
-	Type constant.Uri `json:"type,required"`
+	// The type of data source.
+	//
+	// Any of "uri".
+	Type string `json:"type,omitzero"`
 	paramObj
 }
 
@@ -1191,16 +810,23 @@ func (r *BetaDatasetRegisterParamsSourceUri) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+func init() {
+	apijson.RegisterFieldValidator[BetaDatasetRegisterParamsSourceUri](
+		"type", "uri",
+	)
+}
+
 // A dataset stored in rows.
 //
-// The properties Rows, Type are required.
+// The property Rows is required.
 type BetaDatasetRegisterParamsSourceRows struct {
-	// The dataset is stored in rows. E.g. - [ {"messages": [{"role": "user",
-	// "content": "Hello, world!"}, {"role": "assistant", "content": "Hello, world!"}]}
-	// ]
-	Rows []map[string]BetaDatasetRegisterParamsSourceRowsRowUnion `json:"rows,omitzero,required"`
-	// This field can be elided, and will marshal its zero value as "rows".
-	Type constant.Rows `json:"type,required"`
+	// The dataset is stored in rows. E.g. [{"messages": [{"role": "user", "content":
+	// "Hello, world!"}, {"role": "assistant", "content": "Hello, world!"}]}]
+	Rows []map[string]any `json:"rows,omitzero,required"`
+	// The type of data source.
+	//
+	// Any of "rows".
+	Type string `json:"type,omitzero"`
 	paramObj
 }
 
@@ -1212,64 +838,8 @@ func (r *BetaDatasetRegisterParamsSourceRows) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type BetaDatasetRegisterParamsSourceRowsRowUnion struct {
-	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
-	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
-	OfString   param.Opt[string]  `json:",omitzero,inline"`
-	OfAnyArray []any              `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u BetaDatasetRegisterParamsSourceRowsRowUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
-}
-func (u *BetaDatasetRegisterParamsSourceRowsRowUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *BetaDatasetRegisterParamsSourceRowsRowUnion) asAny() any {
-	if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfAnyArray) {
-		return &u.OfAnyArray
-	}
-	return nil
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type BetaDatasetRegisterParamsMetadataUnion struct {
-	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
-	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
-	OfString   param.Opt[string]  `json:",omitzero,inline"`
-	OfAnyArray []any              `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u BetaDatasetRegisterParamsMetadataUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
-}
-func (u *BetaDatasetRegisterParamsMetadataUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *BetaDatasetRegisterParamsMetadataUnion) asAny() any {
-	if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfAnyArray) {
-		return &u.OfAnyArray
-	}
-	return nil
+func init() {
+	apijson.RegisterFieldValidator[BetaDatasetRegisterParamsSourceRows](
+		"type", "rows",
+	)
 }

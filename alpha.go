@@ -24,6 +24,7 @@ type AlphaService struct {
 	PostTraining AlphaPostTrainingService
 	Benchmarks   AlphaBenchmarkService
 	Eval         AlphaEvalService
+	Admin        AlphaAdminService
 }
 
 // NewAlphaService generates a new service that applies the given options to each
@@ -36,5 +37,6 @@ func NewAlphaService(opts ...option.RequestOption) (r AlphaService) {
 	r.PostTraining = NewAlphaPostTrainingService(opts...)
 	r.Benchmarks = NewAlphaBenchmarkService(opts...)
 	r.Eval = NewAlphaEvalService(opts...)
+	r.Admin = NewAlphaAdminService(opts...)
 	return
 }

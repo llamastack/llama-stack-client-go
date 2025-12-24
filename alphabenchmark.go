@@ -10,7 +10,6 @@ package llamastackclient
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -21,7 +20,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
-	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
 // AlphaBenchmarkService contains methods and other services that help with
@@ -73,34 +71,54 @@ func (r *AlphaBenchmarkService) List(ctx context.Context, opts ...option.Request
 // Deprecated: deprecated
 func (r *AlphaBenchmarkService) Register(ctx context.Context, body AlphaBenchmarkRegisterParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	path := "v1alpha/eval/benchmarks"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
 	return
 }
 
+// Unregister a benchmark.
+//
+// Deprecated: deprecated
+func (r *AlphaBenchmarkService) Unregister(ctx context.Context, benchmarkID string, opts ...option.RequestOption) (err error) {
+	opts = slices.Concat(r.Options, opts)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
+	if benchmarkID == "" {
+		err = errors.New("missing required benchmark_id parameter")
+		return
+	}
+	path := fmt.Sprintf("v1alpha/eval/benchmarks/%s", benchmarkID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
+	return
+}
+
 // A benchmark resource for evaluating model performance.
 type Benchmark struct {
-	// Identifier of the dataset to use for the benchmark evaluation
-	DatasetID  string `json:"dataset_id,required"`
+	// Identifier of the dataset to use for the benchmark evaluation.
+	DatasetID string `json:"dataset_id,required"`
+	// Unique identifier for this resource in llama stack
 	Identifier string `json:"identifier,required"`
-	// Metadata for this evaluation task
-	Metadata   map[string]BenchmarkMetadataUnion `json:"metadata,required"`
-	ProviderID string                            `json:"provider_id,required"`
-	// List of scoring function identifiers to apply during evaluation
+	// ID of the provider that owns this resource
+	ProviderID string `json:"provider_id,required"`
+	// List of scoring function identifiers to apply during evaluation.
 	ScoringFunctions []string `json:"scoring_functions,required"`
-	// The resource type, always benchmark
-	Type               constant.Benchmark `json:"type,required"`
-	ProviderResourceID string             `json:"provider_resource_id"`
+	// Metadata for this evaluation task.
+	Metadata map[string]any `json:"metadata"`
+	// Unique identifier for this resource in the provider
+	ProviderResourceID string `json:"provider_resource_id,nullable"`
+	// The resource type, always benchmark.
+	//
+	// Any of "benchmark".
+	Type BenchmarkType `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		DatasetID          respjson.Field
 		Identifier         respjson.Field
-		Metadata           respjson.Field
 		ProviderID         respjson.Field
 		ScoringFunctions   respjson.Field
-		Type               respjson.Field
+		Metadata           respjson.Field
 		ProviderResourceID respjson.Field
+		Type               respjson.Field
 		ExtraFields        map[string]respjson.Field
 		raw                string
 	} `json:"-"`
@@ -112,59 +130,16 @@ func (r *Benchmark) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// BenchmarkMetadataUnion contains all possible properties and values from [bool],
-// [float64], [string], [[]any].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type BenchmarkMetadataUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
-	} `json:"-"`
-}
+// The resource type, always benchmark.
+type BenchmarkType string
 
-func (u BenchmarkMetadataUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
+const (
+	BenchmarkTypeBenchmark BenchmarkType = "benchmark"
+)
 
-func (u BenchmarkMetadataUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u BenchmarkMetadataUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u BenchmarkMetadataUnion) AsAnyArray() (v []any) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u BenchmarkMetadataUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *BenchmarkMetadataUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
+// Response containing a list of benchmark objects.
 type ListBenchmarksResponse struct {
+	// List of benchmark objects.
 	Data []Benchmark `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -192,7 +167,7 @@ type AlphaBenchmarkRegisterParams struct {
 	// The ID of the provider to use for the benchmark.
 	ProviderID param.Opt[string] `json:"provider_id,omitzero"`
 	// The metadata to use for the benchmark.
-	Metadata map[string]AlphaBenchmarkRegisterParamsMetadataUnion `json:"metadata,omitzero"`
+	Metadata map[string]any `json:"metadata,omitzero"`
 	paramObj
 }
 
@@ -202,35 +177,4 @@ func (r AlphaBenchmarkRegisterParams) MarshalJSON() (data []byte, err error) {
 }
 func (r *AlphaBenchmarkRegisterParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type AlphaBenchmarkRegisterParamsMetadataUnion struct {
-	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
-	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
-	OfString   param.Opt[string]  `json:",omitzero,inline"`
-	OfAnyArray []any              `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u AlphaBenchmarkRegisterParamsMetadataUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
-}
-func (u *AlphaBenchmarkRegisterParamsMetadataUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *AlphaBenchmarkRegisterParamsMetadataUnion) asAny() any {
-	if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfAnyArray) {
-		return &u.OfAnyArray
-	}
-	return nil
 }

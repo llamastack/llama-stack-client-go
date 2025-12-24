@@ -49,7 +49,9 @@ func NewFileService(opts ...option.RequestOption) (r FileService) {
 	return
 }
 
-// Upload file. Upload a file that can be used across various endpoints.
+// Upload file.
+//
+// Upload a file that can be used across various endpoints.
 //
 // The file upload should be a multipart form request with:
 //
@@ -63,7 +65,9 @@ func (r *FileService) New(ctx context.Context, body FileNewParams, opts ...optio
 	return
 }
 
-// Retrieve file. Returns information about a specific file.
+// Retrieve file.
+//
+// Returns information about a specific file.
 func (r *FileService) Get(ctx context.Context, fileID string, opts ...option.RequestOption) (res *File, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if fileID == "" {
@@ -75,7 +79,9 @@ func (r *FileService) Get(ctx context.Context, fileID string, opts ...option.Req
 	return
 }
 
-// List files. Returns a list of files that belong to the user's organization.
+// List files.
+//
+// Returns a list of files that belong to the user's organization.
 func (r *FileService) List(ctx context.Context, query FileListParams, opts ...option.RequestOption) (res *pagination.OpenAICursorPage[File], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
@@ -93,7 +99,9 @@ func (r *FileService) List(ctx context.Context, query FileListParams, opts ...op
 	return res, nil
 }
 
-// List files. Returns a list of files that belong to the user's organization.
+// List files.
+//
+// Returns a list of files that belong to the user's organization.
 func (r *FileService) ListAutoPaging(ctx context.Context, query FileListParams, opts ...option.RequestOption) *pagination.OpenAICursorPageAutoPager[File] {
 	return pagination.NewOpenAICursorPageAutoPager(r.List(ctx, query, opts...))
 }
@@ -110,7 +118,9 @@ func (r *FileService) Delete(ctx context.Context, fileID string, opts ...option.
 	return
 }
 
-// Retrieve file content. Returns the contents of the specified file.
+// Retrieve file content.
+//
+// Returns the contents of the specified file.
 func (r *FileService) Content(ctx context.Context, fileID string, opts ...option.RequestOption) (res *FileContentResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if fileID == "" {
@@ -124,12 +134,10 @@ func (r *FileService) Content(ctx context.Context, fileID string, opts ...option
 
 // Response for deleting a file in OpenAI Files API.
 type DeleteFileResponse struct {
-	// The file identifier that was deleted
-	ID string `json:"id,required"`
-	// Whether the file was successfully deleted
-	Deleted bool `json:"deleted,required"`
-	// The object type, which is always "file"
-	Object constant.File `json:"object,required"`
+	ID      string `json:"id,required"`
+	Deleted bool   `json:"deleted,required"`
+	// Any of "file".
+	Object DeleteFileResponseObject `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -146,24 +154,25 @@ func (r *DeleteFileResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type DeleteFileResponseObject string
+
+const (
+	DeleteFileResponseObjectFile DeleteFileResponseObject = "file"
+)
+
 // OpenAI File object as defined in the OpenAI Files API.
 type File struct {
-	// The file identifier, which can be referenced in the API endpoints
-	ID string `json:"id,required"`
-	// The size of the file, in bytes
-	Bytes int64 `json:"bytes,required"`
-	// The Unix timestamp (in seconds) for when the file was created
-	CreatedAt int64 `json:"created_at,required"`
-	// The Unix timestamp (in seconds) for when the file expires
-	ExpiresAt int64 `json:"expires_at,required"`
-	// The name of the file
-	Filename string `json:"filename,required"`
-	// The object type, which is always "file"
-	Object constant.File `json:"object,required"`
-	// The intended purpose of the file
+	ID        string `json:"id,required"`
+	Bytes     int64  `json:"bytes,required"`
+	CreatedAt int64  `json:"created_at,required"`
+	ExpiresAt int64  `json:"expires_at,required"`
+	Filename  string `json:"filename,required"`
+	// Valid purpose values for OpenAI Files API.
 	//
 	// Any of "assistants", "batch".
 	Purpose FilePurpose `json:"purpose,required"`
+	// Any of "file".
+	Object FileObject `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -171,8 +180,8 @@ type File struct {
 		CreatedAt   respjson.Field
 		ExpiresAt   respjson.Field
 		Filename    respjson.Field
-		Object      respjson.Field
 		Purpose     respjson.Field
+		Object      respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -184,7 +193,7 @@ func (r *File) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The intended purpose of the file
+// Valid purpose values for OpenAI Files API.
 type FilePurpose string
 
 const (
@@ -192,18 +201,20 @@ const (
 	FilePurposeBatch      FilePurpose = "batch"
 )
 
+type FileObject string
+
+const (
+	FileObjectFile FileObject = "file"
+)
+
 // Response for listing files in OpenAI Files API.
 type ListFilesResponse struct {
-	// List of file objects
-	Data []File `json:"data,required"`
-	// ID of the first file in the list for pagination
+	Data    []File `json:"data,required"`
 	FirstID string `json:"first_id,required"`
-	// Whether there are more files available beyond this page
-	HasMore bool `json:"has_more,required"`
-	// ID of the last file in the list for pagination
-	LastID string `json:"last_id,required"`
-	// The object type, which is always "list"
-	Object constant.List `json:"object,required"`
+	HasMore bool   `json:"has_more,required"`
+	LastID  string `json:"last_id,required"`
+	// Any of "list".
+	Object ListFilesResponseObject `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -222,6 +233,12 @@ func (r *ListFilesResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type ListFilesResponseObject string
+
+const (
+	ListFilesResponseObjectList ListFilesResponseObject = "list"
+)
+
 type FileContentResponse = any
 
 type FileNewParams struct {
@@ -230,7 +247,9 @@ type FileNewParams struct {
 	//
 	// Any of "assistants", "batch".
 	Purpose FileNewParamsPurpose `json:"purpose,omitzero,required"`
-	// Control expiration of uploaded files. Params:
+	// Control expiration of uploaded files.
+	//
+	// Params:
 	//
 	// - anchor, must be "created_at"
 	// - seconds, must be int between 3600 and 2592000 (1 hour to 30 days)
@@ -264,7 +283,9 @@ const (
 	FileNewParamsPurposeBatch      FileNewParamsPurpose = "batch"
 )
 
-// Control expiration of uploaded files. Params:
+// Control expiration of uploaded files.
+//
+// Params:
 //
 // - anchor, must be "created_at"
 // - seconds, must be int between 3600 and 2592000 (1 hour to 30 days)
@@ -286,20 +307,13 @@ func (r *FileNewParamsExpiresAfter) UnmarshalJSON(data []byte) error {
 }
 
 type FileListParams struct {
-	// A cursor for use in pagination. `after` is an object ID that defines your place
-	// in the list. For instance, if you make a list request and receive 100 objects,
-	// ending with obj_foo, your subsequent call can include after=obj_foo in order to
-	// fetch the next page of the list.
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
-	// A limit on the number of objects to be returned. Limit can range between 1 and
-	// 10,000, and the default is 10,000.
-	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	// Sort order by the `created_at` timestamp of the objects. `asc` for ascending
-	// order and `desc` for descending order.
+	Limit param.Opt[int64]  `query:"limit,omitzero" json:"-"`
+	// Sort order for paginated responses.
 	//
 	// Any of "asc", "desc".
 	Order FileListParamsOrder `query:"order,omitzero" json:"-"`
-	// Only return files with the given purpose.
+	// Valid purpose values for OpenAI Files API.
 	//
 	// Any of "assistants", "batch".
 	Purpose FileListParamsPurpose `query:"purpose,omitzero" json:"-"`
@@ -314,8 +328,7 @@ func (r FileListParams) URLQuery() (v url.Values, err error) {
 	})
 }
 
-// Sort order by the `created_at` timestamp of the objects. `asc` for ascending
-// order and `desc` for descending order.
+// Sort order for paginated responses.
 type FileListParamsOrder string
 
 const (
@@ -323,7 +336,7 @@ const (
 	FileListParamsOrderDesc FileListParamsOrder = "desc"
 )
 
-// Only return files with the given purpose.
+// Valid purpose values for OpenAI Files API.
 type FileListParamsPurpose string
 
 const (

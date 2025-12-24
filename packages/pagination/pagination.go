@@ -54,8 +54,9 @@ func (r *DatasetsIterrows[T]) GetNextPage() (res *DatasetsIterrows[T], err error
 	}
 	cfg := r.cfg.Clone(r.cfg.Context)
 
-	next := r.NextIndex
+	offset := r.NextIndex
 	length := int64(len(r.Data))
+	next := offset + length
 
 	if length > 0 && next != 0 {
 		err = cfg.Apply(option.WithQuery("start_index", strconv.FormatInt(next, 10)))

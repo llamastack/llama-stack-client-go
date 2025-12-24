@@ -23,7 +23,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/packages/pagination"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
-	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
 // VectorStoreFileBatchService contains methods and other services that help with
@@ -45,8 +44,10 @@ func NewVectorStoreFileBatchService(opts ...option.RequestOption) (r VectorStore
 	return
 }
 
-// Create a vector store file batch. Generate an OpenAI-compatible vector store
-// file batch for the given vector store.
+// Create a vector store file batch.
+//
+// Generate an OpenAI-compatible vector store file batch for the given vector
+// store.
 func (r *VectorStoreFileBatchService) New(ctx context.Context, vectorStoreID string, body VectorStoreFileBatchNewParams, opts ...option.RequestOption) (res *VectorStoreFileBatches, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if vectorStoreID == "" {
@@ -123,23 +124,18 @@ func (r *VectorStoreFileBatchService) ListFilesAutoPaging(ctx context.Context, b
 
 // Response from listing files in a vector store file batch.
 type ListVectorStoreFilesInBatchResponse struct {
-	// List of vector store file objects in the batch
-	Data []VectorStoreFile `json:"data,required"`
-	// Whether there are more files available beyond this page
-	HasMore bool `json:"has_more,required"`
-	// Object type identifier, always "list"
-	Object string `json:"object,required"`
-	// (Optional) ID of the first file in the list for pagination
-	FirstID string `json:"first_id"`
-	// (Optional) ID of the last file in the list for pagination
-	LastID string `json:"last_id"`
+	Data    []VectorStoreFile `json:"data,required"`
+	FirstID string            `json:"first_id,nullable"`
+	HasMore bool              `json:"has_more"`
+	LastID  string            `json:"last_id,nullable"`
+	Object  string            `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
-		HasMore     respjson.Field
-		Object      respjson.Field
 		FirstID     respjson.Field
+		HasMore     respjson.Field
 		LastID      respjson.Field
+		Object      respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -153,28 +149,22 @@ func (r *ListVectorStoreFilesInBatchResponse) UnmarshalJSON(data []byte) error {
 
 // OpenAI Vector Store File Batch object.
 type VectorStoreFileBatches struct {
-	// Unique identifier for the file batch
-	ID string `json:"id,required"`
-	// Timestamp when the file batch was created
-	CreatedAt int64 `json:"created_at,required"`
-	// File processing status counts for the batch
+	ID        string `json:"id,required"`
+	CreatedAt int64  `json:"created_at,required"`
+	// File processing status counts for a vector store.
 	FileCounts VectorStoreFileBatchesFileCounts `json:"file_counts,required"`
-	// Object type identifier, always "vector_store.file_batch"
-	Object string `json:"object,required"`
-	// Current processing status of the file batch
-	//
 	// Any of "completed", "in_progress", "cancelled", "failed".
-	Status VectorStoreFileBatchesStatus `json:"status,required"`
-	// ID of the vector store containing the file batch
-	VectorStoreID string `json:"vector_store_id,required"`
+	Status        VectorStoreFileBatchesStatus `json:"status,required"`
+	VectorStoreID string                       `json:"vector_store_id,required"`
+	Object        string                       `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID            respjson.Field
 		CreatedAt     respjson.Field
 		FileCounts    respjson.Field
-		Object        respjson.Field
 		Status        respjson.Field
 		VectorStoreID respjson.Field
+		Object        respjson.Field
 		ExtraFields   map[string]respjson.Field
 		raw           string
 	} `json:"-"`
@@ -186,18 +176,13 @@ func (r *VectorStoreFileBatches) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// File processing status counts for the batch
+// File processing status counts for a vector store.
 type VectorStoreFileBatchesFileCounts struct {
-	// Number of files that had their processing cancelled
-	Cancelled int64 `json:"cancelled,required"`
-	// Number of files that have been successfully processed
-	Completed int64 `json:"completed,required"`
-	// Number of files that failed to process
-	Failed int64 `json:"failed,required"`
-	// Number of files currently being processed
+	Cancelled  int64 `json:"cancelled,required"`
+	Completed  int64 `json:"completed,required"`
+	Failed     int64 `json:"failed,required"`
 	InProgress int64 `json:"in_progress,required"`
-	// Total number of files in the vector store
-	Total int64 `json:"total,required"`
+	Total      int64 `json:"total,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Cancelled   respjson.Field
@@ -216,7 +201,6 @@ func (r *VectorStoreFileBatchesFileCounts) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Current processing status of the file batch
 type VectorStoreFileBatchesStatus string
 
 const (
@@ -227,11 +211,9 @@ const (
 )
 
 type VectorStoreFileBatchNewParams struct {
-	// A list of File IDs that the vector store should use
-	FileIDs []string `json:"file_ids,omitzero,required"`
-	// (Optional) Key-value attributes to store with the files
-	Attributes map[string]VectorStoreFileBatchNewParamsAttributeUnion `json:"attributes,omitzero"`
-	// (Optional) The chunking strategy used to chunk the file(s). Defaults to auto
+	FileIDs    []string       `json:"file_ids,omitzero,required"`
+	Attributes map[string]any `json:"attributes,omitzero"`
+	// Automatic chunking strategy for vector store files.
 	ChunkingStrategy VectorStoreFileBatchNewParamsChunkingStrategyUnion `json:"chunking_strategy,omitzero"`
 	paramObj
 }
@@ -242,37 +224,6 @@ func (r VectorStoreFileBatchNewParams) MarshalJSON() (data []byte, err error) {
 }
 func (r *VectorStoreFileBatchNewParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type VectorStoreFileBatchNewParamsAttributeUnion struct {
-	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
-	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
-	OfString   param.Opt[string]  `json:",omitzero,inline"`
-	OfAnyArray []any              `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u VectorStoreFileBatchNewParamsAttributeUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
-}
-func (u *VectorStoreFileBatchNewParamsAttributeUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *VectorStoreFileBatchNewParamsAttributeUnion) asAny() any {
-	if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfAnyArray) {
-		return &u.OfAnyArray
-	}
-	return nil
 }
 
 // Only one field can be non-zero.
@@ -326,19 +277,10 @@ func init() {
 	)
 }
 
-func NewVectorStoreFileBatchNewParamsChunkingStrategyAuto() VectorStoreFileBatchNewParamsChunkingStrategyAuto {
-	return VectorStoreFileBatchNewParamsChunkingStrategyAuto{
-		Type: "auto",
-	}
-}
-
 // Automatic chunking strategy for vector store files.
-//
-// This struct has a constant value, construct it with
-// [NewVectorStoreFileBatchNewParamsChunkingStrategyAuto].
 type VectorStoreFileBatchNewParamsChunkingStrategyAuto struct {
-	// Strategy type, always "auto" for automatic chunking
-	Type constant.Auto `json:"type,required"`
+	// Any of "auto".
+	Type string `json:"type,omitzero"`
 	paramObj
 }
 
@@ -350,16 +292,20 @@ func (r *VectorStoreFileBatchNewParamsChunkingStrategyAuto) UnmarshalJSON(data [
 	return apijson.UnmarshalRoot(data, r)
 }
 
+func init() {
+	apijson.RegisterFieldValidator[VectorStoreFileBatchNewParamsChunkingStrategyAuto](
+		"type", "auto",
+	)
+}
+
 // Static chunking strategy with configurable parameters.
 //
-// The properties Static, Type are required.
+// The property Static is required.
 type VectorStoreFileBatchNewParamsChunkingStrategyStatic struct {
-	// Configuration parameters for the static chunking strategy
+	// Configuration for static chunking strategy.
 	Static VectorStoreFileBatchNewParamsChunkingStrategyStaticStatic `json:"static,omitzero,required"`
-	// Strategy type, always "static" for static chunking
-	//
-	// This field can be elided, and will marshal its zero value as "static".
-	Type constant.Static `json:"type,required"`
+	// Any of "static".
+	Type string `json:"type,omitzero"`
 	paramObj
 }
 
@@ -371,14 +317,16 @@ func (r *VectorStoreFileBatchNewParamsChunkingStrategyStatic) UnmarshalJSON(data
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Configuration parameters for the static chunking strategy
-//
-// The properties ChunkOverlapTokens, MaxChunkSizeTokens are required.
+func init() {
+	apijson.RegisterFieldValidator[VectorStoreFileBatchNewParamsChunkingStrategyStatic](
+		"type", "static",
+	)
+}
+
+// Configuration for static chunking strategy.
 type VectorStoreFileBatchNewParamsChunkingStrategyStaticStatic struct {
-	// Number of tokens to overlap between adjacent chunks
-	ChunkOverlapTokens int64 `json:"chunk_overlap_tokens,required"`
-	// Maximum number of tokens per chunk, must be between 100 and 4096
-	MaxChunkSizeTokens int64 `json:"max_chunk_size_tokens,required"`
+	ChunkOverlapTokens param.Opt[int64] `json:"chunk_overlap_tokens,omitzero"`
+	MaxChunkSizeTokens param.Opt[int64] `json:"max_chunk_size_tokens,omitzero"`
 	paramObj
 }
 
@@ -401,21 +349,12 @@ type VectorStoreFileBatchCancelParams struct {
 }
 
 type VectorStoreFileBatchListFilesParams struct {
-	VectorStoreID string `path:"vector_store_id,required" json:"-"`
-	// A cursor for use in pagination. `after` is an object ID that defines your place
-	// in the list.
-	After param.Opt[string] `query:"after,omitzero" json:"-"`
-	// A cursor for use in pagination. `before` is an object ID that defines your place
-	// in the list.
-	Before param.Opt[string] `query:"before,omitzero" json:"-"`
-	// Filter by file status. One of in_progress, completed, failed, cancelled.
-	Filter param.Opt[string] `query:"filter,omitzero" json:"-"`
-	// A limit on the number of objects to be returned. Limit can range between 1 and
-	// 100, and the default is 20.
-	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	// Sort order by the `created_at` timestamp of the objects. `asc` for ascending
-	// order and `desc` for descending order.
-	Order param.Opt[string] `query:"order,omitzero" json:"-"`
+	VectorStoreID string            `path:"vector_store_id,required" json:"-"`
+	After         param.Opt[string] `query:"after,omitzero" json:"-"`
+	Before        param.Opt[string] `query:"before,omitzero" json:"-"`
+	Filter        param.Opt[string] `query:"filter,omitzero" json:"-"`
+	Limit         param.Opt[int64]  `query:"limit,omitzero" json:"-"`
+	Order         param.Opt[string] `query:"order,omitzero" json:"-"`
 	paramObj
 }
 

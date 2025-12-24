@@ -31,7 +31,6 @@ import (
 // the [NewToolRuntimeService] method instead.
 type ToolRuntimeService struct {
 	Options []option.RequestOption
-	RagTool ToolRuntimeRagToolService
 }
 
 // NewToolRuntimeService generates a new service that applies the given options to
@@ -40,11 +39,12 @@ type ToolRuntimeService struct {
 func NewToolRuntimeService(opts ...option.RequestOption) (r ToolRuntimeService) {
 	r = ToolRuntimeService{}
 	r.Options = opts
-	r.RagTool = NewToolRuntimeRagToolService(opts...)
 	return
 }
 
 // Run a tool with the given arguments.
+//
+// Deprecated: deprecated
 func (r *ToolRuntimeService) InvokeTool(ctx context.Context, body ToolRuntimeInvokeToolParams, opts ...option.RequestOption) (res *ToolInvocationResult, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/tool-runtime/invoke"
@@ -53,6 +53,8 @@ func (r *ToolRuntimeService) InvokeTool(ctx context.Context, body ToolRuntimeInv
 }
 
 // List all tools in the runtime.
+//
+// Deprecated: deprecated
 func (r *ToolRuntimeService) ListTools(ctx context.Context, query ToolRuntimeListToolsParams, opts ...option.RequestOption) (res *[]ToolDef, err error) {
 	var env ToolRuntimeListToolsResponseEnvelope
 	opts = slices.Concat(r.Options, opts)
@@ -67,18 +69,12 @@ func (r *ToolRuntimeService) ListTools(ctx context.Context, query ToolRuntimeLis
 
 // Tool definition used in runtime contexts.
 type ToolDef struct {
-	// Name of the tool
-	Name string `json:"name,required"`
-	// (Optional) Human-readable description of what the tool does
-	Description string `json:"description"`
-	// (Optional) JSON Schema for tool inputs (MCP inputSchema)
-	InputSchema map[string]ToolDefInputSchemaUnion `json:"input_schema"`
-	// (Optional) Additional metadata about the tool
-	Metadata map[string]ToolDefMetadataUnion `json:"metadata"`
-	// (Optional) JSON Schema for tool outputs (MCP outputSchema)
-	OutputSchema map[string]ToolDefOutputSchemaUnion `json:"output_schema"`
-	// (Optional) ID of the tool group this tool belongs to
-	ToolgroupID string `json:"toolgroup_id"`
+	Name         string         `json:"name,required"`
+	Description  string         `json:"description,nullable"`
+	InputSchema  map[string]any `json:"input_schema,nullable"`
+	Metadata     map[string]any `json:"metadata,nullable"`
+	OutputSchema map[string]any `json:"output_schema,nullable"`
+	ToolgroupID  string         `json:"toolgroup_id,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Name         respjson.Field
@@ -98,172 +94,13 @@ func (r *ToolDef) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ToolDefInputSchemaUnion contains all possible properties and values from [bool],
-// [float64], [string], [[]any].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type ToolDefInputSchemaUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
-	} `json:"-"`
-}
-
-func (u ToolDefInputSchemaUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ToolDefInputSchemaUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ToolDefInputSchemaUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ToolDefInputSchemaUnion) AsAnyArray() (v []any) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ToolDefInputSchemaUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ToolDefInputSchemaUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToolDefMetadataUnion contains all possible properties and values from [bool],
-// [float64], [string], [[]any].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type ToolDefMetadataUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
-	} `json:"-"`
-}
-
-func (u ToolDefMetadataUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ToolDefMetadataUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ToolDefMetadataUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ToolDefMetadataUnion) AsAnyArray() (v []any) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ToolDefMetadataUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ToolDefMetadataUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ToolDefOutputSchemaUnion contains all possible properties and values from
-// [bool], [float64], [string], [[]any].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type ToolDefOutputSchemaUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
-	} `json:"-"`
-}
-
-func (u ToolDefOutputSchemaUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ToolDefOutputSchemaUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ToolDefOutputSchemaUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ToolDefOutputSchemaUnion) AsAnyArray() (v []any) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ToolDefOutputSchemaUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ToolDefOutputSchemaUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 // Result of a tool invocation.
 type ToolInvocationResult struct {
-	// (Optional) The output content from the tool execution
-	Content InterleavedContentUnion `json:"content"`
-	// (Optional) Numeric error code if the tool execution failed
-	ErrorCode int64 `json:"error_code"`
-	// (Optional) Error message if the tool execution failed
-	ErrorMessage string `json:"error_message"`
-	// (Optional) Additional metadata about the tool execution
-	Metadata map[string]ToolInvocationResultMetadataUnion `json:"metadata"`
+	// A image content item
+	Content      ToolInvocationResultContentUnion `json:"content,nullable"`
+	ErrorCode    int64                            `json:"error_code,nullable"`
+	ErrorMessage string                           `json:"error_message,nullable"`
+	Metadata     map[string]any                   `json:"metadata,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Content      respjson.Field
@@ -281,64 +118,311 @@ func (r *ToolInvocationResult) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ToolInvocationResultMetadataUnion contains all possible properties and values
-// from [bool], [float64], [string], [[]any].
+// ToolInvocationResultContentUnion contains all possible properties and values
+// from [string], [ToolInvocationResultContentImageContentItemOutput],
+// [ToolInvocationResultContentTextContentItem],
+// [[]ToolInvocationResultContentListImageContentItemOutputTextContentItemItemUnion].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 //
 // If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type ToolInvocationResultMetadataUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
+// will be valid: OfString OfListImageContentItemOutputTextContentItem]
+type ToolInvocationResultContentUnion struct {
 	// This field will be present if the value is a [string] instead of an object.
 	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
+	// This field will be present if the value is a
+	// [[]ToolInvocationResultContentListImageContentItemOutputTextContentItemItemUnion]
+	// instead of an object.
+	OfListImageContentItemOutputTextContentItem []ToolInvocationResultContentListImageContentItemOutputTextContentItemItemUnion `json:",inline"`
+	// This field is from variant [ToolInvocationResultContentImageContentItemOutput].
+	Image ToolInvocationResultContentImageContentItemOutputImage `json:"image"`
+	Type  string                                                 `json:"type"`
+	// This field is from variant [ToolInvocationResultContentTextContentItem].
+	Text string `json:"text"`
+	JSON struct {
+		OfString                                    respjson.Field
+		OfListImageContentItemOutputTextContentItem respjson.Field
+		Image                                       respjson.Field
+		Type                                        respjson.Field
+		Text                                        respjson.Field
+		raw                                         string
 	} `json:"-"`
 }
 
-func (u ToolInvocationResultMetadataUnion) AsBool() (v bool) {
+func (u ToolInvocationResultContentUnion) AsString() (v string) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ToolInvocationResultMetadataUnion) AsFloat() (v float64) {
+func (u ToolInvocationResultContentUnion) AsImageContentItemOutput() (v ToolInvocationResultContentImageContentItemOutput) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ToolInvocationResultMetadataUnion) AsString() (v string) {
+func (u ToolInvocationResultContentUnion) AsTextContentItem() (v ToolInvocationResultContentTextContentItem) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ToolInvocationResultMetadataUnion) AsAnyArray() (v []any) {
+func (u ToolInvocationResultContentUnion) AsListImageContentItemOutputTextContentItem() (v []ToolInvocationResultContentListImageContentItemOutputTextContentItemItemUnion) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
 // Returns the unmodified JSON received from the API
-func (u ToolInvocationResultMetadataUnion) RawJSON() string { return u.JSON.raw }
+func (u ToolInvocationResultContentUnion) RawJSON() string { return u.JSON.raw }
 
-func (r *ToolInvocationResultMetadataUnion) UnmarshalJSON(data []byte) error {
+func (r *ToolInvocationResultContentUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A image content item
+type ToolInvocationResultContentImageContentItemOutput struct {
+	// A URL or a base64 encoded string
+	Image ToolInvocationResultContentImageContentItemOutputImage `json:"image,required"`
+	// Any of "image".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Image       respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ToolInvocationResultContentImageContentItemOutput) RawJSON() string { return r.JSON.raw }
+func (r *ToolInvocationResultContentImageContentItemOutput) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A URL or a base64 encoded string
+type ToolInvocationResultContentImageContentItemOutputImage struct {
+	Data string `json:"data,nullable"`
+	// A URL reference to external content.
+	URL ToolInvocationResultContentImageContentItemOutputImageURL `json:"url,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Data        respjson.Field
+		URL         respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ToolInvocationResultContentImageContentItemOutputImage) RawJSON() string { return r.JSON.raw }
+func (r *ToolInvocationResultContentImageContentItemOutputImage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A URL reference to external content.
+type ToolInvocationResultContentImageContentItemOutputImageURL struct {
+	Uri string `json:"uri,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Uri         respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ToolInvocationResultContentImageContentItemOutputImageURL) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ToolInvocationResultContentImageContentItemOutputImageURL) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A text content item
+type ToolInvocationResultContentTextContentItem struct {
+	Text string `json:"text,required"`
+	// Any of "text".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Text        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ToolInvocationResultContentTextContentItem) RawJSON() string { return r.JSON.raw }
+func (r *ToolInvocationResultContentTextContentItem) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ToolInvocationResultContentListImageContentItemOutputTextContentItemItemUnion
+// contains all possible properties and values from
+// [ToolInvocationResultContentListImageContentItemOutputTextContentItemItemImage],
+// [ToolInvocationResultContentListImageContentItemOutputTextContentItemItemText].
+//
+// Use the
+// [ToolInvocationResultContentListImageContentItemOutputTextContentItemItemUnion.AsAny]
+// method to switch on the variant.
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type ToolInvocationResultContentListImageContentItemOutputTextContentItemItemUnion struct {
+	// This field is from variant
+	// [ToolInvocationResultContentListImageContentItemOutputTextContentItemItemImage].
+	Image ToolInvocationResultContentListImageContentItemOutputTextContentItemItemImageImage `json:"image"`
+	// Any of "image", "text".
+	Type string `json:"type"`
+	// This field is from variant
+	// [ToolInvocationResultContentListImageContentItemOutputTextContentItemItemText].
+	Text string `json:"text"`
+	JSON struct {
+		Image respjson.Field
+		Type  respjson.Field
+		Text  respjson.Field
+		raw   string
+	} `json:"-"`
+}
+
+// anyToolInvocationResultContentListImageContentItemOutputTextContentItemItem is
+// implemented by each variant of
+// [ToolInvocationResultContentListImageContentItemOutputTextContentItemItemUnion]
+// to add type safety for the return type of
+// [ToolInvocationResultContentListImageContentItemOutputTextContentItemItemUnion.AsAny]
+type anyToolInvocationResultContentListImageContentItemOutputTextContentItemItem interface {
+	implToolInvocationResultContentListImageContentItemOutputTextContentItemItemUnion()
+}
+
+func (ToolInvocationResultContentListImageContentItemOutputTextContentItemItemImage) implToolInvocationResultContentListImageContentItemOutputTextContentItemItemUnion() {
+}
+func (ToolInvocationResultContentListImageContentItemOutputTextContentItemItemText) implToolInvocationResultContentListImageContentItemOutputTextContentItemItemUnion() {
+}
+
+// Use the following switch statement to find the correct variant
+//
+//	switch variant := ToolInvocationResultContentListImageContentItemOutputTextContentItemItemUnion.AsAny().(type) {
+//	case llamastackclient.ToolInvocationResultContentListImageContentItemOutputTextContentItemItemImage:
+//	case llamastackclient.ToolInvocationResultContentListImageContentItemOutputTextContentItemItemText:
+//	default:
+//	  fmt.Errorf("no variant present")
+//	}
+func (u ToolInvocationResultContentListImageContentItemOutputTextContentItemItemUnion) AsAny() anyToolInvocationResultContentListImageContentItemOutputTextContentItemItem {
+	switch u.Type {
+	case "image":
+		return u.AsImage()
+	case "text":
+		return u.AsText()
+	}
+	return nil
+}
+
+func (u ToolInvocationResultContentListImageContentItemOutputTextContentItemItemUnion) AsImage() (v ToolInvocationResultContentListImageContentItemOutputTextContentItemItemImage) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ToolInvocationResultContentListImageContentItemOutputTextContentItemItemUnion) AsText() (v ToolInvocationResultContentListImageContentItemOutputTextContentItemItemText) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u ToolInvocationResultContentListImageContentItemOutputTextContentItemItemUnion) RawJSON() string {
+	return u.JSON.raw
+}
+
+func (r *ToolInvocationResultContentListImageContentItemOutputTextContentItemItemUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A image content item
+type ToolInvocationResultContentListImageContentItemOutputTextContentItemItemImage struct {
+	// A URL or a base64 encoded string
+	Image ToolInvocationResultContentListImageContentItemOutputTextContentItemItemImageImage `json:"image,required"`
+	// Any of "image".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Image       respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ToolInvocationResultContentListImageContentItemOutputTextContentItemItemImage) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ToolInvocationResultContentListImageContentItemOutputTextContentItemItemImage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A URL or a base64 encoded string
+type ToolInvocationResultContentListImageContentItemOutputTextContentItemItemImageImage struct {
+	Data string `json:"data,nullable"`
+	// A URL reference to external content.
+	URL ToolInvocationResultContentListImageContentItemOutputTextContentItemItemImageImageURL `json:"url,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Data        respjson.Field
+		URL         respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ToolInvocationResultContentListImageContentItemOutputTextContentItemItemImageImage) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ToolInvocationResultContentListImageContentItemOutputTextContentItemItemImageImage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A URL reference to external content.
+type ToolInvocationResultContentListImageContentItemOutputTextContentItemItemImageImageURL struct {
+	Uri string `json:"uri,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Uri         respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ToolInvocationResultContentListImageContentItemOutputTextContentItemItemImageImageURL) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ToolInvocationResultContentListImageContentItemOutputTextContentItemItemImageImageURL) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A text content item
+type ToolInvocationResultContentListImageContentItemOutputTextContentItemItemText struct {
+	Text string `json:"text,required"`
+	// Any of "text".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Text        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ToolInvocationResultContentListImageContentItemOutputTextContentItemItemText) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ToolInvocationResultContentListImageContentItemOutputTextContentItemItemText) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 type ToolRuntimeInvokeToolParams struct {
-	// A dictionary of arguments to pass to the tool.
-	Kwargs map[string]ToolRuntimeInvokeToolParamsKwargUnion `json:"kwargs,omitzero,required"`
-	// The name of the tool to invoke.
-	ToolName string `json:"tool_name,required"`
-	// (Optional) OAuth access token for authenticating with the MCP server.
+	Kwargs        map[string]any    `json:"kwargs,omitzero,required"`
+	ToolName      string            `json:"tool_name,required"`
 	Authorization param.Opt[string] `json:"authorization,omitzero"`
 	paramObj
 }
@@ -351,43 +435,10 @@ func (r *ToolRuntimeInvokeToolParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type ToolRuntimeInvokeToolParamsKwargUnion struct {
-	OfBool     param.Opt[bool]    `json:",omitzero,inline"`
-	OfFloat    param.Opt[float64] `json:",omitzero,inline"`
-	OfString   param.Opt[string]  `json:",omitzero,inline"`
-	OfAnyArray []any              `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u ToolRuntimeInvokeToolParamsKwargUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfBool, u.OfFloat, u.OfString, u.OfAnyArray)
-}
-func (u *ToolRuntimeInvokeToolParamsKwargUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *ToolRuntimeInvokeToolParamsKwargUnion) asAny() any {
-	if !param.IsOmitted(u.OfBool) {
-		return &u.OfBool.Value
-	} else if !param.IsOmitted(u.OfFloat) {
-		return &u.OfFloat.Value
-	} else if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfAnyArray) {
-		return &u.OfAnyArray
-	}
-	return nil
-}
-
 type ToolRuntimeListToolsParams struct {
-	// (Optional) OAuth access token for authenticating with the MCP server.
 	Authorization param.Opt[string] `query:"authorization,omitzero" json:"-"`
-	// The ID of the tool group to list tools for.
-	ToolGroupID param.Opt[string] `query:"tool_group_id,omitzero" json:"-"`
-	// The MCP endpoint to use for the tool group.
+	ToolGroupID   param.Opt[string] `query:"tool_group_id,omitzero" json:"-"`
+	// A URL reference to external content.
 	McpEndpoint ToolRuntimeListToolsParamsMcpEndpoint `query:"mcp_endpoint,omitzero" json:"-"`
 	paramObj
 }
@@ -401,11 +452,10 @@ func (r ToolRuntimeListToolsParams) URLQuery() (v url.Values, err error) {
 	})
 }
 
-// The MCP endpoint to use for the tool group.
+// A URL reference to external content.
 //
 // The property Uri is required.
 type ToolRuntimeListToolsParamsMcpEndpoint struct {
-	// The URL string pointing to the resource
 	Uri string `query:"uri,required" json:"-"`
 	paramObj
 }
@@ -421,7 +471,6 @@ func (r ToolRuntimeListToolsParamsMcpEndpoint) URLQuery() (v url.Values, err err
 
 // Response containing a list of tool definitions.
 type ToolRuntimeListToolsResponseEnvelope struct {
-	// List of tool definitions
 	Data []ToolDef `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {

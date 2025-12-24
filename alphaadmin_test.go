@@ -9,10 +9,8 @@
 package llamastackclient_test
 
 import (
-	"bytes"
 	"context"
 	"errors"
-	"io"
 	"os"
 	"testing"
 
@@ -21,7 +19,7 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 )
 
-func TestFileNewWithOptionalParams(t *testing.T) {
+func TestAlphaAdminHealth(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -32,12 +30,71 @@ func TestFileNewWithOptionalParams(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Files.New(context.TODO(), llamastackclient.FileNewParams{
-		File:    io.Reader(bytes.NewBuffer([]byte("some file contents"))),
-		Purpose: llamastackclient.FileNewParamsPurposeAssistants,
-		ExpiresAfter: llamastackclient.FileNewParamsExpiresAfter{
-			Seconds: 3600,
-		},
+	_, err := client.Alpha.Admin.Health(context.TODO())
+	if err != nil {
+		var apierr *llamastackclient.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestAlphaAdminInspectProvider(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := llamastackclient.NewClient(
+		option.WithBaseURL(baseURL),
+	)
+	_, err := client.Alpha.Admin.InspectProvider(context.TODO(), "provider_id")
+	if err != nil {
+		var apierr *llamastackclient.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestAlphaAdminListProviders(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := llamastackclient.NewClient(
+		option.WithBaseURL(baseURL),
+	)
+	_, err := client.Alpha.Admin.ListProviders(context.TODO())
+	if err != nil {
+		var apierr *llamastackclient.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestAlphaAdminListRoutesWithOptionalParams(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := llamastackclient.NewClient(
+		option.WithBaseURL(baseURL),
+	)
+	_, err := client.Alpha.Admin.ListRoutes(context.TODO(), llamastackclient.AlphaAdminListRoutesParams{
+		APIFilter: llamastackclient.AlphaAdminListRoutesParamsAPIFilterV1,
 	})
 	if err != nil {
 		var apierr *llamastackclient.Error
@@ -48,7 +105,7 @@ func TestFileNewWithOptionalParams(t *testing.T) {
 	}
 }
 
-func TestFileGet(t *testing.T) {
+func TestAlphaAdminVersion(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -59,75 +116,7 @@ func TestFileGet(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Files.Get(context.TODO(), "file_id")
-	if err != nil {
-		var apierr *llamastackclient.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestFileListWithOptionalParams(t *testing.T) {
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := llamastackclient.NewClient(
-		option.WithBaseURL(baseURL),
-	)
-	_, err := client.Files.List(context.TODO(), llamastackclient.FileListParams{
-		After:   llamastackclient.String("after"),
-		Limit:   llamastackclient.Int(0),
-		Order:   llamastackclient.FileListParamsOrderAsc,
-		Purpose: llamastackclient.FileListParamsPurposeAssistants,
-	})
-	if err != nil {
-		var apierr *llamastackclient.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestFileDelete(t *testing.T) {
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := llamastackclient.NewClient(
-		option.WithBaseURL(baseURL),
-	)
-	_, err := client.Files.Delete(context.TODO(), "file_id")
-	if err != nil {
-		var apierr *llamastackclient.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
-		t.Fatalf("err should be nil: %s", err.Error())
-	}
-}
-
-func TestFileContent(t *testing.T) {
-	baseURL := "http://localhost:4010"
-	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
-		baseURL = envURL
-	}
-	if !testutil.CheckTestServer(t, baseURL) {
-		return
-	}
-	client := llamastackclient.NewClient(
-		option.WithBaseURL(baseURL),
-	)
-	_, err := client.Files.Content(context.TODO(), "file_id")
+	_, err := client.Alpha.Admin.Version(context.TODO())
 	if err != nil {
 		var apierr *llamastackclient.Error
 		if errors.As(err, &apierr) {

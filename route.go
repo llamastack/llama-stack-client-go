@@ -40,8 +40,7 @@ func NewRouteService(opts ...option.RequestOption) (r RouteService) {
 	return
 }
 
-// List routes. List all available API routes with their methods and implementing
-// providers.
+// List all available API routes with their methods and implementing providers.
 func (r *RouteService) List(ctx context.Context, query RouteListParams, opts ...option.RequestOption) (res *[]RouteInfo, err error) {
 	var env ListRoutesResponse
 	opts = slices.Concat(r.Options, opts)
@@ -52,24 +51,6 @@ func (r *RouteService) List(ctx context.Context, query RouteListParams, opts ...
 	}
 	res = &env.Data
 	return
-}
-
-// Response containing a list of all available API routes.
-type ListRoutesResponse struct {
-	// List of available route information objects
-	Data []RouteInfo `json:"data,required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ListRoutesResponse) RawJSON() string { return r.JSON.raw }
-func (r *ListRoutesResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
 }
 
 type RouteListParams struct {
@@ -103,3 +84,21 @@ const (
 	RouteListParamsAPIFilterV1beta     RouteListParamsAPIFilter = "v1beta"
 	RouteListParamsAPIFilterDeprecated RouteListParamsAPIFilter = "deprecated"
 )
+
+// Response containing a list of all available API routes.
+type ListRoutesResponse struct {
+	// List of available API routes
+	Data []RouteInfo `json:"data,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Data        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ListRoutesResponse) RawJSON() string { return r.JSON.raw }
+func (r *ListRoutesResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}

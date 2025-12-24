@@ -28,7 +28,7 @@ Or to pin the version:
 <!-- x-release-please-start-version -->
 
 ```sh
-go get -u 'github.com/llamastack/llama-stack-client-go@v0.4.0-alpha.1'
+go get -u 'github.com/llamastack/llama-stack-client-go@v0.4.0-alpha.2'
 ```
 
 <!-- x-release-please-end -->
@@ -53,13 +53,11 @@ import (
 
 func main() {
 	client := llamastackclient.NewClient()
-	response, err := client.Models.Register(context.TODO(), llamastackclient.ModelRegisterParams{
-		ModelID: "model_id",
-	})
+	models, err := client.Models.List(context.TODO())
 	if err != nil {
 		panic(err.Error())
 	}
-	fmt.Printf("%+v\n", response.Identifier)
+	fmt.Printf("%+v\n", models)
 }
 
 ```
@@ -283,8 +281,33 @@ This library provides some conveniences for working with paginated list endpoint
 
 You can use `.ListAutoPaging()` methods to iterate through items across all pages:
 
+```go
+iter := client.Responses.ListAutoPaging(context.TODO(), llamastackclient.ResponseListParams{})
+// Automatically fetches more pages as needed.
+for iter.Next() {
+	responseListResponse := iter.Current()
+	fmt.Printf("%+v\n", responseListResponse)
+}
+if err := iter.Err(); err != nil {
+	panic(err.Error())
+}
+```
+
 Or you can use simple `.List()` methods to fetch a single page and receive a standard response object
 with additional helper methods like `.GetNextPage()`, e.g.:
+
+```go
+page, err := client.Responses.List(context.TODO(), llamastackclient.ResponseListParams{})
+for page != nil {
+	for _, response := range page.Data {
+		fmt.Printf("%+v\n", response)
+	}
+	page, err = page.GetNextPage()
+}
+if err != nil {
+	panic(err.Error())
+}
+```
 
 ### Errors
 
@@ -302,6 +325,7 @@ _, err := client.Chat.Completions.New(context.TODO(), llamastackclient.ChatCompl
 			Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
 				OfString: llamastackclient.String("string"),
 			},
+			Role: "user",
 		},
 	}},
 	Model: "model",
@@ -338,6 +362,7 @@ client.Chat.Completions.New(
 				Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
 					OfString: llamastackclient.String("string"),
 				},
+				Role: "user",
 			},
 		}},
 		Model: "model",
@@ -404,6 +429,7 @@ client.Chat.Completions.New(
 				Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
 					OfString: llamastackclient.String("string"),
 				},
+				Role: "user",
 			},
 		}},
 		Model: "model",
@@ -428,6 +454,7 @@ completion, err := client.Chat.Completions.New(
 				Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
 					OfString: llamastackclient.String("string"),
 				},
+				Role: "user",
 			},
 		}},
 		Model: "model",

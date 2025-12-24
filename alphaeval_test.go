@@ -38,35 +38,38 @@ func TestAlphaEvalEvaluateRowsWithOptionalParams(t *testing.T) {
 				EvalCandidate: llamastackclient.BenchmarkConfigEvalCandidateParam{
 					Model: "model",
 					SamplingParams: llamastackclient.SamplingParams{
-						Strategy: llamastackclient.SamplingParamsStrategyUnion{
-							OfGreedy: &llamastackclient.SamplingParamsStrategyGreedy{},
-						},
 						MaxTokens:         llamastackclient.Int(0),
 						RepetitionPenalty: llamastackclient.Float(0),
 						Stop:              []string{"string"},
+						Strategy: llamastackclient.SamplingParamsStrategyUnion{
+							OfGreedy: &llamastackclient.SamplingParamsStrategyGreedy{
+								Type: "greedy",
+							},
+						},
 					},
 					SystemMessage: llamastackclient.SystemMessageParam{
-						Content: llamastackclient.InterleavedContentUnionParam{
+						Content: llamastackclient.SystemMessageContentUnionParam{
 							OfString: llamastackclient.String("string"),
 						},
+						Role: llamastackclient.SystemMessageRoleSystem,
 					},
+					Type: "model",
 				},
-				ScoringParams: map[string]llamastackclient.ScoringFnParamsUnion{
+				NumExamples: llamastackclient.Int(0),
+				ScoringParams: map[string]llamastackclient.BenchmarkConfigScoringParamUnionParam{
 					"foo": {
-						OfLlmAsJudge: &llamastackclient.ScoringFnParamsLlmAsJudge{
-							AggregationFunctions: []string{"average"},
+						OfLlmAsJudge: &llamastackclient.BenchmarkConfigScoringParamLlmAsJudgeParam{
 							JudgeModel:           "judge_model",
+							AggregationFunctions: []string{"average"},
 							JudgeScoreRegexes:    []string{"string"},
 							PromptTemplate:       llamastackclient.String("prompt_template"),
+							Type:                 "llm_as_judge",
 						},
 					},
 				},
-				NumExamples: llamastackclient.Int(0),
 			},
-			InputRows: []map[string]llamastackclient.AlphaEvalEvaluateRowsParamsInputRowUnion{{
-				"foo": {
-					OfBool: llamastackclient.Bool(true),
-				},
+			InputRows: []map[string]any{{
+				"foo": "bar",
 			}},
 			ScoringFunctions: []string{"string"},
 		},
@@ -99,35 +102,38 @@ func TestAlphaEvalEvaluateRowsAlphaWithOptionalParams(t *testing.T) {
 				EvalCandidate: llamastackclient.BenchmarkConfigEvalCandidateParam{
 					Model: "model",
 					SamplingParams: llamastackclient.SamplingParams{
-						Strategy: llamastackclient.SamplingParamsStrategyUnion{
-							OfGreedy: &llamastackclient.SamplingParamsStrategyGreedy{},
-						},
 						MaxTokens:         llamastackclient.Int(0),
 						RepetitionPenalty: llamastackclient.Float(0),
 						Stop:              []string{"string"},
+						Strategy: llamastackclient.SamplingParamsStrategyUnion{
+							OfGreedy: &llamastackclient.SamplingParamsStrategyGreedy{
+								Type: "greedy",
+							},
+						},
 					},
 					SystemMessage: llamastackclient.SystemMessageParam{
-						Content: llamastackclient.InterleavedContentUnionParam{
+						Content: llamastackclient.SystemMessageContentUnionParam{
 							OfString: llamastackclient.String("string"),
 						},
+						Role: llamastackclient.SystemMessageRoleSystem,
 					},
+					Type: "model",
 				},
-				ScoringParams: map[string]llamastackclient.ScoringFnParamsUnion{
+				NumExamples: llamastackclient.Int(0),
+				ScoringParams: map[string]llamastackclient.BenchmarkConfigScoringParamUnionParam{
 					"foo": {
-						OfLlmAsJudge: &llamastackclient.ScoringFnParamsLlmAsJudge{
-							AggregationFunctions: []string{"average"},
+						OfLlmAsJudge: &llamastackclient.BenchmarkConfigScoringParamLlmAsJudgeParam{
 							JudgeModel:           "judge_model",
+							AggregationFunctions: []string{"average"},
 							JudgeScoreRegexes:    []string{"string"},
 							PromptTemplate:       llamastackclient.String("prompt_template"),
+							Type:                 "llm_as_judge",
 						},
 					},
 				},
-				NumExamples: llamastackclient.Int(0),
 			},
-			InputRows: []map[string]llamastackclient.AlphaEvalEvaluateRowsAlphaParamsInputRowUnion{{
-				"foo": {
-					OfBool: llamastackclient.Bool(true),
-				},
+			InputRows: []map[string]any{{
+				"foo": "bar",
 			}},
 			ScoringFunctions: []string{"string"},
 		},
@@ -160,30 +166,35 @@ func TestAlphaEvalRunEvalWithOptionalParams(t *testing.T) {
 				EvalCandidate: llamastackclient.BenchmarkConfigEvalCandidateParam{
 					Model: "model",
 					SamplingParams: llamastackclient.SamplingParams{
-						Strategy: llamastackclient.SamplingParamsStrategyUnion{
-							OfGreedy: &llamastackclient.SamplingParamsStrategyGreedy{},
-						},
 						MaxTokens:         llamastackclient.Int(0),
 						RepetitionPenalty: llamastackclient.Float(0),
 						Stop:              []string{"string"},
+						Strategy: llamastackclient.SamplingParamsStrategyUnion{
+							OfGreedy: &llamastackclient.SamplingParamsStrategyGreedy{
+								Type: "greedy",
+							},
+						},
 					},
 					SystemMessage: llamastackclient.SystemMessageParam{
-						Content: llamastackclient.InterleavedContentUnionParam{
+						Content: llamastackclient.SystemMessageContentUnionParam{
 							OfString: llamastackclient.String("string"),
 						},
+						Role: llamastackclient.SystemMessageRoleSystem,
 					},
+					Type: "model",
 				},
-				ScoringParams: map[string]llamastackclient.ScoringFnParamsUnion{
+				NumExamples: llamastackclient.Int(0),
+				ScoringParams: map[string]llamastackclient.BenchmarkConfigScoringParamUnionParam{
 					"foo": {
-						OfLlmAsJudge: &llamastackclient.ScoringFnParamsLlmAsJudge{
-							AggregationFunctions: []string{"average"},
+						OfLlmAsJudge: &llamastackclient.BenchmarkConfigScoringParamLlmAsJudgeParam{
 							JudgeModel:           "judge_model",
+							AggregationFunctions: []string{"average"},
 							JudgeScoreRegexes:    []string{"string"},
 							PromptTemplate:       llamastackclient.String("prompt_template"),
+							Type:                 "llm_as_judge",
 						},
 					},
 				},
-				NumExamples: llamastackclient.Int(0),
 			},
 		},
 	)
@@ -215,30 +226,35 @@ func TestAlphaEvalRunEvalAlphaWithOptionalParams(t *testing.T) {
 				EvalCandidate: llamastackclient.BenchmarkConfigEvalCandidateParam{
 					Model: "model",
 					SamplingParams: llamastackclient.SamplingParams{
-						Strategy: llamastackclient.SamplingParamsStrategyUnion{
-							OfGreedy: &llamastackclient.SamplingParamsStrategyGreedy{},
-						},
 						MaxTokens:         llamastackclient.Int(0),
 						RepetitionPenalty: llamastackclient.Float(0),
 						Stop:              []string{"string"},
+						Strategy: llamastackclient.SamplingParamsStrategyUnion{
+							OfGreedy: &llamastackclient.SamplingParamsStrategyGreedy{
+								Type: "greedy",
+							},
+						},
 					},
 					SystemMessage: llamastackclient.SystemMessageParam{
-						Content: llamastackclient.InterleavedContentUnionParam{
+						Content: llamastackclient.SystemMessageContentUnionParam{
 							OfString: llamastackclient.String("string"),
 						},
+						Role: llamastackclient.SystemMessageRoleSystem,
 					},
+					Type: "model",
 				},
-				ScoringParams: map[string]llamastackclient.ScoringFnParamsUnion{
+				NumExamples: llamastackclient.Int(0),
+				ScoringParams: map[string]llamastackclient.BenchmarkConfigScoringParamUnionParam{
 					"foo": {
-						OfLlmAsJudge: &llamastackclient.ScoringFnParamsLlmAsJudge{
-							AggregationFunctions: []string{"average"},
+						OfLlmAsJudge: &llamastackclient.BenchmarkConfigScoringParamLlmAsJudgeParam{
 							JudgeModel:           "judge_model",
+							AggregationFunctions: []string{"average"},
 							JudgeScoreRegexes:    []string{"string"},
 							PromptTemplate:       llamastackclient.String("prompt_template"),
+							Type:                 "llm_as_judge",
 						},
 					},
 				},
-				NumExamples: llamastackclient.Int(0),
 			},
 		},
 	)

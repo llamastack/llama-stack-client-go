@@ -10,7 +10,6 @@ package llamastackclient_test
 
 import (
 	"context"
-	"errors"
 	"os"
 	"testing"
 
@@ -19,7 +18,7 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 )
 
-func TestSafetyRunShield(t *testing.T) {
+func TestAutoPagination(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -30,26 +29,13 @@ func TestSafetyRunShield(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Safety.RunShield(context.TODO(), llamastackclient.SafetyRunShieldParams{
-		Messages: []llamastackclient.SafetyRunShieldParamsMessageUnion{{
-			OfUser: &llamastackclient.SafetyRunShieldParamsMessageUser{
-				Content: llamastackclient.SafetyRunShieldParamsMessageUserContentUnion{
-					OfString: llamastackclient.String("string"),
-				},
-				Name: llamastackclient.String("name"),
-				Role: "user",
-			},
-		}},
-		Params: map[string]any{
-			"foo": "bar",
-		},
-		ShieldID: "shield_id",
-	})
-	if err != nil {
-		var apierr *llamastackclient.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
+	iter := client.Responses.ListAutoPaging(context.TODO(), llamastackclient.ResponseListParams{})
+	// Prism mock isn't going to give us real pagination
+	for i := 0; i < 3 && iter.Next(); i++ {
+		response := iter.Current()
+		t.Logf("%+v\n", response.ID)
+	}
+	if err := iter.Err(); err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
 }

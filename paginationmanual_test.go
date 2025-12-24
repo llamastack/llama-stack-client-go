@@ -10,7 +10,6 @@ package llamastackclient_test
 
 import (
 	"context"
-	"errors"
 	"os"
 	"testing"
 
@@ -19,7 +18,7 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 )
 
-func TestSafetyRunShield(t *testing.T) {
+func TestManualPagination(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -30,26 +29,21 @@ func TestSafetyRunShield(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Safety.RunShield(context.TODO(), llamastackclient.SafetyRunShieldParams{
-		Messages: []llamastackclient.SafetyRunShieldParamsMessageUnion{{
-			OfUser: &llamastackclient.SafetyRunShieldParamsMessageUser{
-				Content: llamastackclient.SafetyRunShieldParamsMessageUserContentUnion{
-					OfString: llamastackclient.String("string"),
-				},
-				Name: llamastackclient.String("name"),
-				Role: "user",
-			},
-		}},
-		Params: map[string]any{
-			"foo": "bar",
-		},
-		ShieldID: "shield_id",
-	})
+	page, err := client.Responses.List(context.TODO(), llamastackclient.ResponseListParams{})
 	if err != nil {
-		var apierr *llamastackclient.Error
-		if errors.As(err, &apierr) {
-			t.Log(string(apierr.DumpRequest(true)))
-		}
 		t.Fatalf("err should be nil: %s", err.Error())
+	}
+	for _, response := range page.Data {
+		t.Logf("%+v\n", response.ID)
+	}
+	// Prism mock isn't going to give us real pagination
+	page, err = page.GetNextPage()
+	if err != nil {
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+	if page != nil {
+		for _, response := range page.Data {
+			t.Logf("%+v\n", response.ID)
+		}
 	}
 }

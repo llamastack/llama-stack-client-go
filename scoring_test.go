@@ -31,18 +31,17 @@ func TestScoringScore(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Scoring.Score(context.TODO(), llamastackclient.ScoringScoreParams{
-		InputRows: []map[string]llamastackclient.ScoringScoreParamsInputRowUnion{{
-			"foo": {
-				OfBool: llamastackclient.Bool(true),
-			},
+		InputRows: []map[string]any{{
+			"foo": "bar",
 		}},
-		ScoringFunctions: map[string]llamastackclient.ScoringFnParamsUnion{
+		ScoringFunctions: map[string]llamastackclient.ScoringScoreParamsScoringFunctionUnion{
 			"foo": {
-				OfLlmAsJudge: &llamastackclient.ScoringFnParamsLlmAsJudge{
-					AggregationFunctions: []string{"average"},
+				OfLlmAsJudge: &llamastackclient.ScoringScoreParamsScoringFunctionLlmAsJudge{
 					JudgeModel:           "judge_model",
+					AggregationFunctions: []string{"average"},
 					JudgeScoreRegexes:    []string{"string"},
 					PromptTemplate:       llamastackclient.String("prompt_template"),
+					Type:                 "llm_as_judge",
 				},
 			},
 		},
@@ -56,7 +55,7 @@ func TestScoringScore(t *testing.T) {
 	}
 }
 
-func TestScoringScoreBatch(t *testing.T) {
+func TestScoringScoreBatchWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -68,18 +67,19 @@ func TestScoringScoreBatch(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Scoring.ScoreBatch(context.TODO(), llamastackclient.ScoringScoreBatchParams{
-		DatasetID:          "dataset_id",
-		SaveResultsDataset: true,
-		ScoringFunctions: map[string]llamastackclient.ScoringFnParamsUnion{
+		DatasetID: "dataset_id",
+		ScoringFunctions: map[string]llamastackclient.ScoringScoreBatchParamsScoringFunctionUnion{
 			"foo": {
-				OfLlmAsJudge: &llamastackclient.ScoringFnParamsLlmAsJudge{
-					AggregationFunctions: []string{"average"},
+				OfLlmAsJudge: &llamastackclient.ScoringScoreBatchParamsScoringFunctionLlmAsJudge{
 					JudgeModel:           "judge_model",
+					AggregationFunctions: []string{"average"},
 					JudgeScoreRegexes:    []string{"string"},
 					PromptTemplate:       llamastackclient.String("prompt_template"),
+					Type:                 "llm_as_judge",
 				},
 			},
 		},
+		SaveResultsDataset: llamastackclient.Bool(true),
 	})
 	if err != nil {
 		var apierr *llamastackclient.Error

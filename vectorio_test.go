@@ -33,13 +33,8 @@ func TestVectorIoInsertWithOptionalParams(t *testing.T) {
 	err := client.VectorIo.Insert(context.TODO(), llamastackclient.VectorIoInsertParams{
 		Chunks: []llamastackclient.VectorIoInsertParamsChunk{{
 			ChunkID: "chunk_id",
-			Content: llamastackclient.InterleavedContentUnionParam{
+			Content: llamastackclient.VectorIoInsertParamsChunkContentUnion{
 				OfString: llamastackclient.String("string"),
-			},
-			Metadata: map[string]llamastackclient.VectorIoInsertParamsChunkMetadataUnion{
-				"foo": {
-					OfBool: llamastackclient.Bool(true),
-				},
 			},
 			ChunkMetadata: llamastackclient.VectorIoInsertParamsChunkChunkMetadata{
 				ChunkEmbeddingDimension: llamastackclient.Int(0),
@@ -55,6 +50,9 @@ func TestVectorIoInsertWithOptionalParams(t *testing.T) {
 				UpdatedTimestamp:        llamastackclient.Int(0),
 			},
 			Embedding: []float64{0},
+			Metadata: map[string]any{
+				"foo": "bar",
+			},
 		}},
 		VectorStoreID: "vector_store_id",
 		TtlSeconds:    llamastackclient.Int(0),
@@ -80,14 +78,12 @@ func TestVectorIoQueryWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.VectorIo.Query(context.TODO(), llamastackclient.VectorIoQueryParams{
-		Query: llamastackclient.InterleavedContentUnionParam{
+		Query: llamastackclient.VectorIoQueryParamsQueryUnion{
 			OfString: llamastackclient.String("string"),
 		},
 		VectorStoreID: "vector_store_id",
-		Params: map[string]llamastackclient.VectorIoQueryParamsParamUnion{
-			"foo": {
-				OfBool: llamastackclient.Bool(true),
-			},
+		Params: map[string]any{
+			"foo": "bar",
 		},
 	})
 	if err != nil {

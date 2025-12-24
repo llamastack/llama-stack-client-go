@@ -49,10 +49,8 @@ func TestCompletionNewWithOptionalParams(t *testing.T) {
 		Stop: llamastackclient.CompletionNewParamsStopUnion{
 			OfString: llamastackclient.String("string"),
 		},
-		StreamOptions: map[string]llamastackclient.CompletionNewParamsStreamOptionUnion{
-			"foo": {
-				OfBool: llamastackclient.Bool(true),
-			},
+		StreamOptions: map[string]any{
+			"foo": "bar",
 		},
 		Suffix:      llamastackclient.String("suffix"),
 		Temperature: llamastackclient.Float(0),

@@ -34,12 +34,16 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 		Input: llamastackclient.ResponseNewParamsInputUnion{
 			OfString: llamastackclient.String("string"),
 		},
-		Model:              "model",
-		Conversation:       llamastackclient.String("conversation"),
-		Include:            []string{"string"},
-		Instructions:       llamastackclient.String("instructions"),
-		MaxInferIters:      llamastackclient.Int(0),
-		MaxToolCalls:       llamastackclient.Int(0),
+		Model:         "model",
+		Conversation:  llamastackclient.String("conversation"),
+		Include:       []string{"web_search_call.action.sources"},
+		Instructions:  llamastackclient.String("instructions"),
+		MaxInferIters: llamastackclient.Int(0),
+		MaxToolCalls:  llamastackclient.Int(0),
+		Metadata: map[string]string{
+			"foo": "string",
+		},
+		ParallelToolCalls:  llamastackclient.Bool(true),
 		PreviousResponseID: llamastackclient.String("previous_response_id"),
 		Prompt: llamastackclient.ResponseNewParamsPrompt{
 			ID: "id",
@@ -47,6 +51,7 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 				"foo": {
 					OfInputText: &llamastackclient.ResponseNewParamsPromptVariableInputText{
 						Text: "text",
+						Type: "input_text",
 					},
 				},
 			},
@@ -56,21 +61,22 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 		Temperature: llamastackclient.Float(0),
 		Text: llamastackclient.ResponseNewParamsText{
 			Format: llamastackclient.ResponseNewParamsTextFormat{
-				Type:        llamastackclient.ResponseNewParamsTextFormatTypeText,
 				Description: llamastackclient.String("description"),
 				Name:        llamastackclient.String("name"),
-				Schema: map[string]llamastackclient.ResponseNewParamsTextFormatSchemaUnion{
-					"foo": {
-						OfBool: llamastackclient.Bool(true),
-					},
+				Schema: map[string]any{
+					"foo": "bar",
 				},
 				Strict: llamastackclient.Bool(true),
+				Type:   "text",
 			},
+		},
+		ToolChoice: llamastackclient.ResponseNewParamsToolChoiceUnion{
+			OfOpenAIResponseInputToolChoiceMode: llamastackclient.String("auto"),
 		},
 		Tools: []llamastackclient.ResponseNewParamsToolUnion{{
 			OfOpenAIResponseInputToolWebSearch: &llamastackclient.ResponseNewParamsToolOpenAIResponseInputToolWebSearch{
-				Type:              llamastackclient.ResponseNewParamsToolOpenAIResponseInputToolWebSearchTypeWebSearch,
-				SearchContextSize: llamastackclient.String("search_context_size"),
+				SearchContextSize: llamastackclient.String("S?oC\"high"),
+				Type:              "web_search",
 			},
 		}},
 	})

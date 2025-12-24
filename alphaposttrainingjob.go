@@ -10,7 +10,6 @@ package llamastackclient
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
 	"net/url"
 	"slices"
@@ -44,7 +43,7 @@ func NewAlphaPostTrainingJobService(opts ...option.RequestOption) (r AlphaPostTr
 }
 
 // Get all training jobs.
-func (r *AlphaPostTrainingJobService) List(ctx context.Context, opts ...option.RequestOption) (res *[]ListPostTrainingJobsResponseData, err error) {
+func (r *AlphaPostTrainingJobService) List(ctx context.Context, opts ...option.RequestOption) (res *[]PostTrainingJob, err error) {
 	var env ListPostTrainingJobsResponse
 	opts = slices.Concat(r.Options, opts)
 	path := "v1alpha/post-training/jobs"
@@ -67,7 +66,7 @@ func (r *AlphaPostTrainingJobService) Artifacts(ctx context.Context, query Alpha
 // Cancel a training job.
 func (r *AlphaPostTrainingJobService) Cancel(ctx context.Context, body AlphaPostTrainingJobCancelParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "")}, opts...)
+	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	path := "v1alpha/post-training/job/cancel"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
 	return
@@ -83,14 +82,12 @@ func (r *AlphaPostTrainingJobService) Status(ctx context.Context, query AlphaPos
 
 // Artifacts of a finetuning job.
 type AlphaPostTrainingJobArtifactsResponse struct {
-	// List of model checkpoints created during training
-	Checkpoints []AlphaPostTrainingJobArtifactsResponseCheckpoint `json:"checkpoints,required"`
-	// Unique identifier for the training job
-	JobUuid string `json:"job_uuid,required"`
+	JobUuid     string                                            `json:"job_uuid,required"`
+	Checkpoints []AlphaPostTrainingJobArtifactsResponseCheckpoint `json:"checkpoints"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Checkpoints respjson.Field
 		JobUuid     respjson.Field
+		Checkpoints respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -104,18 +101,13 @@ func (r *AlphaPostTrainingJobArtifactsResponse) UnmarshalJSON(data []byte) error
 
 // Checkpoint created during training runs.
 type AlphaPostTrainingJobArtifactsResponseCheckpoint struct {
-	// Timestamp when the checkpoint was created
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
-	// Training epoch when the checkpoint was saved
-	Epoch int64 `json:"epoch,required"`
-	// Unique identifier for the checkpoint
-	Identifier string `json:"identifier,required"`
-	// File system path where the checkpoint is stored
-	Path string `json:"path,required"`
-	// Identifier of the training job that created this checkpoint
-	PostTrainingJobID string `json:"post_training_job_id,required"`
-	// (Optional) Training metrics associated with this checkpoint
-	TrainingMetrics AlphaPostTrainingJobArtifactsResponseCheckpointTrainingMetrics `json:"training_metrics"`
+	CreatedAt         time.Time `json:"created_at,required" format:"date-time"`
+	Epoch             int64     `json:"epoch,required"`
+	Identifier        string    `json:"identifier,required"`
+	Path              string    `json:"path,required"`
+	PostTrainingJobID string    `json:"post_training_job_id,required"`
+	// Training metrics captured during post-training jobs.
+	TrainingMetrics AlphaPostTrainingJobArtifactsResponseCheckpointTrainingMetrics `json:"training_metrics,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CreatedAt         respjson.Field
@@ -135,15 +127,11 @@ func (r *AlphaPostTrainingJobArtifactsResponseCheckpoint) UnmarshalJSON(data []b
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// (Optional) Training metrics associated with this checkpoint
+// Training metrics captured during post-training jobs.
 type AlphaPostTrainingJobArtifactsResponseCheckpointTrainingMetrics struct {
-	// Training epoch number
-	Epoch int64 `json:"epoch,required"`
-	// Perplexity metric indicating model confidence
-	Perplexity float64 `json:"perplexity,required"`
-	// Loss value on the training dataset
-	TrainLoss float64 `json:"train_loss,required"`
-	// Loss value on the validation dataset
+	Epoch          int64   `json:"epoch,required"`
+	Perplexity     float64 `json:"perplexity,required"`
+	TrainLoss      float64 `json:"train_loss,required"`
 	ValidationLoss float64 `json:"validation_loss,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -166,27 +154,21 @@ func (r *AlphaPostTrainingJobArtifactsResponseCheckpointTrainingMetrics) Unmarsh
 
 // Status of a finetuning job.
 type AlphaPostTrainingJobStatusResponse struct {
-	// List of model checkpoints created during training
-	Checkpoints []AlphaPostTrainingJobStatusResponseCheckpoint `json:"checkpoints,required"`
-	// Unique identifier for the training job
 	JobUuid string `json:"job_uuid,required"`
-	// Current status of the training job
+	// Status of a job execution.
 	//
 	// Any of "completed", "in_progress", "failed", "scheduled", "cancelled".
-	Status AlphaPostTrainingJobStatusResponseStatus `json:"status,required"`
-	// (Optional) Timestamp when the job finished, if completed
-	CompletedAt time.Time `json:"completed_at" format:"date-time"`
-	// (Optional) Information about computational resources allocated to the job
-	ResourcesAllocated map[string]AlphaPostTrainingJobStatusResponseResourcesAllocatedUnion `json:"resources_allocated"`
-	// (Optional) Timestamp when the job was scheduled
-	ScheduledAt time.Time `json:"scheduled_at" format:"date-time"`
-	// (Optional) Timestamp when the job execution began
-	StartedAt time.Time `json:"started_at" format:"date-time"`
+	Status             AlphaPostTrainingJobStatusResponseStatus       `json:"status,required"`
+	Checkpoints        []AlphaPostTrainingJobStatusResponseCheckpoint `json:"checkpoints"`
+	CompletedAt        time.Time                                      `json:"completed_at,nullable" format:"date-time"`
+	ResourcesAllocated map[string]any                                 `json:"resources_allocated,nullable"`
+	ScheduledAt        time.Time                                      `json:"scheduled_at,nullable" format:"date-time"`
+	StartedAt          time.Time                                      `json:"started_at,nullable" format:"date-time"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Checkpoints        respjson.Field
 		JobUuid            respjson.Field
 		Status             respjson.Field
+		Checkpoints        respjson.Field
 		CompletedAt        respjson.Field
 		ResourcesAllocated respjson.Field
 		ScheduledAt        respjson.Field
@@ -202,20 +184,26 @@ func (r *AlphaPostTrainingJobStatusResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Status of a job execution.
+type AlphaPostTrainingJobStatusResponseStatus string
+
+const (
+	AlphaPostTrainingJobStatusResponseStatusCompleted  AlphaPostTrainingJobStatusResponseStatus = "completed"
+	AlphaPostTrainingJobStatusResponseStatusInProgress AlphaPostTrainingJobStatusResponseStatus = "in_progress"
+	AlphaPostTrainingJobStatusResponseStatusFailed     AlphaPostTrainingJobStatusResponseStatus = "failed"
+	AlphaPostTrainingJobStatusResponseStatusScheduled  AlphaPostTrainingJobStatusResponseStatus = "scheduled"
+	AlphaPostTrainingJobStatusResponseStatusCancelled  AlphaPostTrainingJobStatusResponseStatus = "cancelled"
+)
+
 // Checkpoint created during training runs.
 type AlphaPostTrainingJobStatusResponseCheckpoint struct {
-	// Timestamp when the checkpoint was created
-	CreatedAt time.Time `json:"created_at,required" format:"date-time"`
-	// Training epoch when the checkpoint was saved
-	Epoch int64 `json:"epoch,required"`
-	// Unique identifier for the checkpoint
-	Identifier string `json:"identifier,required"`
-	// File system path where the checkpoint is stored
-	Path string `json:"path,required"`
-	// Identifier of the training job that created this checkpoint
-	PostTrainingJobID string `json:"post_training_job_id,required"`
-	// (Optional) Training metrics associated with this checkpoint
-	TrainingMetrics AlphaPostTrainingJobStatusResponseCheckpointTrainingMetrics `json:"training_metrics"`
+	CreatedAt         time.Time `json:"created_at,required" format:"date-time"`
+	Epoch             int64     `json:"epoch,required"`
+	Identifier        string    `json:"identifier,required"`
+	Path              string    `json:"path,required"`
+	PostTrainingJobID string    `json:"post_training_job_id,required"`
+	// Training metrics captured during post-training jobs.
+	TrainingMetrics AlphaPostTrainingJobStatusResponseCheckpointTrainingMetrics `json:"training_metrics,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CreatedAt         respjson.Field
@@ -235,15 +223,11 @@ func (r *AlphaPostTrainingJobStatusResponseCheckpoint) UnmarshalJSON(data []byte
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// (Optional) Training metrics associated with this checkpoint
+// Training metrics captured during post-training jobs.
 type AlphaPostTrainingJobStatusResponseCheckpointTrainingMetrics struct {
-	// Training epoch number
-	Epoch int64 `json:"epoch,required"`
-	// Perplexity metric indicating model confidence
-	Perplexity float64 `json:"perplexity,required"`
-	// Loss value on the training dataset
-	TrainLoss float64 `json:"train_loss,required"`
-	// Loss value on the validation dataset
+	Epoch          int64   `json:"epoch,required"`
+	Perplexity     float64 `json:"perplexity,required"`
+	TrainLoss      float64 `json:"train_loss,required"`
 	ValidationLoss float64 `json:"validation_loss,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -264,73 +248,23 @@ func (r *AlphaPostTrainingJobStatusResponseCheckpointTrainingMetrics) UnmarshalJ
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Current status of the training job
-type AlphaPostTrainingJobStatusResponseStatus string
-
-const (
-	AlphaPostTrainingJobStatusResponseStatusCompleted  AlphaPostTrainingJobStatusResponseStatus = "completed"
-	AlphaPostTrainingJobStatusResponseStatusInProgress AlphaPostTrainingJobStatusResponseStatus = "in_progress"
-	AlphaPostTrainingJobStatusResponseStatusFailed     AlphaPostTrainingJobStatusResponseStatus = "failed"
-	AlphaPostTrainingJobStatusResponseStatusScheduled  AlphaPostTrainingJobStatusResponseStatus = "scheduled"
-	AlphaPostTrainingJobStatusResponseStatusCancelled  AlphaPostTrainingJobStatusResponseStatus = "cancelled"
-)
-
-// AlphaPostTrainingJobStatusResponseResourcesAllocatedUnion contains all possible
-// properties and values from [bool], [float64], [string], [[]any].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfBool OfFloat OfString OfAnyArray]
-type AlphaPostTrainingJobStatusResponseResourcesAllocatedUnion struct {
-	// This field will be present if the value is a [bool] instead of an object.
-	OfBool bool `json:",inline"`
-	// This field will be present if the value is a [float64] instead of an object.
-	OfFloat float64 `json:",inline"`
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a [[]any] instead of an object.
-	OfAnyArray []any `json:",inline"`
-	JSON       struct {
-		OfBool     respjson.Field
-		OfFloat    respjson.Field
-		OfString   respjson.Field
-		OfAnyArray respjson.Field
-		raw        string
+type ListPostTrainingJobsResponse struct {
+	Data []PostTrainingJob `json:"data,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Data        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
 	} `json:"-"`
 }
 
-func (u AlphaPostTrainingJobStatusResponseResourcesAllocatedUnion) AsBool() (v bool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u AlphaPostTrainingJobStatusResponseResourcesAllocatedUnion) AsFloat() (v float64) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u AlphaPostTrainingJobStatusResponseResourcesAllocatedUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u AlphaPostTrainingJobStatusResponseResourcesAllocatedUnion) AsAnyArray() (v []any) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
 // Returns the unmodified JSON received from the API
-func (u AlphaPostTrainingJobStatusResponseResourcesAllocatedUnion) RawJSON() string {
-	return u.JSON.raw
-}
-
-func (r *AlphaPostTrainingJobStatusResponseResourcesAllocatedUnion) UnmarshalJSON(data []byte) error {
+func (r ListPostTrainingJobsResponse) RawJSON() string { return r.JSON.raw }
+func (r *ListPostTrainingJobsResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 type AlphaPostTrainingJobArtifactsParams struct {
-	// The UUID of the job to get the artifacts of.
 	JobUuid string `query:"job_uuid,required" json:"-"`
 	paramObj
 }
@@ -345,7 +279,6 @@ func (r AlphaPostTrainingJobArtifactsParams) URLQuery() (v url.Values, err error
 }
 
 type AlphaPostTrainingJobCancelParams struct {
-	// The UUID of the job to cancel.
 	JobUuid string `json:"job_uuid,required"`
 	paramObj
 }
@@ -359,7 +292,6 @@ func (r *AlphaPostTrainingJobCancelParams) UnmarshalJSON(data []byte) error {
 }
 
 type AlphaPostTrainingJobStatusParams struct {
-	// The UUID of the job to get the status of.
 	JobUuid string `query:"job_uuid,required" json:"-"`
 	paramObj
 }
