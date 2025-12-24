@@ -1,5 +1,51 @@
 # Changelog
 
+## 0.4.0-alpha.2 (2025-12-24)
+
+Full Changelog: [v0.4.0-alpha.1...v0.4.0-alpha.2](https://github.com/llamastack/llama-stack-client-go/compare/v0.4.0-alpha.1...v0.4.0-alpha.2)
+
+### Features
+
+* Add metadata field to request and response ([40e2322](https://github.com/llamastack/llama-stack-client-go/commit/40e232274eb4ce4a02927891c3d076b75f05b4ce))
+* add support for tool_choice to repsponses api ([01c0163](https://github.com/llamastack/llama-stack-client-go/commit/01c01637a633a2596dba9e6097953af4ef82563a))
+* **api:** add readonly connectors API ([d10a918](https://github.com/llamastack/llama-stack-client-go/commit/d10a918772ceeb8059340d7e7e0905f837f83131))
+* **api:** deprecate `toolgroup` and `tool_runtime` apis ([a1bf3a4](https://github.com/llamastack/llama-stack-client-go/commit/a1bf3a4f18acf63730208b92808c1a05ef9abcfa))
+* convert Benchmarks API to use FastAPI router ([c64b27d](https://github.com/llamastack/llama-stack-client-go/commit/c64b27d4c45cc0d956a3abf86fa65c209e858795))
+* convert Datasets API to use FastAPI router ([d96d09c](https://github.com/llamastack/llama-stack-client-go/commit/d96d09c37bcbe974830334bb283ecd5daa2b0a2c))
+* **encoder:** support bracket encoding form-data object members ([97fd8b2](https://github.com/llamastack/llama-stack-client-go/commit/97fd8b246e8a9de6952c9ddcfd31f5832d9c79bb))
+* Implement FastAPI router system ([79287a7](https://github.com/llamastack/llama-stack-client-go/commit/79287a753e70992d4c2fb272b347d6d718193278))
+* Implement include parameter specifically for adding logprobs in the output message ([45eda95](https://github.com/llamastack/llama-stack-client-go/commit/45eda95f3ed6b647f02037c3d08f9447e82b7bbc))
+* introduce /admin API for stack administration and operations ([236906d](https://github.com/llamastack/llama-stack-client-go/commit/236906dda29ae103193096518ede546068d65286))
+* migrate Inspect API to FastAPI router ([7589982](https://github.com/llamastack/llama-stack-client-go/commit/7589982a9aa7f2716e42aad6038e54b0ae30df22))
+* migrate Providers API to FastAPI router pattern ([76698f3](https://github.com/llamastack/llama-stack-client-go/commit/76698f376d164a3b8c45efddd3d424f82b3aae84))
+* Wire through parallel_tool_calls to Responses API ([eaa165c](https://github.com/llamastack/llama-stack-client-go/commit/eaa165c2c627190f21a30fdb54b738b0a76711f3))
+
+
+### Bug Fixes
+
+* **client:** correctly specify Accept header with */* instead of empty ([e5041ce](https://github.com/llamastack/llama-stack-client-go/commit/e5041ce562316eb7caafd32cb55269c754581d7e))
+* **client:** fix issue with duplicate definitions in Go ([4b368be](https://github.com/llamastack/llama-stack-client-go/commit/4b368be02d6b4b13207b2f406eb85211ad911317))
+* **mcp:** correct code tool API endpoint ([69a2283](https://github.com/llamastack/llama-stack-client-go/commit/69a22835be10196d477118fce60dedf59e2e032c))
+* **openapi:** restore embedded request wrappers ([d1a3652](https://github.com/llamastack/llama-stack-client-go/commit/d1a36526f794bbcf096f9a725fd328420fff3bb4))
+* Pydantic validation error with list-type metadata in vector search ([#3797](https://github.com/llamastack/llama-stack-client-go/issues/3797)) ([7539880](https://github.com/llamastack/llama-stack-client-go/commit/75398807b92fb7566e679a69a949f0859810a5c4))
+* rename param to avoid collision ([185cff3](https://github.com/llamastack/llama-stack-client-go/commit/185cff3098fb3f18b0f88849236c464d356f9f80))
+
+
+### Chores
+
+* add copyright header as pre-commit hook ([#22](https://github.com/llamastack/llama-stack-client-go/issues/22)) ([6d87900](https://github.com/llamastack/llama-stack-client-go/commit/6d8790031ca42588b65c6e56f559a61b4e909852))
+* add float64 to valid types for RegisterFieldValidator ([842d1cb](https://github.com/llamastack/llama-stack-client-go/commit/842d1cb00d4c62066c1cf6163642a8432a4410c7))
+* elide duplicate aliases ([fe02071](https://github.com/llamastack/llama-stack-client-go/commit/fe02071f3ecded66d669bd7f365fecfe3c932273))
+* **internal:** codegen related update ([e1ed21b](https://github.com/llamastack/llama-stack-client-go/commit/e1ed21b372851f7755e37b2a6fc9d3d2cd1be3b2))
+* **internal:** codegen related update ([de0c9d9](https://github.com/llamastack/llama-stack-client-go/commit/de0c9d9740c1ce66108f4da34d7e781cf6bc7f4a))
+* run precommit on pull request as well ([#23](https://github.com/llamastack/llama-stack-client-go/issues/23)) ([6c50f0c](https://github.com/llamastack/llama-stack-client-go/commit/6c50f0c5a6e4c091c2f91c8f42625eab1d010683))
+* use Pydantic to generate OpenAPI schema ([ef0159f](https://github.com/llamastack/llama-stack-client-go/commit/ef0159fc37971d1fbcbaff773f81d2d68fe44516))
+
+
+### Documentation
+
+* add more examples ([50d6580](https://github.com/llamastack/llama-stack-client-go/commit/50d658046467e8d023f9ffbdd6080938239a551f))
+
 ## 0.4.0-alpha.1 (2025-11-14)
 
 Full Changelog: [v0.1.0-alpha.1...v0.4.0-alpha.1](https://github.com/llamastack/llama-stack-client-go/compare/v0.1.0-alpha.1...v0.4.0-alpha.1)
