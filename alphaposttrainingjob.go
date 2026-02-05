@@ -10,6 +10,8 @@ package llamastackclient
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"net/http"
 	"slices"
 	"time"
@@ -53,26 +55,38 @@ func (r *AlphaPostTrainingJobService) List(ctx context.Context, opts ...option.R
 }
 
 // Get the artifacts of a training job.
-func (r *AlphaPostTrainingJobService) Artifacts(ctx context.Context, opts ...option.RequestOption) (res *AlphaPostTrainingJobArtifactsResponse, err error) {
+func (r *AlphaPostTrainingJobService) Artifacts(ctx context.Context, jobUuid string, opts ...option.RequestOption) (res *AlphaPostTrainingJobArtifactsResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	path := "v1alpha/post-training/job/artifacts"
+	if jobUuid == "" {
+		err = errors.New("missing required job_uuid parameter")
+		return
+	}
+	path := fmt.Sprintf("v1alpha/post-training/jobs/%s/artifacts", jobUuid)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return
 }
 
 // Cancel a training job.
-func (r *AlphaPostTrainingJobService) Cancel(ctx context.Context, opts ...option.RequestOption) (err error) {
+func (r *AlphaPostTrainingJobService) Cancel(ctx context.Context, jobUuid string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
-	path := "v1alpha/post-training/job/cancel"
+	if jobUuid == "" {
+		err = errors.New("missing required job_uuid parameter")
+		return
+	}
+	path := fmt.Sprintf("v1alpha/post-training/jobs/%s/cancel", jobUuid)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, nil, opts...)
 	return
 }
 
 // Get the status of a training job.
-func (r *AlphaPostTrainingJobService) Status(ctx context.Context, opts ...option.RequestOption) (res *AlphaPostTrainingJobStatusResponse, err error) {
+func (r *AlphaPostTrainingJobService) Status(ctx context.Context, jobUuid string, opts ...option.RequestOption) (res *AlphaPostTrainingJobStatusResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
-	path := "v1alpha/post-training/job/status"
+	if jobUuid == "" {
+		err = errors.New("missing required job_uuid parameter")
+		return
+	}
+	path := fmt.Sprintf("v1alpha/post-training/jobs/%s/status", jobUuid)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return
 }

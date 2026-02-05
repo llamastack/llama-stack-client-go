@@ -51,7 +51,7 @@ func TestAlphaPostTrainingJobArtifacts(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Alpha.PostTraining.Job.Artifacts(context.TODO())
+	_, err := client.Alpha.PostTraining.Job.Artifacts(context.TODO(), "job_uuid")
 	if err != nil {
 		var apierr *llamastackclient.Error
 		if errors.As(err, &apierr) {
@@ -72,7 +72,7 @@ func TestAlphaPostTrainingJobCancel(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	err := client.Alpha.PostTraining.Job.Cancel(context.TODO())
+	err := client.Alpha.PostTraining.Job.Cancel(context.TODO(), "job_uuid")
 	if err != nil {
 		var apierr *llamastackclient.Error
 		if errors.As(err, &apierr) {
@@ -93,7 +93,7 @@ func TestAlphaPostTrainingJobStatus(t *testing.T) {
 	client := llamastackclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Alpha.PostTraining.Job.Status(context.TODO())
+	_, err := client.Alpha.PostTraining.Job.Status(context.TODO(), "job_uuid")
 	if err != nil {
 		var apierr *llamastackclient.Error
 		if errors.As(err, &apierr) {
