@@ -670,6 +670,9 @@ const (
 )
 
 type BetaDatasetAppendrowsParams struct {
+	// The ID of the dataset to append the rows to.
+	DatasetID string `json:"dataset_id,required"`
+	// The rows to append to the dataset.
 	Rows []map[string]any `json:"rows,omitzero,required"`
 	paramObj
 }
@@ -683,7 +686,9 @@ func (r *BetaDatasetAppendrowsParams) UnmarshalJSON(data []byte) error {
 }
 
 type BetaDatasetIterrowsParams struct {
-	Limit      param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// The number of rows to get.
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Index into dataset for the first row to get. Get all rows if None.
 	StartIndex param.Opt[int64] `query:"start_index,omitzero" json:"-"`
 	paramObj
 }

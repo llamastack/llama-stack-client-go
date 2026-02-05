@@ -91,7 +91,9 @@ func (r *ShieldService) Register(ctx context.Context, body ShieldRegisterParams,
 	return
 }
 
+// Response containing a list of all shields.
 type ListShieldsResponse struct {
+	// List of shield objects
 	Data []Shield `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -143,10 +145,14 @@ const (
 )
 
 type ShieldRegisterParams struct {
-	ShieldID         string            `json:"shield_id,required"`
-	ProviderID       param.Opt[string] `json:"provider_id,omitzero"`
+	// The identifier of the shield to register.
+	ShieldID string `json:"shield_id,required"`
+	// The identifier of the provider.
+	ProviderID param.Opt[string] `json:"provider_id,omitzero"`
+	// The identifier of the shield in the provider.
 	ProviderShieldID param.Opt[string] `json:"provider_shield_id,omitzero"`
-	Params           map[string]any    `json:"params,omitzero"`
+	// The parameters of the shield.
+	Params map[string]any `json:"params,omitzero"`
 	paramObj
 }
 

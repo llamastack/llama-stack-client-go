@@ -36,10 +36,10 @@ func TestAlphaEvalEvaluateRowsWithOptionalParams(t *testing.T) {
 		llamastackclient.AlphaEvalEvaluateRowsParams{
 			BenchmarkConfig: llamastackclient.BenchmarkConfigParam{
 				EvalCandidate: llamastackclient.BenchmarkConfigEvalCandidateParam{
-					Model: "model",
+					Model: "x",
 					SamplingParams: llamastackclient.SamplingParams{
-						MaxTokens:         llamastackclient.Int(0),
-						RepetitionPenalty: llamastackclient.Float(0),
+						MaxTokens:         llamastackclient.Int(1),
+						RepetitionPenalty: llamastackclient.Float(-2),
 						Stop:              []string{"string"},
 						Strategy: llamastackclient.SamplingParamsStrategyUnion{
 							OfGreedy: &llamastackclient.SamplingParamsStrategyGreedy{
@@ -55,7 +55,7 @@ func TestAlphaEvalEvaluateRowsWithOptionalParams(t *testing.T) {
 					},
 					Type: "model",
 				},
-				NumExamples: llamastackclient.Int(0),
+				NumExamples: llamastackclient.Int(1),
 				ScoringParams: map[string]llamastackclient.BenchmarkConfigScoringParamUnionParam{
 					"foo": {
 						OfLlmAsJudge: &llamastackclient.BenchmarkConfigScoringParamLlmAsJudgeParam{
@@ -100,10 +100,10 @@ func TestAlphaEvalEvaluateRowsAlphaWithOptionalParams(t *testing.T) {
 		llamastackclient.AlphaEvalEvaluateRowsAlphaParams{
 			BenchmarkConfig: llamastackclient.BenchmarkConfigParam{
 				EvalCandidate: llamastackclient.BenchmarkConfigEvalCandidateParam{
-					Model: "model",
+					Model: "x",
 					SamplingParams: llamastackclient.SamplingParams{
-						MaxTokens:         llamastackclient.Int(0),
-						RepetitionPenalty: llamastackclient.Float(0),
+						MaxTokens:         llamastackclient.Int(1),
+						RepetitionPenalty: llamastackclient.Float(-2),
 						Stop:              []string{"string"},
 						Strategy: llamastackclient.SamplingParamsStrategyUnion{
 							OfGreedy: &llamastackclient.SamplingParamsStrategyGreedy{
@@ -119,7 +119,7 @@ func TestAlphaEvalEvaluateRowsAlphaWithOptionalParams(t *testing.T) {
 					},
 					Type: "model",
 				},
-				NumExamples: llamastackclient.Int(0),
+				NumExamples: llamastackclient.Int(1),
 				ScoringParams: map[string]llamastackclient.BenchmarkConfigScoringParamUnionParam{
 					"foo": {
 						OfLlmAsJudge: &llamastackclient.BenchmarkConfigScoringParamLlmAsJudgeParam{
@@ -164,10 +164,10 @@ func TestAlphaEvalRunEvalWithOptionalParams(t *testing.T) {
 		llamastackclient.AlphaEvalRunEvalParams{
 			BenchmarkConfig: llamastackclient.BenchmarkConfigParam{
 				EvalCandidate: llamastackclient.BenchmarkConfigEvalCandidateParam{
-					Model: "model",
+					Model: "x",
 					SamplingParams: llamastackclient.SamplingParams{
-						MaxTokens:         llamastackclient.Int(0),
-						RepetitionPenalty: llamastackclient.Float(0),
+						MaxTokens:         llamastackclient.Int(1),
+						RepetitionPenalty: llamastackclient.Float(-2),
 						Stop:              []string{"string"},
 						Strategy: llamastackclient.SamplingParamsStrategyUnion{
 							OfGreedy: &llamastackclient.SamplingParamsStrategyGreedy{
@@ -183,7 +183,7 @@ func TestAlphaEvalRunEvalWithOptionalParams(t *testing.T) {
 					},
 					Type: "model",
 				},
-				NumExamples: llamastackclient.Int(0),
+				NumExamples: llamastackclient.Int(1),
 				ScoringParams: map[string]llamastackclient.BenchmarkConfigScoringParamUnionParam{
 					"foo": {
 						OfLlmAsJudge: &llamastackclient.BenchmarkConfigScoringParamLlmAsJudgeParam{
@@ -224,10 +224,10 @@ func TestAlphaEvalRunEvalAlphaWithOptionalParams(t *testing.T) {
 		llamastackclient.AlphaEvalRunEvalAlphaParams{
 			BenchmarkConfig: llamastackclient.BenchmarkConfigParam{
 				EvalCandidate: llamastackclient.BenchmarkConfigEvalCandidateParam{
-					Model: "model",
+					Model: "x",
 					SamplingParams: llamastackclient.SamplingParams{
-						MaxTokens:         llamastackclient.Int(0),
-						RepetitionPenalty: llamastackclient.Float(0),
+						MaxTokens:         llamastackclient.Int(1),
+						RepetitionPenalty: llamastackclient.Float(-2),
 						Stop:              []string{"string"},
 						Strategy: llamastackclient.SamplingParamsStrategyUnion{
 							OfGreedy: &llamastackclient.SamplingParamsStrategyGreedy{
@@ -243,7 +243,7 @@ func TestAlphaEvalRunEvalAlphaWithOptionalParams(t *testing.T) {
 					},
 					Type: "model",
 				},
-				NumExamples: llamastackclient.Int(0),
+				NumExamples: llamastackclient.Int(1),
 				ScoringParams: map[string]llamastackclient.BenchmarkConfigScoringParamUnionParam{
 					"foo": {
 						OfLlmAsJudge: &llamastackclient.BenchmarkConfigScoringParamLlmAsJudgeParam{

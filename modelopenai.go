@@ -51,7 +51,9 @@ func (r *ModelOpenAIService) List(ctx context.Context, opts ...option.RequestOpt
 	return
 }
 
+// Response containing a list of OpenAI model objects.
 type ListModelsResponse struct {
+	// List of OpenAI model objects.
 	Data []Model `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {

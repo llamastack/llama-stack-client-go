@@ -44,10 +44,7 @@ func NewVectorStoreFileBatchService(opts ...option.RequestOption) (r VectorStore
 	return
 }
 
-// Create a vector store file batch.
-//
-// Generate an OpenAI-compatible vector store file batch for the given vector
-// store.
+// Create a vector store file batch (OpenAI-compatible).
 func (r *VectorStoreFileBatchService) New(ctx context.Context, vectorStoreID string, body VectorStoreFileBatchNewParams, opts ...option.RequestOption) (res *VectorStoreFileBatches, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if vectorStoreID == "" {
@@ -59,7 +56,7 @@ func (r *VectorStoreFileBatchService) New(ctx context.Context, vectorStoreID str
 	return
 }
 
-// Retrieve a vector store file batch.
+// Retrieve a vector store file batch (OpenAI-compatible).
 func (r *VectorStoreFileBatchService) Get(ctx context.Context, batchID string, query VectorStoreFileBatchGetParams, opts ...option.RequestOption) (res *VectorStoreFileBatches, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if query.VectorStoreID == "" {
@@ -75,7 +72,7 @@ func (r *VectorStoreFileBatchService) Get(ctx context.Context, batchID string, q
 	return
 }
 
-// Cancels a vector store file batch.
+// Cancel a vector store file batch (OpenAI-compatible).
 func (r *VectorStoreFileBatchService) Cancel(ctx context.Context, batchID string, body VectorStoreFileBatchCancelParams, opts ...option.RequestOption) (res *VectorStoreFileBatches, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if body.VectorStoreID == "" {
@@ -91,7 +88,7 @@ func (r *VectorStoreFileBatchService) Cancel(ctx context.Context, batchID string
 	return
 }
 
-// Returns a list of vector store files in a batch.
+// List files in a vector store file batch (OpenAI-compatible).
 func (r *VectorStoreFileBatchService) ListFiles(ctx context.Context, batchID string, params VectorStoreFileBatchListFilesParams, opts ...option.RequestOption) (res *pagination.OpenAICursorPage[VectorStoreFile], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
@@ -117,7 +114,7 @@ func (r *VectorStoreFileBatchService) ListFiles(ctx context.Context, batchID str
 	return res, nil
 }
 
-// Returns a list of vector store files in a batch.
+// List files in a vector store file batch (OpenAI-compatible).
 func (r *VectorStoreFileBatchService) ListFilesAutoPaging(ctx context.Context, batchID string, params VectorStoreFileBatchListFilesParams, opts ...option.RequestOption) *pagination.OpenAICursorPageAutoPager[VectorStoreFile] {
 	return pagination.NewOpenAICursorPageAutoPager(r.ListFiles(ctx, batchID, params, opts...))
 }
@@ -339,22 +336,30 @@ func (r *VectorStoreFileBatchNewParamsChunkingStrategyStaticStatic) UnmarshalJSO
 }
 
 type VectorStoreFileBatchGetParams struct {
+	// The vector store identifier.
 	VectorStoreID string `path:"vector_store_id,required" json:"-"`
 	paramObj
 }
 
 type VectorStoreFileBatchCancelParams struct {
+	// The vector store identifier.
 	VectorStoreID string `path:"vector_store_id,required" json:"-"`
 	paramObj
 }
 
 type VectorStoreFileBatchListFilesParams struct {
-	VectorStoreID string            `path:"vector_store_id,required" json:"-"`
-	After         param.Opt[string] `query:"after,omitzero" json:"-"`
-	Before        param.Opt[string] `query:"before,omitzero" json:"-"`
-	Filter        param.Opt[string] `query:"filter,omitzero" json:"-"`
-	Limit         param.Opt[int64]  `query:"limit,omitzero" json:"-"`
-	Order         param.Opt[string] `query:"order,omitzero" json:"-"`
+	// The vector store identifier.
+	VectorStoreID string `path:"vector_store_id,required" json:"-"`
+	// Pagination cursor (after).
+	After param.Opt[string] `query:"after,omitzero" json:"-"`
+	// Pagination cursor (before).
+	Before param.Opt[string] `query:"before,omitzero" json:"-"`
+	// Filter by file status.
+	Filter param.Opt[string] `query:"filter,omitzero" json:"-"`
+	// Maximum number of files to return.
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Sort order by created_at: asc or desc.
+	Order param.Opt[string] `query:"order,omitzero" json:"-"`
 	paramObj
 }
 

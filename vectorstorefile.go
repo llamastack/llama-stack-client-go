@@ -46,7 +46,7 @@ func NewVectorStoreFileService(opts ...option.RequestOption) (r VectorStoreFileS
 	return
 }
 
-// Attach a file to a vector store.
+// Attach a file to a vector store (OpenAI-compatible).
 func (r *VectorStoreFileService) New(ctx context.Context, vectorStoreID string, body VectorStoreFileNewParams, opts ...option.RequestOption) (res *VectorStoreFile, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if vectorStoreID == "" {
@@ -58,7 +58,7 @@ func (r *VectorStoreFileService) New(ctx context.Context, vectorStoreID string, 
 	return
 }
 
-// Retrieves a vector store file.
+// Retrieve a vector store file (OpenAI-compatible).
 func (r *VectorStoreFileService) Get(ctx context.Context, fileID string, query VectorStoreFileGetParams, opts ...option.RequestOption) (res *VectorStoreFile, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if query.VectorStoreID == "" {
@@ -74,7 +74,7 @@ func (r *VectorStoreFileService) Get(ctx context.Context, fileID string, query V
 	return
 }
 
-// Updates a vector store file.
+// Update a vector store file (OpenAI-compatible).
 func (r *VectorStoreFileService) Update(ctx context.Context, fileID string, params VectorStoreFileUpdateParams, opts ...option.RequestOption) (res *VectorStoreFile, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if params.VectorStoreID == "" {
@@ -90,7 +90,7 @@ func (r *VectorStoreFileService) Update(ctx context.Context, fileID string, para
 	return
 }
 
-// List files in a vector store.
+// List files in a vector store (OpenAI-compatible).
 func (r *VectorStoreFileService) List(ctx context.Context, vectorStoreID string, query VectorStoreFileListParams, opts ...option.RequestOption) (res *pagination.OpenAICursorPage[VectorStoreFile], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
@@ -112,12 +112,12 @@ func (r *VectorStoreFileService) List(ctx context.Context, vectorStoreID string,
 	return res, nil
 }
 
-// List files in a vector store.
+// List files in a vector store (OpenAI-compatible).
 func (r *VectorStoreFileService) ListAutoPaging(ctx context.Context, vectorStoreID string, query VectorStoreFileListParams, opts ...option.RequestOption) *pagination.OpenAICursorPageAutoPager[VectorStoreFile] {
 	return pagination.NewOpenAICursorPageAutoPager(r.List(ctx, vectorStoreID, query, opts...))
 }
 
-// Delete a vector store file.
+// Delete a vector store file (OpenAI-compatible).
 func (r *VectorStoreFileService) Delete(ctx context.Context, fileID string, body VectorStoreFileDeleteParams, opts ...option.RequestOption) (res *VectorStoreFileDeleteResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if body.VectorStoreID == "" {
@@ -133,7 +133,7 @@ func (r *VectorStoreFileService) Delete(ctx context.Context, fileID string, body
 	return
 }
 
-// Retrieves the contents of a vector store file.
+// Retrieve vector store file contents (OpenAI-compatible).
 func (r *VectorStoreFileService) Content(ctx context.Context, fileID string, params VectorStoreFileContentParams, opts ...option.RequestOption) (res *VectorStoreFileContentResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if params.VectorStoreID == "" {
@@ -469,32 +469,28 @@ func (r *VectorStoreFileContentResponseData) UnmarshalJSON(data []byte) error {
 // expected to change after. Use `Chunk.metadata` for metadata that will be used in
 // the context during inference.
 type VectorStoreFileContentResponseDataChunkMetadata struct {
-	ChunkEmbeddingDimension int64  `json:"chunk_embedding_dimension,nullable"`
-	ChunkEmbeddingModel     string `json:"chunk_embedding_model,nullable"`
-	ChunkID                 string `json:"chunk_id,nullable"`
-	ChunkTokenizer          string `json:"chunk_tokenizer,nullable"`
-	ChunkWindow             string `json:"chunk_window,nullable"`
-	ContentTokenCount       int64  `json:"content_token_count,nullable"`
-	CreatedTimestamp        int64  `json:"created_timestamp,nullable"`
-	DocumentID              string `json:"document_id,nullable"`
-	MetadataTokenCount      int64  `json:"metadata_token_count,nullable"`
-	Source                  string `json:"source,nullable"`
-	UpdatedTimestamp        int64  `json:"updated_timestamp,nullable"`
+	ChunkID            string `json:"chunk_id,nullable"`
+	ChunkTokenizer     string `json:"chunk_tokenizer,nullable"`
+	ChunkWindow        string `json:"chunk_window,nullable"`
+	ContentTokenCount  int64  `json:"content_token_count,nullable"`
+	CreatedTimestamp   int64  `json:"created_timestamp,nullable"`
+	DocumentID         string `json:"document_id,nullable"`
+	MetadataTokenCount int64  `json:"metadata_token_count,nullable"`
+	Source             string `json:"source,nullable"`
+	UpdatedTimestamp   int64  `json:"updated_timestamp,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ChunkEmbeddingDimension respjson.Field
-		ChunkEmbeddingModel     respjson.Field
-		ChunkID                 respjson.Field
-		ChunkTokenizer          respjson.Field
-		ChunkWindow             respjson.Field
-		ContentTokenCount       respjson.Field
-		CreatedTimestamp        respjson.Field
-		DocumentID              respjson.Field
-		MetadataTokenCount      respjson.Field
-		Source                  respjson.Field
-		UpdatedTimestamp        respjson.Field
-		ExtraFields             map[string]respjson.Field
-		raw                     string
+		ChunkID            respjson.Field
+		ChunkTokenizer     respjson.Field
+		ChunkWindow        respjson.Field
+		ContentTokenCount  respjson.Field
+		CreatedTimestamp   respjson.Field
+		DocumentID         respjson.Field
+		MetadataTokenCount respjson.Field
+		Source             respjson.Field
+		UpdatedTimestamp   respjson.Field
+		ExtraFields        map[string]respjson.Field
+		raw                string
 	} `json:"-"`
 }
 
@@ -511,9 +507,11 @@ const (
 )
 
 type VectorStoreFileNewParams struct {
-	FileID     string         `json:"file_id,required"`
+	// The ID of the file to attach.
+	FileID string `json:"file_id,required"`
+	// Attributes to associate with the file.
 	Attributes map[string]any `json:"attributes,omitzero"`
-	// Automatic chunking strategy for vector store files.
+	// Strategy for chunking the file content.
 	ChunkingStrategy VectorStoreFileNewParamsChunkingStrategyUnion `json:"chunking_strategy,omitzero"`
 	paramObj
 }
@@ -639,13 +637,16 @@ func (r *VectorStoreFileNewParamsChunkingStrategyStaticStatic) UnmarshalJSON(dat
 }
 
 type VectorStoreFileGetParams struct {
+	// The vector store identifier.
 	VectorStoreID string `path:"vector_store_id,required" json:"-"`
 	paramObj
 }
 
 type VectorStoreFileUpdateParams struct {
-	VectorStoreID string         `path:"vector_store_id,required" json:"-"`
-	Attributes    map[string]any `json:"attributes,omitzero,required"`
+	// The vector store identifier.
+	VectorStoreID string `path:"vector_store_id,required" json:"-"`
+	// The new attributes for the file.
+	Attributes map[string]any `json:"attributes,omitzero,required"`
 	paramObj
 }
 
@@ -658,10 +659,16 @@ func (r *VectorStoreFileUpdateParams) UnmarshalJSON(data []byte) error {
 }
 
 type VectorStoreFileListParams struct {
-	After  param.Opt[string] `query:"after,omitzero" json:"-"`
+	// Pagination cursor (after).
+	After param.Opt[string] `query:"after,omitzero" json:"-"`
+	// Pagination cursor (before).
 	Before param.Opt[string] `query:"before,omitzero" json:"-"`
-	Limit  param.Opt[int64]  `query:"limit,omitzero" json:"-"`
-	Order  param.Opt[string] `query:"order,omitzero" json:"-"`
+	// Maximum number of files to return.
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Sort order by created_at: asc or desc.
+	Order param.Opt[string] `query:"order,omitzero" json:"-"`
+	// Filter by file status.
+	//
 	// Any of "completed", "in_progress", "cancelled", "failed".
 	Filter VectorStoreFileListParamsFilter `query:"filter,omitzero" json:"-"`
 	paramObj
@@ -676,6 +683,7 @@ func (r VectorStoreFileListParams) URLQuery() (v url.Values, err error) {
 	})
 }
 
+// Filter by file status.
 type VectorStoreFileListParamsFilter string
 
 const (
@@ -686,14 +694,18 @@ const (
 )
 
 type VectorStoreFileDeleteParams struct {
+	// The vector store identifier.
 	VectorStoreID string `path:"vector_store_id,required" json:"-"`
 	paramObj
 }
 
 type VectorStoreFileContentParams struct {
-	VectorStoreID     string          `path:"vector_store_id,required" json:"-"`
+	// The vector store identifier.
+	VectorStoreID string `path:"vector_store_id,required" json:"-"`
+	// Include embedding vectors.
 	IncludeEmbeddings param.Opt[bool] `query:"include_embeddings,omitzero" json:"-"`
-	IncludeMetadata   param.Opt[bool] `query:"include_metadata,omitzero" json:"-"`
+	// Include chunk metadata.
+	IncludeMetadata param.Opt[bool] `query:"include_metadata,omitzero" json:"-"`
 	paramObj
 }
 

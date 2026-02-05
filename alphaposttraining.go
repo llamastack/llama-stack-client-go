@@ -90,13 +90,17 @@ func (r *PostTrainingJob) UnmarshalJSON(data []byte) error {
 }
 
 type AlphaPostTrainingPreferenceOptimizeParams struct {
-	// Configuration for Direct Preference Optimization (DPO) alignment.
-	AlgorithmConfig        AlphaPostTrainingPreferenceOptimizeParamsAlgorithmConfig `json:"algorithm_config,omitzero,required"`
-	FinetunedModel         string                                                   `json:"finetuned_model,required"`
-	HyperparamSearchConfig map[string]any                                           `json:"hyperparam_search_config,omitzero,required"`
-	JobUuid                string                                                   `json:"job_uuid,required"`
-	LoggerConfig           map[string]any                                           `json:"logger_config,omitzero,required"`
-	// Comprehensive configuration for the training process.
+	// The algorithm configuration.
+	AlgorithmConfig AlphaPostTrainingPreferenceOptimizeParamsAlgorithmConfig `json:"algorithm_config,omitzero,required"`
+	// The model to fine-tune.
+	FinetunedModel string `json:"finetuned_model,required"`
+	// The hyperparam search configuration.
+	HyperparamSearchConfig map[string]any `json:"hyperparam_search_config,omitzero,required"`
+	// The UUID of the job to create.
+	JobUuid string `json:"job_uuid,required"`
+	// The logger configuration.
+	LoggerConfig map[string]any `json:"logger_config,omitzero,required"`
+	// The training configuration.
 	TrainingConfig AlphaPostTrainingPreferenceOptimizeParamsTrainingConfig `json:"training_config,omitzero,required"`
 	paramObj
 }
@@ -109,7 +113,7 @@ func (r *AlphaPostTrainingPreferenceOptimizeParams) UnmarshalJSON(data []byte) e
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Configuration for Direct Preference Optimization (DPO) alignment.
+// The algorithm configuration.
 //
 // The property Beta is required.
 type AlphaPostTrainingPreferenceOptimizeParamsAlgorithmConfig struct {
@@ -133,7 +137,7 @@ func init() {
 	)
 }
 
-// Comprehensive configuration for the training process.
+// The training configuration.
 //
 // The property NEpochs is required.
 type AlphaPostTrainingPreferenceOptimizeParamsTrainingConfig struct {
@@ -236,15 +240,19 @@ func init() {
 }
 
 type AlphaPostTrainingSupervisedFineTuneParams struct {
+	// The hyperparam search configuration.
 	HyperparamSearchConfig map[string]any `json:"hyperparam_search_config,omitzero,required"`
-	JobUuid                string         `json:"job_uuid,required"`
-	LoggerConfig           map[string]any `json:"logger_config,omitzero,required"`
-	// Comprehensive configuration for the training process.
+	// The UUID of the job to create.
+	JobUuid string `json:"job_uuid,required"`
+	// The logger configuration.
+	LoggerConfig map[string]any `json:"logger_config,omitzero,required"`
+	// The training configuration.
 	TrainingConfig AlphaPostTrainingSupervisedFineTuneParamsTrainingConfig `json:"training_config,omitzero,required"`
-	CheckpointDir  param.Opt[string]                                       `json:"checkpoint_dir,omitzero"`
-	// Model descriptor for training if not in provider config`
+	// The directory to save checkpoint(s) to.
+	CheckpointDir param.Opt[string] `json:"checkpoint_dir,omitzero"`
+	// Model descriptor for training if not in provider config
 	Model param.Opt[string] `json:"model,omitzero"`
-	// Configuration for Low-Rank Adaptation (LoRA) fine-tuning.
+	// The algorithm configuration.
 	AlgorithmConfig AlphaPostTrainingSupervisedFineTuneParamsAlgorithmConfigUnion `json:"algorithm_config,omitzero"`
 	paramObj
 }
@@ -257,7 +265,7 @@ func (r *AlphaPostTrainingSupervisedFineTuneParams) UnmarshalJSON(data []byte) e
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Comprehensive configuration for the training process.
+// The training configuration.
 //
 // The property NEpochs is required.
 type AlphaPostTrainingSupervisedFineTuneParamsTrainingConfig struct {

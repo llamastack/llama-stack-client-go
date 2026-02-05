@@ -40,8 +40,6 @@ func NewEmbeddingService(opts ...option.RequestOption) (r EmbeddingService) {
 	return
 }
 
-// Create embeddings.
-//
 // Generate OpenAI-compatible embeddings for the given input using the specified
 // model.
 func (r *EmbeddingService) New(ctx context.Context, body EmbeddingNewParams, opts ...option.RequestOption) (res *CreateEmbeddingsResponse, err error) {
@@ -53,10 +51,14 @@ func (r *EmbeddingService) New(ctx context.Context, body EmbeddingNewParams, opt
 
 // Response from an OpenAI-compatible embeddings request.
 type CreateEmbeddingsResponse struct {
-	Data  []CreateEmbeddingsResponseData `json:"data,required"`
-	Model string                         `json:"model,required"`
-	// Usage information for an OpenAI-compatible embeddings response.
+	// List of embedding data objects.
+	Data []CreateEmbeddingsResponseData `json:"data,required"`
+	// The model that was used to generate the embeddings.
+	Model string `json:"model,required"`
+	// Usage information.
 	Usage CreateEmbeddingsResponseUsage `json:"usage,required"`
+	// The object type.
+	//
 	// Any of "list".
 	Object CreateEmbeddingsResponseObject `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -78,8 +80,13 @@ func (r *CreateEmbeddingsResponse) UnmarshalJSON(data []byte) error {
 
 // A single embedding data object from an OpenAI-compatible embeddings response.
 type CreateEmbeddingsResponseData struct {
+	// The embedding vector as a list of floats (when encoding_format='float') or as a
+	// base64-encoded string.
 	Embedding CreateEmbeddingsResponseDataEmbeddingUnion `json:"embedding,required"`
-	Index     int64                                      `json:"index,required"`
+	// The index of the embedding in the input list.
+	Index int64 `json:"index,required"`
+	// The object type.
+	//
 	// Any of "embedding".
 	Object string `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -134,10 +141,12 @@ func (r *CreateEmbeddingsResponseDataEmbeddingUnion) UnmarshalJSON(data []byte) 
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Usage information for an OpenAI-compatible embeddings response.
+// Usage information.
 type CreateEmbeddingsResponseUsage struct {
+	// The number of tokens in the input.
 	PromptTokens int64 `json:"prompt_tokens,required"`
-	TotalTokens  int64 `json:"total_tokens,required"`
+	// The total number of tokens used.
+	TotalTokens int64 `json:"total_tokens,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		PromptTokens respjson.Field
@@ -153,6 +162,7 @@ func (r *CreateEmbeddingsResponseUsage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// The object type.
 type CreateEmbeddingsResponseObject string
 
 const (
@@ -160,11 +170,18 @@ const (
 )
 
 type EmbeddingNewParams struct {
-	Input          EmbeddingNewParamsInputUnion `json:"input,omitzero,required"`
-	Model          string                       `json:"model,required"`
-	Dimensions     param.Opt[int64]             `json:"dimensions,omitzero"`
-	EncodingFormat param.Opt[string]            `json:"encoding_format,omitzero"`
-	User           param.Opt[string]            `json:"user,omitzero"`
+	// Input text to embed, encoded as a string or array of tokens.
+	Input EmbeddingNewParamsInputUnion `json:"input,omitzero,required"`
+	// The identifier of the model to use.
+	Model string `json:"model,required"`
+	// The number of dimensions for output embeddings.
+	Dimensions param.Opt[int64] `json:"dimensions,omitzero"`
+	// A unique identifier representing your end-user.
+	User param.Opt[string] `json:"user,omitzero"`
+	// The format to return the embeddings in.
+	//
+	// Any of "float", "base64".
+	EncodingFormat EmbeddingNewParamsEncodingFormat `json:"encoding_format,omitzero"`
 	paramObj
 }
 
@@ -180,13 +197,15 @@ func (r *EmbeddingNewParams) UnmarshalJSON(data []byte) error {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type EmbeddingNewParamsInputUnion struct {
-	OfString     param.Opt[string] `json:",omitzero,inline"`
-	OfListString []string          `json:",omitzero,inline"`
+	OfString             param.Opt[string] `json:",omitzero,inline"`
+	OfArrayOfStrings     []string          `json:",omitzero,inline"`
+	OfArrayOfTokens      []int64           `json:",omitzero,inline"`
+	OfArrayOfTokenArrays [][]int64         `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u EmbeddingNewParamsInputUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfString, u.OfListString)
+	return param.MarshalUnion(u, u.OfString, u.OfArrayOfStrings, u.OfArrayOfTokens, u.OfArrayOfTokenArrays)
 }
 func (u *EmbeddingNewParamsInputUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -195,8 +214,20 @@ func (u *EmbeddingNewParamsInputUnion) UnmarshalJSON(data []byte) error {
 func (u *EmbeddingNewParamsInputUnion) asAny() any {
 	if !param.IsOmitted(u.OfString) {
 		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfListString) {
-		return &u.OfListString
+	} else if !param.IsOmitted(u.OfArrayOfStrings) {
+		return &u.OfArrayOfStrings
+	} else if !param.IsOmitted(u.OfArrayOfTokens) {
+		return &u.OfArrayOfTokens
+	} else if !param.IsOmitted(u.OfArrayOfTokenArrays) {
+		return &u.OfArrayOfTokenArrays
 	}
 	return nil
 }
+
+// The format to return the embeddings in.
+type EmbeddingNewParamsEncodingFormat string
+
+const (
+	EmbeddingNewParamsEncodingFormatFloat  EmbeddingNewParamsEncodingFormat = "float"
+	EmbeddingNewParamsEncodingFormatBase64 EmbeddingNewParamsEncodingFormat = "base64"
+)

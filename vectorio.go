@@ -40,7 +40,7 @@ func NewVectorIoService(opts ...option.RequestOption) (r VectorIoService) {
 	return
 }
 
-// Insert chunks into a vector database.
+// Insert embedded chunks into a vector database.
 func (r *VectorIoService) Insert(ctx context.Context, body VectorIoInsertParams, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
@@ -76,35 +76,78 @@ func (r *QueryChunksResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// A chunk of content that can be inserted into a vector database.
+// A chunk of content with its embedding vector for vector database operations.
+// Inherits all fields from Chunk and adds embedding-related fields.
 type QueryChunksResponseChunk struct {
 	ChunkID string `json:"chunk_id,required"`
-	// A image content item
-	Content QueryChunksResponseChunkContentUnion `json:"content,required"`
 	// `ChunkMetadata` is backend metadata for a `Chunk` that is used to store
 	// additional information about the chunk that will not be used in the context
 	// during inference, but is required for backend functionality. The `ChunkMetadata`
 	// is set during chunk creation in `MemoryToolRuntimeImpl().insert()`and is not
 	// expected to change after. Use `Chunk.metadata` for metadata that will be used in
 	// the context during inference.
-	ChunkMetadata QueryChunksResponseChunkChunkMetadata `json:"chunk_metadata,nullable"`
-	Embedding     []float64                             `json:"embedding,nullable"`
-	Metadata      map[string]any                        `json:"metadata"`
+	ChunkMetadata QueryChunksResponseChunkChunkMetadata `json:"chunk_metadata,required"`
+	// A image content item
+	Content            QueryChunksResponseChunkContentUnion `json:"content,required"`
+	Embedding          []float64                            `json:"embedding,required"`
+	EmbeddingDimension int64                                `json:"embedding_dimension,required"`
+	EmbeddingModel     string                               `json:"embedding_model,required"`
+	Metadata           map[string]any                       `json:"metadata"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ChunkID       respjson.Field
-		Content       respjson.Field
-		ChunkMetadata respjson.Field
-		Embedding     respjson.Field
-		Metadata      respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
+		ChunkID            respjson.Field
+		ChunkMetadata      respjson.Field
+		Content            respjson.Field
+		Embedding          respjson.Field
+		EmbeddingDimension respjson.Field
+		EmbeddingModel     respjson.Field
+		Metadata           respjson.Field
+		ExtraFields        map[string]respjson.Field
+		raw                string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
 func (r QueryChunksResponseChunk) RawJSON() string { return r.JSON.raw }
 func (r *QueryChunksResponseChunk) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// `ChunkMetadata` is backend metadata for a `Chunk` that is used to store
+// additional information about the chunk that will not be used in the context
+// during inference, but is required for backend functionality. The `ChunkMetadata`
+// is set during chunk creation in `MemoryToolRuntimeImpl().insert()`and is not
+// expected to change after. Use `Chunk.metadata` for metadata that will be used in
+// the context during inference.
+type QueryChunksResponseChunkChunkMetadata struct {
+	ChunkID            string `json:"chunk_id,nullable"`
+	ChunkTokenizer     string `json:"chunk_tokenizer,nullable"`
+	ChunkWindow        string `json:"chunk_window,nullable"`
+	ContentTokenCount  int64  `json:"content_token_count,nullable"`
+	CreatedTimestamp   int64  `json:"created_timestamp,nullable"`
+	DocumentID         string `json:"document_id,nullable"`
+	MetadataTokenCount int64  `json:"metadata_token_count,nullable"`
+	Source             string `json:"source,nullable"`
+	UpdatedTimestamp   int64  `json:"updated_timestamp,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ChunkID            respjson.Field
+		ChunkTokenizer     respjson.Field
+		ChunkWindow        respjson.Field
+		ContentTokenCount  respjson.Field
+		CreatedTimestamp   respjson.Field
+		DocumentID         respjson.Field
+		MetadataTokenCount respjson.Field
+		Source             respjson.Field
+		UpdatedTimestamp   respjson.Field
+		ExtraFields        map[string]respjson.Field
+		raw                string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r QueryChunksResponseChunkChunkMetadata) RawJSON() string { return r.JSON.raw }
+func (r *QueryChunksResponseChunkChunkMetadata) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -413,52 +456,13 @@ func (r *QueryChunksResponseChunkContentListImageContentItemOutputTextContentIte
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// `ChunkMetadata` is backend metadata for a `Chunk` that is used to store
-// additional information about the chunk that will not be used in the context
-// during inference, but is required for backend functionality. The `ChunkMetadata`
-// is set during chunk creation in `MemoryToolRuntimeImpl().insert()`and is not
-// expected to change after. Use `Chunk.metadata` for metadata that will be used in
-// the context during inference.
-type QueryChunksResponseChunkChunkMetadata struct {
-	ChunkEmbeddingDimension int64  `json:"chunk_embedding_dimension,nullable"`
-	ChunkEmbeddingModel     string `json:"chunk_embedding_model,nullable"`
-	ChunkID                 string `json:"chunk_id,nullable"`
-	ChunkTokenizer          string `json:"chunk_tokenizer,nullable"`
-	ChunkWindow             string `json:"chunk_window,nullable"`
-	ContentTokenCount       int64  `json:"content_token_count,nullable"`
-	CreatedTimestamp        int64  `json:"created_timestamp,nullable"`
-	DocumentID              string `json:"document_id,nullable"`
-	MetadataTokenCount      int64  `json:"metadata_token_count,nullable"`
-	Source                  string `json:"source,nullable"`
-	UpdatedTimestamp        int64  `json:"updated_timestamp,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ChunkEmbeddingDimension respjson.Field
-		ChunkEmbeddingModel     respjson.Field
-		ChunkID                 respjson.Field
-		ChunkTokenizer          respjson.Field
-		ChunkWindow             respjson.Field
-		ContentTokenCount       respjson.Field
-		CreatedTimestamp        respjson.Field
-		DocumentID              respjson.Field
-		MetadataTokenCount      respjson.Field
-		Source                  respjson.Field
-		UpdatedTimestamp        respjson.Field
-		ExtraFields             map[string]respjson.Field
-		raw                     string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r QueryChunksResponseChunkChunkMetadata) RawJSON() string { return r.JSON.raw }
-func (r *QueryChunksResponseChunkChunkMetadata) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type VectorIoInsertParams struct {
-	Chunks        []VectorIoInsertParamsChunk `json:"chunks,omitzero,required"`
-	VectorStoreID string                      `json:"vector_store_id,required"`
-	TtlSeconds    param.Opt[int64]            `json:"ttl_seconds,omitzero"`
+	// The list of embedded chunks to insert.
+	Chunks []VectorIoInsertParamsChunk `json:"chunks,omitzero,required"`
+	// The ID of the vector store to insert chunks into.
+	VectorStoreID string `json:"vector_store_id,required"`
+	// Time-to-live in seconds for the inserted chunks.
+	TtlSeconds param.Opt[int64] `json:"ttl_seconds,omitzero"`
 	paramObj
 }
 
@@ -470,22 +474,26 @@ func (r *VectorIoInsertParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// A chunk of content that can be inserted into a vector database.
+// A chunk of content with its embedding vector for vector database operations.
+// Inherits all fields from Chunk and adds embedding-related fields.
 //
-// The properties ChunkID, Content are required.
+// The properties ChunkID, ChunkMetadata, Content, Embedding, EmbeddingDimension,
+// EmbeddingModel are required.
 type VectorIoInsertParamsChunk struct {
 	ChunkID string `json:"chunk_id,required"`
-	// A image content item
-	Content VectorIoInsertParamsChunkContentUnion `json:"content,omitzero,required"`
 	// `ChunkMetadata` is backend metadata for a `Chunk` that is used to store
 	// additional information about the chunk that will not be used in the context
 	// during inference, but is required for backend functionality. The `ChunkMetadata`
 	// is set during chunk creation in `MemoryToolRuntimeImpl().insert()`and is not
 	// expected to change after. Use `Chunk.metadata` for metadata that will be used in
 	// the context during inference.
-	ChunkMetadata VectorIoInsertParamsChunkChunkMetadata `json:"chunk_metadata,omitzero"`
-	Embedding     []float64                              `json:"embedding,omitzero"`
-	Metadata      map[string]any                         `json:"metadata,omitzero"`
+	ChunkMetadata VectorIoInsertParamsChunkChunkMetadata `json:"chunk_metadata,omitzero,required"`
+	// A image content item
+	Content            VectorIoInsertParamsChunkContentUnion `json:"content,omitzero,required"`
+	Embedding          []float64                             `json:"embedding,omitzero,required"`
+	EmbeddingDimension int64                                 `json:"embedding_dimension,required"`
+	EmbeddingModel     string                                `json:"embedding_model,required"`
+	Metadata           map[string]any                        `json:"metadata,omitzero"`
 	paramObj
 }
 
@@ -494,6 +502,33 @@ func (r VectorIoInsertParamsChunk) MarshalJSON() (data []byte, err error) {
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *VectorIoInsertParamsChunk) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// `ChunkMetadata` is backend metadata for a `Chunk` that is used to store
+// additional information about the chunk that will not be used in the context
+// during inference, but is required for backend functionality. The `ChunkMetadata`
+// is set during chunk creation in `MemoryToolRuntimeImpl().insert()`and is not
+// expected to change after. Use `Chunk.metadata` for metadata that will be used in
+// the context during inference.
+type VectorIoInsertParamsChunkChunkMetadata struct {
+	ChunkID            param.Opt[string] `json:"chunk_id,omitzero"`
+	ChunkTokenizer     param.Opt[string] `json:"chunk_tokenizer,omitzero"`
+	ChunkWindow        param.Opt[string] `json:"chunk_window,omitzero"`
+	ContentTokenCount  param.Opt[int64]  `json:"content_token_count,omitzero"`
+	CreatedTimestamp   param.Opt[int64]  `json:"created_timestamp,omitzero"`
+	DocumentID         param.Opt[string] `json:"document_id,omitzero"`
+	MetadataTokenCount param.Opt[int64]  `json:"metadata_token_count,omitzero"`
+	Source             param.Opt[string] `json:"source,omitzero"`
+	UpdatedTimestamp   param.Opt[int64]  `json:"updated_timestamp,omitzero"`
+	paramObj
+}
+
+func (r VectorIoInsertParamsChunkChunkMetadata) MarshalJSON() (data []byte, err error) {
+	type shadow VectorIoInsertParamsChunkChunkMetadata
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *VectorIoInsertParamsChunkChunkMetadata) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -775,40 +810,13 @@ func init() {
 	)
 }
 
-// `ChunkMetadata` is backend metadata for a `Chunk` that is used to store
-// additional information about the chunk that will not be used in the context
-// during inference, but is required for backend functionality. The `ChunkMetadata`
-// is set during chunk creation in `MemoryToolRuntimeImpl().insert()`and is not
-// expected to change after. Use `Chunk.metadata` for metadata that will be used in
-// the context during inference.
-type VectorIoInsertParamsChunkChunkMetadata struct {
-	ChunkEmbeddingDimension param.Opt[int64]  `json:"chunk_embedding_dimension,omitzero"`
-	ChunkEmbeddingModel     param.Opt[string] `json:"chunk_embedding_model,omitzero"`
-	ChunkID                 param.Opt[string] `json:"chunk_id,omitzero"`
-	ChunkTokenizer          param.Opt[string] `json:"chunk_tokenizer,omitzero"`
-	ChunkWindow             param.Opt[string] `json:"chunk_window,omitzero"`
-	ContentTokenCount       param.Opt[int64]  `json:"content_token_count,omitzero"`
-	CreatedTimestamp        param.Opt[int64]  `json:"created_timestamp,omitzero"`
-	DocumentID              param.Opt[string] `json:"document_id,omitzero"`
-	MetadataTokenCount      param.Opt[int64]  `json:"metadata_token_count,omitzero"`
-	Source                  param.Opt[string] `json:"source,omitzero"`
-	UpdatedTimestamp        param.Opt[int64]  `json:"updated_timestamp,omitzero"`
-	paramObj
-}
-
-func (r VectorIoInsertParamsChunkChunkMetadata) MarshalJSON() (data []byte, err error) {
-	type shadow VectorIoInsertParamsChunkChunkMetadata
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *VectorIoInsertParamsChunkChunkMetadata) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
 type VectorIoQueryParams struct {
-	// A image content item
-	Query         VectorIoQueryParamsQueryUnion `json:"query,omitzero,required"`
-	VectorStoreID string                        `json:"vector_store_id,required"`
-	Params        map[string]any                `json:"params,omitzero"`
+	// The query content to search for.
+	Query VectorIoQueryParamsQueryUnion `json:"query,omitzero,required"`
+	// The ID of the vector store to query.
+	VectorStoreID string `json:"vector_store_id,required"`
+	// Additional query parameters.
+	Params map[string]any `json:"params,omitzero"`
 	paramObj
 }
 

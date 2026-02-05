@@ -45,8 +45,6 @@ func NewChatCompletionService(opts ...option.RequestOption) (r ChatCompletionSer
 	return
 }
 
-// Create chat completions.
-//
 // Generate an OpenAI-compatible chat completion for the given messages using the
 // specified model.
 func (r *ChatCompletionService) New(ctx context.Context, body ChatCompletionNewParams, opts ...option.RequestOption) (res *ChatCompletionNewResponse, err error) {
@@ -56,8 +54,6 @@ func (r *ChatCompletionService) New(ctx context.Context, body ChatCompletionNewP
 	return
 }
 
-// Create chat completions.
-//
 // Generate an OpenAI-compatible chat completion for the given messages using the
 // specified model.
 func (r *ChatCompletionService) NewStreaming(ctx context.Context, body ChatCompletionNewParams, opts ...option.RequestOption) (stream *ssestream.Stream[ChatCompletionChunk]) {
@@ -72,8 +68,6 @@ func (r *ChatCompletionService) NewStreaming(ctx context.Context, body ChatCompl
 	return ssestream.NewStream[ChatCompletionChunk](ssestream.NewDecoder(raw), err)
 }
 
-// Get chat completion.
-//
 // Describe a chat completion by its ID.
 func (r *ChatCompletionService) Get(ctx context.Context, completionID string, opts ...option.RequestOption) (res *ChatCompletionGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -96,10 +90,16 @@ func (r *ChatCompletionService) List(ctx context.Context, query ChatCompletionLi
 
 // Response from an OpenAI-compatible chat completion request.
 type ChatCompletionNewResponse struct {
-	ID      string                            `json:"id,required"`
+	// The ID of the chat completion.
+	ID string `json:"id,required"`
+	// List of choices.
 	Choices []ChatCompletionNewResponseChoice `json:"choices,required"`
-	Created int64                             `json:"created,required"`
-	Model   string                            `json:"model,required"`
+	// The Unix timestamp in seconds when the chat completion was created.
+	Created int64 `json:"created,required"`
+	// The model that was used to generate the chat completion.
+	Model string `json:"model,required"`
+	// The object type.
+	//
 	// Any of "chat.completion".
 	Object ChatCompletionNewResponseObject `json:"object"`
 	// Usage information for OpenAI chat completion.
@@ -125,9 +125,13 @@ func (r *ChatCompletionNewResponse) UnmarshalJSON(data []byte) error {
 
 // A choice from an OpenAI-compatible chat completion response.
 type ChatCompletionNewResponseChoice struct {
+	// The reason the model stopped generating.
+	//
+	// Any of "stop", "length", "tool_calls", "content_filter", "function_call".
 	FinishReason string `json:"finish_reason,required"`
-	Index        int64  `json:"index,required"`
-	// A message from the user in an OpenAI-compatible chat completion request.
+	// The index of the choice.
+	Index int64 `json:"index,required"`
+	// The message from the model.
 	Message ChatCompletionNewResponseChoiceMessageUnion `json:"message,required"`
 	// The log probabilities for the tokens in the message from an OpenAI-compatible
 	// chat completion response.
@@ -297,8 +301,12 @@ func (r *ChatCompletionNewResponseChoiceMessageUnionContent) UnmarshalJSON(data 
 
 // A message from the user in an OpenAI-compatible chat completion request.
 type ChatCompletionNewResponseChoiceMessageUser struct {
+	// The content of the message, which can include text and other media.
 	Content ChatCompletionNewResponseChoiceMessageUserContentUnion `json:"content,required"`
-	Name    string                                                 `json:"name,nullable"`
+	// The name of the user message participant.
+	Name string `json:"name,nullable"`
+	// Must be 'user' to identify this as a user message.
+	//
 	// Any of "user".
 	Role string `json:"role"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -452,7 +460,10 @@ func (r *ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompleti
 
 // Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -474,8 +485,10 @@ func (r *ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompleti
 
 // Image content part for OpenAI-compatible chat completion messages.
 type ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL struct {
-	// Image URL specification for OpenAI-compatible chat completion messages.
+	// Image URL specification and processing details.
 	ImageURL ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL `json:"image_url,required"`
+	// Must be 'image_url' to identify this as image content.
+	//
 	// Any of "image_url".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -495,9 +508,13 @@ func (r *ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompleti
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Image URL specification for OpenAI-compatible chat completion messages.
+// Image URL specification and processing details.
 type ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL struct {
-	URL    string `json:"url,required"`
+	// URL of the image to include in the message.
+	URL string `json:"url,required"`
+	// Level of detail for image processing. Can be 'low', 'high', or 'auto'.
+	//
+	// Any of "low", "high", "auto".
 	Detail string `json:"detail,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -517,7 +534,10 @@ func (r *ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompleti
 }
 
 type ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile struct {
+	// File specification.
 	File ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile `json:"file,required"`
+	// Must be 'file' to identify this as file content.
+	//
 	// Any of "file".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -537,9 +557,13 @@ func (r *ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompleti
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// File specification.
 type ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile struct {
+	// Base64-encoded file data.
 	FileData string `json:"file_data,nullable"`
-	FileID   string `json:"file_id,nullable"`
+	// ID of an uploaded file.
+	FileID string `json:"file_id,nullable"`
+	// Name of the file.
 	Filename string `json:"filename,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -561,8 +585,13 @@ func (r *ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompleti
 
 // A system message providing instructions or context to the model.
 type ChatCompletionNewResponseChoiceMessageSystem struct {
+	// The content of the 'system prompt'. If multiple system messages are provided,
+	// they are concatenated.
 	Content ChatCompletionNewResponseChoiceMessageSystemContentUnion `json:"content,required"`
-	Name    string                                                   `json:"name,nullable"`
+	// The name of the system message participant.
+	Name string `json:"name,nullable"`
+	// Must be 'system' to identify this as a system message.
+	//
 	// Any of "system".
 	Role string `json:"role"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -622,7 +651,10 @@ func (r *ChatCompletionNewResponseChoiceMessageSystemContentUnion) UnmarshalJSON
 
 // Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionNewResponseChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -645,10 +677,15 @@ func (r *ChatCompletionNewResponseChoiceMessageSystemContentListOpenAIChatComple
 // A message containing the model's (assistant) response in an OpenAI-compatible
 // chat completion request.
 type ChatCompletionNewResponseChoiceMessageAssistant struct {
+	// The content of the model's response.
 	Content ChatCompletionNewResponseChoiceMessageAssistantContentUnion `json:"content,nullable"`
-	Name    string                                                      `json:"name,nullable"`
+	// The name of the assistant message participant.
+	Name string `json:"name,nullable"`
+	// Must be 'assistant' to identify this as the model's response.
+	//
 	// Any of "assistant".
-	Role      string                                                    `json:"role"`
+	Role string `json:"role"`
+	// List of tool calls. Each tool call is an OpenAIChatCompletionToolCall object.
 	ToolCalls []ChatCompletionNewResponseChoiceMessageAssistantToolCall `json:"tool_calls,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -710,7 +747,10 @@ func (r *ChatCompletionNewResponseChoiceMessageAssistantContentUnion) UnmarshalJ
 
 // Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionNewResponseChoiceMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -732,10 +772,14 @@ func (r *ChatCompletionNewResponseChoiceMessageAssistantContentListOpenAIChatCom
 
 // Tool call specification for OpenAI-compatible chat completion responses.
 type ChatCompletionNewResponseChoiceMessageAssistantToolCall struct {
+	// Unique identifier for the tool call.
 	ID string `json:"id,nullable"`
 	// Function call details for OpenAI-compatible tool calls.
 	Function ChatCompletionNewResponseChoiceMessageAssistantToolCallFunction `json:"function,nullable"`
-	Index    int64                                                           `json:"index,nullable"`
+	// Index of the tool call in the list.
+	Index int64 `json:"index,nullable"`
+	// Must be 'function' to identify this as a function call.
+	//
 	// Any of "function".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -757,8 +801,10 @@ func (r *ChatCompletionNewResponseChoiceMessageAssistantToolCall) UnmarshalJSON(
 
 // Function call details for OpenAI-compatible tool calls.
 type ChatCompletionNewResponseChoiceMessageAssistantToolCallFunction struct {
+	// Arguments to pass to the function as a JSON string.
 	Arguments string `json:"arguments,nullable"`
-	Name      string `json:"name,nullable"`
+	// Name of the function to call.
+	Name string `json:"name,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments   respjson.Field
@@ -779,8 +825,12 @@ func (r *ChatCompletionNewResponseChoiceMessageAssistantToolCallFunction) Unmars
 // A message representing the result of a tool invocation in an OpenAI-compatible
 // chat completion request.
 type ChatCompletionNewResponseChoiceMessageTool struct {
-	Content    ChatCompletionNewResponseChoiceMessageToolContentUnion `json:"content,required"`
-	ToolCallID string                                                 `json:"tool_call_id,required"`
+	// The response content from the tool.
+	Content ChatCompletionNewResponseChoiceMessageToolContentUnion `json:"content,required"`
+	// Unique identifier for the tool call this response is for.
+	ToolCallID string `json:"tool_call_id,required"`
+	// Must be 'tool' to identify this as a tool response.
+	//
 	// Any of "tool".
 	Role string `json:"role"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -840,7 +890,10 @@ func (r *ChatCompletionNewResponseChoiceMessageToolContentUnion) UnmarshalJSON(d
 
 // Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionNewResponseChoiceMessageToolContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -862,8 +915,12 @@ func (r *ChatCompletionNewResponseChoiceMessageToolContentListOpenAIChatCompleti
 
 // A message from the developer in an OpenAI-compatible chat completion request.
 type ChatCompletionNewResponseChoiceMessageDeveloper struct {
+	// The content of the developer message.
 	Content ChatCompletionNewResponseChoiceMessageDeveloperContentUnion `json:"content,required"`
-	Name    string                                                      `json:"name,nullable"`
+	// The name of the developer message participant.
+	Name string `json:"name,nullable"`
+	// Must be 'developer' to identify this as a developer message.
+	//
 	// Any of "developer".
 	Role string `json:"role"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -925,7 +982,10 @@ func (r *ChatCompletionNewResponseChoiceMessageDeveloperContentUnion) UnmarshalJ
 
 // Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionNewResponseChoiceMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -948,7 +1008,9 @@ func (r *ChatCompletionNewResponseChoiceMessageDeveloperContentListOpenAIChatCom
 // The log probabilities for the tokens in the message from an OpenAI-compatible
 // chat completion response.
 type ChatCompletionNewResponseChoiceLogprobs struct {
+	// The log probabilities for the tokens in the message.
 	Content []ChatCompletionNewResponseChoiceLogprobsContent `json:"content,nullable"`
+	// The log probabilities for the refusal tokens.
 	Refusal []ChatCompletionNewResponseChoiceLogprobsRefusal `json:"refusal,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -967,13 +1029,14 @@ func (r *ChatCompletionNewResponseChoiceLogprobs) UnmarshalJSON(data []byte) err
 
 // The log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token :top_logprobs: The top log probabilities for the token
 type ChatCompletionNewResponseChoiceLogprobsContent struct {
-	Token       string                                                     `json:"token,required"`
-	Logprob     float64                                                    `json:"logprob,required"`
-	Bytes       []int64                                                    `json:"bytes,nullable"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
+	Logprob float64 `json:"logprob,required"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
+	// The top log probabilities for the token.
 	TopLogprobs []ChatCompletionNewResponseChoiceLogprobsContentTopLogprob `json:"top_logprobs,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -994,13 +1057,13 @@ func (r *ChatCompletionNewResponseChoiceLogprobsContent) UnmarshalJSON(data []by
 
 // The top log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token
 type ChatCompletionNewResponseChoiceLogprobsContentTopLogprob struct {
-	Token   string  `json:"token,required"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
 	Logprob float64 `json:"logprob,required"`
-	Bytes   []int64 `json:"bytes,nullable"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -1019,13 +1082,14 @@ func (r *ChatCompletionNewResponseChoiceLogprobsContentTopLogprob) UnmarshalJSON
 
 // The log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token :top_logprobs: The top log probabilities for the token
 type ChatCompletionNewResponseChoiceLogprobsRefusal struct {
-	Token       string                                                     `json:"token,required"`
-	Logprob     float64                                                    `json:"logprob,required"`
-	Bytes       []int64                                                    `json:"bytes,nullable"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
+	Logprob float64 `json:"logprob,required"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
+	// The top log probabilities for the token.
 	TopLogprobs []ChatCompletionNewResponseChoiceLogprobsRefusalTopLogprob `json:"top_logprobs,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1046,13 +1110,13 @@ func (r *ChatCompletionNewResponseChoiceLogprobsRefusal) UnmarshalJSON(data []by
 
 // The top log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token
 type ChatCompletionNewResponseChoiceLogprobsRefusalTopLogprob struct {
-	Token   string  `json:"token,required"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
 	Logprob float64 `json:"logprob,required"`
-	Bytes   []int64 `json:"bytes,nullable"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -1069,6 +1133,7 @@ func (r *ChatCompletionNewResponseChoiceLogprobsRefusalTopLogprob) UnmarshalJSON
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// The object type.
 type ChatCompletionNewResponseObject string
 
 const (
@@ -1077,9 +1142,12 @@ const (
 
 // Usage information for OpenAI chat completion.
 type ChatCompletionNewResponseUsage struct {
+	// Number of tokens in the completion.
 	CompletionTokens int64 `json:"completion_tokens,required"`
-	PromptTokens     int64 `json:"prompt_tokens,required"`
-	TotalTokens      int64 `json:"total_tokens,required"`
+	// Number of tokens in the prompt.
+	PromptTokens int64 `json:"prompt_tokens,required"`
+	// Total tokens used (prompt + completion).
+	TotalTokens int64 `json:"total_tokens,required"`
 	// Token details for output tokens in OpenAI chat completion usage.
 	CompletionTokensDetails ChatCompletionNewResponseUsageCompletionTokensDetails `json:"completion_tokens_details,nullable"`
 	// Token details for prompt tokens in OpenAI chat completion usage.
@@ -1104,6 +1172,7 @@ func (r *ChatCompletionNewResponseUsage) UnmarshalJSON(data []byte) error {
 
 // Token details for output tokens in OpenAI chat completion usage.
 type ChatCompletionNewResponseUsageCompletionTokensDetails struct {
+	// Number of tokens used for reasoning (o1/o3 models).
 	ReasoningTokens int64 `json:"reasoning_tokens,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1121,6 +1190,7 @@ func (r *ChatCompletionNewResponseUsageCompletionTokensDetails) UnmarshalJSON(da
 
 // Token details for prompt tokens in OpenAI chat completion usage.
 type ChatCompletionNewResponseUsagePromptTokensDetails struct {
+	// Number of tokens retrieved from cache.
 	CachedTokens int64 `json:"cached_tokens,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1137,11 +1207,18 @@ func (r *ChatCompletionNewResponseUsagePromptTokensDetails) UnmarshalJSON(data [
 }
 
 type ChatCompletionGetResponse struct {
-	ID            string                                       `json:"id,required"`
-	Choices       []ChatCompletionGetResponseChoice            `json:"choices,required"`
-	Created       int64                                        `json:"created,required"`
+	// The ID of the chat completion.
+	ID string `json:"id,required"`
+	// List of choices.
+	Choices []ChatCompletionGetResponseChoice `json:"choices,required"`
+	// The Unix timestamp in seconds when the chat completion was created.
+	Created int64 `json:"created,required"`
+	// The input messages used to generate this completion.
 	InputMessages []ChatCompletionGetResponseInputMessageUnion `json:"input_messages,required"`
-	Model         string                                       `json:"model,required"`
+	// The model that was used to generate the chat completion.
+	Model string `json:"model,required"`
+	// The object type.
+	//
 	// Any of "chat.completion".
 	Object ChatCompletionGetResponseObject `json:"object"`
 	// Usage information for OpenAI chat completion.
@@ -1168,9 +1245,13 @@ func (r *ChatCompletionGetResponse) UnmarshalJSON(data []byte) error {
 
 // A choice from an OpenAI-compatible chat completion response.
 type ChatCompletionGetResponseChoice struct {
+	// The reason the model stopped generating.
+	//
+	// Any of "stop", "length", "tool_calls", "content_filter", "function_call".
 	FinishReason string `json:"finish_reason,required"`
-	Index        int64  `json:"index,required"`
-	// A message from the user in an OpenAI-compatible chat completion request.
+	// The index of the choice.
+	Index int64 `json:"index,required"`
+	// The message from the model.
 	Message ChatCompletionGetResponseChoiceMessageUnion `json:"message,required"`
 	// The log probabilities for the tokens in the message from an OpenAI-compatible
 	// chat completion response.
@@ -1340,8 +1421,12 @@ func (r *ChatCompletionGetResponseChoiceMessageUnionContent) UnmarshalJSON(data 
 
 // A message from the user in an OpenAI-compatible chat completion request.
 type ChatCompletionGetResponseChoiceMessageUser struct {
+	// The content of the message, which can include text and other media.
 	Content ChatCompletionGetResponseChoiceMessageUserContentUnion `json:"content,required"`
-	Name    string                                                 `json:"name,nullable"`
+	// The name of the user message participant.
+	Name string `json:"name,nullable"`
+	// Must be 'user' to identify this as a user message.
+	//
 	// Any of "user".
 	Role string `json:"role"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1495,7 +1580,10 @@ func (r *ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompleti
 
 // Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1517,8 +1605,10 @@ func (r *ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompleti
 
 // Image content part for OpenAI-compatible chat completion messages.
 type ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL struct {
-	// Image URL specification for OpenAI-compatible chat completion messages.
+	// Image URL specification and processing details.
 	ImageURL ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL `json:"image_url,required"`
+	// Must be 'image_url' to identify this as image content.
+	//
 	// Any of "image_url".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1538,9 +1628,13 @@ func (r *ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompleti
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Image URL specification for OpenAI-compatible chat completion messages.
+// Image URL specification and processing details.
 type ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL struct {
-	URL    string `json:"url,required"`
+	// URL of the image to include in the message.
+	URL string `json:"url,required"`
+	// Level of detail for image processing. Can be 'low', 'high', or 'auto'.
+	//
+	// Any of "low", "high", "auto".
 	Detail string `json:"detail,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1560,7 +1654,10 @@ func (r *ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompleti
 }
 
 type ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile struct {
+	// File specification.
 	File ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile `json:"file,required"`
+	// Must be 'file' to identify this as file content.
+	//
 	// Any of "file".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1580,9 +1677,13 @@ func (r *ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompleti
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// File specification.
 type ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile struct {
+	// Base64-encoded file data.
 	FileData string `json:"file_data,nullable"`
-	FileID   string `json:"file_id,nullable"`
+	// ID of an uploaded file.
+	FileID string `json:"file_id,nullable"`
+	// Name of the file.
 	Filename string `json:"filename,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1604,8 +1705,13 @@ func (r *ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompleti
 
 // A system message providing instructions or context to the model.
 type ChatCompletionGetResponseChoiceMessageSystem struct {
+	// The content of the 'system prompt'. If multiple system messages are provided,
+	// they are concatenated.
 	Content ChatCompletionGetResponseChoiceMessageSystemContentUnion `json:"content,required"`
-	Name    string                                                   `json:"name,nullable"`
+	// The name of the system message participant.
+	Name string `json:"name,nullable"`
+	// Must be 'system' to identify this as a system message.
+	//
 	// Any of "system".
 	Role string `json:"role"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1665,7 +1771,10 @@ func (r *ChatCompletionGetResponseChoiceMessageSystemContentUnion) UnmarshalJSON
 
 // Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionGetResponseChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1688,10 +1797,15 @@ func (r *ChatCompletionGetResponseChoiceMessageSystemContentListOpenAIChatComple
 // A message containing the model's (assistant) response in an OpenAI-compatible
 // chat completion request.
 type ChatCompletionGetResponseChoiceMessageAssistant struct {
+	// The content of the model's response.
 	Content ChatCompletionGetResponseChoiceMessageAssistantContentUnion `json:"content,nullable"`
-	Name    string                                                      `json:"name,nullable"`
+	// The name of the assistant message participant.
+	Name string `json:"name,nullable"`
+	// Must be 'assistant' to identify this as the model's response.
+	//
 	// Any of "assistant".
-	Role      string                                                    `json:"role"`
+	Role string `json:"role"`
+	// List of tool calls. Each tool call is an OpenAIChatCompletionToolCall object.
 	ToolCalls []ChatCompletionGetResponseChoiceMessageAssistantToolCall `json:"tool_calls,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -1753,7 +1867,10 @@ func (r *ChatCompletionGetResponseChoiceMessageAssistantContentUnion) UnmarshalJ
 
 // Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionGetResponseChoiceMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1775,10 +1892,14 @@ func (r *ChatCompletionGetResponseChoiceMessageAssistantContentListOpenAIChatCom
 
 // Tool call specification for OpenAI-compatible chat completion responses.
 type ChatCompletionGetResponseChoiceMessageAssistantToolCall struct {
+	// Unique identifier for the tool call.
 	ID string `json:"id,nullable"`
 	// Function call details for OpenAI-compatible tool calls.
 	Function ChatCompletionGetResponseChoiceMessageAssistantToolCallFunction `json:"function,nullable"`
-	Index    int64                                                           `json:"index,nullable"`
+	// Index of the tool call in the list.
+	Index int64 `json:"index,nullable"`
+	// Must be 'function' to identify this as a function call.
+	//
 	// Any of "function".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1800,8 +1921,10 @@ func (r *ChatCompletionGetResponseChoiceMessageAssistantToolCall) UnmarshalJSON(
 
 // Function call details for OpenAI-compatible tool calls.
 type ChatCompletionGetResponseChoiceMessageAssistantToolCallFunction struct {
+	// Arguments to pass to the function as a JSON string.
 	Arguments string `json:"arguments,nullable"`
-	Name      string `json:"name,nullable"`
+	// Name of the function to call.
+	Name string `json:"name,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments   respjson.Field
@@ -1822,8 +1945,12 @@ func (r *ChatCompletionGetResponseChoiceMessageAssistantToolCallFunction) Unmars
 // A message representing the result of a tool invocation in an OpenAI-compatible
 // chat completion request.
 type ChatCompletionGetResponseChoiceMessageTool struct {
-	Content    ChatCompletionGetResponseChoiceMessageToolContentUnion `json:"content,required"`
-	ToolCallID string                                                 `json:"tool_call_id,required"`
+	// The response content from the tool.
+	Content ChatCompletionGetResponseChoiceMessageToolContentUnion `json:"content,required"`
+	// Unique identifier for the tool call this response is for.
+	ToolCallID string `json:"tool_call_id,required"`
+	// Must be 'tool' to identify this as a tool response.
+	//
 	// Any of "tool".
 	Role string `json:"role"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1883,7 +2010,10 @@ func (r *ChatCompletionGetResponseChoiceMessageToolContentUnion) UnmarshalJSON(d
 
 // Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionGetResponseChoiceMessageToolContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1905,8 +2035,12 @@ func (r *ChatCompletionGetResponseChoiceMessageToolContentListOpenAIChatCompleti
 
 // A message from the developer in an OpenAI-compatible chat completion request.
 type ChatCompletionGetResponseChoiceMessageDeveloper struct {
+	// The content of the developer message.
 	Content ChatCompletionGetResponseChoiceMessageDeveloperContentUnion `json:"content,required"`
-	Name    string                                                      `json:"name,nullable"`
+	// The name of the developer message participant.
+	Name string `json:"name,nullable"`
+	// Must be 'developer' to identify this as a developer message.
+	//
 	// Any of "developer".
 	Role string `json:"role"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1968,7 +2102,10 @@ func (r *ChatCompletionGetResponseChoiceMessageDeveloperContentUnion) UnmarshalJ
 
 // Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionGetResponseChoiceMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1991,7 +2128,9 @@ func (r *ChatCompletionGetResponseChoiceMessageDeveloperContentListOpenAIChatCom
 // The log probabilities for the tokens in the message from an OpenAI-compatible
 // chat completion response.
 type ChatCompletionGetResponseChoiceLogprobs struct {
+	// The log probabilities for the tokens in the message.
 	Content []ChatCompletionGetResponseChoiceLogprobsContent `json:"content,nullable"`
+	// The log probabilities for the refusal tokens.
 	Refusal []ChatCompletionGetResponseChoiceLogprobsRefusal `json:"refusal,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -2010,13 +2149,14 @@ func (r *ChatCompletionGetResponseChoiceLogprobs) UnmarshalJSON(data []byte) err
 
 // The log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token :top_logprobs: The top log probabilities for the token
 type ChatCompletionGetResponseChoiceLogprobsContent struct {
-	Token       string                                                     `json:"token,required"`
-	Logprob     float64                                                    `json:"logprob,required"`
-	Bytes       []int64                                                    `json:"bytes,nullable"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
+	Logprob float64 `json:"logprob,required"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
+	// The top log probabilities for the token.
 	TopLogprobs []ChatCompletionGetResponseChoiceLogprobsContentTopLogprob `json:"top_logprobs,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -2037,13 +2177,13 @@ func (r *ChatCompletionGetResponseChoiceLogprobsContent) UnmarshalJSON(data []by
 
 // The top log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token
 type ChatCompletionGetResponseChoiceLogprobsContentTopLogprob struct {
-	Token   string  `json:"token,required"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
 	Logprob float64 `json:"logprob,required"`
-	Bytes   []int64 `json:"bytes,nullable"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -2062,13 +2202,14 @@ func (r *ChatCompletionGetResponseChoiceLogprobsContentTopLogprob) UnmarshalJSON
 
 // The log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token :top_logprobs: The top log probabilities for the token
 type ChatCompletionGetResponseChoiceLogprobsRefusal struct {
-	Token       string                                                     `json:"token,required"`
-	Logprob     float64                                                    `json:"logprob,required"`
-	Bytes       []int64                                                    `json:"bytes,nullable"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
+	Logprob float64 `json:"logprob,required"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
+	// The top log probabilities for the token.
 	TopLogprobs []ChatCompletionGetResponseChoiceLogprobsRefusalTopLogprob `json:"top_logprobs,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -2089,13 +2230,13 @@ func (r *ChatCompletionGetResponseChoiceLogprobsRefusal) UnmarshalJSON(data []by
 
 // The top log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token
 type ChatCompletionGetResponseChoiceLogprobsRefusalTopLogprob struct {
-	Token   string  `json:"token,required"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
 	Logprob float64 `json:"logprob,required"`
-	Bytes   []int64 `json:"bytes,nullable"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -2259,8 +2400,12 @@ func (r *ChatCompletionGetResponseInputMessageUnionContent) UnmarshalJSON(data [
 
 // A message from the user in an OpenAI-compatible chat completion request.
 type ChatCompletionGetResponseInputMessageUser struct {
+	// The content of the message, which can include text and other media.
 	Content ChatCompletionGetResponseInputMessageUserContentUnion `json:"content,required"`
-	Name    string                                                `json:"name,nullable"`
+	// The name of the user message participant.
+	Name string `json:"name,nullable"`
+	// Must be 'user' to identify this as a user message.
+	//
 	// Any of "user".
 	Role string `json:"role"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -2414,7 +2559,10 @@ func (r *ChatCompletionGetResponseInputMessageUserContentListOpenAIChatCompletio
 
 // Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionGetResponseInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -2436,8 +2584,10 @@ func (r *ChatCompletionGetResponseInputMessageUserContentListOpenAIChatCompletio
 
 // Image content part for OpenAI-compatible chat completion messages.
 type ChatCompletionGetResponseInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL struct {
-	// Image URL specification for OpenAI-compatible chat completion messages.
+	// Image URL specification and processing details.
 	ImageURL ChatCompletionGetResponseInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL `json:"image_url,required"`
+	// Must be 'image_url' to identify this as image content.
+	//
 	// Any of "image_url".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -2457,9 +2607,13 @@ func (r *ChatCompletionGetResponseInputMessageUserContentListOpenAIChatCompletio
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Image URL specification for OpenAI-compatible chat completion messages.
+// Image URL specification and processing details.
 type ChatCompletionGetResponseInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL struct {
-	URL    string `json:"url,required"`
+	// URL of the image to include in the message.
+	URL string `json:"url,required"`
+	// Level of detail for image processing. Can be 'low', 'high', or 'auto'.
+	//
+	// Any of "low", "high", "auto".
 	Detail string `json:"detail,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -2479,7 +2633,10 @@ func (r *ChatCompletionGetResponseInputMessageUserContentListOpenAIChatCompletio
 }
 
 type ChatCompletionGetResponseInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile struct {
+	// File specification.
 	File ChatCompletionGetResponseInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile `json:"file,required"`
+	// Must be 'file' to identify this as file content.
+	//
 	// Any of "file".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -2499,9 +2656,13 @@ func (r *ChatCompletionGetResponseInputMessageUserContentListOpenAIChatCompletio
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// File specification.
 type ChatCompletionGetResponseInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile struct {
+	// Base64-encoded file data.
 	FileData string `json:"file_data,nullable"`
-	FileID   string `json:"file_id,nullable"`
+	// ID of an uploaded file.
+	FileID string `json:"file_id,nullable"`
+	// Name of the file.
 	Filename string `json:"filename,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -2523,8 +2684,13 @@ func (r *ChatCompletionGetResponseInputMessageUserContentListOpenAIChatCompletio
 
 // A system message providing instructions or context to the model.
 type ChatCompletionGetResponseInputMessageSystem struct {
+	// The content of the 'system prompt'. If multiple system messages are provided,
+	// they are concatenated.
 	Content ChatCompletionGetResponseInputMessageSystemContentUnion `json:"content,required"`
-	Name    string                                                  `json:"name,nullable"`
+	// The name of the system message participant.
+	Name string `json:"name,nullable"`
+	// Must be 'system' to identify this as a system message.
+	//
 	// Any of "system".
 	Role string `json:"role"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -2584,7 +2750,10 @@ func (r *ChatCompletionGetResponseInputMessageSystemContentUnion) UnmarshalJSON(
 
 // Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionGetResponseInputMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -2607,10 +2776,15 @@ func (r *ChatCompletionGetResponseInputMessageSystemContentListOpenAIChatComplet
 // A message containing the model's (assistant) response in an OpenAI-compatible
 // chat completion request.
 type ChatCompletionGetResponseInputMessageAssistant struct {
+	// The content of the model's response.
 	Content ChatCompletionGetResponseInputMessageAssistantContentUnion `json:"content,nullable"`
-	Name    string                                                     `json:"name,nullable"`
+	// The name of the assistant message participant.
+	Name string `json:"name,nullable"`
+	// Must be 'assistant' to identify this as the model's response.
+	//
 	// Any of "assistant".
-	Role      string                                                   `json:"role"`
+	Role string `json:"role"`
+	// List of tool calls. Each tool call is an OpenAIChatCompletionToolCall object.
 	ToolCalls []ChatCompletionGetResponseInputMessageAssistantToolCall `json:"tool_calls,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -2672,7 +2846,10 @@ func (r *ChatCompletionGetResponseInputMessageAssistantContentUnion) UnmarshalJS
 
 // Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionGetResponseInputMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -2694,10 +2871,14 @@ func (r *ChatCompletionGetResponseInputMessageAssistantContentListOpenAIChatComp
 
 // Tool call specification for OpenAI-compatible chat completion responses.
 type ChatCompletionGetResponseInputMessageAssistantToolCall struct {
+	// Unique identifier for the tool call.
 	ID string `json:"id,nullable"`
 	// Function call details for OpenAI-compatible tool calls.
 	Function ChatCompletionGetResponseInputMessageAssistantToolCallFunction `json:"function,nullable"`
-	Index    int64                                                          `json:"index,nullable"`
+	// Index of the tool call in the list.
+	Index int64 `json:"index,nullable"`
+	// Must be 'function' to identify this as a function call.
+	//
 	// Any of "function".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -2719,8 +2900,10 @@ func (r *ChatCompletionGetResponseInputMessageAssistantToolCall) UnmarshalJSON(d
 
 // Function call details for OpenAI-compatible tool calls.
 type ChatCompletionGetResponseInputMessageAssistantToolCallFunction struct {
+	// Arguments to pass to the function as a JSON string.
 	Arguments string `json:"arguments,nullable"`
-	Name      string `json:"name,nullable"`
+	// Name of the function to call.
+	Name string `json:"name,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments   respjson.Field
@@ -2741,8 +2924,12 @@ func (r *ChatCompletionGetResponseInputMessageAssistantToolCallFunction) Unmarsh
 // A message representing the result of a tool invocation in an OpenAI-compatible
 // chat completion request.
 type ChatCompletionGetResponseInputMessageTool struct {
-	Content    ChatCompletionGetResponseInputMessageToolContentUnion `json:"content,required"`
-	ToolCallID string                                                `json:"tool_call_id,required"`
+	// The response content from the tool.
+	Content ChatCompletionGetResponseInputMessageToolContentUnion `json:"content,required"`
+	// Unique identifier for the tool call this response is for.
+	ToolCallID string `json:"tool_call_id,required"`
+	// Must be 'tool' to identify this as a tool response.
+	//
 	// Any of "tool".
 	Role string `json:"role"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -2802,7 +2989,10 @@ func (r *ChatCompletionGetResponseInputMessageToolContentUnion) UnmarshalJSON(da
 
 // Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionGetResponseInputMessageToolContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -2824,8 +3014,12 @@ func (r *ChatCompletionGetResponseInputMessageToolContentListOpenAIChatCompletio
 
 // A message from the developer in an OpenAI-compatible chat completion request.
 type ChatCompletionGetResponseInputMessageDeveloper struct {
+	// The content of the developer message.
 	Content ChatCompletionGetResponseInputMessageDeveloperContentUnion `json:"content,required"`
-	Name    string                                                     `json:"name,nullable"`
+	// The name of the developer message participant.
+	Name string `json:"name,nullable"`
+	// Must be 'developer' to identify this as a developer message.
+	//
 	// Any of "developer".
 	Role string `json:"role"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -2887,7 +3081,10 @@ func (r *ChatCompletionGetResponseInputMessageDeveloperContentUnion) UnmarshalJS
 
 // Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionGetResponseInputMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -2907,6 +3104,7 @@ func (r *ChatCompletionGetResponseInputMessageDeveloperContentListOpenAIChatComp
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// The object type.
 type ChatCompletionGetResponseObject string
 
 const (
@@ -2915,9 +3113,12 @@ const (
 
 // Usage information for OpenAI chat completion.
 type ChatCompletionGetResponseUsage struct {
+	// Number of tokens in the completion.
 	CompletionTokens int64 `json:"completion_tokens,required"`
-	PromptTokens     int64 `json:"prompt_tokens,required"`
-	TotalTokens      int64 `json:"total_tokens,required"`
+	// Number of tokens in the prompt.
+	PromptTokens int64 `json:"prompt_tokens,required"`
+	// Total tokens used (prompt + completion).
+	TotalTokens int64 `json:"total_tokens,required"`
 	// Token details for output tokens in OpenAI chat completion usage.
 	CompletionTokensDetails ChatCompletionGetResponseUsageCompletionTokensDetails `json:"completion_tokens_details,nullable"`
 	// Token details for prompt tokens in OpenAI chat completion usage.
@@ -2942,6 +3143,7 @@ func (r *ChatCompletionGetResponseUsage) UnmarshalJSON(data []byte) error {
 
 // Token details for output tokens in OpenAI chat completion usage.
 type ChatCompletionGetResponseUsageCompletionTokensDetails struct {
+	// Number of tokens used for reasoning (o1/o3 models).
 	ReasoningTokens int64 `json:"reasoning_tokens,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -2959,6 +3161,7 @@ func (r *ChatCompletionGetResponseUsageCompletionTokensDetails) UnmarshalJSON(da
 
 // Token details for prompt tokens in OpenAI chat completion usage.
 type ChatCompletionGetResponseUsagePromptTokensDetails struct {
+	// Number of tokens retrieved from cache.
 	CachedTokens int64 `json:"cached_tokens,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -2976,10 +3179,16 @@ func (r *ChatCompletionGetResponseUsagePromptTokensDetails) UnmarshalJSON(data [
 
 // Response from listing OpenAI-compatible chat completions.
 type ChatCompletionListResponse struct {
-	Data    []ChatCompletionListResponseData `json:"data,required"`
-	FirstID string                           `json:"first_id,required"`
-	HasMore bool                             `json:"has_more,required"`
-	LastID  string                           `json:"last_id,required"`
+	// List of chat completion objects with their input messages.
+	Data []ChatCompletionListResponseData `json:"data,required"`
+	// ID of the first completion in this list.
+	FirstID string `json:"first_id,required"`
+	// Whether there are more completions available beyond this list.
+	HasMore bool `json:"has_more,required"`
+	// ID of the last completion in this list.
+	LastID string `json:"last_id,required"`
+	// Must be 'list' to identify this as a list response.
+	//
 	// Any of "list".
 	Object ChatCompletionListResponseObject `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3001,11 +3210,18 @@ func (r *ChatCompletionListResponse) UnmarshalJSON(data []byte) error {
 }
 
 type ChatCompletionListResponseData struct {
-	ID            string                                            `json:"id,required"`
-	Choices       []ChatCompletionListResponseDataChoice            `json:"choices,required"`
-	Created       int64                                             `json:"created,required"`
+	// The ID of the chat completion.
+	ID string `json:"id,required"`
+	// List of choices.
+	Choices []ChatCompletionListResponseDataChoice `json:"choices,required"`
+	// The Unix timestamp in seconds when the chat completion was created.
+	Created int64 `json:"created,required"`
+	// The input messages used to generate this completion.
 	InputMessages []ChatCompletionListResponseDataInputMessageUnion `json:"input_messages,required"`
-	Model         string                                            `json:"model,required"`
+	// The model that was used to generate the chat completion.
+	Model string `json:"model,required"`
+	// The object type.
+	//
 	// Any of "chat.completion".
 	Object string `json:"object"`
 	// Usage information for OpenAI chat completion.
@@ -3032,9 +3248,13 @@ func (r *ChatCompletionListResponseData) UnmarshalJSON(data []byte) error {
 
 // A choice from an OpenAI-compatible chat completion response.
 type ChatCompletionListResponseDataChoice struct {
+	// The reason the model stopped generating.
+	//
+	// Any of "stop", "length", "tool_calls", "content_filter", "function_call".
 	FinishReason string `json:"finish_reason,required"`
-	Index        int64  `json:"index,required"`
-	// A message from the user in an OpenAI-compatible chat completion request.
+	// The index of the choice.
+	Index int64 `json:"index,required"`
+	// The message from the model.
 	Message ChatCompletionListResponseDataChoiceMessageUnion `json:"message,required"`
 	// The log probabilities for the tokens in the message from an OpenAI-compatible
 	// chat completion response.
@@ -3207,8 +3427,12 @@ func (r *ChatCompletionListResponseDataChoiceMessageUnionContent) UnmarshalJSON(
 
 // A message from the user in an OpenAI-compatible chat completion request.
 type ChatCompletionListResponseDataChoiceMessageUser struct {
+	// The content of the message, which can include text and other media.
 	Content ChatCompletionListResponseDataChoiceMessageUserContentUnion `json:"content,required"`
-	Name    string                                                      `json:"name,nullable"`
+	// The name of the user message participant.
+	Name string `json:"name,nullable"`
+	// Must be 'user' to identify this as a user message.
+	//
 	// Any of "user".
 	Role string `json:"role"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3364,7 +3588,10 @@ func (r *ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCom
 
 // Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3386,8 +3613,10 @@ func (r *ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCom
 
 // Image content part for OpenAI-compatible chat completion messages.
 type ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL struct {
-	// Image URL specification for OpenAI-compatible chat completion messages.
+	// Image URL specification and processing details.
 	ImageURL ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL `json:"image_url,required"`
+	// Must be 'image_url' to identify this as image content.
+	//
 	// Any of "image_url".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3407,9 +3636,13 @@ func (r *ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCom
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Image URL specification for OpenAI-compatible chat completion messages.
+// Image URL specification and processing details.
 type ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL struct {
-	URL    string `json:"url,required"`
+	// URL of the image to include in the message.
+	URL string `json:"url,required"`
+	// Level of detail for image processing. Can be 'low', 'high', or 'auto'.
+	//
+	// Any of "low", "high", "auto".
 	Detail string `json:"detail,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -3429,7 +3662,10 @@ func (r *ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCom
 }
 
 type ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile struct {
+	// File specification.
 	File ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile `json:"file,required"`
+	// Must be 'file' to identify this as file content.
+	//
 	// Any of "file".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3449,9 +3685,13 @@ func (r *ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCom
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// File specification.
 type ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile struct {
+	// Base64-encoded file data.
 	FileData string `json:"file_data,nullable"`
-	FileID   string `json:"file_id,nullable"`
+	// ID of an uploaded file.
+	FileID string `json:"file_id,nullable"`
+	// Name of the file.
 	Filename string `json:"filename,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -3473,8 +3713,13 @@ func (r *ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCom
 
 // A system message providing instructions or context to the model.
 type ChatCompletionListResponseDataChoiceMessageSystem struct {
+	// The content of the 'system prompt'. If multiple system messages are provided,
+	// they are concatenated.
 	Content ChatCompletionListResponseDataChoiceMessageSystemContentUnion `json:"content,required"`
-	Name    string                                                        `json:"name,nullable"`
+	// The name of the system message participant.
+	Name string `json:"name,nullable"`
+	// Must be 'system' to identify this as a system message.
+	//
 	// Any of "system".
 	Role string `json:"role"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3536,7 +3781,10 @@ func (r *ChatCompletionListResponseDataChoiceMessageSystemContentUnion) Unmarsha
 
 // Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionListResponseDataChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3559,10 +3807,15 @@ func (r *ChatCompletionListResponseDataChoiceMessageSystemContentListOpenAIChatC
 // A message containing the model's (assistant) response in an OpenAI-compatible
 // chat completion request.
 type ChatCompletionListResponseDataChoiceMessageAssistant struct {
+	// The content of the model's response.
 	Content ChatCompletionListResponseDataChoiceMessageAssistantContentUnion `json:"content,nullable"`
-	Name    string                                                           `json:"name,nullable"`
+	// The name of the assistant message participant.
+	Name string `json:"name,nullable"`
+	// Must be 'assistant' to identify this as the model's response.
+	//
 	// Any of "assistant".
-	Role      string                                                         `json:"role"`
+	Role string `json:"role"`
+	// List of tool calls. Each tool call is an OpenAIChatCompletionToolCall object.
 	ToolCalls []ChatCompletionListResponseDataChoiceMessageAssistantToolCall `json:"tool_calls,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -3624,7 +3877,10 @@ func (r *ChatCompletionListResponseDataChoiceMessageAssistantContentUnion) Unmar
 
 // Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionListResponseDataChoiceMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3646,10 +3902,14 @@ func (r *ChatCompletionListResponseDataChoiceMessageAssistantContentListOpenAICh
 
 // Tool call specification for OpenAI-compatible chat completion responses.
 type ChatCompletionListResponseDataChoiceMessageAssistantToolCall struct {
+	// Unique identifier for the tool call.
 	ID string `json:"id,nullable"`
 	// Function call details for OpenAI-compatible tool calls.
 	Function ChatCompletionListResponseDataChoiceMessageAssistantToolCallFunction `json:"function,nullable"`
-	Index    int64                                                                `json:"index,nullable"`
+	// Index of the tool call in the list.
+	Index int64 `json:"index,nullable"`
+	// Must be 'function' to identify this as a function call.
+	//
 	// Any of "function".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3673,8 +3933,10 @@ func (r *ChatCompletionListResponseDataChoiceMessageAssistantToolCall) Unmarshal
 
 // Function call details for OpenAI-compatible tool calls.
 type ChatCompletionListResponseDataChoiceMessageAssistantToolCallFunction struct {
+	// Arguments to pass to the function as a JSON string.
 	Arguments string `json:"arguments,nullable"`
-	Name      string `json:"name,nullable"`
+	// Name of the function to call.
+	Name string `json:"name,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments   respjson.Field
@@ -3695,8 +3957,12 @@ func (r *ChatCompletionListResponseDataChoiceMessageAssistantToolCallFunction) U
 // A message representing the result of a tool invocation in an OpenAI-compatible
 // chat completion request.
 type ChatCompletionListResponseDataChoiceMessageTool struct {
-	Content    ChatCompletionListResponseDataChoiceMessageToolContentUnion `json:"content,required"`
-	ToolCallID string                                                      `json:"tool_call_id,required"`
+	// The response content from the tool.
+	Content ChatCompletionListResponseDataChoiceMessageToolContentUnion `json:"content,required"`
+	// Unique identifier for the tool call this response is for.
+	ToolCallID string `json:"tool_call_id,required"`
+	// Must be 'tool' to identify this as a tool response.
+	//
 	// Any of "tool".
 	Role string `json:"role"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3758,7 +4024,10 @@ func (r *ChatCompletionListResponseDataChoiceMessageToolContentUnion) UnmarshalJ
 
 // Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionListResponseDataChoiceMessageToolContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3780,8 +4049,12 @@ func (r *ChatCompletionListResponseDataChoiceMessageToolContentListOpenAIChatCom
 
 // A message from the developer in an OpenAI-compatible chat completion request.
 type ChatCompletionListResponseDataChoiceMessageDeveloper struct {
+	// The content of the developer message.
 	Content ChatCompletionListResponseDataChoiceMessageDeveloperContentUnion `json:"content,required"`
-	Name    string                                                           `json:"name,nullable"`
+	// The name of the developer message participant.
+	Name string `json:"name,nullable"`
+	// Must be 'developer' to identify this as a developer message.
+	//
 	// Any of "developer".
 	Role string `json:"role"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3843,7 +4116,10 @@ func (r *ChatCompletionListResponseDataChoiceMessageDeveloperContentUnion) Unmar
 
 // Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionListResponseDataChoiceMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3866,7 +4142,9 @@ func (r *ChatCompletionListResponseDataChoiceMessageDeveloperContentListOpenAICh
 // The log probabilities for the tokens in the message from an OpenAI-compatible
 // chat completion response.
 type ChatCompletionListResponseDataChoiceLogprobs struct {
+	// The log probabilities for the tokens in the message.
 	Content []ChatCompletionListResponseDataChoiceLogprobsContent `json:"content,nullable"`
+	// The log probabilities for the refusal tokens.
 	Refusal []ChatCompletionListResponseDataChoiceLogprobsRefusal `json:"refusal,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -3885,13 +4163,14 @@ func (r *ChatCompletionListResponseDataChoiceLogprobs) UnmarshalJSON(data []byte
 
 // The log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token :top_logprobs: The top log probabilities for the token
 type ChatCompletionListResponseDataChoiceLogprobsContent struct {
-	Token       string                                                          `json:"token,required"`
-	Logprob     float64                                                         `json:"logprob,required"`
-	Bytes       []int64                                                         `json:"bytes,nullable"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
+	Logprob float64 `json:"logprob,required"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
+	// The top log probabilities for the token.
 	TopLogprobs []ChatCompletionListResponseDataChoiceLogprobsContentTopLogprob `json:"top_logprobs,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -3912,13 +4191,13 @@ func (r *ChatCompletionListResponseDataChoiceLogprobsContent) UnmarshalJSON(data
 
 // The top log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token
 type ChatCompletionListResponseDataChoiceLogprobsContentTopLogprob struct {
-	Token   string  `json:"token,required"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
 	Logprob float64 `json:"logprob,required"`
-	Bytes   []int64 `json:"bytes,nullable"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -3939,13 +4218,14 @@ func (r *ChatCompletionListResponseDataChoiceLogprobsContentTopLogprob) Unmarsha
 
 // The log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token :top_logprobs: The top log probabilities for the token
 type ChatCompletionListResponseDataChoiceLogprobsRefusal struct {
-	Token       string                                                          `json:"token,required"`
-	Logprob     float64                                                         `json:"logprob,required"`
-	Bytes       []int64                                                         `json:"bytes,nullable"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
+	Logprob float64 `json:"logprob,required"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
+	// The top log probabilities for the token.
 	TopLogprobs []ChatCompletionListResponseDataChoiceLogprobsRefusalTopLogprob `json:"top_logprobs,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -3966,13 +4246,13 @@ func (r *ChatCompletionListResponseDataChoiceLogprobsRefusal) UnmarshalJSON(data
 
 // The top log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token
 type ChatCompletionListResponseDataChoiceLogprobsRefusalTopLogprob struct {
-	Token   string  `json:"token,required"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
 	Logprob float64 `json:"logprob,required"`
-	Bytes   []int64 `json:"bytes,nullable"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -4142,8 +4422,12 @@ func (r *ChatCompletionListResponseDataInputMessageUnionContent) UnmarshalJSON(d
 
 // A message from the user in an OpenAI-compatible chat completion request.
 type ChatCompletionListResponseDataInputMessageUser struct {
+	// The content of the message, which can include text and other media.
 	Content ChatCompletionListResponseDataInputMessageUserContentUnion `json:"content,required"`
-	Name    string                                                     `json:"name,nullable"`
+	// The name of the user message participant.
+	Name string `json:"name,nullable"`
+	// Must be 'user' to identify this as a user message.
+	//
 	// Any of "user".
 	Role string `json:"role"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4299,7 +4583,10 @@ func (r *ChatCompletionListResponseDataInputMessageUserContentListOpenAIChatComp
 
 // Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionListResponseDataInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4321,8 +4608,10 @@ func (r *ChatCompletionListResponseDataInputMessageUserContentListOpenAIChatComp
 
 // Image content part for OpenAI-compatible chat completion messages.
 type ChatCompletionListResponseDataInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL struct {
-	// Image URL specification for OpenAI-compatible chat completion messages.
+	// Image URL specification and processing details.
 	ImageURL ChatCompletionListResponseDataInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL `json:"image_url,required"`
+	// Must be 'image_url' to identify this as image content.
+	//
 	// Any of "image_url".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4342,9 +4631,13 @@ func (r *ChatCompletionListResponseDataInputMessageUserContentListOpenAIChatComp
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Image URL specification for OpenAI-compatible chat completion messages.
+// Image URL specification and processing details.
 type ChatCompletionListResponseDataInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL struct {
-	URL    string `json:"url,required"`
+	// URL of the image to include in the message.
+	URL string `json:"url,required"`
+	// Level of detail for image processing. Can be 'low', 'high', or 'auto'.
+	//
+	// Any of "low", "high", "auto".
 	Detail string `json:"detail,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -4364,7 +4657,10 @@ func (r *ChatCompletionListResponseDataInputMessageUserContentListOpenAIChatComp
 }
 
 type ChatCompletionListResponseDataInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile struct {
+	// File specification.
 	File ChatCompletionListResponseDataInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile `json:"file,required"`
+	// Must be 'file' to identify this as file content.
+	//
 	// Any of "file".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4384,9 +4680,13 @@ func (r *ChatCompletionListResponseDataInputMessageUserContentListOpenAIChatComp
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// File specification.
 type ChatCompletionListResponseDataInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile struct {
+	// Base64-encoded file data.
 	FileData string `json:"file_data,nullable"`
-	FileID   string `json:"file_id,nullable"`
+	// ID of an uploaded file.
+	FileID string `json:"file_id,nullable"`
+	// Name of the file.
 	Filename string `json:"filename,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -4408,8 +4708,13 @@ func (r *ChatCompletionListResponseDataInputMessageUserContentListOpenAIChatComp
 
 // A system message providing instructions or context to the model.
 type ChatCompletionListResponseDataInputMessageSystem struct {
+	// The content of the 'system prompt'. If multiple system messages are provided,
+	// they are concatenated.
 	Content ChatCompletionListResponseDataInputMessageSystemContentUnion `json:"content,required"`
-	Name    string                                                       `json:"name,nullable"`
+	// The name of the system message participant.
+	Name string `json:"name,nullable"`
+	// Must be 'system' to identify this as a system message.
+	//
 	// Any of "system".
 	Role string `json:"role"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4471,7 +4776,10 @@ func (r *ChatCompletionListResponseDataInputMessageSystemContentUnion) Unmarshal
 
 // Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionListResponseDataInputMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4494,10 +4802,15 @@ func (r *ChatCompletionListResponseDataInputMessageSystemContentListOpenAIChatCo
 // A message containing the model's (assistant) response in an OpenAI-compatible
 // chat completion request.
 type ChatCompletionListResponseDataInputMessageAssistant struct {
+	// The content of the model's response.
 	Content ChatCompletionListResponseDataInputMessageAssistantContentUnion `json:"content,nullable"`
-	Name    string                                                          `json:"name,nullable"`
+	// The name of the assistant message participant.
+	Name string `json:"name,nullable"`
+	// Must be 'assistant' to identify this as the model's response.
+	//
 	// Any of "assistant".
-	Role      string                                                        `json:"role"`
+	Role string `json:"role"`
+	// List of tool calls. Each tool call is an OpenAIChatCompletionToolCall object.
 	ToolCalls []ChatCompletionListResponseDataInputMessageAssistantToolCall `json:"tool_calls,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -4559,7 +4872,10 @@ func (r *ChatCompletionListResponseDataInputMessageAssistantContentUnion) Unmars
 
 // Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionListResponseDataInputMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4581,10 +4897,14 @@ func (r *ChatCompletionListResponseDataInputMessageAssistantContentListOpenAICha
 
 // Tool call specification for OpenAI-compatible chat completion responses.
 type ChatCompletionListResponseDataInputMessageAssistantToolCall struct {
+	// Unique identifier for the tool call.
 	ID string `json:"id,nullable"`
 	// Function call details for OpenAI-compatible tool calls.
 	Function ChatCompletionListResponseDataInputMessageAssistantToolCallFunction `json:"function,nullable"`
-	Index    int64                                                               `json:"index,nullable"`
+	// Index of the tool call in the list.
+	Index int64 `json:"index,nullable"`
+	// Must be 'function' to identify this as a function call.
+	//
 	// Any of "function".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4608,8 +4928,10 @@ func (r *ChatCompletionListResponseDataInputMessageAssistantToolCall) UnmarshalJ
 
 // Function call details for OpenAI-compatible tool calls.
 type ChatCompletionListResponseDataInputMessageAssistantToolCallFunction struct {
+	// Arguments to pass to the function as a JSON string.
 	Arguments string `json:"arguments,nullable"`
-	Name      string `json:"name,nullable"`
+	// Name of the function to call.
+	Name string `json:"name,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments   respjson.Field
@@ -4630,8 +4952,12 @@ func (r *ChatCompletionListResponseDataInputMessageAssistantToolCallFunction) Un
 // A message representing the result of a tool invocation in an OpenAI-compatible
 // chat completion request.
 type ChatCompletionListResponseDataInputMessageTool struct {
-	Content    ChatCompletionListResponseDataInputMessageToolContentUnion `json:"content,required"`
-	ToolCallID string                                                     `json:"tool_call_id,required"`
+	// The response content from the tool.
+	Content ChatCompletionListResponseDataInputMessageToolContentUnion `json:"content,required"`
+	// Unique identifier for the tool call this response is for.
+	ToolCallID string `json:"tool_call_id,required"`
+	// Must be 'tool' to identify this as a tool response.
+	//
 	// Any of "tool".
 	Role string `json:"role"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4693,7 +5019,10 @@ func (r *ChatCompletionListResponseDataInputMessageToolContentUnion) UnmarshalJS
 
 // Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionListResponseDataInputMessageToolContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4715,8 +5044,12 @@ func (r *ChatCompletionListResponseDataInputMessageToolContentListOpenAIChatComp
 
 // A message from the developer in an OpenAI-compatible chat completion request.
 type ChatCompletionListResponseDataInputMessageDeveloper struct {
+	// The content of the developer message.
 	Content ChatCompletionListResponseDataInputMessageDeveloperContentUnion `json:"content,required"`
-	Name    string                                                          `json:"name,nullable"`
+	// The name of the developer message participant.
+	Name string `json:"name,nullable"`
+	// Must be 'developer' to identify this as a developer message.
+	//
 	// Any of "developer".
 	Role string `json:"role"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4778,7 +5111,10 @@ func (r *ChatCompletionListResponseDataInputMessageDeveloperContentUnion) Unmars
 
 // Text content part for OpenAI-compatible chat completion messages.
 type ChatCompletionListResponseDataInputMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4800,9 +5136,12 @@ func (r *ChatCompletionListResponseDataInputMessageDeveloperContentListOpenAICha
 
 // Usage information for OpenAI chat completion.
 type ChatCompletionListResponseDataUsage struct {
+	// Number of tokens in the completion.
 	CompletionTokens int64 `json:"completion_tokens,required"`
-	PromptTokens     int64 `json:"prompt_tokens,required"`
-	TotalTokens      int64 `json:"total_tokens,required"`
+	// Number of tokens in the prompt.
+	PromptTokens int64 `json:"prompt_tokens,required"`
+	// Total tokens used (prompt + completion).
+	TotalTokens int64 `json:"total_tokens,required"`
 	// Token details for output tokens in OpenAI chat completion usage.
 	CompletionTokensDetails ChatCompletionListResponseDataUsageCompletionTokensDetails `json:"completion_tokens_details,nullable"`
 	// Token details for prompt tokens in OpenAI chat completion usage.
@@ -4827,6 +5166,7 @@ func (r *ChatCompletionListResponseDataUsage) UnmarshalJSON(data []byte) error {
 
 // Token details for output tokens in OpenAI chat completion usage.
 type ChatCompletionListResponseDataUsageCompletionTokensDetails struct {
+	// Number of tokens used for reasoning (o1/o3 models).
 	ReasoningTokens int64 `json:"reasoning_tokens,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -4846,6 +5186,7 @@ func (r *ChatCompletionListResponseDataUsageCompletionTokensDetails) UnmarshalJS
 
 // Token details for prompt tokens in OpenAI chat completion usage.
 type ChatCompletionListResponseDataUsagePromptTokensDetails struct {
+	// Number of tokens retrieved from cache.
 	CachedTokens int64 `json:"cached_tokens,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -4861,6 +5202,7 @@ func (r *ChatCompletionListResponseDataUsagePromptTokensDetails) UnmarshalJSON(d
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Must be 'list' to identify this as a list response.
 type ChatCompletionListResponseObject string
 
 const (
@@ -4868,29 +5210,56 @@ const (
 )
 
 type ChatCompletionNewParams struct {
-	Messages            []ChatCompletionNewParamsMessageUnion    `json:"messages,omitzero,required"`
-	Model               string                                   `json:"model,required"`
-	FrequencyPenalty    param.Opt[float64]                       `json:"frequency_penalty,omitzero"`
-	Logprobs            param.Opt[bool]                          `json:"logprobs,omitzero"`
-	MaxCompletionTokens param.Opt[int64]                         `json:"max_completion_tokens,omitzero"`
-	MaxTokens           param.Opt[int64]                         `json:"max_tokens,omitzero"`
-	N                   param.Opt[int64]                         `json:"n,omitzero"`
-	ParallelToolCalls   param.Opt[bool]                          `json:"parallel_tool_calls,omitzero"`
-	PresencePenalty     param.Opt[float64]                       `json:"presence_penalty,omitzero"`
-	Seed                param.Opt[int64]                         `json:"seed,omitzero"`
-	Temperature         param.Opt[float64]                       `json:"temperature,omitzero"`
-	TopLogprobs         param.Opt[int64]                         `json:"top_logprobs,omitzero"`
-	TopP                param.Opt[float64]                       `json:"top_p,omitzero"`
-	User                param.Opt[string]                        `json:"user,omitzero"`
-	FunctionCall        ChatCompletionNewParamsFunctionCallUnion `json:"function_call,omitzero"`
-	Functions           []map[string]any                         `json:"functions,omitzero"`
-	LogitBias           map[string]float64                       `json:"logit_bias,omitzero"`
-	// Text response format for OpenAI-compatible chat completion requests.
+	// List of messages in the conversation.
+	Messages []ChatCompletionNewParamsMessageUnion `json:"messages,omitzero,required"`
+	// The identifier of the model to use.
+	Model string `json:"model,required"`
+	// The penalty for repeated tokens.
+	FrequencyPenalty param.Opt[float64] `json:"frequency_penalty,omitzero"`
+	// The log probabilities to use.
+	Logprobs param.Opt[bool] `json:"logprobs,omitzero"`
+	// The maximum number of tokens to generate.
+	MaxCompletionTokens param.Opt[int64] `json:"max_completion_tokens,omitzero"`
+	// The maximum number of tokens to generate.
+	MaxTokens param.Opt[int64] `json:"max_tokens,omitzero"`
+	// The number of completions to generate.
+	N param.Opt[int64] `json:"n,omitzero"`
+	// Whether to parallelize tool calls.
+	ParallelToolCalls param.Opt[bool] `json:"parallel_tool_calls,omitzero"`
+	// The penalty for repeated tokens.
+	PresencePenalty param.Opt[float64] `json:"presence_penalty,omitzero"`
+	// A stable identifier used for safety monitoring and abuse detection.
+	SafetyIdentifier param.Opt[string] `json:"safety_identifier,omitzero"`
+	// The seed to use.
+	Seed param.Opt[int64] `json:"seed,omitzero"`
+	// The temperature to use.
+	Temperature param.Opt[float64] `json:"temperature,omitzero"`
+	// The top log probabilities to use.
+	TopLogprobs param.Opt[int64] `json:"top_logprobs,omitzero"`
+	// The top p to use.
+	TopP param.Opt[float64] `json:"top_p,omitzero"`
+	// The user to use.
+	User param.Opt[string] `json:"user,omitzero"`
+	// The function call to use.
+	FunctionCall ChatCompletionNewParamsFunctionCallUnion `json:"function_call,omitzero"`
+	// List of functions to use.
+	Functions []map[string]any `json:"functions,omitzero"`
+	// The logit bias to use.
+	LogitBias map[string]float64 `json:"logit_bias,omitzero"`
+	// The effort level for reasoning models.
+	//
+	// Any of "none", "minimal", "low", "medium", "high", "xhigh".
+	ReasoningEffort ChatCompletionNewParamsReasoningEffort `json:"reasoning_effort,omitzero"`
+	// The response format to use.
 	ResponseFormat ChatCompletionNewParamsResponseFormatUnion `json:"response_format,omitzero"`
-	Stop           ChatCompletionNewParamsStopUnion           `json:"stop,omitzero"`
-	StreamOptions  map[string]any                             `json:"stream_options,omitzero"`
-	ToolChoice     ChatCompletionNewParamsToolChoiceUnion     `json:"tool_choice,omitzero"`
-	Tools          []map[string]any                           `json:"tools,omitzero"`
+	// The stop tokens to use.
+	Stop ChatCompletionNewParamsStopUnion `json:"stop,omitzero"`
+	// The stream options to use.
+	StreamOptions map[string]any `json:"stream_options,omitzero"`
+	// The tool choice to use.
+	ToolChoice ChatCompletionNewParamsToolChoiceUnion `json:"tool_choice,omitzero"`
+	// The tools to use.
+	Tools []map[string]any `json:"tools,omitzero"`
 	paramObj
 }
 
@@ -5041,8 +5410,12 @@ func init() {
 //
 // The property Content is required.
 type ChatCompletionNewParamsMessageUser struct {
+	// The content of the message, which can include text and other media.
 	Content ChatCompletionNewParamsMessageUserContentUnion `json:"content,omitzero,required"`
-	Name    param.Opt[string]                              `json:"name,omitzero"`
+	// The name of the user message participant.
+	Name param.Opt[string] `json:"name,omitzero"`
+	// Must be 'user' to identify this as a user message.
+	//
 	// Any of "user".
 	Role string `json:"role,omitzero"`
 	paramObj
@@ -5164,7 +5537,10 @@ func init() {
 //
 // The property Text is required.
 type ChatCompletionNewParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -5188,8 +5564,10 @@ func init() {
 //
 // The property ImageURL is required.
 type ChatCompletionNewParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL struct {
-	// Image URL specification for OpenAI-compatible chat completion messages.
+	// Image URL specification and processing details.
 	ImageURL ChatCompletionNewParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL `json:"image_url,omitzero,required"`
+	// Must be 'image_url' to identify this as image content.
+	//
 	// Any of "image_url".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -5209,12 +5587,16 @@ func init() {
 	)
 }
 
-// Image URL specification for OpenAI-compatible chat completion messages.
+// Image URL specification and processing details.
 //
 // The property URL is required.
 type ChatCompletionNewParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL struct {
-	URL    string            `json:"url,required"`
-	Detail param.Opt[string] `json:"detail,omitzero"`
+	// URL of the image to include in the message.
+	URL string `json:"url,required"`
+	// Level of detail for image processing. Can be 'low', 'high', or 'auto'.
+	//
+	// Any of "low", "high", "auto".
+	Detail string `json:"detail,omitzero"`
 	paramObj
 }
 
@@ -5226,9 +5608,18 @@ func (r *ChatCompletionNewParamsMessageUserContentListOpenAIChatCompletionConten
 	return apijson.UnmarshalRoot(data, r)
 }
 
+func init() {
+	apijson.RegisterFieldValidator[ChatCompletionNewParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL](
+		"detail", "low", "high", "auto",
+	)
+}
+
 // The property File is required.
 type ChatCompletionNewParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile struct {
+	// File specification.
 	File ChatCompletionNewParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile `json:"file,omitzero,required"`
+	// Must be 'file' to identify this as file content.
+	//
 	// Any of "file".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -5248,9 +5639,13 @@ func init() {
 	)
 }
 
+// File specification.
 type ChatCompletionNewParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile struct {
+	// Base64-encoded file data.
 	FileData param.Opt[string] `json:"file_data,omitzero"`
-	FileID   param.Opt[string] `json:"file_id,omitzero"`
+	// ID of an uploaded file.
+	FileID param.Opt[string] `json:"file_id,omitzero"`
+	// Name of the file.
 	Filename param.Opt[string] `json:"filename,omitzero"`
 	paramObj
 }
@@ -5267,8 +5662,13 @@ func (r *ChatCompletionNewParamsMessageUserContentListOpenAIChatCompletionConten
 //
 // The property Content is required.
 type ChatCompletionNewParamsMessageSystem struct {
+	// The content of the 'system prompt'. If multiple system messages are provided,
+	// they are concatenated.
 	Content ChatCompletionNewParamsMessageSystemContentUnion `json:"content,omitzero,required"`
-	Name    param.Opt[string]                                `json:"name,omitzero"`
+	// The name of the system message participant.
+	Name param.Opt[string] `json:"name,omitzero"`
+	// Must be 'system' to identify this as a system message.
+	//
 	// Any of "system".
 	Role string `json:"role,omitzero"`
 	paramObj
@@ -5317,7 +5717,10 @@ func (u *ChatCompletionNewParamsMessageSystemContentUnion) asAny() any {
 //
 // The property Text is required.
 type ChatCompletionNewParamsMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -5340,9 +5743,14 @@ func init() {
 // A message containing the model's (assistant) response in an OpenAI-compatible
 // chat completion request.
 type ChatCompletionNewParamsMessageAssistant struct {
-	Name      param.Opt[string]                                   `json:"name,omitzero"`
-	Content   ChatCompletionNewParamsMessageAssistantContentUnion `json:"content,omitzero"`
-	ToolCalls []ChatCompletionNewParamsMessageAssistantToolCall   `json:"tool_calls,omitzero"`
+	// The name of the assistant message participant.
+	Name param.Opt[string] `json:"name,omitzero"`
+	// The content of the model's response.
+	Content ChatCompletionNewParamsMessageAssistantContentUnion `json:"content,omitzero"`
+	// List of tool calls. Each tool call is an OpenAIChatCompletionToolCall object.
+	ToolCalls []ChatCompletionNewParamsMessageAssistantToolCall `json:"tool_calls,omitzero"`
+	// Must be 'assistant' to identify this as the model's response.
+	//
 	// Any of "assistant".
 	Role string `json:"role,omitzero"`
 	paramObj
@@ -5391,7 +5799,10 @@ func (u *ChatCompletionNewParamsMessageAssistantContentUnion) asAny() any {
 //
 // The property Text is required.
 type ChatCompletionNewParamsMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -5413,10 +5824,14 @@ func init() {
 
 // Tool call specification for OpenAI-compatible chat completion responses.
 type ChatCompletionNewParamsMessageAssistantToolCall struct {
-	ID    param.Opt[string] `json:"id,omitzero"`
-	Index param.Opt[int64]  `json:"index,omitzero"`
+	// Unique identifier for the tool call.
+	ID param.Opt[string] `json:"id,omitzero"`
+	// Index of the tool call in the list.
+	Index param.Opt[int64] `json:"index,omitzero"`
 	// Function call details for OpenAI-compatible tool calls.
 	Function ChatCompletionNewParamsMessageAssistantToolCallFunction `json:"function,omitzero"`
+	// Must be 'function' to identify this as a function call.
+	//
 	// Any of "function".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -5438,8 +5853,10 @@ func init() {
 
 // Function call details for OpenAI-compatible tool calls.
 type ChatCompletionNewParamsMessageAssistantToolCallFunction struct {
+	// Arguments to pass to the function as a JSON string.
 	Arguments param.Opt[string] `json:"arguments,omitzero"`
-	Name      param.Opt[string] `json:"name,omitzero"`
+	// Name of the function to call.
+	Name param.Opt[string] `json:"name,omitzero"`
 	paramObj
 }
 
@@ -5456,8 +5873,12 @@ func (r *ChatCompletionNewParamsMessageAssistantToolCallFunction) UnmarshalJSON(
 //
 // The properties Content, ToolCallID are required.
 type ChatCompletionNewParamsMessageTool struct {
-	Content    ChatCompletionNewParamsMessageToolContentUnion `json:"content,omitzero,required"`
-	ToolCallID string                                         `json:"tool_call_id,required"`
+	// The response content from the tool.
+	Content ChatCompletionNewParamsMessageToolContentUnion `json:"content,omitzero,required"`
+	// Unique identifier for the tool call this response is for.
+	ToolCallID string `json:"tool_call_id,required"`
+	// Must be 'tool' to identify this as a tool response.
+	//
 	// Any of "tool".
 	Role string `json:"role,omitzero"`
 	paramObj
@@ -5506,7 +5927,10 @@ func (u *ChatCompletionNewParamsMessageToolContentUnion) asAny() any {
 //
 // The property Text is required.
 type ChatCompletionNewParamsMessageToolContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -5530,8 +5954,12 @@ func init() {
 //
 // The property Content is required.
 type ChatCompletionNewParamsMessageDeveloper struct {
+	// The content of the developer message.
 	Content ChatCompletionNewParamsMessageDeveloperContentUnion `json:"content,omitzero,required"`
-	Name    param.Opt[string]                                   `json:"name,omitzero"`
+	// The name of the developer message participant.
+	Name param.Opt[string] `json:"name,omitzero"`
+	// Must be 'developer' to identify this as a developer message.
+	//
 	// Any of "developer".
 	Role string `json:"role,omitzero"`
 	paramObj
@@ -5580,7 +6008,10 @@ func (u *ChatCompletionNewParamsMessageDeveloperContentUnion) asAny() any {
 //
 // The property Text is required.
 type ChatCompletionNewParamsMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -5624,6 +6055,18 @@ func (u *ChatCompletionNewParamsFunctionCallUnion) asAny() any {
 	}
 	return nil
 }
+
+// The effort level for reasoning models.
+type ChatCompletionNewParamsReasoningEffort string
+
+const (
+	ChatCompletionNewParamsReasoningEffortNone    ChatCompletionNewParamsReasoningEffort = "none"
+	ChatCompletionNewParamsReasoningEffortMinimal ChatCompletionNewParamsReasoningEffort = "minimal"
+	ChatCompletionNewParamsReasoningEffortLow     ChatCompletionNewParamsReasoningEffort = "low"
+	ChatCompletionNewParamsReasoningEffortMedium  ChatCompletionNewParamsReasoningEffort = "medium"
+	ChatCompletionNewParamsReasoningEffortHigh    ChatCompletionNewParamsReasoningEffort = "high"
+	ChatCompletionNewParamsReasoningEffortXhigh   ChatCompletionNewParamsReasoningEffort = "xhigh"
+)
 
 // Only one field can be non-zero.
 //
@@ -5684,6 +6127,8 @@ func init() {
 
 // Text response format for OpenAI-compatible chat completion requests.
 type ChatCompletionNewParamsResponseFormatText struct {
+	// Must be 'text' to indicate plain text response format.
+	//
 	// Any of "text".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -5707,8 +6152,10 @@ func init() {
 //
 // The property JsonSchema is required.
 type ChatCompletionNewParamsResponseFormatJsonSchema struct {
-	// JSON schema specification for OpenAI-compatible structured response format.
+	// The JSON schema specification for the response.
 	JsonSchema ChatCompletionNewParamsResponseFormatJsonSchemaJsonSchema `json:"json_schema,omitzero,required"`
+	// Must be 'json_schema' to indicate structured JSON response format.
+	//
 	// Any of "json_schema".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -5728,7 +6175,7 @@ func init() {
 	)
 }
 
-// JSON schema specification for OpenAI-compatible structured response format.
+// The JSON schema specification for the response.
 type ChatCompletionNewParamsResponseFormatJsonSchemaJsonSchema struct {
 	Description param.Opt[string] `json:"description,omitzero"`
 	Strict      param.Opt[bool]   `json:"strict,omitzero"`
@@ -5747,6 +6194,8 @@ func (r *ChatCompletionNewParamsResponseFormatJsonSchemaJsonSchema) UnmarshalJSO
 
 // JSON object response format for OpenAI-compatible chat completion requests.
 type ChatCompletionNewParamsResponseFormatJsonObject struct {
+	// Must be 'json_object' to indicate generic JSON object response format.
+	//
 	// Any of "json_object".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -5817,8 +6266,11 @@ func (u *ChatCompletionNewParamsToolChoiceUnion) asAny() any {
 }
 
 type ChatCompletionListParams struct {
+	// The ID of the last chat completion to return.
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
-	Limit param.Opt[int64]  `query:"limit,omitzero" json:"-"`
+	// The maximum number of chat completions to return.
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// The model to filter by.
 	Model param.Opt[string] `query:"model,omitzero" json:"-"`
 	// Sort order for paginated responses.
 	//

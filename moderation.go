@@ -39,9 +39,7 @@ func NewModerationService(opts ...option.RequestOption) (r ModerationService) {
 	return
 }
 
-// Create moderation.
-//
-// Classifies if text and/or image inputs are potentially harmful.
+// Classifies if text inputs are potentially harmful. OpenAI-compatible endpoint.
 func (r *ModerationService) New(ctx context.Context, body ModerationNewParams, opts ...option.RequestOption) (res *CreateResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/moderations"
@@ -49,10 +47,13 @@ func (r *ModerationService) New(ctx context.Context, body ModerationNewParams, o
 	return
 }
 
-// A moderation object.
+// A moderation object containing the results of content classification.
 type CreateResponse struct {
-	ID      string                 `json:"id,required"`
-	Model   string                 `json:"model,required"`
+	// The unique identifier for the moderation request
+	ID string `json:"id,required"`
+	// The model used to generate the moderation results
+	Model string `json:"model,required"`
+	// A list of moderation result objects
 	Results []CreateResponseResult `json:"results,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -70,14 +71,21 @@ func (r *CreateResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// A moderation object.
+// A moderation result object containing flagged status and category information.
 type CreateResponseResult struct {
-	Flagged                   bool                `json:"flagged,required"`
-	Categories                map[string]bool     `json:"categories,nullable"`
+	// Whether any of the below categories are flagged
+	Flagged bool `json:"flagged,required"`
+	// A dictionary of the categories, and whether they are flagged or not
+	Categories map[string]bool `json:"categories,nullable"`
+	// A dictionary of the categories along with the input type(s) that the score
+	// applies to
 	CategoryAppliedInputTypes map[string][]string `json:"category_applied_input_types,nullable"`
-	CategoryScores            map[string]float64  `json:"category_scores,nullable"`
-	Metadata                  map[string]any      `json:"metadata"`
-	UserMessage               string              `json:"user_message,nullable"`
+	// A dictionary of the categories along with their scores as predicted by model
+	CategoryScores map[string]float64 `json:"category_scores,nullable"`
+	// Additional metadata about the moderation
+	Metadata map[string]any `json:"metadata"`
+	// A message to convey to the user about the moderation result
+	UserMessage string `json:"user_message,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Flagged                   respjson.Field
@@ -98,8 +106,11 @@ func (r *CreateResponseResult) UnmarshalJSON(data []byte) error {
 }
 
 type ModerationNewParams struct {
+	// Input (or inputs) to classify. Can be a single string or an array of strings.
 	Input ModerationNewParamsInputUnion `json:"input,omitzero,required"`
-	Model param.Opt[string]             `json:"model,omitzero"`
+	// The content moderation model to use. If not specified, the default shield will
+	// be used.
+	Model param.Opt[string] `json:"model,omitzero"`
 	paramObj
 }
 

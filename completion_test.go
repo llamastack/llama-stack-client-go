@@ -35,16 +35,16 @@ func TestCompletionNewWithOptionalParams(t *testing.T) {
 		Prompt: llamastackclient.CompletionNewParamsPromptUnion{
 			OfString: llamastackclient.String("string"),
 		},
-		BestOf:           llamastackclient.Int(0),
+		BestOf:           llamastackclient.Int(1),
 		Echo:             llamastackclient.Bool(true),
-		FrequencyPenalty: llamastackclient.Float(0),
+		FrequencyPenalty: llamastackclient.Float(-2),
 		LogitBias: map[string]float64{
 			"foo": 0,
 		},
 		Logprobs:        llamastackclient.Bool(true),
-		MaxTokens:       llamastackclient.Int(0),
-		N:               llamastackclient.Int(0),
-		PresencePenalty: llamastackclient.Float(0),
+		MaxTokens:       llamastackclient.Int(1),
+		N:               llamastackclient.Int(1),
+		PresencePenalty: llamastackclient.Float(-2),
 		Seed:            llamastackclient.Int(0),
 		Stop: llamastackclient.CompletionNewParamsStopUnion{
 			OfString: llamastackclient.String("string"),

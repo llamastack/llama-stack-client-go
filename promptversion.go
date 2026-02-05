@@ -40,8 +40,6 @@ func NewPromptVersionService(opts ...option.RequestOption) (r PromptVersionServi
 	return
 }
 
-// List prompt versions.
-//
 // List all versions of a specific prompt.
 func (r *PromptVersionService) List(ctx context.Context, promptID string, opts ...option.RequestOption) (res *[]Prompt, err error) {
 	var env ListPromptsResponse

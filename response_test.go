@@ -34,12 +34,16 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 		Input: llamastackclient.ResponseNewParamsInputUnion{
 			OfString: llamastackclient.String("string"),
 		},
-		Model:         "model",
-		Conversation:  llamastackclient.String("conversation"),
-		Include:       []string{"web_search_call.action.sources"},
-		Instructions:  llamastackclient.String("instructions"),
-		MaxInferIters: llamastackclient.Int(0),
-		MaxToolCalls:  llamastackclient.Int(0),
+		Model:        "model",
+		Conversation: llamastackclient.String("conversation"),
+		Guardrails: []llamastackclient.ResponseNewParamsGuardrailUnion{{
+			OfString: llamastackclient.String("string"),
+		}},
+		Include:         []string{"web_search_call.action.sources"},
+		Instructions:    llamastackclient.String("instructions"),
+		MaxInferIters:   llamastackclient.Int(1),
+		MaxOutputTokens: llamastackclient.Int(16),
+		MaxToolCalls:    llamastackclient.Int(1),
 		Metadata: map[string]string{
 			"foo": "string",
 		},
@@ -57,8 +61,12 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 			},
 			Version: llamastackclient.String("version"),
 		},
-		Store:       llamastackclient.Bool(true),
-		Temperature: llamastackclient.Float(0),
+		Reasoning: llamastackclient.ResponseNewParamsReasoning{
+			Effort: "none",
+		},
+		SafetyIdentifier: llamastackclient.String("safety_identifier"),
+		Store:            llamastackclient.Bool(true),
+		Temperature:      llamastackclient.Float(0),
 		Text: llamastackclient.ResponseNewParamsText{
 			Format: llamastackclient.ResponseNewParamsTextFormat{
 				Description: llamastackclient.String("description"),

@@ -137,12 +137,14 @@ func (r *RouteInfo) UnmarshalJSON(data []byte) error {
 
 // Details of a safety violation detected by content moderation.
 type SafetyViolation struct {
-	// Severity level of a safety violation.
+	// Severity level of the violation
 	//
 	// Any of "info", "warn", "error".
 	ViolationLevel SafetyViolationViolationLevel `json:"violation_level,required"`
-	Metadata       map[string]any                `json:"metadata"`
-	UserMessage    string                        `json:"user_message,nullable"`
+	// Additional metadata including specific violation codes
+	Metadata map[string]any `json:"metadata"`
+	// Message to convey to the user about the violation
+	UserMessage string `json:"user_message,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ViolationLevel respjson.Field
@@ -159,7 +161,7 @@ func (r *SafetyViolation) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Severity level of a safety violation.
+// Severity level of the violation
 type SafetyViolationViolationLevel string
 
 const (
@@ -168,13 +170,18 @@ const (
 	SafetyViolationViolationLevelError SafetyViolationViolationLevel = "error"
 )
 
-// Sampling parameters.
+// Sampling parameters for text generation.
 type SamplingParams struct {
-	MaxTokens         param.Opt[int64]   `json:"max_tokens,omitzero"`
+	// The maximum number of tokens that can be generated in the completion. The token
+	// count of your prompt plus max_tokens cannot exceed the model's context length.
+	MaxTokens param.Opt[int64] `json:"max_tokens,omitzero"`
+	// Number between -2.0 and 2.0. Positive values penalize new tokens based on
+	// whether they appear in the text so far.
 	RepetitionPenalty param.Opt[float64] `json:"repetition_penalty,omitzero"`
-	Stop              []string           `json:"stop,omitzero"`
-	// Greedy sampling strategy that selects the highest probability token at each
-	// step.
+	// Up to 4 sequences where the API will stop generating further tokens. The
+	// returned text will not contain the stop sequence.
+	Stop []string `json:"stop,omitzero"`
+	// The sampling strategy to use.
 	Strategy SamplingParamsStrategyUnion `json:"strategy,omitzero"`
 	paramObj
 }
@@ -217,8 +224,8 @@ func (u *SamplingParamsStrategyUnion) asAny() any {
 
 // Returns a pointer to the underlying variant's property, if present.
 func (u SamplingParamsStrategyUnion) GetTemperature() *float64 {
-	if vt := u.OfTopP; vt != nil && vt.Temperature.Valid() {
-		return &vt.Temperature.Value
+	if vt := u.OfTopP; vt != nil {
+		return &vt.Temperature
 	}
 	return nil
 }
@@ -263,6 +270,8 @@ func init() {
 // Greedy sampling strategy that selects the highest probability token at each
 // step.
 type SamplingParamsStrategyGreedy struct {
+	// Must be 'greedy' to identify this sampling strategy.
+	//
 	// Any of "greedy".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -287,8 +296,12 @@ func init() {
 //
 // The property Temperature is required.
 type SamplingParamsStrategyTopP struct {
-	Temperature param.Opt[float64] `json:"temperature,omitzero,required"`
-	TopP        param.Opt[float64] `json:"top_p,omitzero"`
+	// Controls randomness in sampling. Higher values increase randomness.
+	Temperature float64 `json:"temperature,required"`
+	// Cumulative probability threshold for nucleus sampling.
+	TopP param.Opt[float64] `json:"top_p,omitzero"`
+	// Must be 'top_p' to identify this sampling strategy.
+	//
 	// Any of "top_p".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -312,7 +325,10 @@ func init() {
 //
 // The property TopK is required.
 type SamplingParamsStrategyTopK struct {
+	// Number of top tokens to consider for sampling. Must be at least 1.
 	TopK int64 `json:"top_k,required"`
+	// Must be 'top_k' to identify this sampling strategy.
+	//
 	// Any of "top_k".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -334,8 +350,10 @@ func init() {
 
 // A scoring result for a single row.
 type ScoringResult struct {
-	AggregatedResults map[string]any   `json:"aggregated_results,required"`
-	ScoreRows         []map[string]any `json:"score_rows,required"`
+	// Map of metric name to aggregated value
+	AggregatedResults map[string]any `json:"aggregated_results,required"`
+	// The scoring result for each row. Each row is a map of column name to value.
+	ScoreRows []map[string]any `json:"score_rows,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AggregatedResults respjson.Field
@@ -355,8 +373,12 @@ func (r *ScoringResult) UnmarshalJSON(data []byte) error {
 //
 // The property Content is required.
 type SystemMessageParam struct {
-	// A image content item
+	// The content of the 'system prompt'. If multiple system messages are provided,
+	// they are concatenated. The underlying Llama Stack code may also add other system
+	// messages.
 	Content SystemMessageContentUnionParam `json:"content,omitzero,required"`
+	// Must be 'system' to identify this as a system message.
+	//
 	// Any of "system".
 	Role SystemMessageRole `json:"role,omitzero"`
 	paramObj
@@ -648,6 +670,7 @@ func init() {
 	)
 }
 
+// Must be 'system' to identify this as a system message.
 type SystemMessageRole string
 
 const (

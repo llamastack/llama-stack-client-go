@@ -50,9 +50,7 @@ func NewVectorStoreService(opts ...option.RequestOption) (r VectorStoreService) 
 	return
 }
 
-// Creates a vector store.
-//
-// Generate an OpenAI-compatible vector store with the given parameters.
+// Create a vector store (OpenAI-compatible).
 func (r *VectorStoreService) New(ctx context.Context, body VectorStoreNewParams, opts ...option.RequestOption) (res *VectorStore, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/vector_stores"
@@ -60,7 +58,7 @@ func (r *VectorStoreService) New(ctx context.Context, body VectorStoreNewParams,
 	return
 }
 
-// Retrieves a vector store.
+// Retrieve a vector store (OpenAI-compatible).
 func (r *VectorStoreService) Get(ctx context.Context, vectorStoreID string, opts ...option.RequestOption) (res *VectorStore, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if vectorStoreID == "" {
@@ -72,7 +70,7 @@ func (r *VectorStoreService) Get(ctx context.Context, vectorStoreID string, opts
 	return
 }
 
-// Updates a vector store.
+// Update a vector store (OpenAI-compatible).
 func (r *VectorStoreService) Update(ctx context.Context, vectorStoreID string, body VectorStoreUpdateParams, opts ...option.RequestOption) (res *VectorStore, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if vectorStoreID == "" {
@@ -84,7 +82,7 @@ func (r *VectorStoreService) Update(ctx context.Context, vectorStoreID string, b
 	return
 }
 
-// Returns a list of vector stores.
+// List vector stores (OpenAI-compatible).
 func (r *VectorStoreService) List(ctx context.Context, query VectorStoreListParams, opts ...option.RequestOption) (res *pagination.OpenAICursorPage[VectorStore], err error) {
 	var raw *http.Response
 	opts = slices.Concat(r.Options, opts)
@@ -102,12 +100,12 @@ func (r *VectorStoreService) List(ctx context.Context, query VectorStoreListPara
 	return res, nil
 }
 
-// Returns a list of vector stores.
+// List vector stores (OpenAI-compatible).
 func (r *VectorStoreService) ListAutoPaging(ctx context.Context, query VectorStoreListParams, opts ...option.RequestOption) *pagination.OpenAICursorPageAutoPager[VectorStore] {
 	return pagination.NewOpenAICursorPageAutoPager(r.List(ctx, query, opts...))
 }
 
-// Delete a vector store.
+// Delete a vector store (OpenAI-compatible).
 func (r *VectorStoreService) Delete(ctx context.Context, vectorStoreID string, opts ...option.RequestOption) (res *VectorStoreDeleteResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if vectorStoreID == "" {
@@ -119,10 +117,7 @@ func (r *VectorStoreService) Delete(ctx context.Context, vectorStoreID string, o
 	return
 }
 
-// Search for chunks in a vector store.
-//
-// Searches a vector store for relevant chunks based on a query and optional file
-// attribute filters.
+// Search a vector store (OpenAI-compatible).
 func (r *VectorStoreService) Search(ctx context.Context, vectorStoreID string, body VectorStoreSearchParams, opts ...option.RequestOption) (res *VectorStoreSearchResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if vectorStoreID == "" {
@@ -331,32 +326,28 @@ func (r *VectorStoreSearchResponseDataContent) UnmarshalJSON(data []byte) error 
 // expected to change after. Use `Chunk.metadata` for metadata that will be used in
 // the context during inference.
 type VectorStoreSearchResponseDataContentChunkMetadata struct {
-	ChunkEmbeddingDimension int64  `json:"chunk_embedding_dimension,nullable"`
-	ChunkEmbeddingModel     string `json:"chunk_embedding_model,nullable"`
-	ChunkID                 string `json:"chunk_id,nullable"`
-	ChunkTokenizer          string `json:"chunk_tokenizer,nullable"`
-	ChunkWindow             string `json:"chunk_window,nullable"`
-	ContentTokenCount       int64  `json:"content_token_count,nullable"`
-	CreatedTimestamp        int64  `json:"created_timestamp,nullable"`
-	DocumentID              string `json:"document_id,nullable"`
-	MetadataTokenCount      int64  `json:"metadata_token_count,nullable"`
-	Source                  string `json:"source,nullable"`
-	UpdatedTimestamp        int64  `json:"updated_timestamp,nullable"`
+	ChunkID            string `json:"chunk_id,nullable"`
+	ChunkTokenizer     string `json:"chunk_tokenizer,nullable"`
+	ChunkWindow        string `json:"chunk_window,nullable"`
+	ContentTokenCount  int64  `json:"content_token_count,nullable"`
+	CreatedTimestamp   int64  `json:"created_timestamp,nullable"`
+	DocumentID         string `json:"document_id,nullable"`
+	MetadataTokenCount int64  `json:"metadata_token_count,nullable"`
+	Source             string `json:"source,nullable"`
+	UpdatedTimestamp   int64  `json:"updated_timestamp,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ChunkEmbeddingDimension respjson.Field
-		ChunkEmbeddingModel     respjson.Field
-		ChunkID                 respjson.Field
-		ChunkTokenizer          respjson.Field
-		ChunkWindow             respjson.Field
-		ContentTokenCount       respjson.Field
-		CreatedTimestamp        respjson.Field
-		DocumentID              respjson.Field
-		MetadataTokenCount      respjson.Field
-		Source                  respjson.Field
-		UpdatedTimestamp        respjson.Field
-		ExtraFields             map[string]respjson.Field
-		raw                     string
+		ChunkID            respjson.Field
+		ChunkTokenizer     respjson.Field
+		ChunkWindow        respjson.Field
+		ContentTokenCount  respjson.Field
+		CreatedTimestamp   respjson.Field
+		DocumentID         respjson.Field
+		MetadataTokenCount respjson.Field
+		Source             respjson.Field
+		UpdatedTimestamp   respjson.Field
+		ExtraFields        map[string]respjson.Field
+		raw                string
 	} `json:"-"`
 }
 
@@ -541,9 +532,12 @@ func (r *VectorStoreNewParamsChunkingStrategyStaticStatic) UnmarshalJSON(data []
 }
 
 type VectorStoreUpdateParams struct {
-	Name         param.Opt[string] `json:"name,omitzero"`
-	ExpiresAfter map[string]any    `json:"expires_after,omitzero"`
-	Metadata     map[string]any    `json:"metadata,omitzero"`
+	// The new name for the vector store.
+	Name param.Opt[string] `json:"name,omitzero"`
+	// Expiration policy for the vector store.
+	ExpiresAfter map[string]any `json:"expires_after,omitzero"`
+	// Metadata to associate with the vector store.
+	Metadata map[string]any `json:"metadata,omitzero"`
 	paramObj
 }
 
@@ -556,10 +550,14 @@ func (r *VectorStoreUpdateParams) UnmarshalJSON(data []byte) error {
 }
 
 type VectorStoreListParams struct {
-	After  param.Opt[string] `query:"after,omitzero" json:"-"`
+	// Pagination cursor (after).
+	After param.Opt[string] `query:"after,omitzero" json:"-"`
+	// Pagination cursor (before).
 	Before param.Opt[string] `query:"before,omitzero" json:"-"`
-	Limit  param.Opt[int64]  `query:"limit,omitzero" json:"-"`
-	Order  param.Opt[string] `query:"order,omitzero" json:"-"`
+	// Maximum number of vector stores to return.
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Sort order by created_at: asc or desc.
+	Order param.Opt[string] `query:"order,omitzero" json:"-"`
 	paramObj
 }
 
@@ -572,12 +570,33 @@ func (r VectorStoreListParams) URLQuery() (v url.Values, err error) {
 }
 
 type VectorStoreSearchParams struct {
-	Query         VectorStoreSearchParamsQueryUnion `json:"query,omitzero,required"`
-	MaxNumResults param.Opt[int64]                  `json:"max_num_results,omitzero"`
-	RewriteQuery  param.Opt[bool]                   `json:"rewrite_query,omitzero"`
-	SearchMode    param.Opt[string]                 `json:"search_mode,omitzero"`
-	Filters       map[string]any                    `json:"filters,omitzero"`
+	// The search query string or list of query strings.
+	Query VectorStoreSearchParamsQueryUnion `json:"query,omitzero,required"`
+	// Maximum number of results to return.
+	MaxNumResults param.Opt[int64] `json:"max_num_results,omitzero"`
+	// Whether to rewrite the query for better results.
+	RewriteQuery param.Opt[bool] `json:"rewrite_query,omitzero"`
+	// The search mode to use (e.g., 'vector', 'keyword').
+	SearchMode param.Opt[string] `json:"search_mode,omitzero"`
+	// Filters to apply to the search.
+	Filters map[string]any `json:"filters,omitzero"`
 	// Options for ranking and filtering search results.
+	//
+	// This class configures how search results are ranked and filtered. You can use
+	// algorithm-based rerankers (weighted, RRF) or neural rerankers. Defaults from
+	// VectorStoresConfig are used when parameters are not provided.
+	//
+	// Examples: # Weighted ranker with custom alpha
+	// SearchRankingOptions(ranker="weighted", alpha=0.7)
+	//
+	//	# RRF ranker with custom impact factor
+	//	SearchRankingOptions(ranker="rrf", impact_factor=50.0)
+	//
+	//	# Use config defaults (just specify ranker type)
+	//	SearchRankingOptions(ranker="weighted")  # Uses alpha from VectorStoresConfig
+	//
+	//	# Score threshold filtering
+	//	SearchRankingOptions(ranker="weighted", score_threshold=0.5)
 	RankingOptions VectorStoreSearchParamsRankingOptions `json:"ranking_options,omitzero"`
 	paramObj
 }
@@ -616,9 +635,34 @@ func (u *VectorStoreSearchParamsQueryUnion) asAny() any {
 }
 
 // Options for ranking and filtering search results.
+//
+// This class configures how search results are ranked and filtered. You can use
+// algorithm-based rerankers (weighted, RRF) or neural rerankers. Defaults from
+// VectorStoresConfig are used when parameters are not provided.
+//
+// Examples: # Weighted ranker with custom alpha
+// SearchRankingOptions(ranker="weighted", alpha=0.7)
+//
+//	# RRF ranker with custom impact factor
+//	SearchRankingOptions(ranker="rrf", impact_factor=50.0)
+//
+//	# Use config defaults (just specify ranker type)
+//	SearchRankingOptions(ranker="weighted")  # Uses alpha from VectorStoresConfig
+//
+//	# Score threshold filtering
+//	SearchRankingOptions(ranker="weighted", score_threshold=0.5)
 type VectorStoreSearchParamsRankingOptions struct {
+	// Weight factor for weighted ranker
+	Alpha param.Opt[float64] `json:"alpha,omitzero"`
+	// Impact factor for RRF algorithm
+	ImpactFactor param.Opt[float64] `json:"impact_factor,omitzero"`
+	// Model identifier for neural reranker
+	Model          param.Opt[string]  `json:"model,omitzero"`
 	Ranker         param.Opt[string]  `json:"ranker,omitzero"`
 	ScoreThreshold param.Opt[float64] `json:"score_threshold,omitzero"`
+	// Weights for combining vector, keyword, and neural scores. Keys: 'vector',
+	// 'keyword', 'neural'
+	Weights map[string]float64 `json:"weights,omitzero"`
 	paramObj
 }
 

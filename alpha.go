@@ -20,11 +20,11 @@ import (
 // the [NewAlphaService] method instead.
 type AlphaService struct {
 	Options      []option.RequestOption
-	Inference    AlphaInferenceService
 	PostTraining AlphaPostTrainingService
 	Benchmarks   AlphaBenchmarkService
 	Eval         AlphaEvalService
 	Admin        AlphaAdminService
+	Inference    AlphaInferenceService
 }
 
 // NewAlphaService generates a new service that applies the given options to each
@@ -33,10 +33,10 @@ type AlphaService struct {
 func NewAlphaService(opts ...option.RequestOption) (r AlphaService) {
 	r = AlphaService{}
 	r.Options = opts
-	r.Inference = NewAlphaInferenceService(opts...)
 	r.PostTraining = NewAlphaPostTrainingService(opts...)
 	r.Benchmarks = NewAlphaBenchmarkService(opts...)
 	r.Eval = NewAlphaEvalService(opts...)
 	r.Admin = NewAlphaAdminService(opts...)
+	r.Inference = NewAlphaInferenceService(opts...)
 	return
 }

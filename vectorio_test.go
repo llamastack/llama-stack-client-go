@@ -33,23 +33,23 @@ func TestVectorIoInsertWithOptionalParams(t *testing.T) {
 	err := client.VectorIo.Insert(context.TODO(), llamastackclient.VectorIoInsertParams{
 		Chunks: []llamastackclient.VectorIoInsertParamsChunk{{
 			ChunkID: "chunk_id",
+			ChunkMetadata: llamastackclient.VectorIoInsertParamsChunkChunkMetadata{
+				ChunkID:            llamastackclient.String("chunk_id"),
+				ChunkTokenizer:     llamastackclient.String("chunk_tokenizer"),
+				ChunkWindow:        llamastackclient.String("chunk_window"),
+				ContentTokenCount:  llamastackclient.Int(0),
+				CreatedTimestamp:   llamastackclient.Int(0),
+				DocumentID:         llamastackclient.String("document_id"),
+				MetadataTokenCount: llamastackclient.Int(0),
+				Source:             llamastackclient.String("source"),
+				UpdatedTimestamp:   llamastackclient.Int(0),
+			},
 			Content: llamastackclient.VectorIoInsertParamsChunkContentUnion{
 				OfString: llamastackclient.String("string"),
 			},
-			ChunkMetadata: llamastackclient.VectorIoInsertParamsChunkChunkMetadata{
-				ChunkEmbeddingDimension: llamastackclient.Int(0),
-				ChunkEmbeddingModel:     llamastackclient.String("chunk_embedding_model"),
-				ChunkID:                 llamastackclient.String("chunk_id"),
-				ChunkTokenizer:          llamastackclient.String("chunk_tokenizer"),
-				ChunkWindow:             llamastackclient.String("chunk_window"),
-				ContentTokenCount:       llamastackclient.Int(0),
-				CreatedTimestamp:        llamastackclient.Int(0),
-				DocumentID:              llamastackclient.String("document_id"),
-				MetadataTokenCount:      llamastackclient.Int(0),
-				Source:                  llamastackclient.String("source"),
-				UpdatedTimestamp:        llamastackclient.Int(0),
-			},
-			Embedding: []float64{0},
+			Embedding:          []float64{0},
+			EmbeddingDimension: 0,
+			EmbeddingModel:     "embedding_model",
 			Metadata: map[string]any{
 				"foo": "bar",
 			},

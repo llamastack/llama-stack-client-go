@@ -41,7 +41,7 @@ func TestChatCompletionNewWithOptionalParams(t *testing.T) {
 			},
 		}},
 		Model:            "model",
-		FrequencyPenalty: llamastackclient.Float(0),
+		FrequencyPenalty: llamastackclient.Float(-2),
 		FunctionCall: llamastackclient.ChatCompletionNewParamsFunctionCallUnion{
 			OfString: llamastackclient.String("string"),
 		},
@@ -52,17 +52,19 @@ func TestChatCompletionNewWithOptionalParams(t *testing.T) {
 			"foo": 0,
 		},
 		Logprobs:            llamastackclient.Bool(true),
-		MaxCompletionTokens: llamastackclient.Int(0),
-		MaxTokens:           llamastackclient.Int(0),
-		N:                   llamastackclient.Int(0),
+		MaxCompletionTokens: llamastackclient.Int(1),
+		MaxTokens:           llamastackclient.Int(1),
+		N:                   llamastackclient.Int(1),
 		ParallelToolCalls:   llamastackclient.Bool(true),
-		PresencePenalty:     llamastackclient.Float(0),
+		PresencePenalty:     llamastackclient.Float(-2),
+		ReasoningEffort:     llamastackclient.ChatCompletionNewParamsReasoningEffortNone,
 		ResponseFormat: llamastackclient.ChatCompletionNewParamsResponseFormatUnion{
 			OfText: &llamastackclient.ChatCompletionNewParamsResponseFormatText{
 				Type: "text",
 			},
 		},
-		Seed: llamastackclient.Int(0),
+		SafetyIdentifier: llamastackclient.String("safety_identifier"),
+		Seed:             llamastackclient.Int(0),
 		Stop: llamastackclient.ChatCompletionNewParamsStopUnion{
 			OfString: llamastackclient.String("string"),
 		},

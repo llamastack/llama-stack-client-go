@@ -118,23 +118,31 @@ func (r *ResponseService) Delete(ctx context.Context, responseID string, opts ..
 
 // Complete OpenAI response object containing generation results and metadata.
 type ResponseObject struct {
-	ID        string                      `json:"id,required"`
-	CreatedAt int64                       `json:"created_at,required"`
-	Model     string                      `json:"model,required"`
-	Output    []ResponseObjectOutputUnion `json:"output,required"`
-	Status    string                      `json:"status,required"`
+	ID          string                      `json:"id,required"`
+	CreatedAt   int64                       `json:"created_at,required"`
+	Model       string                      `json:"model,required"`
+	Output      []ResponseObjectOutputUnion `json:"output,required"`
+	Status      string                      `json:"status,required"`
+	Store       bool                        `json:"store,required"`
+	CompletedAt int64                       `json:"completed_at,nullable"`
 	// Error details for failed OpenAI response requests.
-	Error        ResponseObjectError `json:"error,nullable"`
-	Instructions string              `json:"instructions,nullable"`
-	MaxToolCalls int64               `json:"max_tool_calls,nullable"`
-	Metadata     map[string]string   `json:"metadata,nullable"`
+	Error           ResponseObjectError `json:"error,nullable"`
+	Instructions    string              `json:"instructions,nullable"`
+	MaxOutputTokens int64               `json:"max_output_tokens,nullable"`
+	MaxToolCalls    int64               `json:"max_tool_calls,nullable"`
+	Metadata        map[string]string   `json:"metadata,nullable"`
 	// Any of "response".
 	Object             ResponseObjectObject `json:"object"`
 	ParallelToolCalls  bool                 `json:"parallel_tool_calls,nullable"`
 	PreviousResponseID string               `json:"previous_response_id,nullable"`
 	// OpenAI compatible Prompt object that is used in OpenAI responses.
-	Prompt      ResponseObjectPrompt `json:"prompt,nullable"`
-	Temperature float64              `json:"temperature,nullable"`
+	Prompt ResponseObjectPrompt `json:"prompt,nullable"`
+	// Configuration for reasoning effort in OpenAI responses.
+	//
+	// Controls how much reasoning the model performs before generating a response.
+	Reasoning        ResponseObjectReasoning `json:"reasoning,nullable"`
+	SafetyIdentifier string                  `json:"safety_identifier,nullable"`
+	Temperature      float64                 `json:"temperature,nullable"`
 	// Text response configuration for OpenAI responses.
 	Text ResponseObjectText `json:"text"`
 	// Constrains the tools available to the model to a pre-defined set.
@@ -151,14 +159,19 @@ type ResponseObject struct {
 		Model              respjson.Field
 		Output             respjson.Field
 		Status             respjson.Field
+		Store              respjson.Field
+		CompletedAt        respjson.Field
 		Error              respjson.Field
 		Instructions       respjson.Field
+		MaxOutputTokens    respjson.Field
 		MaxToolCalls       respjson.Field
 		Metadata           respjson.Field
 		Object             respjson.Field
 		ParallelToolCalls  respjson.Field
 		PreviousResponseID respjson.Field
 		Prompt             respjson.Field
+		Reasoning          respjson.Field
+		SafetyIdentifier   respjson.Field
 		Temperature        respjson.Field
 		Text               respjson.Field
 		ToolChoice         respjson.Field
@@ -918,13 +931,14 @@ func (r *ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageConten
 
 // The log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token :top_logprobs: The top log probabilities for the token
 type ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprob struct {
-	Token       string                                                                                                                                                    `json:"token,required"`
-	Logprob     float64                                                                                                                                                   `json:"logprob,required"`
-	Bytes       []int64                                                                                                                                                   `json:"bytes,nullable"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
+	Logprob float64 `json:"logprob,required"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
+	// The top log probabilities for the token.
 	TopLogprobs []ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob `json:"top_logprobs,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -947,13 +961,13 @@ func (r *ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageConten
 
 // The top log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token
 type ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob struct {
-	Token   string  `json:"token,required"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
 	Logprob float64 `json:"logprob,required"`
-	Bytes   []int64 `json:"bytes,nullable"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -1405,6 +1419,26 @@ func (r *ResponseObjectPromptVariableInputFile) UnmarshalJSON(data []byte) error
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Configuration for reasoning effort in OpenAI responses.
+//
+// Controls how much reasoning the model performs before generating a response.
+type ResponseObjectReasoning struct {
+	// Any of "none", "minimal", "low", "medium", "high", "xhigh".
+	Effort string `json:"effort,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Effort      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectReasoning) RawJSON() string { return r.JSON.raw }
+func (r *ResponseObjectReasoning) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // Text response configuration for OpenAI responses.
 type ResponseObjectText struct {
 	// Configuration for Responses API text format.
@@ -1774,6 +1808,22 @@ type ResponseObjectToolFileSearch struct {
 	Filters        map[string]any `json:"filters,nullable"`
 	MaxNumResults  int64          `json:"max_num_results,nullable"`
 	// Options for ranking and filtering search results.
+	//
+	// This class configures how search results are ranked and filtered. You can use
+	// algorithm-based rerankers (weighted, RRF) or neural rerankers. Defaults from
+	// VectorStoresConfig are used when parameters are not provided.
+	//
+	// Examples: # Weighted ranker with custom alpha
+	// SearchRankingOptions(ranker="weighted", alpha=0.7)
+	//
+	//	# RRF ranker with custom impact factor
+	//	SearchRankingOptions(ranker="rrf", impact_factor=50.0)
+	//
+	//	# Use config defaults (just specify ranker type)
+	//	SearchRankingOptions(ranker="weighted")  # Uses alpha from VectorStoresConfig
+	//
+	//	# Score threshold filtering
+	//	SearchRankingOptions(ranker="weighted", score_threshold=0.5)
 	RankingOptions ResponseObjectToolFileSearchRankingOptions `json:"ranking_options,nullable"`
 	// Any of "file_search".
 	Type string `json:"type"`
@@ -1796,13 +1846,42 @@ func (r *ResponseObjectToolFileSearch) UnmarshalJSON(data []byte) error {
 }
 
 // Options for ranking and filtering search results.
+//
+// This class configures how search results are ranked and filtered. You can use
+// algorithm-based rerankers (weighted, RRF) or neural rerankers. Defaults from
+// VectorStoresConfig are used when parameters are not provided.
+//
+// Examples: # Weighted ranker with custom alpha
+// SearchRankingOptions(ranker="weighted", alpha=0.7)
+//
+//	# RRF ranker with custom impact factor
+//	SearchRankingOptions(ranker="rrf", impact_factor=50.0)
+//
+//	# Use config defaults (just specify ranker type)
+//	SearchRankingOptions(ranker="weighted")  # Uses alpha from VectorStoresConfig
+//
+//	# Score threshold filtering
+//	SearchRankingOptions(ranker="weighted", score_threshold=0.5)
 type ResponseObjectToolFileSearchRankingOptions struct {
+	// Weight factor for weighted ranker
+	Alpha float64 `json:"alpha,nullable"`
+	// Impact factor for RRF algorithm
+	ImpactFactor float64 `json:"impact_factor,nullable"`
+	// Model identifier for neural reranker
+	Model          string  `json:"model,nullable"`
 	Ranker         string  `json:"ranker,nullable"`
 	ScoreThreshold float64 `json:"score_threshold,nullable"`
+	// Weights for combining vector, keyword, and neural scores. Keys: 'vector',
+	// 'keyword', 'neural'
+	Weights map[string]float64 `json:"weights,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		Alpha          respjson.Field
+		ImpactFactor   respjson.Field
+		Model          respjson.Field
 		Ranker         respjson.Field
 		ScoreThreshold respjson.Field
+		Weights        respjson.Field
 		ExtraFields    map[string]respjson.Field
 		raw            string
 	} `json:"-"`
@@ -1919,20 +1998,20 @@ func (r *ResponseObjectToolMcpAllowedToolsAllowedToolsFilter) UnmarshalJSON(data
 
 // Usage information for OpenAI response.
 type ResponseObjectUsage struct {
-	InputTokens  int64 `json:"input_tokens,required"`
-	OutputTokens int64 `json:"output_tokens,required"`
-	TotalTokens  int64 `json:"total_tokens,required"`
+	InputTokens int64 `json:"input_tokens,required"`
 	// Token details for input tokens in OpenAI response usage.
-	InputTokensDetails ResponseObjectUsageInputTokensDetails `json:"input_tokens_details,nullable"`
+	InputTokensDetails ResponseObjectUsageInputTokensDetails `json:"input_tokens_details,required"`
+	OutputTokens       int64                                 `json:"output_tokens,required"`
 	// Token details for output tokens in OpenAI response usage.
-	OutputTokensDetails ResponseObjectUsageOutputTokensDetails `json:"output_tokens_details,nullable"`
+	OutputTokensDetails ResponseObjectUsageOutputTokensDetails `json:"output_tokens_details,required"`
+	TotalTokens         int64                                  `json:"total_tokens,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		InputTokens         respjson.Field
-		OutputTokens        respjson.Field
-		TotalTokens         respjson.Field
 		InputTokensDetails  respjson.Field
+		OutputTokens        respjson.Field
 		OutputTokensDetails respjson.Field
+		TotalTokens         respjson.Field
 		ExtraFields         map[string]respjson.Field
 		raw                 string
 	} `json:"-"`
@@ -1946,7 +2025,7 @@ func (r *ResponseObjectUsage) UnmarshalJSON(data []byte) error {
 
 // Token details for input tokens in OpenAI response usage.
 type ResponseObjectUsageInputTokensDetails struct {
-	CachedTokens int64 `json:"cached_tokens,nullable"`
+	CachedTokens int64 `json:"cached_tokens,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CachedTokens respjson.Field
@@ -1963,7 +2042,7 @@ func (r *ResponseObjectUsageInputTokensDetails) UnmarshalJSON(data []byte) error
 
 // Token details for output tokens in OpenAI response usage.
 type ResponseObjectUsageOutputTokensDetails struct {
-	ReasoningTokens int64 `json:"reasoning_tokens,nullable"`
+	ReasoningTokens int64 `json:"reasoning_tokens,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ReasoningTokens respjson.Field
@@ -3506,13 +3585,14 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAI
 
 // The log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token :top_logprobs: The top log probabilities for the token
 type ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprob struct {
-	Token       string                                                                                                                                                                         `json:"token,required"`
-	Logprob     float64                                                                                                                                                                        `json:"logprob,required"`
-	Bytes       []int64                                                                                                                                                                        `json:"bytes,nullable"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
+	Logprob float64 `json:"logprob,required"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
+	// The top log probabilities for the token.
 	TopLogprobs []ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob `json:"top_logprobs,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -3535,13 +3615,13 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAI
 
 // The top log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token
 type ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob struct {
-	Token   string  `json:"token,required"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
 	Logprob float64 `json:"logprob,required"`
-	Bytes   []int64 `json:"bytes,nullable"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -4590,13 +4670,14 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIR
 
 // The log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token :top_logprobs: The top log probabilities for the token
 type ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprob struct {
-	Token       string                                                                                                                                                                        `json:"token,required"`
-	Logprob     float64                                                                                                                                                                       `json:"logprob,required"`
-	Bytes       []int64                                                                                                                                                                       `json:"bytes,nullable"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
+	Logprob float64 `json:"logprob,required"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
+	// The top log probabilities for the token.
 	TopLogprobs []ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob `json:"top_logprobs,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -4619,13 +4700,13 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIR
 
 // The top log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token
 type ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob struct {
-	Token   string  `json:"token,required"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
 	Logprob float64 `json:"logprob,required"`
-	Bytes   []int64 `json:"bytes,nullable"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -4914,13 +4995,14 @@ func (r *ResponseObjectStreamResponseOutputTextDelta) UnmarshalJSON(data []byte)
 
 // The log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token :top_logprobs: The top log probabilities for the token
 type ResponseObjectStreamResponseOutputTextDeltaLogprob struct {
-	Token       string                                                         `json:"token,required"`
-	Logprob     float64                                                        `json:"logprob,required"`
-	Bytes       []int64                                                        `json:"bytes,nullable"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
+	Logprob float64 `json:"logprob,required"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
+	// The top log probabilities for the token.
 	TopLogprobs []ResponseObjectStreamResponseOutputTextDeltaLogprobTopLogprob `json:"top_logprobs,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -4941,13 +5023,13 @@ func (r *ResponseObjectStreamResponseOutputTextDeltaLogprob) UnmarshalJSON(data 
 
 // The top log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token
 type ResponseObjectStreamResponseOutputTextDeltaLogprobTopLogprob struct {
-	Token   string  `json:"token,required"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
 	Logprob float64 `json:"logprob,required"`
-	Bytes   []int64 `json:"bytes,nullable"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -5658,13 +5740,14 @@ func (r *ResponseObjectStreamResponseContentPartAddedPartOutputTextAnnotationFil
 
 // The log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token :top_logprobs: The top log probabilities for the token
 type ResponseObjectStreamResponseContentPartAddedPartOutputTextLogprob struct {
-	Token       string                                                                        `json:"token,required"`
-	Logprob     float64                                                                       `json:"logprob,required"`
-	Bytes       []int64                                                                       `json:"bytes,nullable"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
+	Logprob float64 `json:"logprob,required"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
+	// The top log probabilities for the token.
 	TopLogprobs []ResponseObjectStreamResponseContentPartAddedPartOutputTextLogprobTopLogprob `json:"top_logprobs,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -5687,13 +5770,13 @@ func (r *ResponseObjectStreamResponseContentPartAddedPartOutputTextLogprob) Unma
 
 // The top log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token
 type ResponseObjectStreamResponseContentPartAddedPartOutputTextLogprobTopLogprob struct {
-	Token   string  `json:"token,required"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
 	Logprob float64 `json:"logprob,required"`
-	Bytes   []int64 `json:"bytes,nullable"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -6124,13 +6207,14 @@ func (r *ResponseObjectStreamResponseContentPartDonePartOutputTextAnnotationFile
 
 // The log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token :top_logprobs: The top log probabilities for the token
 type ResponseObjectStreamResponseContentPartDonePartOutputTextLogprob struct {
-	Token       string                                                                       `json:"token,required"`
-	Logprob     float64                                                                      `json:"logprob,required"`
-	Bytes       []int64                                                                      `json:"bytes,nullable"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
+	Logprob float64 `json:"logprob,required"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
+	// The top log probabilities for the token.
 	TopLogprobs []ResponseObjectStreamResponseContentPartDonePartOutputTextLogprobTopLogprob `json:"top_logprobs,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -6153,13 +6237,13 @@ func (r *ResponseObjectStreamResponseContentPartDonePartOutputTextLogprob) Unmar
 
 // The top log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token
 type ResponseObjectStreamResponseContentPartDonePartOutputTextLogprobTopLogprob struct {
-	Token   string  `json:"token,required"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
 	Logprob float64 `json:"logprob,required"`
-	Bytes   []int64 `json:"bytes,nullable"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -6880,24 +6964,32 @@ func (r *ResponseObjectStreamResponseCompleted) UnmarshalJSON(data []byte) error
 
 // OpenAI response object extended with input context information.
 type ResponseListResponse struct {
-	ID        string                            `json:"id,required"`
-	CreatedAt int64                             `json:"created_at,required"`
-	Input     []ResponseListResponseInputUnion  `json:"input,required"`
-	Model     string                            `json:"model,required"`
-	Output    []ResponseListResponseOutputUnion `json:"output,required"`
-	Status    string                            `json:"status,required"`
+	ID          string                            `json:"id,required"`
+	CreatedAt   int64                             `json:"created_at,required"`
+	Input       []ResponseListResponseInputUnion  `json:"input,required"`
+	Model       string                            `json:"model,required"`
+	Output      []ResponseListResponseOutputUnion `json:"output,required"`
+	Status      string                            `json:"status,required"`
+	Store       bool                              `json:"store,required"`
+	CompletedAt int64                             `json:"completed_at,nullable"`
 	// Error details for failed OpenAI response requests.
-	Error        ResponseListResponseError `json:"error,nullable"`
-	Instructions string                    `json:"instructions,nullable"`
-	MaxToolCalls int64                     `json:"max_tool_calls,nullable"`
-	Metadata     map[string]string         `json:"metadata,nullable"`
+	Error           ResponseListResponseError `json:"error,nullable"`
+	Instructions    string                    `json:"instructions,nullable"`
+	MaxOutputTokens int64                     `json:"max_output_tokens,nullable"`
+	MaxToolCalls    int64                     `json:"max_tool_calls,nullable"`
+	Metadata        map[string]string         `json:"metadata,nullable"`
 	// Any of "response".
 	Object             ResponseListResponseObject `json:"object"`
 	ParallelToolCalls  bool                       `json:"parallel_tool_calls,nullable"`
 	PreviousResponseID string                     `json:"previous_response_id,nullable"`
 	// OpenAI compatible Prompt object that is used in OpenAI responses.
-	Prompt      ResponseListResponsePrompt `json:"prompt,nullable"`
-	Temperature float64                    `json:"temperature,nullable"`
+	Prompt ResponseListResponsePrompt `json:"prompt,nullable"`
+	// Configuration for reasoning effort in OpenAI responses.
+	//
+	// Controls how much reasoning the model performs before generating a response.
+	Reasoning        ResponseListResponseReasoning `json:"reasoning,nullable"`
+	SafetyIdentifier string                        `json:"safety_identifier,nullable"`
+	Temperature      float64                       `json:"temperature,nullable"`
 	// Text response configuration for OpenAI responses.
 	Text ResponseListResponseText `json:"text"`
 	// Constrains the tools available to the model to a pre-defined set.
@@ -6915,14 +7007,19 @@ type ResponseListResponse struct {
 		Model              respjson.Field
 		Output             respjson.Field
 		Status             respjson.Field
+		Store              respjson.Field
+		CompletedAt        respjson.Field
 		Error              respjson.Field
 		Instructions       respjson.Field
+		MaxOutputTokens    respjson.Field
 		MaxToolCalls       respjson.Field
 		Metadata           respjson.Field
 		Object             respjson.Field
 		ParallelToolCalls  respjson.Field
 		PreviousResponseID respjson.Field
 		Prompt             respjson.Field
+		Reasoning          respjson.Field
+		SafetyIdentifier   respjson.Field
 		Temperature        respjson.Field
 		Text               respjson.Field
 		ToolChoice         respjson.Field
@@ -7669,13 +7766,14 @@ func (r *ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIRe
 
 // The log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token :top_logprobs: The top log probabilities for the token
 type ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprob struct {
-	Token       string                                                                                                                                                                             `json:"token,required"`
-	Logprob     float64                                                                                                                                                                            `json:"logprob,required"`
-	Bytes       []int64                                                                                                                                                                            `json:"bytes,nullable"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
+	Logprob float64 `json:"logprob,required"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
+	// The top log probabilities for the token.
 	TopLogprobs []ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob `json:"top_logprobs,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -7698,13 +7796,13 @@ func (r *ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIRe
 
 // The top log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token
 type ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob struct {
-	Token   string  `json:"token,required"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
 	Logprob float64 `json:"logprob,required"`
-	Bytes   []int64 `json:"bytes,nullable"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -8762,13 +8860,14 @@ func (r *ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessage
 
 // The log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token :top_logprobs: The top log probabilities for the token
 type ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprob struct {
-	Token       string                                                                                                                                                          `json:"token,required"`
-	Logprob     float64                                                                                                                                                         `json:"logprob,required"`
-	Bytes       []int64                                                                                                                                                         `json:"bytes,nullable"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
+	Logprob float64 `json:"logprob,required"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
+	// The top log probabilities for the token.
 	TopLogprobs []ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob `json:"top_logprobs,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -8791,13 +8890,13 @@ func (r *ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessage
 
 // The top log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token
 type ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob struct {
-	Token   string  `json:"token,required"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
 	Logprob float64 `json:"logprob,required"`
-	Bytes   []int64 `json:"bytes,nullable"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -9249,6 +9348,26 @@ func (r *ResponseListResponsePromptVariableInputFile) UnmarshalJSON(data []byte)
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Configuration for reasoning effort in OpenAI responses.
+//
+// Controls how much reasoning the model performs before generating a response.
+type ResponseListResponseReasoning struct {
+	// Any of "none", "minimal", "low", "medium", "high", "xhigh".
+	Effort string `json:"effort,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Effort      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseListResponseReasoning) RawJSON() string { return r.JSON.raw }
+func (r *ResponseListResponseReasoning) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // Text response configuration for OpenAI responses.
 type ResponseListResponseText struct {
 	// Configuration for Responses API text format.
@@ -9620,6 +9739,22 @@ type ResponseListResponseToolFileSearch struct {
 	Filters        map[string]any `json:"filters,nullable"`
 	MaxNumResults  int64          `json:"max_num_results,nullable"`
 	// Options for ranking and filtering search results.
+	//
+	// This class configures how search results are ranked and filtered. You can use
+	// algorithm-based rerankers (weighted, RRF) or neural rerankers. Defaults from
+	// VectorStoresConfig are used when parameters are not provided.
+	//
+	// Examples: # Weighted ranker with custom alpha
+	// SearchRankingOptions(ranker="weighted", alpha=0.7)
+	//
+	//	# RRF ranker with custom impact factor
+	//	SearchRankingOptions(ranker="rrf", impact_factor=50.0)
+	//
+	//	# Use config defaults (just specify ranker type)
+	//	SearchRankingOptions(ranker="weighted")  # Uses alpha from VectorStoresConfig
+	//
+	//	# Score threshold filtering
+	//	SearchRankingOptions(ranker="weighted", score_threshold=0.5)
 	RankingOptions ResponseListResponseToolFileSearchRankingOptions `json:"ranking_options,nullable"`
 	// Any of "file_search".
 	Type string `json:"type"`
@@ -9642,13 +9777,42 @@ func (r *ResponseListResponseToolFileSearch) UnmarshalJSON(data []byte) error {
 }
 
 // Options for ranking and filtering search results.
+//
+// This class configures how search results are ranked and filtered. You can use
+// algorithm-based rerankers (weighted, RRF) or neural rerankers. Defaults from
+// VectorStoresConfig are used when parameters are not provided.
+//
+// Examples: # Weighted ranker with custom alpha
+// SearchRankingOptions(ranker="weighted", alpha=0.7)
+//
+//	# RRF ranker with custom impact factor
+//	SearchRankingOptions(ranker="rrf", impact_factor=50.0)
+//
+//	# Use config defaults (just specify ranker type)
+//	SearchRankingOptions(ranker="weighted")  # Uses alpha from VectorStoresConfig
+//
+//	# Score threshold filtering
+//	SearchRankingOptions(ranker="weighted", score_threshold=0.5)
 type ResponseListResponseToolFileSearchRankingOptions struct {
+	// Weight factor for weighted ranker
+	Alpha float64 `json:"alpha,nullable"`
+	// Impact factor for RRF algorithm
+	ImpactFactor float64 `json:"impact_factor,nullable"`
+	// Model identifier for neural reranker
+	Model          string  `json:"model,nullable"`
 	Ranker         string  `json:"ranker,nullable"`
 	ScoreThreshold float64 `json:"score_threshold,nullable"`
+	// Weights for combining vector, keyword, and neural scores. Keys: 'vector',
+	// 'keyword', 'neural'
+	Weights map[string]float64 `json:"weights,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		Alpha          respjson.Field
+		ImpactFactor   respjson.Field
+		Model          respjson.Field
 		Ranker         respjson.Field
 		ScoreThreshold respjson.Field
+		Weights        respjson.Field
 		ExtraFields    map[string]respjson.Field
 		raw            string
 	} `json:"-"`
@@ -9768,20 +9932,20 @@ func (r *ResponseListResponseToolMcpAllowedToolsAllowedToolsFilter) UnmarshalJSO
 
 // Usage information for OpenAI response.
 type ResponseListResponseUsage struct {
-	InputTokens  int64 `json:"input_tokens,required"`
-	OutputTokens int64 `json:"output_tokens,required"`
-	TotalTokens  int64 `json:"total_tokens,required"`
+	InputTokens int64 `json:"input_tokens,required"`
 	// Token details for input tokens in OpenAI response usage.
-	InputTokensDetails ResponseListResponseUsageInputTokensDetails `json:"input_tokens_details,nullable"`
+	InputTokensDetails ResponseListResponseUsageInputTokensDetails `json:"input_tokens_details,required"`
+	OutputTokens       int64                                       `json:"output_tokens,required"`
 	// Token details for output tokens in OpenAI response usage.
-	OutputTokensDetails ResponseListResponseUsageOutputTokensDetails `json:"output_tokens_details,nullable"`
+	OutputTokensDetails ResponseListResponseUsageOutputTokensDetails `json:"output_tokens_details,required"`
+	TotalTokens         int64                                        `json:"total_tokens,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		InputTokens         respjson.Field
-		OutputTokens        respjson.Field
-		TotalTokens         respjson.Field
 		InputTokensDetails  respjson.Field
+		OutputTokens        respjson.Field
 		OutputTokensDetails respjson.Field
+		TotalTokens         respjson.Field
 		ExtraFields         map[string]respjson.Field
 		raw                 string
 	} `json:"-"`
@@ -9795,7 +9959,7 @@ func (r *ResponseListResponseUsage) UnmarshalJSON(data []byte) error {
 
 // Token details for input tokens in OpenAI response usage.
 type ResponseListResponseUsageInputTokensDetails struct {
-	CachedTokens int64 `json:"cached_tokens,nullable"`
+	CachedTokens int64 `json:"cached_tokens,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CachedTokens respjson.Field
@@ -9812,7 +9976,7 @@ func (r *ResponseListResponseUsageInputTokensDetails) UnmarshalJSON(data []byte)
 
 // Token details for output tokens in OpenAI response usage.
 type ResponseListResponseUsageOutputTokensDetails struct {
-	ReasoningTokens int64 `json:"reasoning_tokens,nullable"`
+	ReasoningTokens int64 `json:"reasoning_tokens,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ReasoningTokens respjson.Field
@@ -9856,29 +10020,53 @@ const (
 )
 
 type ResponseNewParams struct {
-	Input              ResponseNewParamsInputUnion `json:"input,omitzero,required"`
-	Model              string                      `json:"model,required"`
-	Conversation       param.Opt[string]           `json:"conversation,omitzero"`
-	Instructions       param.Opt[string]           `json:"instructions,omitzero"`
-	MaxInferIters      param.Opt[int64]            `json:"max_infer_iters,omitzero"`
-	MaxToolCalls       param.Opt[int64]            `json:"max_tool_calls,omitzero"`
-	ParallelToolCalls  param.Opt[bool]             `json:"parallel_tool_calls,omitzero"`
-	PreviousResponseID param.Opt[string]           `json:"previous_response_id,omitzero"`
-	Store              param.Opt[bool]             `json:"store,omitzero"`
-	Temperature        param.Opt[float64]          `json:"temperature,omitzero"`
+	// Input message(s) to create the response.
+	Input ResponseNewParamsInputUnion `json:"input,omitzero,required"`
+	// The underlying LLM used for completions.
+	Model string `json:"model,required"`
+	// Optional ID of a conversation to add the response to.
+	Conversation param.Opt[string] `json:"conversation,omitzero"`
+	// Instructions to guide the model's behavior.
+	Instructions param.Opt[string] `json:"instructions,omitzero"`
+	// Maximum number of inference iterations.
+	MaxInferIters param.Opt[int64] `json:"max_infer_iters,omitzero"`
+	// Upper bound for the number of tokens that can be generated for a response.
+	MaxOutputTokens param.Opt[int64] `json:"max_output_tokens,omitzero"`
+	// Max number of total calls to built-in tools that can be processed in a response.
+	MaxToolCalls param.Opt[int64] `json:"max_tool_calls,omitzero"`
+	// Whether to enable parallel tool calls.
+	ParallelToolCalls param.Opt[bool] `json:"parallel_tool_calls,omitzero"`
+	// Optional ID of a previous response to continue from.
+	PreviousResponseID param.Opt[string] `json:"previous_response_id,omitzero"`
+	// A stable identifier used for safety monitoring and abuse detection.
+	SafetyIdentifier param.Opt[string] `json:"safety_identifier,omitzero"`
+	// Whether to store the response in the database.
+	Store param.Opt[bool] `json:"store,omitzero"`
+	// Sampling temperature.
+	Temperature param.Opt[float64] `json:"temperature,omitzero"`
+	// List of guardrails to apply during response generation.
+	Guardrails []ResponseNewParamsGuardrailUnion `json:"guardrails,omitzero"`
+	// Additional fields to include in the response.
+	//
 	// Any of "web_search_call.action.sources", "code_interpreter_call.outputs",
 	// "computer_call_output.output.image_url", "file_search_call.results",
 	// "message.input_image.image_url", "message.output_text.logprobs",
 	// "reasoning.encrypted_content".
-	Include  []string          `json:"include,omitzero"`
+	Include []string `json:"include,omitzero"`
+	// Dictionary of metadata key-value pairs to attach to the response.
 	Metadata map[string]string `json:"metadata,omitzero"`
 	// OpenAI compatible Prompt object that is used in OpenAI responses.
 	Prompt ResponseNewParamsPrompt `json:"prompt,omitzero"`
+	// Configuration for reasoning effort in OpenAI responses.
+	//
+	// Controls how much reasoning the model performs before generating a response.
+	Reasoning ResponseNewParamsReasoning `json:"reasoning,omitzero"`
 	// Text response configuration for OpenAI responses.
 	Text ResponseNewParamsText `json:"text,omitzero"`
-	// Constrains the tools available to the model to a pre-defined set.
+	// How the model should select which tool to call (if any).
 	ToolChoice ResponseNewParamsToolChoiceUnion `json:"tool_choice,omitzero"`
-	Tools      []ResponseNewParamsToolUnion     `json:"tools,omitzero"`
+	// List of tools available to the model.
+	Tools []ResponseNewParamsToolUnion `json:"tools,omitzero"`
 	paramObj
 }
 
@@ -9894,13 +10082,13 @@ func (r *ResponseNewParams) UnmarshalJSON(data []byte) error {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type ResponseNewParamsInputUnion struct {
-	OfString                                                                  param.Opt[string]                                                                                        `json:",omitzero,inline"`
-	OfListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutput []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemUnion `json:",omitzero,inline"`
+	OfString                                                                                                   param.Opt[string]                                                                                                                         `json:",omitzero,inline"`
+	OfListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponse []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemUnion `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u ResponseNewParamsInputUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfString, u.OfListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutput)
+	return param.MarshalUnion(u, u.OfString, u.OfListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponse)
 }
 func (u *ResponseNewParamsInputUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -9909,8 +10097,8 @@ func (u *ResponseNewParamsInputUnion) UnmarshalJSON(data []byte) error {
 func (u *ResponseNewParamsInputUnion) asAny() any {
 	if !param.IsOmitted(u.OfString) {
 		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutput) {
-		return &u.OfListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutput
+	} else if !param.IsOmitted(u.OfListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponse) {
+		return &u.OfListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponse
 	}
 	return nil
 }
@@ -9918,21 +10106,20 @@ func (u *ResponseNewParamsInputUnion) asAny() any {
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemUnion struct {
-	OfOpenAIResponseMessageInput                                                                                             *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInput                    `json:",omitzero,inline"`
-	OfOpenAIResponseOutputMessageWebSearchToolCall                                                                           *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageWebSearchToolCall  `json:",omitzero,inline"`
-	OfOpenAIResponseOutputMessageFileSearchToolCall                                                                          *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageFileSearchToolCall `json:",omitzero,inline"`
-	OfOpenAIResponseOutputMessageFunctionToolCall                                                                            *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageFunctionToolCall   `json:",omitzero,inline"`
-	OfOpenAIResponseOutputMessageMcpCall                                                                                     *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageMcpCall            `json:",omitzero,inline"`
-	OfOpenAIResponseOutputMessageMcpListTools                                                                                *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageMcpListTools       `json:",omitzero,inline"`
-	OfOpenAIResponseMcpApprovalRequest                                                                                       *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMcpApprovalRequest              `json:",omitzero,inline"`
-	OfOpenAIResponseInputFunctionToolCallOutput                                                                              *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseInputFunctionToolCallOutput     `json:",omitzero,inline"`
-	OfOpenAIResponseMcpApprovalResponse                                                                                      *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMcpApprovalResponse             `json:",omitzero,inline"`
-	OfResponseNewsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInput *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInput                    `json:",omitzero,inline"`
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemUnion struct {
+	OfOpenAIResponseMessageInput                    *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInput                    `json:",omitzero,inline"`
+	OfOpenAIResponseOutputMessageWebSearchToolCall  *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageWebSearchToolCall  `json:",omitzero,inline"`
+	OfOpenAIResponseOutputMessageFileSearchToolCall *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageFileSearchToolCall `json:",omitzero,inline"`
+	OfOpenAIResponseOutputMessageFunctionToolCall   *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageFunctionToolCall   `json:",omitzero,inline"`
+	OfOpenAIResponseOutputMessageMcpCall            *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageMcpCall            `json:",omitzero,inline"`
+	OfOpenAIResponseOutputMessageMcpListTools       *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageMcpListTools       `json:",omitzero,inline"`
+	OfOpenAIResponseMcpApprovalRequest              *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMcpApprovalRequest              `json:",omitzero,inline"`
+	OfOpenAIResponseInputFunctionToolCallOutput     *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseInputFunctionToolCallOutput     `json:",omitzero,inline"`
+	OfOpenAIResponseMcpApprovalResponse             *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMcpApprovalResponse             `json:",omitzero,inline"`
 	paramUnion
 }
 
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemUnion) MarshalJSON() ([]byte, error) {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfOpenAIResponseMessageInput,
 		u.OfOpenAIResponseOutputMessageWebSearchToolCall,
 		u.OfOpenAIResponseOutputMessageFileSearchToolCall,
@@ -9941,14 +10128,13 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 		u.OfOpenAIResponseOutputMessageMcpListTools,
 		u.OfOpenAIResponseMcpApprovalRequest,
 		u.OfOpenAIResponseInputFunctionToolCallOutput,
-		u.OfOpenAIResponseMcpApprovalResponse,
-		u.OfResponseNewsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInput)
+		u.OfOpenAIResponseMcpApprovalResponse)
 }
-func (u *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemUnion) UnmarshalJSON(data []byte) error {
+func (u *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
-func (u *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemUnion) asAny() any {
+func (u *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemUnion) asAny() any {
 	if !param.IsOmitted(u.OfOpenAIResponseMessageInput) {
 		return u.OfOpenAIResponseMessageInput
 	} else if !param.IsOmitted(u.OfOpenAIResponseOutputMessageWebSearchToolCall) {
@@ -9967,14 +10153,28 @@ func (u *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInput
 		return u.OfOpenAIResponseInputFunctionToolCallOutput
 	} else if !param.IsOmitted(u.OfOpenAIResponseMcpApprovalResponse) {
 		return u.OfOpenAIResponseMcpApprovalResponse
-	} else if !param.IsOmitted(u.OfResponseNewsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInput) {
-		return u.OfResponseNewsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInput
 	}
 	return nil
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemUnion) GetQueries() []string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemUnion) GetContent() *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentUnion {
+	if vt := u.OfOpenAIResponseMessageInput; vt != nil {
+		return &vt.Content
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemUnion) GetRole() *string {
+	if vt := u.OfOpenAIResponseMessageInput; vt != nil {
+		return &vt.Role
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemUnion) GetQueries() []string {
 	if vt := u.OfOpenAIResponseOutputMessageFileSearchToolCall; vt != nil {
 		return vt.Queries
 	}
@@ -9982,7 +10182,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemUnion) GetResults() []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageFileSearchToolCallResult {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemUnion) GetResults() []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageFileSearchToolCallResult {
 	if vt := u.OfOpenAIResponseOutputMessageFileSearchToolCall; vt != nil {
 		return vt.Results
 	}
@@ -9990,7 +10190,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemUnion) GetError() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemUnion) GetError() *string {
 	if vt := u.OfOpenAIResponseOutputMessageMcpCall; vt != nil && vt.Error.Valid() {
 		return &vt.Error.Value
 	}
@@ -9998,7 +10198,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemUnion) GetTools() []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageMcpListToolsTool {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemUnion) GetTools() []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageMcpListToolsTool {
 	if vt := u.OfOpenAIResponseOutputMessageMcpListTools; vt != nil {
 		return vt.Tools
 	}
@@ -10006,7 +10206,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemUnion) GetApprovalRequestID() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemUnion) GetApprovalRequestID() *string {
 	if vt := u.OfOpenAIResponseMcpApprovalResponse; vt != nil {
 		return &vt.ApprovalRequestID
 	}
@@ -10014,7 +10214,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemUnion) GetApprove() *bool {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemUnion) GetApprove() *bool {
 	if vt := u.OfOpenAIResponseMcpApprovalResponse; vt != nil {
 		return &vt.Approve
 	}
@@ -10022,7 +10222,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemUnion) GetReason() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemUnion) GetReason() *string {
 	if vt := u.OfOpenAIResponseMcpApprovalResponse; vt != nil && vt.Reason.Valid() {
 		return &vt.Reason.Value
 	}
@@ -10030,17 +10230,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemUnion) GetRole() *string {
-	if vt := u.OfOpenAIResponseMessageInput; vt != nil {
-		return (*string)(&vt.Role)
-	} else if vt := u.OfResponseNewsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInput; vt != nil {
-		return (*string)(&vt.Role)
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemUnion) GetID() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemUnion) GetID() *string {
 	if vt := u.OfOpenAIResponseMessageInput; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
 	} else if vt := u.OfOpenAIResponseOutputMessageWebSearchToolCall; vt != nil {
@@ -10059,14 +10249,12 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 		return &vt.ID.Value
 	} else if vt := u.OfOpenAIResponseMcpApprovalResponse; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
-	} else if vt := u.OfResponseNewsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInput; vt != nil && vt.ID.Valid() {
-		return &vt.ID.Value
 	}
 	return nil
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemUnion) GetStatus() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemUnion) GetStatus() *string {
 	if vt := u.OfOpenAIResponseMessageInput; vt != nil && vt.Status.Valid() {
 		return &vt.Status.Value
 	} else if vt := u.OfOpenAIResponseOutputMessageWebSearchToolCall; vt != nil {
@@ -10077,14 +10265,12 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 		return &vt.Status.Value
 	} else if vt := u.OfOpenAIResponseInputFunctionToolCallOutput; vt != nil && vt.Status.Valid() {
 		return &vt.Status.Value
-	} else if vt := u.OfResponseNewsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInput; vt != nil && vt.Status.Valid() {
-		return &vt.Status.Value
 	}
 	return nil
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemUnion) GetType() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemUnion) GetType() *string {
 	if vt := u.OfOpenAIResponseMessageInput; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfOpenAIResponseOutputMessageWebSearchToolCall; vt != nil {
@@ -10103,14 +10289,12 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 		return (*string)(&vt.Type)
 	} else if vt := u.OfOpenAIResponseMcpApprovalResponse; vt != nil {
 		return (*string)(&vt.Type)
-	} else if vt := u.OfResponseNewsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInput; vt != nil {
-		return (*string)(&vt.Type)
 	}
 	return nil
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemUnion) GetArguments() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemUnion) GetArguments() *string {
 	if vt := u.OfOpenAIResponseOutputMessageFunctionToolCall; vt != nil {
 		return (*string)(&vt.Arguments)
 	} else if vt := u.OfOpenAIResponseOutputMessageMcpCall; vt != nil {
@@ -10122,7 +10306,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemUnion) GetCallID() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemUnion) GetCallID() *string {
 	if vt := u.OfOpenAIResponseOutputMessageFunctionToolCall; vt != nil {
 		return (*string)(&vt.CallID)
 	} else if vt := u.OfOpenAIResponseInputFunctionToolCallOutput; vt != nil {
@@ -10132,7 +10316,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemUnion) GetName() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemUnion) GetName() *string {
 	if vt := u.OfOpenAIResponseOutputMessageFunctionToolCall; vt != nil {
 		return (*string)(&vt.Name)
 	} else if vt := u.OfOpenAIResponseOutputMessageMcpCall; vt != nil {
@@ -10144,7 +10328,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemUnion) GetServerLabel() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemUnion) GetServerLabel() *string {
 	if vt := u.OfOpenAIResponseOutputMessageMcpCall; vt != nil {
 		return (*string)(&vt.ServerLabel)
 	} else if vt := u.OfOpenAIResponseOutputMessageMcpListTools; vt != nil {
@@ -10156,21 +10340,11 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemUnion) GetOutput() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemUnion) GetOutput() *string {
 	if vt := u.OfOpenAIResponseOutputMessageMcpCall; vt != nil && vt.Output.Valid() {
 		return &vt.Output.Value
 	} else if vt := u.OfOpenAIResponseInputFunctionToolCallOutput; vt != nil {
 		return (*string)(&vt.Output)
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's Content property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemUnion) GetContent() *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentUnion {
-	if vt := u.OfOpenAIResponseMessageInput; vt != nil {
-		return &vt.Content
-	} else if vt := u.OfResponseNewsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInput; vt != nil {
-		return &vt.Content
 	}
 	return nil
 }
@@ -10180,8 +10354,8 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 // and there is no way to tell them apart in certain scenarios.
 //
 // The properties Content, Role are required.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInput struct {
-	Content ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentUnion `json:"content,omitzero,required"`
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInput struct {
+	Content ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentUnion `json:"content,omitzero,required"`
 	// Any of "system", "developer", "user", "assistant".
 	Role   string            `json:"role,omitzero,required"`
 	ID     param.Opt[string] `json:"id,omitzero"`
@@ -10191,19 +10365,19 @@ type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunc
 	paramObj
 }
 
-func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInput) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInput
+func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInput) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInput
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInput) UnmarshalJSON(data []byte) error {
+func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInput) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInput](
+	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInput](
 		"role", "system", "developer", "user", "assistant",
 	)
-	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInput](
+	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInput](
 		"type", "message",
 	)
 }
@@ -10211,21 +10385,21 @@ func init() {
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentUnion struct {
-	OfString                                                                                                               param.Opt[string]                                                                                                                                                                                                                                                 `json:",omitzero,inline"`
-	OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion `json:",omitzero,inline"`
-	OfListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusal                                []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion                                `json:",omitzero,inline"`
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentUnion struct {
+	OfString                                                                                                               param.Opt[string]                                                                                                                                                                                                                                                                                  `json:",omitzero,inline"`
+	OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion `json:",omitzero,inline"`
+	OfListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusal                                []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion                                `json:",omitzero,inline"`
 	paramUnion
 }
 
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentUnion) MarshalJSON() ([]byte, error) {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfString, u.OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile, u.OfListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusal)
 }
-func (u *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentUnion) UnmarshalJSON(data []byte) error {
+func (u *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
-func (u *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentUnion) asAny() any {
+func (u *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentUnion) asAny() any {
 	if !param.IsOmitted(u.OfString) {
 		return &u.OfString.Value
 	} else if !param.IsOmitted(u.OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile) {
@@ -10239,21 +10413,21 @@ func (u *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInput
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion struct {
-	OfInputText  *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText  `json:",omitzero,inline"`
-	OfInputImage *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage `json:",omitzero,inline"`
-	OfInputFile  *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile  `json:",omitzero,inline"`
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion struct {
+	OfInputText  *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText  `json:",omitzero,inline"`
+	OfInputImage *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage `json:",omitzero,inline"`
+	OfInputFile  *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile  `json:",omitzero,inline"`
 	paramUnion
 }
 
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) MarshalJSON() ([]byte, error) {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfInputText, u.OfInputImage, u.OfInputFile)
 }
-func (u *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) UnmarshalJSON(data []byte) error {
+func (u *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
-func (u *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) asAny() any {
+func (u *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) asAny() any {
 	if !param.IsOmitted(u.OfInputText) {
 		return u.OfInputText
 	} else if !param.IsOmitted(u.OfInputImage) {
@@ -10265,7 +10439,7 @@ func (u *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInput
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetText() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetText() *string {
 	if vt := u.OfInputText; vt != nil {
 		return &vt.Text
 	}
@@ -10273,7 +10447,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetDetail() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetDetail() *string {
 	if vt := u.OfInputImage; vt != nil {
 		return &vt.Detail
 	}
@@ -10281,7 +10455,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetImageURL() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetImageURL() *string {
 	if vt := u.OfInputImage; vt != nil && vt.ImageURL.Valid() {
 		return &vt.ImageURL.Value
 	}
@@ -10289,7 +10463,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetFileData() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetFileData() *string {
 	if vt := u.OfInputFile; vt != nil && vt.FileData.Valid() {
 		return &vt.FileData.Value
 	}
@@ -10297,7 +10471,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetFileURL() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetFileURL() *string {
 	if vt := u.OfInputFile; vt != nil && vt.FileURL.Valid() {
 		return &vt.FileURL.Value
 	}
@@ -10305,7 +10479,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetFilename() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetFilename() *string {
 	if vt := u.OfInputFile; vt != nil && vt.Filename.Valid() {
 		return &vt.Filename.Value
 	}
@@ -10313,7 +10487,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetType() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetType() *string {
 	if vt := u.OfInputText; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfInputImage; vt != nil {
@@ -10325,7 +10499,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetFileID() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetFileID() *string {
 	if vt := u.OfInputImage; vt != nil && vt.FileID.Valid() {
 		return &vt.FileID.Value
 	} else if vt := u.OfInputFile; vt != nil && vt.FileID.Valid() {
@@ -10335,40 +10509,40 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 func init() {
-	apijson.RegisterUnion[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion](
+	apijson.RegisterUnion[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion](
 		"type",
-		apijson.Discriminator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText]("input_text"),
-		apijson.Discriminator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage]("input_image"),
-		apijson.Discriminator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile]("input_file"),
+		apijson.Discriminator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText]("input_text"),
+		apijson.Discriminator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage]("input_image"),
+		apijson.Discriminator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile]("input_file"),
 	)
 }
 
 // Text content for input messages in OpenAI response format.
 //
 // The property Text is required.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText struct {
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText struct {
 	Text string `json:"text,required"`
 	// Any of "input_text".
 	Type string `json:"type,omitzero"`
 	paramObj
 }
 
-func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText
+func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) UnmarshalJSON(data []byte) error {
+func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText](
+	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText](
 		"type", "input_text",
 	)
 }
 
 // Image content for input messages in OpenAI response format.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage struct {
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage struct {
 	FileID   param.Opt[string] `json:"file_id,omitzero"`
 	ImageURL param.Opt[string] `json:"image_url,omitzero"`
 	// Any of "low", "high", "auto".
@@ -10378,25 +10552,25 @@ type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunc
 	paramObj
 }
 
-func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage
+func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) UnmarshalJSON(data []byte) error {
+func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage](
+	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage](
 		"detail", "low", "high", "auto",
 	)
-	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage](
+	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage](
 		"type", "input_image",
 	)
 }
 
 // File content for input messages in OpenAI response format.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
 	FileData param.Opt[string] `json:"file_data,omitzero"`
 	FileID   param.Opt[string] `json:"file_id,omitzero"`
 	FileURL  param.Opt[string] `json:"file_url,omitzero"`
@@ -10406,16 +10580,16 @@ type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunc
 	paramObj
 }
 
-func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile
+func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) UnmarshalJSON(data []byte) error {
+func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile](
+	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile](
 		"type", "input_file",
 	)
 }
@@ -10423,20 +10597,20 @@ func init() {
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion struct {
-	OfOutputText *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputText `json:",omitzero,inline"`
-	OfRefusal    *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemRefusal    `json:",omitzero,inline"`
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion struct {
+	OfOutputText *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputText `json:",omitzero,inline"`
+	OfRefusal    *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemRefusal    `json:",omitzero,inline"`
 	paramUnion
 }
 
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion) MarshalJSON() ([]byte, error) {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfOutputText, u.OfRefusal)
 }
-func (u *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion) UnmarshalJSON(data []byte) error {
+func (u *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
-func (u *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion) asAny() any {
+func (u *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion) asAny() any {
 	if !param.IsOmitted(u.OfOutputText) {
 		return u.OfOutputText
 	} else if !param.IsOmitted(u.OfRefusal) {
@@ -10446,7 +10620,7 @@ func (u *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInput
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion) GetText() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion) GetText() *string {
 	if vt := u.OfOutputText; vt != nil {
 		return &vt.Text
 	}
@@ -10454,7 +10628,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion) GetAnnotations() []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion) GetAnnotations() []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion {
 	if vt := u.OfOutputText; vt != nil {
 		return vt.Annotations
 	}
@@ -10462,7 +10636,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion) GetLogprobs() []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprob {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion) GetLogprobs() []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprob {
 	if vt := u.OfOutputText; vt != nil {
 		return vt.Logprobs
 	}
@@ -10470,7 +10644,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion) GetRefusal() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion) GetRefusal() *string {
 	if vt := u.OfRefusal; vt != nil {
 		return &vt.Refusal
 	}
@@ -10478,7 +10652,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion) GetType() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion) GetType() *string {
 	if vt := u.OfOutputText; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfRefusal; vt != nil {
@@ -10488,33 +10662,33 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 func init() {
-	apijson.RegisterUnion[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion](
+	apijson.RegisterUnion[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion](
 		"type",
-		apijson.Discriminator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputText]("output_text"),
-		apijson.Discriminator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemRefusal]("refusal"),
+		apijson.Discriminator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputText]("output_text"),
+		apijson.Discriminator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemRefusal]("refusal"),
 	)
 }
 
 // The property Text is required.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputText struct {
-	Text        string                                                                                                                                                                                                                                                 `json:"text,required"`
-	Logprobs    []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprob         `json:"logprobs,omitzero"`
-	Annotations []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion `json:"annotations,omitzero"`
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputText struct {
+	Text        string                                                                                                                                                                                                                                                                                  `json:"text,required"`
+	Logprobs    []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprob         `json:"logprobs,omitzero"`
+	Annotations []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion `json:"annotations,omitzero"`
 	// Any of "output_text".
 	Type string `json:"type,omitzero"`
 	paramObj
 }
 
-func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputText) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputText
+func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputText) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputText
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputText) UnmarshalJSON(data []byte) error {
+func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputText) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputText](
+	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputText](
 		"type", "output_text",
 	)
 }
@@ -10522,22 +10696,22 @@ func init() {
 // Only one field can be non-zero.
 //
 // Use [param.IsOmitted] to confirm if a field is set.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion struct {
-	OfFileCitation          *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation          `json:",omitzero,inline"`
-	OfURLCitation           *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation           `json:",omitzero,inline"`
-	OfContainerFileCitation *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation `json:",omitzero,inline"`
-	OfFilePath              *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath              `json:",omitzero,inline"`
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion struct {
+	OfFileCitation          *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation          `json:",omitzero,inline"`
+	OfURLCitation           *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation           `json:",omitzero,inline"`
+	OfContainerFileCitation *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation `json:",omitzero,inline"`
+	OfFilePath              *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath              `json:",omitzero,inline"`
 	paramUnion
 }
 
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) MarshalJSON() ([]byte, error) {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) MarshalJSON() ([]byte, error) {
 	return param.MarshalUnion(u, u.OfFileCitation, u.OfURLCitation, u.OfContainerFileCitation, u.OfFilePath)
 }
-func (u *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) UnmarshalJSON(data []byte) error {
+func (u *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
 }
 
-func (u *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) asAny() any {
+func (u *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) asAny() any {
 	if !param.IsOmitted(u.OfFileCitation) {
 		return u.OfFileCitation
 	} else if !param.IsOmitted(u.OfURLCitation) {
@@ -10551,7 +10725,7 @@ func (u *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInput
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetTitle() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetTitle() *string {
 	if vt := u.OfURLCitation; vt != nil {
 		return &vt.Title
 	}
@@ -10559,7 +10733,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetURL() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetURL() *string {
 	if vt := u.OfURLCitation; vt != nil {
 		return &vt.URL
 	}
@@ -10567,7 +10741,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetContainerID() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetContainerID() *string {
 	if vt := u.OfContainerFileCitation; vt != nil {
 		return &vt.ContainerID
 	}
@@ -10575,7 +10749,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetFileID() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetFileID() *string {
 	if vt := u.OfFileCitation; vt != nil {
 		return (*string)(&vt.FileID)
 	} else if vt := u.OfContainerFileCitation; vt != nil {
@@ -10587,7 +10761,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetFilename() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetFilename() *string {
 	if vt := u.OfFileCitation; vt != nil {
 		return (*string)(&vt.Filename)
 	} else if vt := u.OfContainerFileCitation; vt != nil {
@@ -10597,7 +10771,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetIndex() *int64 {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetIndex() *int64 {
 	if vt := u.OfFileCitation; vt != nil {
 		return (*int64)(&vt.Index)
 	} else if vt := u.OfFilePath; vt != nil {
@@ -10607,7 +10781,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetType() *string {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetType() *string {
 	if vt := u.OfFileCitation; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfURLCitation; vt != nil {
@@ -10621,7 +10795,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetEndIndex() *int64 {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetEndIndex() *int64 {
 	if vt := u.OfURLCitation; vt != nil {
 		return (*int64)(&vt.EndIndex)
 	} else if vt := u.OfContainerFileCitation; vt != nil {
@@ -10631,7 +10805,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetStartIndex() *int64 {
+func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) GetStartIndex() *int64 {
 	if vt := u.OfURLCitation; vt != nil {
 		return (*int64)(&vt.StartIndex)
 	} else if vt := u.OfContainerFileCitation; vt != nil {
@@ -10641,19 +10815,19 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 }
 
 func init() {
-	apijson.RegisterUnion[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion](
+	apijson.RegisterUnion[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion](
 		"type",
-		apijson.Discriminator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation]("file_citation"),
-		apijson.Discriminator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation]("url_citation"),
-		apijson.Discriminator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation]("container_file_citation"),
-		apijson.Discriminator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath]("file_path"),
+		apijson.Discriminator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation]("file_citation"),
+		apijson.Discriminator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation]("url_citation"),
+		apijson.Discriminator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation]("container_file_citation"),
+		apijson.Discriminator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath]("file_path"),
 	)
 }
 
 // File citation annotation for referencing specific files in response content.
 //
 // The properties FileID, Filename, Index are required.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation struct {
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation struct {
 	FileID   string `json:"file_id,required"`
 	Filename string `json:"filename,required"`
 	Index    int64  `json:"index,required"`
@@ -10662,16 +10836,16 @@ type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunc
 	paramObj
 }
 
-func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation
+func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation) UnmarshalJSON(data []byte) error {
+func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation](
+	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation](
 		"type", "file_citation",
 	)
 }
@@ -10679,7 +10853,7 @@ func init() {
 // URL citation annotation for referencing external web resources.
 //
 // The properties EndIndex, StartIndex, Title, URL are required.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation struct {
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation struct {
 	EndIndex   int64  `json:"end_index,required"`
 	StartIndex int64  `json:"start_index,required"`
 	Title      string `json:"title,required"`
@@ -10689,22 +10863,22 @@ type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunc
 	paramObj
 }
 
-func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation
+func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation) UnmarshalJSON(data []byte) error {
+func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation](
+	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation](
 		"type", "url_citation",
 	)
 }
 
 // The properties ContainerID, EndIndex, FileID, Filename, StartIndex are required.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation struct {
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation struct {
 	ContainerID string `json:"container_id,required"`
 	EndIndex    int64  `json:"end_index,required"`
 	FileID      string `json:"file_id,required"`
@@ -10715,22 +10889,22 @@ type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunc
 	paramObj
 }
 
-func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation
+func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation) UnmarshalJSON(data []byte) error {
+func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation](
+	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation](
 		"type", "container_file_citation",
 	)
 }
 
 // The properties FileID, Index are required.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath struct {
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath struct {
 	FileID string `json:"file_id,required"`
 	Index  int64  `json:"index,required"`
 	// Any of "file_path".
@@ -10738,16 +10912,16 @@ type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunc
 	paramObj
 }
 
-func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath
+func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath) UnmarshalJSON(data []byte) error {
+func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath](
+	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath](
 		"type", "file_path",
 	)
 }
@@ -10755,68 +10929,69 @@ func init() {
 // The log probability for a token from an OpenAI-compatible chat completion
 // response.
 //
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token :top_logprobs: The top log probabilities for the token
-//
 // The properties Token, Logprob are required.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprob struct {
-	Token       string                                                                                                                                                                                                                                                   `json:"token,required"`
-	Logprob     float64                                                                                                                                                                                                                                                  `json:"logprob,required"`
-	Bytes       []int64                                                                                                                                                                                                                                                  `json:"bytes,omitzero"`
-	TopLogprobs []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob `json:"top_logprobs,omitzero"`
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprob struct {
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
+	Logprob float64 `json:"logprob,required"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,omitzero"`
+	// The top log probabilities for the token.
+	TopLogprobs []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob `json:"top_logprobs,omitzero"`
 	paramObj
 }
 
-func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprob) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprob
+func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprob) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprob
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprob) UnmarshalJSON(data []byte) error {
+func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprob) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The top log probability for a token from an OpenAI-compatible chat completion
 // response.
 //
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token
-//
 // The properties Token, Logprob are required.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob struct {
-	Token   string  `json:"token,required"`
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob struct {
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
 	Logprob float64 `json:"logprob,required"`
-	Bytes   []int64 `json:"bytes,omitzero"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,omitzero"`
 	paramObj
 }
 
-func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob
+func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob) UnmarshalJSON(data []byte) error {
+func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Refusal content within a streamed response part.
 //
 // The property Refusal is required.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemRefusal struct {
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemRefusal struct {
 	Refusal string `json:"refusal,required"`
 	// Any of "refusal".
 	Type string `json:"type,omitzero"`
 	paramObj
 }
 
-func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemRefusal) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemRefusal
+func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemRefusal) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemRefusal
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemRefusal) UnmarshalJSON(data []byte) error {
+func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemRefusal) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemRefusal](
+	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemRefusal](
 		"type", "refusal",
 	)
 }
@@ -10824,7 +10999,7 @@ func init() {
 // Web search tool call output message for OpenAI responses.
 //
 // The properties ID, Status are required.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageWebSearchToolCall struct {
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageWebSearchToolCall struct {
 	ID     string `json:"id,required"`
 	Status string `json:"status,required"`
 	// Any of "web_search_call".
@@ -10832,16 +11007,16 @@ type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunc
 	paramObj
 }
 
-func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageWebSearchToolCall) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageWebSearchToolCall
+func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageWebSearchToolCall) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageWebSearchToolCall
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageWebSearchToolCall) UnmarshalJSON(data []byte) error {
+func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageWebSearchToolCall) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageWebSearchToolCall](
+	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageWebSearchToolCall](
 		"type", "web_search_call",
 	)
 }
@@ -10849,26 +11024,26 @@ func init() {
 // File search tool call output message for OpenAI responses.
 //
 // The properties ID, Queries, Status are required.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageFileSearchToolCall struct {
-	ID      string                                                                                                                                                 `json:"id,required"`
-	Queries []string                                                                                                                                               `json:"queries,omitzero,required"`
-	Status  string                                                                                                                                                 `json:"status,required"`
-	Results []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageFileSearchToolCallResult `json:"results,omitzero"`
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageFileSearchToolCall struct {
+	ID      string                                                                                                                                                                                  `json:"id,required"`
+	Queries []string                                                                                                                                                                                `json:"queries,omitzero,required"`
+	Status  string                                                                                                                                                                                  `json:"status,required"`
+	Results []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageFileSearchToolCallResult `json:"results,omitzero"`
 	// Any of "file_search_call".
 	Type string `json:"type,omitzero"`
 	paramObj
 }
 
-func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageFileSearchToolCall) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageFileSearchToolCall
+func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageFileSearchToolCall) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageFileSearchToolCall
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageFileSearchToolCall) UnmarshalJSON(data []byte) error {
+func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageFileSearchToolCall) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageFileSearchToolCall](
+	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageFileSearchToolCall](
 		"type", "file_search_call",
 	)
 }
@@ -10876,7 +11051,7 @@ func init() {
 // Search results returned by the file search operation.
 //
 // The properties Attributes, FileID, Filename, Score, Text are required.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageFileSearchToolCallResult struct {
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageFileSearchToolCallResult struct {
 	Attributes map[string]any `json:"attributes,omitzero,required"`
 	FileID     string         `json:"file_id,required"`
 	Filename   string         `json:"filename,required"`
@@ -10885,18 +11060,18 @@ type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunc
 	paramObj
 }
 
-func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageFileSearchToolCallResult) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageFileSearchToolCallResult
+func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageFileSearchToolCallResult) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageFileSearchToolCallResult
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageFileSearchToolCallResult) UnmarshalJSON(data []byte) error {
+func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageFileSearchToolCallResult) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Function tool call output message for OpenAI responses.
 //
 // The properties Arguments, CallID, Name are required.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageFunctionToolCall struct {
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageFunctionToolCall struct {
 	Arguments string            `json:"arguments,required"`
 	CallID    string            `json:"call_id,required"`
 	Name      string            `json:"name,required"`
@@ -10907,16 +11082,16 @@ type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunc
 	paramObj
 }
 
-func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageFunctionToolCall) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageFunctionToolCall
+func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageFunctionToolCall) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageFunctionToolCall
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageFunctionToolCall) UnmarshalJSON(data []byte) error {
+func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageFunctionToolCall) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageFunctionToolCall](
+	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageFunctionToolCall](
 		"type", "function_call",
 	)
 }
@@ -10924,7 +11099,7 @@ func init() {
 // Model Context Protocol (MCP) call output message for OpenAI responses.
 //
 // The properties ID, Arguments, Name, ServerLabel are required.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageMcpCall struct {
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageMcpCall struct {
 	ID          string            `json:"id,required"`
 	Arguments   string            `json:"arguments,required"`
 	Name        string            `json:"name,required"`
@@ -10936,16 +11111,16 @@ type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunc
 	paramObj
 }
 
-func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageMcpCall) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageMcpCall
+func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageMcpCall) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageMcpCall
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageMcpCall) UnmarshalJSON(data []byte) error {
+func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageMcpCall) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageMcpCall](
+	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageMcpCall](
 		"type", "mcp_call",
 	)
 }
@@ -10953,25 +11128,25 @@ func init() {
 // MCP list tools output message containing available tools from an MCP server.
 //
 // The properties ID, ServerLabel, Tools are required.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageMcpListTools struct {
-	ID          string                                                                                                                                         `json:"id,required"`
-	ServerLabel string                                                                                                                                         `json:"server_label,required"`
-	Tools       []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageMcpListToolsTool `json:"tools,omitzero,required"`
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageMcpListTools struct {
+	ID          string                                                                                                                                                                          `json:"id,required"`
+	ServerLabel string                                                                                                                                                                          `json:"server_label,required"`
+	Tools       []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageMcpListToolsTool `json:"tools,omitzero,required"`
 	// Any of "mcp_list_tools".
 	Type string `json:"type,omitzero"`
 	paramObj
 }
 
-func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageMcpListTools) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageMcpListTools
+func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageMcpListTools) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageMcpListTools
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageMcpListTools) UnmarshalJSON(data []byte) error {
+func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageMcpListTools) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageMcpListTools](
+	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageMcpListTools](
 		"type", "mcp_list_tools",
 	)
 }
@@ -10979,25 +11154,25 @@ func init() {
 // Tool definition returned by MCP list tools operation.
 //
 // The properties InputSchema, Name are required.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageMcpListToolsTool struct {
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageMcpListToolsTool struct {
 	InputSchema map[string]any    `json:"input_schema,omitzero,required"`
 	Name        string            `json:"name,required"`
 	Description param.Opt[string] `json:"description,omitzero"`
 	paramObj
 }
 
-func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageMcpListToolsTool) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageMcpListToolsTool
+func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageMcpListToolsTool) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageMcpListToolsTool
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageMcpListToolsTool) UnmarshalJSON(data []byte) error {
+func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageMcpListToolsTool) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // A request for human approval of a tool invocation.
 //
 // The properties ID, Arguments, Name, ServerLabel are required.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMcpApprovalRequest struct {
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMcpApprovalRequest struct {
 	ID          string `json:"id,required"`
 	Arguments   string `json:"arguments,required"`
 	Name        string `json:"name,required"`
@@ -11007,16 +11182,16 @@ type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunc
 	paramObj
 }
 
-func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMcpApprovalRequest) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMcpApprovalRequest
+func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMcpApprovalRequest) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMcpApprovalRequest
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMcpApprovalRequest) UnmarshalJSON(data []byte) error {
+func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMcpApprovalRequest) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMcpApprovalRequest](
+	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMcpApprovalRequest](
 		"type", "mcp_approval_request",
 	)
 }
@@ -11025,7 +11200,7 @@ func init() {
 // model.
 //
 // The properties CallID, Output are required.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseInputFunctionToolCallOutput struct {
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseInputFunctionToolCallOutput struct {
 	CallID string            `json:"call_id,required"`
 	Output string            `json:"output,required"`
 	ID     param.Opt[string] `json:"id,omitzero"`
@@ -11035,16 +11210,16 @@ type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunc
 	paramObj
 }
 
-func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseInputFunctionToolCallOutput) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseInputFunctionToolCallOutput
+func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseInputFunctionToolCallOutput) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseInputFunctionToolCallOutput
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseInputFunctionToolCallOutput) UnmarshalJSON(data []byte) error {
+func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseInputFunctionToolCallOutput) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseInputFunctionToolCallOutput](
+	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseInputFunctionToolCallOutput](
 		"type", "function_call_output",
 	)
 }
@@ -11052,7 +11227,7 @@ func init() {
 // A response to an MCP approval request.
 //
 // The properties ApprovalRequestID, Approve are required.
-type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMcpApprovalResponse struct {
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMcpApprovalResponse struct {
 	ApprovalRequestID string            `json:"approval_request_id,required"`
 	Approve           bool              `json:"approve,required"`
 	ID                param.Opt[string] `json:"id,omitzero"`
@@ -11062,18 +11237,59 @@ type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunc
 	paramObj
 }
 
-func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMcpApprovalResponse) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMcpApprovalResponse
+func (r ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMcpApprovalResponse) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMcpApprovalResponse
 	return param.MarshalObject(r, (*shadow)(&r))
 }
-func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMcpApprovalResponse) UnmarshalJSON(data []byte) error {
+func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMcpApprovalResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 func init() {
-	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMcpApprovalResponse](
+	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMcpApprovalResponse](
 		"type", "mcp_approval_response",
 	)
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type ResponseNewParamsGuardrailUnion struct {
+	OfString                param.Opt[string]                                `json:",omitzero,inline"`
+	OfResponseGuardrailSpec *ResponseNewParamsGuardrailResponseGuardrailSpec `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u ResponseNewParamsGuardrailUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfString, u.OfResponseGuardrailSpec)
+}
+func (u *ResponseNewParamsGuardrailUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *ResponseNewParamsGuardrailUnion) asAny() any {
+	if !param.IsOmitted(u.OfString) {
+		return &u.OfString.Value
+	} else if !param.IsOmitted(u.OfResponseGuardrailSpec) {
+		return u.OfResponseGuardrailSpec
+	}
+	return nil
+}
+
+// Specification for a guardrail to apply during response generation.
+//
+// The property Type is required.
+type ResponseNewParamsGuardrailResponseGuardrailSpec struct {
+	Type string `json:"type,required"`
+	paramObj
+}
+
+func (r ResponseNewParamsGuardrailResponseGuardrailSpec) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsGuardrailResponseGuardrailSpec
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ResponseNewParamsGuardrailResponseGuardrailSpec) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // OpenAI compatible Prompt object that is used in OpenAI responses.
@@ -11275,6 +11491,29 @@ func (r *ResponseNewParamsPromptVariableInputFile) UnmarshalJSON(data []byte) er
 func init() {
 	apijson.RegisterFieldValidator[ResponseNewParamsPromptVariableInputFile](
 		"type", "input_file",
+	)
+}
+
+// Configuration for reasoning effort in OpenAI responses.
+//
+// Controls how much reasoning the model performs before generating a response.
+type ResponseNewParamsReasoning struct {
+	// Any of "none", "minimal", "low", "medium", "high", "xhigh".
+	Effort string `json:"effort,omitzero"`
+	paramObj
+}
+
+func (r ResponseNewParamsReasoning) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsReasoning
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ResponseNewParamsReasoning) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ResponseNewParamsReasoning](
+		"effort", "none", "minimal", "low", "medium", "high", "xhigh",
 	)
 }
 
@@ -11685,14 +11924,6 @@ func (u ResponseNewParamsToolUnion) GetServerLabel() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ResponseNewParamsToolUnion) GetServerURL() *string {
-	if vt := u.OfMcp; vt != nil {
-		return &vt.ServerURL
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
 func (u ResponseNewParamsToolUnion) GetAllowedTools() *ResponseNewParamsToolMcpAllowedToolsUnion {
 	if vt := u.OfMcp; vt != nil {
 		return &vt.AllowedTools
@@ -11709,6 +11940,14 @@ func (u ResponseNewParamsToolUnion) GetAuthorization() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u ResponseNewParamsToolUnion) GetConnectorID() *string {
+	if vt := u.OfMcp; vt != nil && vt.ConnectorID.Valid() {
+		return &vt.ConnectorID.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u ResponseNewParamsToolUnion) GetHeaders() map[string]any {
 	if vt := u.OfMcp; vt != nil {
 		return vt.Headers
@@ -11720,6 +11959,14 @@ func (u ResponseNewParamsToolUnion) GetHeaders() map[string]any {
 func (u ResponseNewParamsToolUnion) GetRequireApproval() *ResponseNewParamsToolMcpRequireApprovalUnion {
 	if vt := u.OfMcp; vt != nil {
 		return &vt.RequireApproval
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ResponseNewParamsToolUnion) GetServerURL() *string {
+	if vt := u.OfMcp; vt != nil && vt.ServerURL.Valid() {
+		return &vt.ServerURL.Value
 	}
 	return nil
 }
@@ -11782,6 +12029,22 @@ type ResponseNewParamsToolFileSearch struct {
 	MaxNumResults  param.Opt[int64] `json:"max_num_results,omitzero"`
 	Filters        map[string]any   `json:"filters,omitzero"`
 	// Options for ranking and filtering search results.
+	//
+	// This class configures how search results are ranked and filtered. You can use
+	// algorithm-based rerankers (weighted, RRF) or neural rerankers. Defaults from
+	// VectorStoresConfig are used when parameters are not provided.
+	//
+	// Examples: # Weighted ranker with custom alpha
+	// SearchRankingOptions(ranker="weighted", alpha=0.7)
+	//
+	//	# RRF ranker with custom impact factor
+	//	SearchRankingOptions(ranker="rrf", impact_factor=50.0)
+	//
+	//	# Use config defaults (just specify ranker type)
+	//	SearchRankingOptions(ranker="weighted")  # Uses alpha from VectorStoresConfig
+	//
+	//	# Score threshold filtering
+	//	SearchRankingOptions(ranker="weighted", score_threshold=0.5)
 	RankingOptions ResponseNewParamsToolFileSearchRankingOptions `json:"ranking_options,omitzero"`
 	// Any of "file_search".
 	Type string `json:"type,omitzero"`
@@ -11803,9 +12066,34 @@ func init() {
 }
 
 // Options for ranking and filtering search results.
+//
+// This class configures how search results are ranked and filtered. You can use
+// algorithm-based rerankers (weighted, RRF) or neural rerankers. Defaults from
+// VectorStoresConfig are used when parameters are not provided.
+//
+// Examples: # Weighted ranker with custom alpha
+// SearchRankingOptions(ranker="weighted", alpha=0.7)
+//
+//	# RRF ranker with custom impact factor
+//	SearchRankingOptions(ranker="rrf", impact_factor=50.0)
+//
+//	# Use config defaults (just specify ranker type)
+//	SearchRankingOptions(ranker="weighted")  # Uses alpha from VectorStoresConfig
+//
+//	# Score threshold filtering
+//	SearchRankingOptions(ranker="weighted", score_threshold=0.5)
 type ResponseNewParamsToolFileSearchRankingOptions struct {
+	// Weight factor for weighted ranker
+	Alpha param.Opt[float64] `json:"alpha,omitzero"`
+	// Impact factor for RRF algorithm
+	ImpactFactor param.Opt[float64] `json:"impact_factor,omitzero"`
+	// Model identifier for neural reranker
+	Model          param.Opt[string]  `json:"model,omitzero"`
 	Ranker         param.Opt[string]  `json:"ranker,omitzero"`
 	ScoreThreshold param.Opt[float64] `json:"score_threshold,omitzero"`
+	// Weights for combining vector, keyword, and neural scores. Keys: 'vector',
+	// 'keyword', 'neural'
+	Weights map[string]float64 `json:"weights,omitzero"`
 	paramObj
 }
 
@@ -11846,11 +12134,12 @@ func init() {
 
 // Model Context Protocol (MCP) tool configuration for OpenAI response inputs.
 //
-// The properties ServerLabel, ServerURL are required.
+// The property ServerLabel is required.
 type ResponseNewParamsToolMcp struct {
 	ServerLabel   string            `json:"server_label,required"`
-	ServerURL     string            `json:"server_url,required"`
 	Authorization param.Opt[string] `json:"authorization,omitzero"`
+	ConnectorID   param.Opt[string] `json:"connector_id,omitzero"`
+	ServerURL     param.Opt[string] `json:"server_url,omitzero"`
 	// Filter configuration for restricting which MCP tools can be used.
 	AllowedTools ResponseNewParamsToolMcpAllowedToolsUnion `json:"allowed_tools,omitzero"`
 	Headers      map[string]any                            `json:"headers,omitzero"`
@@ -11964,8 +12253,11 @@ func (r *ResponseNewParamsToolMcpRequireApprovalApprovalFilter) UnmarshalJSON(da
 }
 
 type ResponseListParams struct {
+	// The ID of the last response to return.
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
-	Limit param.Opt[int64]  `query:"limit,omitzero" json:"-"`
+	// The number of responses to return.
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// The model to filter responses by.
 	Model param.Opt[string] `query:"model,omitzero" json:"-"`
 	// Sort order for paginated responses.
 	//

@@ -45,8 +45,6 @@ func NewPromptService(opts ...option.RequestOption) (r PromptService) {
 	return
 }
 
-// Create prompt.
-//
 // Create a new prompt.
 func (r *PromptService) New(ctx context.Context, body PromptNewParams, opts ...option.RequestOption) (res *Prompt, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -55,8 +53,6 @@ func (r *PromptService) New(ctx context.Context, body PromptNewParams, opts ...o
 	return
 }
 
-// Get prompt.
-//
 // Get a prompt by its identifier and optional version.
 func (r *PromptService) Get(ctx context.Context, promptID string, query PromptGetParams, opts ...option.RequestOption) (res *Prompt, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -69,8 +65,6 @@ func (r *PromptService) Get(ctx context.Context, promptID string, query PromptGe
 	return
 }
 
-// Update prompt.
-//
 // Update an existing prompt (increments version).
 func (r *PromptService) Update(ctx context.Context, promptID string, body PromptUpdateParams, opts ...option.RequestOption) (res *Prompt, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -79,7 +73,7 @@ func (r *PromptService) Update(ctx context.Context, promptID string, body Prompt
 		return
 	}
 	path := fmt.Sprintf("v1/prompts/%s", promptID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
 	return
 }
 
@@ -96,8 +90,6 @@ func (r *PromptService) List(ctx context.Context, opts ...option.RequestOption) 
 	return
 }
 
-// Delete prompt.
-//
 // Delete a prompt.
 func (r *PromptService) Delete(ctx context.Context, promptID string, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -111,8 +103,6 @@ func (r *PromptService) Delete(ctx context.Context, promptID string, opts ...opt
 	return
 }
 
-// Set prompt version.
-//
 // Set which version of a prompt should be the default in get_prompt (latest).
 func (r *PromptService) SetDefaultVersion(ctx context.Context, promptID string, body PromptSetDefaultVersionParams, opts ...option.RequestOption) (res *Prompt, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -121,7 +111,7 @@ func (r *PromptService) SetDefaultVersion(ctx context.Context, promptID string, 
 		return
 	}
 	path := fmt.Sprintf("v1/prompts/%s/set-default-version", promptID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
 	return
 }
 
@@ -174,7 +164,9 @@ func (r *Prompt) UnmarshalJSON(data []byte) error {
 }
 
 type PromptNewParams struct {
-	Prompt    string   `json:"prompt,required"`
+	// The prompt text content with variable placeholders.
+	Prompt string `json:"prompt,required"`
+	// List of variable names that can be used in the prompt template.
 	Variables []string `json:"variables,omitzero"`
 	paramObj
 }
@@ -188,6 +180,7 @@ func (r *PromptNewParams) UnmarshalJSON(data []byte) error {
 }
 
 type PromptGetParams struct {
+	// The version of the prompt to get (defaults to latest).
 	Version param.Opt[int64] `query:"version,omitzero" json:"-"`
 	paramObj
 }
@@ -201,10 +194,14 @@ func (r PromptGetParams) URLQuery() (v url.Values, err error) {
 }
 
 type PromptUpdateParams struct {
-	Prompt       string          `json:"prompt,required"`
-	Version      int64           `json:"version,required"`
+	// The updated prompt text content.
+	Prompt string `json:"prompt,required"`
+	// The current version of the prompt being updated.
+	Version int64 `json:"version,required"`
+	// Set the new version as the default (default=True).
 	SetAsDefault param.Opt[bool] `json:"set_as_default,omitzero"`
-	Variables    []string        `json:"variables,omitzero"`
+	// Updated list of variable names that can be used in the prompt template.
+	Variables []string `json:"variables,omitzero"`
 	paramObj
 }
 
@@ -217,6 +214,7 @@ func (r *PromptUpdateParams) UnmarshalJSON(data []byte) error {
 }
 
 type PromptSetDefaultVersionParams struct {
+	// The version to set as default.
 	Version int64 `json:"version,required"`
 	paramObj
 }

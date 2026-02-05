@@ -36,7 +36,7 @@ func TestResponseInputItemListWithOptionalParams(t *testing.T) {
 		llamastackclient.ResponseInputItemListParams{
 			After:   llamastackclient.String("after"),
 			Before:  llamastackclient.String("before"),
-			Include: []string{"string"},
+			Include: []string{"web_search_call.action.sources"},
 			Limit:   llamastackclient.Int(0),
 			Order:   llamastackclient.ResponseInputItemListParamsOrderAsc,
 		},

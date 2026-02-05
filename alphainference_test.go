@@ -38,7 +38,7 @@ func TestAlphaInferenceRerankWithOptionalParams(t *testing.T) {
 		Query: llamastackclient.AlphaInferenceRerankParamsQueryUnion{
 			OfString: llamastackclient.String("string"),
 		},
-		MaxNumResults: llamastackclient.Int(0),
+		MaxNumResults: llamastackclient.Int(1),
 	})
 	if err != nil {
 		var apierr *llamastackclient.Error

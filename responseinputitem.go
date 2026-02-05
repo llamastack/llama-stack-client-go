@@ -806,13 +806,14 @@ func (r *ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentList
 
 // The log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token :top_logprobs: The top log probabilities for the token
 type ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprob struct {
-	Token       string                                                                                                                                                                                     `json:"token,required"`
-	Logprob     float64                                                                                                                                                                                    `json:"logprob,required"`
-	Bytes       []int64                                                                                                                                                                                    `json:"bytes,nullable"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
+	Logprob float64 `json:"logprob,required"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
+	// The top log probabilities for the token.
 	TopLogprobs []ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob `json:"top_logprobs,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -835,13 +836,13 @@ func (r *ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentList
 
 // The top log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token
 type ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob struct {
-	Token   string  `json:"token,required"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
 	Logprob float64 `json:"logprob,required"`
-	Bytes   []int64 `json:"bytes,nullable"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -1164,10 +1165,20 @@ const (
 )
 
 type ResponseInputItemListParams struct {
-	After   param.Opt[string] `query:"after,omitzero" json:"-"`
-	Before  param.Opt[string] `query:"before,omitzero" json:"-"`
-	Limit   param.Opt[int64]  `query:"limit,omitzero" json:"-"`
-	Include []string          `query:"include,omitzero" json:"-"`
+	// An item ID to list items after, used for pagination.
+	After param.Opt[string] `query:"after,omitzero" json:"-"`
+	// An item ID to list items before, used for pagination.
+	Before param.Opt[string] `query:"before,omitzero" json:"-"`
+	// A limit on the number of objects to be returned. Limit can range between 1 and
+	// 100, and the default is 20.
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Additional fields to include in the response.
+	//
+	// Any of "web_search_call.action.sources", "code_interpreter_call.outputs",
+	// "computer_call_output.output.image_url", "file_search_call.results",
+	// "message.input_image.image_url", "message.output_text.logprobs",
+	// "reasoning.encrypted_content".
+	Include []string `query:"include,omitzero" json:"-"`
 	// Sort order for paginated responses.
 	//
 	// Any of "asc", "desc".

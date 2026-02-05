@@ -43,8 +43,6 @@ func NewModelService(opts ...option.RequestOption) (r ModelService) {
 	return
 }
 
-// Get model.
-//
 // Get a model by its identifier.
 func (r *ModelService) Get(ctx context.Context, modelID string, opts ...option.RequestOption) (res *ModelGetResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -70,8 +68,6 @@ func (r *ModelService) List(ctx context.Context, opts ...option.RequestOption) (
 	return
 }
 
-// Register model.
-//
 // Register a model.
 //
 // Deprecated: deprecated
@@ -82,8 +78,6 @@ func (r *ModelService) Register(ctx context.Context, body ModelRegisterParams, o
 	return
 }
 
-// Unregister model.
-//
 // Unregister a model.
 //
 // Deprecated: deprecated
@@ -99,7 +93,9 @@ func (r *ModelService) Unregister(ctx context.Context, modelID string, opts ...o
 	return
 }
 
+// Response containing a list of OpenAI model objects.
 type ListModelsResponse struct {
+	// List of OpenAI model objects.
 	Data []Model `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -253,10 +249,14 @@ const (
 )
 
 type ModelRegisterParams struct {
-	ModelID         string            `json:"model_id,required"`
-	ProviderID      param.Opt[string] `json:"provider_id,omitzero"`
+	// The identifier of the model to register.
+	ModelID string `json:"model_id,required"`
+	// The identifier of the provider.
+	ProviderID param.Opt[string] `json:"provider_id,omitzero"`
+	// The identifier of the model in the provider.
 	ProviderModelID param.Opt[string] `json:"provider_model_id,omitzero"`
-	Metadata        map[string]any    `json:"metadata,omitzero"`
+	// Any additional metadata for this model.
+	Metadata map[string]any `json:"metadata,omitzero"`
 	// Enumeration of supported model types in Llama Stack.
 	//
 	// Any of "llm", "embedding", "rerank".

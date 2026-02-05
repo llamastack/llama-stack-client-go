@@ -39,9 +39,7 @@ func NewSafetyService(opts ...option.RequestOption) (r SafetyService) {
 	return
 }
 
-// Run shield.
-//
-// Run a shield.
+// Run a safety shield on messages to check for policy violations.
 func (r *SafetyService) RunShield(ctx context.Context, body SafetyRunShieldParams, opts ...option.RequestOption) (res *RunShieldResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/safety/run-shield"
@@ -68,9 +66,10 @@ func (r *RunShieldResponse) UnmarshalJSON(data []byte) error {
 }
 
 type SafetyRunShieldParams struct {
+	// The messages to run the shield on
 	Messages []SafetyRunShieldParamsMessageUnion `json:"messages,omitzero,required"`
-	Params   map[string]any                      `json:"params,omitzero,required"`
-	ShieldID string                              `json:"shield_id,required"`
+	// The identifier of the shield to run
+	ShieldID string `json:"shield_id,required"`
 	paramObj
 }
 
@@ -221,8 +220,12 @@ func init() {
 //
 // The property Content is required.
 type SafetyRunShieldParamsMessageUser struct {
+	// The content of the message, which can include text and other media.
 	Content SafetyRunShieldParamsMessageUserContentUnion `json:"content,omitzero,required"`
-	Name    param.Opt[string]                            `json:"name,omitzero"`
+	// The name of the user message participant.
+	Name param.Opt[string] `json:"name,omitzero"`
+	// Must be 'user' to identify this as a user message.
+	//
 	// Any of "user".
 	Role string `json:"role,omitzero"`
 	paramObj
@@ -344,7 +347,10 @@ func init() {
 //
 // The property Text is required.
 type SafetyRunShieldParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -368,8 +374,10 @@ func init() {
 //
 // The property ImageURL is required.
 type SafetyRunShieldParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL struct {
-	// Image URL specification for OpenAI-compatible chat completion messages.
+	// Image URL specification and processing details.
 	ImageURL SafetyRunShieldParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL `json:"image_url,omitzero,required"`
+	// Must be 'image_url' to identify this as image content.
+	//
 	// Any of "image_url".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -389,12 +397,16 @@ func init() {
 	)
 }
 
-// Image URL specification for OpenAI-compatible chat completion messages.
+// Image URL specification and processing details.
 //
 // The property URL is required.
 type SafetyRunShieldParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL struct {
-	URL    string            `json:"url,required"`
-	Detail param.Opt[string] `json:"detail,omitzero"`
+	// URL of the image to include in the message.
+	URL string `json:"url,required"`
+	// Level of detail for image processing. Can be 'low', 'high', or 'auto'.
+	//
+	// Any of "low", "high", "auto".
+	Detail string `json:"detail,omitzero"`
 	paramObj
 }
 
@@ -406,9 +418,18 @@ func (r *SafetyRunShieldParamsMessageUserContentListOpenAIChatCompletionContentP
 	return apijson.UnmarshalRoot(data, r)
 }
 
+func init() {
+	apijson.RegisterFieldValidator[SafetyRunShieldParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL](
+		"detail", "low", "high", "auto",
+	)
+}
+
 // The property File is required.
 type SafetyRunShieldParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile struct {
+	// File specification.
 	File SafetyRunShieldParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile `json:"file,omitzero,required"`
+	// Must be 'file' to identify this as file content.
+	//
 	// Any of "file".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -428,9 +449,13 @@ func init() {
 	)
 }
 
+// File specification.
 type SafetyRunShieldParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile struct {
+	// Base64-encoded file data.
 	FileData param.Opt[string] `json:"file_data,omitzero"`
-	FileID   param.Opt[string] `json:"file_id,omitzero"`
+	// ID of an uploaded file.
+	FileID param.Opt[string] `json:"file_id,omitzero"`
+	// Name of the file.
 	Filename param.Opt[string] `json:"filename,omitzero"`
 	paramObj
 }
@@ -447,8 +472,13 @@ func (r *SafetyRunShieldParamsMessageUserContentListOpenAIChatCompletionContentP
 //
 // The property Content is required.
 type SafetyRunShieldParamsMessageSystem struct {
+	// The content of the 'system prompt'. If multiple system messages are provided,
+	// they are concatenated.
 	Content SafetyRunShieldParamsMessageSystemContentUnion `json:"content,omitzero,required"`
-	Name    param.Opt[string]                              `json:"name,omitzero"`
+	// The name of the system message participant.
+	Name param.Opt[string] `json:"name,omitzero"`
+	// Must be 'system' to identify this as a system message.
+	//
 	// Any of "system".
 	Role string `json:"role,omitzero"`
 	paramObj
@@ -497,7 +527,10 @@ func (u *SafetyRunShieldParamsMessageSystemContentUnion) asAny() any {
 //
 // The property Text is required.
 type SafetyRunShieldParamsMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -520,9 +553,14 @@ func init() {
 // A message containing the model's (assistant) response in an OpenAI-compatible
 // chat completion request.
 type SafetyRunShieldParamsMessageAssistant struct {
-	Name      param.Opt[string]                                 `json:"name,omitzero"`
-	Content   SafetyRunShieldParamsMessageAssistantContentUnion `json:"content,omitzero"`
-	ToolCalls []SafetyRunShieldParamsMessageAssistantToolCall   `json:"tool_calls,omitzero"`
+	// The name of the assistant message participant.
+	Name param.Opt[string] `json:"name,omitzero"`
+	// The content of the model's response.
+	Content SafetyRunShieldParamsMessageAssistantContentUnion `json:"content,omitzero"`
+	// List of tool calls. Each tool call is an OpenAIChatCompletionToolCall object.
+	ToolCalls []SafetyRunShieldParamsMessageAssistantToolCall `json:"tool_calls,omitzero"`
+	// Must be 'assistant' to identify this as the model's response.
+	//
 	// Any of "assistant".
 	Role string `json:"role,omitzero"`
 	paramObj
@@ -571,7 +609,10 @@ func (u *SafetyRunShieldParamsMessageAssistantContentUnion) asAny() any {
 //
 // The property Text is required.
 type SafetyRunShieldParamsMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -593,10 +634,14 @@ func init() {
 
 // Tool call specification for OpenAI-compatible chat completion responses.
 type SafetyRunShieldParamsMessageAssistantToolCall struct {
-	ID    param.Opt[string] `json:"id,omitzero"`
-	Index param.Opt[int64]  `json:"index,omitzero"`
+	// Unique identifier for the tool call.
+	ID param.Opt[string] `json:"id,omitzero"`
+	// Index of the tool call in the list.
+	Index param.Opt[int64] `json:"index,omitzero"`
 	// Function call details for OpenAI-compatible tool calls.
 	Function SafetyRunShieldParamsMessageAssistantToolCallFunction `json:"function,omitzero"`
+	// Must be 'function' to identify this as a function call.
+	//
 	// Any of "function".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -618,8 +663,10 @@ func init() {
 
 // Function call details for OpenAI-compatible tool calls.
 type SafetyRunShieldParamsMessageAssistantToolCallFunction struct {
+	// Arguments to pass to the function as a JSON string.
 	Arguments param.Opt[string] `json:"arguments,omitzero"`
-	Name      param.Opt[string] `json:"name,omitzero"`
+	// Name of the function to call.
+	Name param.Opt[string] `json:"name,omitzero"`
 	paramObj
 }
 
@@ -636,8 +683,12 @@ func (r *SafetyRunShieldParamsMessageAssistantToolCallFunction) UnmarshalJSON(da
 //
 // The properties Content, ToolCallID are required.
 type SafetyRunShieldParamsMessageTool struct {
-	Content    SafetyRunShieldParamsMessageToolContentUnion `json:"content,omitzero,required"`
-	ToolCallID string                                       `json:"tool_call_id,required"`
+	// The response content from the tool.
+	Content SafetyRunShieldParamsMessageToolContentUnion `json:"content,omitzero,required"`
+	// Unique identifier for the tool call this response is for.
+	ToolCallID string `json:"tool_call_id,required"`
+	// Must be 'tool' to identify this as a tool response.
+	//
 	// Any of "tool".
 	Role string `json:"role,omitzero"`
 	paramObj
@@ -686,7 +737,10 @@ func (u *SafetyRunShieldParamsMessageToolContentUnion) asAny() any {
 //
 // The property Text is required.
 type SafetyRunShieldParamsMessageToolContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -710,8 +764,12 @@ func init() {
 //
 // The property Content is required.
 type SafetyRunShieldParamsMessageDeveloper struct {
+	// The content of the developer message.
 	Content SafetyRunShieldParamsMessageDeveloperContentUnion `json:"content,omitzero,required"`
-	Name    param.Opt[string]                                 `json:"name,omitzero"`
+	// The name of the developer message participant.
+	Name param.Opt[string] `json:"name,omitzero"`
+	// Must be 'developer' to identify this as a developer message.
+	//
 	// Any of "developer".
 	Role string `json:"role,omitzero"`
 	paramObj
@@ -760,7 +818,10 @@ func (u *SafetyRunShieldParamsMessageDeveloperContentUnion) asAny() any {
 //
 // The property Text is required.
 type SafetyRunShieldParamsMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem struct {
+	// The text content of the message.
 	Text string `json:"text,required"`
+	// Must be 'text' to identify this as text content.
+	//
 	// Any of "text".
 	Type string `json:"type,omitzero"`
 	paramObj

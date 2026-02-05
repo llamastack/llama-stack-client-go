@@ -57,6 +57,7 @@ func (r *ScoringService) ScoreBatch(ctx context.Context, body ScoringScoreBatchP
 
 // The response from scoring.
 type ScoringScoreResponse struct {
+	// A map of scoring function name to ScoringResult.
 	Results map[string]ScoringResult `json:"results,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -74,8 +75,10 @@ func (r *ScoringScoreResponse) UnmarshalJSON(data []byte) error {
 
 // Response from batch scoring operations on datasets.
 type ScoringScoreBatchResponse struct {
-	Results   map[string]ScoringResult `json:"results,required"`
-	DatasetID string                   `json:"dataset_id,nullable"`
+	// A map of scoring function name to ScoringResult
+	Results map[string]ScoringResult `json:"results,required"`
+	// (Optional) The identifier of the dataset that was scored
+	DatasetID string `json:"dataset_id,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Results     respjson.Field
@@ -92,7 +95,9 @@ func (r *ScoringScoreBatchResponse) UnmarshalJSON(data []byte) error {
 }
 
 type ScoringScoreParams struct {
-	InputRows        []map[string]any                                  `json:"input_rows,omitzero,required"`
+	// The rows to score.
+	InputRows []map[string]any `json:"input_rows,omitzero,required"`
+	// The scoring functions to use for the scoring.
 	ScoringFunctions map[string]ScoringScoreParamsScoringFunctionUnion `json:"scoring_functions,omitzero,required"`
 	paramObj
 }
@@ -283,9 +288,12 @@ func init() {
 }
 
 type ScoringScoreBatchParams struct {
-	DatasetID          string                                                 `json:"dataset_id,required"`
-	ScoringFunctions   map[string]ScoringScoreBatchParamsScoringFunctionUnion `json:"scoring_functions,omitzero,required"`
-	SaveResultsDataset param.Opt[bool]                                        `json:"save_results_dataset,omitzero"`
+	// The ID of the dataset to score.
+	DatasetID string `json:"dataset_id,required"`
+	// The scoring functions to use for the scoring.
+	ScoringFunctions map[string]ScoringScoreBatchParamsScoringFunctionUnion `json:"scoring_functions,omitzero,required"`
+	// Whether to save the results to a dataset.
+	SaveResultsDataset param.Opt[bool] `json:"save_results_dataset,omitzero"`
 	paramObj
 }
 

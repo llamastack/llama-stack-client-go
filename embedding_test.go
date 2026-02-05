@@ -35,8 +35,8 @@ func TestEmbeddingNewWithOptionalParams(t *testing.T) {
 			OfString: llamastackclient.String("string"),
 		},
 		Model:          "model",
-		Dimensions:     llamastackclient.Int(0),
-		EncodingFormat: llamastackclient.String("encoding_format"),
+		Dimensions:     llamastackclient.Int(1),
+		EncodingFormat: llamastackclient.EmbeddingNewParamsEncodingFormatFloat,
 		User:           llamastackclient.String("user"),
 	})
 	if err != nil {

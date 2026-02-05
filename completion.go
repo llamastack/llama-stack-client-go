@@ -40,8 +40,6 @@ func NewCompletionService(opts ...option.RequestOption) (r CompletionService) {
 	return
 }
 
-// Create completion.
-//
 // Generate an OpenAI-compatible completion for the given prompt using the
 // specified model.
 func (r *CompletionService) New(ctx context.Context, body CompletionNewParams, opts ...option.RequestOption) (res *CompletionNewResponse, err error) {
@@ -51,8 +49,6 @@ func (r *CompletionService) New(ctx context.Context, body CompletionNewParams, o
 	return
 }
 
-// Create completion.
-//
 // Generate an OpenAI-compatible completion for the given prompt using the
 // specified model.
 func (r *CompletionService) NewStreaming(ctx context.Context, body CompletionNewParams, opts ...option.RequestOption) (stream *ssestream.Stream[CompletionNewResponse]) {
@@ -68,16 +64,17 @@ func (r *CompletionService) NewStreaming(ctx context.Context, body CompletionNew
 }
 
 // Response from an OpenAI-compatible completion request.
-//
-// :id: The ID of the completion :choices: List of choices :created: The Unix
-// timestamp in seconds when the completion was created :model: The model that was
-// used to generate the completion :object: The object type, which will be
-// "text_completion"
 type CompletionNewResponse struct {
-	ID      string                        `json:"id,required"`
+	// The ID of the completion.
+	ID string `json:"id,required"`
+	// List of choices.
 	Choices []CompletionNewResponseChoice `json:"choices,required"`
-	Created int64                         `json:"created,required"`
-	Model   string                        `json:"model,required"`
+	// The Unix timestamp in seconds when the completion was created.
+	Created int64 `json:"created,required"`
+	// The model that was used to generate the completion.
+	Model string `json:"model,required"`
+	// The object type.
+	//
 	// Any of "text_completion".
 	Object CompletionNewResponseObject `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -99,14 +96,15 @@ func (r *CompletionNewResponse) UnmarshalJSON(data []byte) error {
 }
 
 // A choice from an OpenAI-compatible completion response.
-//
-// :finish_reason: The reason the model stopped generating :text: The text of the
-// choice :index: The index of the choice :logprobs: (Optional) The log
-// probabilities for the tokens in the choice
 type CompletionNewResponseChoice struct {
+	// The reason the model stopped generating.
+	//
+	// Any of "stop", "length", "tool_calls", "content_filter", "function_call".
 	FinishReason string `json:"finish_reason,required"`
-	Index        int64  `json:"index,required"`
-	Text         string `json:"text,required"`
+	// The index of the choice.
+	Index int64 `json:"index,required"`
+	// The text of the choice.
+	Text string `json:"text,required"`
 	// The log probabilities for the tokens in the message from an OpenAI-compatible
 	// chat completion response.
 	Logprobs CompletionNewResponseChoiceLogprobs `json:"logprobs,nullable"`
@@ -130,7 +128,9 @@ func (r *CompletionNewResponseChoice) UnmarshalJSON(data []byte) error {
 // The log probabilities for the tokens in the message from an OpenAI-compatible
 // chat completion response.
 type CompletionNewResponseChoiceLogprobs struct {
+	// The log probabilities for the tokens in the message.
 	Content []CompletionNewResponseChoiceLogprobsContent `json:"content,nullable"`
+	// The log probabilities for the refusal tokens.
 	Refusal []CompletionNewResponseChoiceLogprobsRefusal `json:"refusal,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -149,13 +149,14 @@ func (r *CompletionNewResponseChoiceLogprobs) UnmarshalJSON(data []byte) error {
 
 // The log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token :top_logprobs: The top log probabilities for the token
 type CompletionNewResponseChoiceLogprobsContent struct {
-	Token       string                                                 `json:"token,required"`
-	Logprob     float64                                                `json:"logprob,required"`
-	Bytes       []int64                                                `json:"bytes,nullable"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
+	Logprob float64 `json:"logprob,required"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
+	// The top log probabilities for the token.
 	TopLogprobs []CompletionNewResponseChoiceLogprobsContentTopLogprob `json:"top_logprobs,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -176,13 +177,13 @@ func (r *CompletionNewResponseChoiceLogprobsContent) UnmarshalJSON(data []byte) 
 
 // The top log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token
 type CompletionNewResponseChoiceLogprobsContentTopLogprob struct {
-	Token   string  `json:"token,required"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
 	Logprob float64 `json:"logprob,required"`
-	Bytes   []int64 `json:"bytes,nullable"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -201,13 +202,14 @@ func (r *CompletionNewResponseChoiceLogprobsContentTopLogprob) UnmarshalJSON(dat
 
 // The log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token :top_logprobs: The top log probabilities for the token
 type CompletionNewResponseChoiceLogprobsRefusal struct {
-	Token       string                                                 `json:"token,required"`
-	Logprob     float64                                                `json:"logprob,required"`
-	Bytes       []int64                                                `json:"bytes,nullable"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
+	Logprob float64 `json:"logprob,required"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
+	// The top log probabilities for the token.
 	TopLogprobs []CompletionNewResponseChoiceLogprobsRefusalTopLogprob `json:"top_logprobs,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -228,13 +230,13 @@ func (r *CompletionNewResponseChoiceLogprobsRefusal) UnmarshalJSON(data []byte) 
 
 // The top log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token
 type CompletionNewResponseChoiceLogprobsRefusalTopLogprob struct {
-	Token   string  `json:"token,required"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
 	Logprob float64 `json:"logprob,required"`
-	Bytes   []int64 `json:"bytes,nullable"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -251,6 +253,7 @@ func (r *CompletionNewResponseChoiceLogprobsRefusalTopLogprob) UnmarshalJSON(dat
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// The object type.
 type CompletionNewResponseObject string
 
 const (
@@ -258,23 +261,40 @@ const (
 )
 
 type CompletionNewParams struct {
-	Model            string                         `json:"model,required"`
-	Prompt           CompletionNewParamsPromptUnion `json:"prompt,omitzero,required"`
-	BestOf           param.Opt[int64]               `json:"best_of,omitzero"`
-	Echo             param.Opt[bool]                `json:"echo,omitzero"`
-	FrequencyPenalty param.Opt[float64]             `json:"frequency_penalty,omitzero"`
-	Logprobs         param.Opt[bool]                `json:"logprobs,omitzero"`
-	MaxTokens        param.Opt[int64]               `json:"max_tokens,omitzero"`
-	N                param.Opt[int64]               `json:"n,omitzero"`
-	PresencePenalty  param.Opt[float64]             `json:"presence_penalty,omitzero"`
-	Seed             param.Opt[int64]               `json:"seed,omitzero"`
-	Suffix           param.Opt[string]              `json:"suffix,omitzero"`
-	Temperature      param.Opt[float64]             `json:"temperature,omitzero"`
-	TopP             param.Opt[float64]             `json:"top_p,omitzero"`
-	User             param.Opt[string]              `json:"user,omitzero"`
-	LogitBias        map[string]float64             `json:"logit_bias,omitzero"`
-	Stop             CompletionNewParamsStopUnion   `json:"stop,omitzero"`
-	StreamOptions    map[string]any                 `json:"stream_options,omitzero"`
+	// The identifier of the model to use.
+	Model string `json:"model,required"`
+	// The prompt to generate a completion for.
+	Prompt CompletionNewParamsPromptUnion `json:"prompt,omitzero,required"`
+	// The number of completions to generate.
+	BestOf param.Opt[int64] `json:"best_of,omitzero"`
+	// Whether to echo the prompt.
+	Echo param.Opt[bool] `json:"echo,omitzero"`
+	// The penalty for repeated tokens.
+	FrequencyPenalty param.Opt[float64] `json:"frequency_penalty,omitzero"`
+	// The log probabilities to use.
+	Logprobs param.Opt[bool] `json:"logprobs,omitzero"`
+	// The maximum number of tokens to generate.
+	MaxTokens param.Opt[int64] `json:"max_tokens,omitzero"`
+	// The number of completions to generate.
+	N param.Opt[int64] `json:"n,omitzero"`
+	// The penalty for repeated tokens.
+	PresencePenalty param.Opt[float64] `json:"presence_penalty,omitzero"`
+	// The seed to use.
+	Seed param.Opt[int64] `json:"seed,omitzero"`
+	// The suffix that should be appended to the completion.
+	Suffix param.Opt[string] `json:"suffix,omitzero"`
+	// The temperature to use.
+	Temperature param.Opt[float64] `json:"temperature,omitzero"`
+	// The top p to use.
+	TopP param.Opt[float64] `json:"top_p,omitzero"`
+	// The user to use.
+	User param.Opt[string] `json:"user,omitzero"`
+	// The logit bias to use.
+	LogitBias map[string]float64 `json:"logit_bias,omitzero"`
+	// The stop tokens to use.
+	Stop CompletionNewParamsStopUnion `json:"stop,omitzero"`
+	// The stream options to use.
+	StreamOptions map[string]any `json:"stream_options,omitzero"`
 	paramObj
 }
 

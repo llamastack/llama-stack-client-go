@@ -11,15 +11,12 @@ package llamastackclient
 import (
 	"context"
 	"net/http"
-	"net/url"
 	"slices"
 	"time"
 
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
-	"github.com/llamastack/llama-stack-client-go/internal/apiquery"
 	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
 	"github.com/llamastack/llama-stack-client-go/option"
-	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 )
 
@@ -56,27 +53,27 @@ func (r *AlphaPostTrainingJobService) List(ctx context.Context, opts ...option.R
 }
 
 // Get the artifacts of a training job.
-func (r *AlphaPostTrainingJobService) Artifacts(ctx context.Context, query AlphaPostTrainingJobArtifactsParams, opts ...option.RequestOption) (res *AlphaPostTrainingJobArtifactsResponse, err error) {
+func (r *AlphaPostTrainingJobService) Artifacts(ctx context.Context, opts ...option.RequestOption) (res *AlphaPostTrainingJobArtifactsResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1alpha/post-training/job/artifacts"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return
 }
 
 // Cancel a training job.
-func (r *AlphaPostTrainingJobService) Cancel(ctx context.Context, body AlphaPostTrainingJobCancelParams, opts ...option.RequestOption) (err error) {
+func (r *AlphaPostTrainingJobService) Cancel(ctx context.Context, opts ...option.RequestOption) (err error) {
 	opts = slices.Concat(r.Options, opts)
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	path := "v1alpha/post-training/job/cancel"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, nil, opts...)
 	return
 }
 
 // Get the status of a training job.
-func (r *AlphaPostTrainingJobService) Status(ctx context.Context, query AlphaPostTrainingJobStatusParams, opts ...option.RequestOption) (res *AlphaPostTrainingJobStatusResponse, err error) {
+func (r *AlphaPostTrainingJobService) Status(ctx context.Context, opts ...option.RequestOption) (res *AlphaPostTrainingJobStatusResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1alpha/post-training/job/status"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
 	return
 }
 
@@ -262,45 +259,4 @@ type ListPostTrainingJobsResponse struct {
 func (r ListPostTrainingJobsResponse) RawJSON() string { return r.JSON.raw }
 func (r *ListPostTrainingJobsResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-type AlphaPostTrainingJobArtifactsParams struct {
-	JobUuid string `query:"job_uuid,required" json:"-"`
-	paramObj
-}
-
-// URLQuery serializes [AlphaPostTrainingJobArtifactsParams]'s query parameters as
-// `url.Values`.
-func (r AlphaPostTrainingJobArtifactsParams) URLQuery() (v url.Values, err error) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
-}
-
-type AlphaPostTrainingJobCancelParams struct {
-	JobUuid string `json:"job_uuid,required"`
-	paramObj
-}
-
-func (r AlphaPostTrainingJobCancelParams) MarshalJSON() (data []byte, err error) {
-	type shadow AlphaPostTrainingJobCancelParams
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *AlphaPostTrainingJobCancelParams) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type AlphaPostTrainingJobStatusParams struct {
-	JobUuid string `query:"job_uuid,required" json:"-"`
-	paramObj
-}
-
-// URLQuery serializes [AlphaPostTrainingJobStatusParams]'s query parameters as
-// `url.Values`.
-func (r AlphaPostTrainingJobStatusParams) URLQuery() (v url.Values, err error) {
-	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
-		ArrayFormat:  apiquery.ArrayQueryFormatComma,
-		NestedFormat: apiquery.NestedQueryFormatBrackets,
-	})
 }

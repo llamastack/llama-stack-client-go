@@ -44,8 +44,6 @@ func NewConversationService(opts ...option.RequestOption) (r ConversationService
 }
 
 // Create a conversation.
-//
-// Create a conversation.
 func (r *ConversationService) New(ctx context.Context, body ConversationNewParams, opts ...option.RequestOption) (res *ConversationObject, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/conversations"
@@ -53,8 +51,6 @@ func (r *ConversationService) New(ctx context.Context, body ConversationNewParam
 	return
 }
 
-// Retrieve a conversation.
-//
 // Get a conversation with the given ID.
 func (r *ConversationService) Get(ctx context.Context, conversationID string, opts ...option.RequestOption) (res *ConversationObject, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -67,8 +63,6 @@ func (r *ConversationService) Get(ctx context.Context, conversationID string, op
 	return
 }
 
-// Update a conversation.
-//
 // Update a conversation's metadata with the given ID.
 func (r *ConversationService) Update(ctx context.Context, conversationID string, body ConversationUpdateParams, opts ...option.RequestOption) (res *ConversationObject, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -81,8 +75,6 @@ func (r *ConversationService) Update(ctx context.Context, conversationID string,
 	return
 }
 
-// Delete a conversation.
-//
 // Delete a conversation with the given ID.
 func (r *ConversationService) Delete(ctx context.Context, conversationID string, opts ...option.RequestOption) (res *ConversationDeleteResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -163,8 +155,10 @@ func (r *ConversationDeleteResponse) UnmarshalJSON(data []byte) error {
 }
 
 type ConversationNewParams struct {
-	Items    []ConversationNewParamsItemUnion `json:"items,omitzero"`
-	Metadata map[string]string                `json:"metadata,omitzero"`
+	// Initial items to include in the conversation context.
+	Items []ConversationNewParamsItemUnion `json:"items,omitzero"`
+	// Set of key-value pairs that can be attached to an object.
+	Metadata map[string]string `json:"metadata,omitzero"`
 	paramObj
 }
 
@@ -1017,14 +1011,15 @@ func init() {
 // The log probability for a token from an OpenAI-compatible chat completion
 // response.
 //
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token :top_logprobs: The top log probabilities for the token
-//
 // The properties Token, Logprob are required.
 type ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprob struct {
-	Token       string                                                                                                                                                        `json:"token,required"`
-	Logprob     float64                                                                                                                                                       `json:"logprob,required"`
-	Bytes       []int64                                                                                                                                                       `json:"bytes,omitzero"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
+	Logprob float64 `json:"logprob,required"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,omitzero"`
+	// The top log probabilities for the token.
 	TopLogprobs []ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob `json:"top_logprobs,omitzero"`
 	paramObj
 }
@@ -1040,14 +1035,14 @@ func (r *ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageC
 // The top log probability for a token from an OpenAI-compatible chat completion
 // response.
 //
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token
-//
 // The properties Token, Logprob are required.
 type ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob struct {
-	Token   string  `json:"token,required"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
 	Logprob float64 `json:"logprob,required"`
-	Bytes   []int64 `json:"bytes,omitzero"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,omitzero"`
 	paramObj
 }
 
@@ -1339,6 +1334,7 @@ func (r *ConversationNewParamsItemMcpListToolsTool) UnmarshalJSON(data []byte) e
 }
 
 type ConversationUpdateParams struct {
+	// Set of key-value pairs that can be attached to an object.
 	Metadata map[string]string `json:"metadata,omitzero,required"`
 	paramObj
 }

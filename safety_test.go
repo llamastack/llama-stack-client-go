@@ -40,10 +40,7 @@ func TestSafetyRunShield(t *testing.T) {
 				Role: "user",
 			},
 		}},
-		Params: map[string]any{
-			"foo": "bar",
-		},
-		ShieldID: "shield_id",
+		ShieldID: "x",
 	})
 	if err != nil {
 		var apierr *llamastackclient.Error

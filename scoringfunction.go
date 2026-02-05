@@ -93,7 +93,9 @@ func (r *ScoringFunctionService) Unregister(ctx context.Context, scoringFnID str
 	return
 }
 
+// Response containing a list of scoring function objects.
 type ListScoringFunctionsResponse struct {
+	// List of scoring function objects.
 	Data []ScoringFn `json:"data,required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -334,12 +336,17 @@ const (
 )
 
 type ScoringFunctionRegisterParams struct {
-	Description         string                                  `json:"description,required"`
-	ReturnType          ScoringFunctionRegisterParamsReturnType `json:"return_type,omitzero,required"`
-	ScoringFnID         string                                  `json:"scoring_fn_id,required"`
-	ProviderID          param.Opt[string]                       `json:"provider_id,omitzero"`
-	ProviderScoringFnID param.Opt[string]                       `json:"provider_scoring_fn_id,omitzero"`
-	// Parameters for LLM-as-judge scoring function configuration.
+	// The description of the scoring function.
+	Description string                                  `json:"description,required"`
+	ReturnType  ScoringFunctionRegisterParamsReturnType `json:"return_type,omitzero,required"`
+	// The ID of the scoring function to register.
+	ScoringFnID string `json:"scoring_fn_id,required"`
+	// The ID of the provider to use for the scoring function.
+	ProviderID param.Opt[string] `json:"provider_id,omitzero"`
+	// The ID of the provider scoring function to use for the scoring function.
+	ProviderScoringFnID param.Opt[string] `json:"provider_scoring_fn_id,omitzero"`
+	// The parameters for the scoring function for benchmark eval, these can be
+	// overridden for app eval.
 	Params ScoringFunctionRegisterParamsParamsUnion `json:"params,omitzero"`
 	paramObj
 }

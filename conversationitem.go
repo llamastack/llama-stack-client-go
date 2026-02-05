@@ -45,8 +45,6 @@ func NewConversationItemService(opts ...option.RequestOption) (r ConversationIte
 	return
 }
 
-// Create items.
-//
 // Create items in the conversation.
 func (r *ConversationItemService) New(ctx context.Context, conversationID string, body ConversationItemNewParams, opts ...option.RequestOption) (res *ConversationItemNewResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -59,8 +57,6 @@ func (r *ConversationItemService) New(ctx context.Context, conversationID string
 	return
 }
 
-// List items.
-//
 // List items in the conversation.
 func (r *ConversationItemService) List(ctx context.Context, conversationID string, query ConversationItemListParams, opts ...option.RequestOption) (res *pagination.OpenAICursorPage[ConversationItemListResponseUnion], err error) {
 	var raw *http.Response
@@ -83,15 +79,11 @@ func (r *ConversationItemService) List(ctx context.Context, conversationID strin
 	return res, nil
 }
 
-// List items.
-//
 // List items in the conversation.
 func (r *ConversationItemService) ListAutoPaging(ctx context.Context, conversationID string, query ConversationItemListParams, opts ...option.RequestOption) *pagination.OpenAICursorPageAutoPager[ConversationItemListResponseUnion] {
 	return pagination.NewOpenAICursorPageAutoPager(r.List(ctx, conversationID, query, opts...))
 }
 
-// Delete an item.
-//
 // Delete a conversation item.
 func (r *ConversationItemService) Delete(ctx context.Context, itemID string, body ConversationItemDeleteParams, opts ...option.RequestOption) (res *ConversationItemDeleteResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
@@ -108,10 +100,8 @@ func (r *ConversationItemService) Delete(ctx context.Context, itemID string, bod
 	return
 }
 
-// Retrieve an item.
-//
 // Retrieve a conversation item.
-func (r *ConversationItemService) Get(ctx context.Context, itemID string, query ConversationItemGetParams, opts ...option.RequestOption) (res *ConversationItemGetResponse, err error) {
+func (r *ConversationItemService) Get(ctx context.Context, itemID string, query ConversationItemGetParams, opts ...option.RequestOption) (res *ConversationItemGetResponseUnion, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if query.ConversationID == "" {
 		err = errors.New("missing required conversation_id parameter")
@@ -930,13 +920,14 @@ func (r *ConversationItemNewResponseDataMessageContentListOpenAIResponseOutputMe
 
 // The log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token :top_logprobs: The top log probabilities for the token
 type ConversationItemNewResponseDataMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprob struct {
-	Token       string                                                                                                                                                               `json:"token,required"`
-	Logprob     float64                                                                                                                                                              `json:"logprob,required"`
-	Bytes       []int64                                                                                                                                                              `json:"bytes,nullable"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
+	Logprob float64 `json:"logprob,required"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
+	// The top log probabilities for the token.
 	TopLogprobs []ConversationItemNewResponseDataMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob `json:"top_logprobs,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -959,13 +950,13 @@ func (r *ConversationItemNewResponseDataMessageContentListOpenAIResponseOutputMe
 
 // The top log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token
 type ConversationItemNewResponseDataMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob struct {
-	Token   string  `json:"token,required"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
 	Logprob float64 `json:"logprob,required"`
-	Bytes   []int64 `json:"bytes,nullable"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -2034,13 +2025,14 @@ func (r *ConversationItemListResponseMessageContentListOpenAIResponseOutputMessa
 
 // The log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token :top_logprobs: The top log probabilities for the token
 type ConversationItemListResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprob struct {
-	Token       string                                                                                                                                                            `json:"token,required"`
-	Logprob     float64                                                                                                                                                           `json:"logprob,required"`
-	Bytes       []int64                                                                                                                                                           `json:"bytes,nullable"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
+	Logprob float64 `json:"logprob,required"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
+	// The top log probabilities for the token.
 	TopLogprobs []ConversationItemListResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob `json:"top_logprobs,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -2063,13 +2055,13 @@ func (r *ConversationItemListResponseMessageContentListOpenAIResponseOutputMessa
 
 // The top log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token
 type ConversationItemListResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob struct {
-	Token   string  `json:"token,required"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
 	Logprob float64 `json:"logprob,required"`
-	Bytes   []int64 `json:"bytes,nullable"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -2389,17 +2381,191 @@ func (r *ConversationItemDeleteResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// ConversationItemGetResponseUnion contains all possible properties and values
+// from [ConversationItemGetResponseMessage],
+// [ConversationItemGetResponseWebSearchCall],
+// [ConversationItemGetResponseFileSearchCall],
+// [ConversationItemGetResponseFunctionCall],
+// [ConversationItemGetResponseFunctionCallOutput],
+// [ConversationItemGetResponseMcpApprovalRequest],
+// [ConversationItemGetResponseMcpApprovalResponse],
+// [ConversationItemGetResponseMcpCall], [ConversationItemGetResponseMcpListTools].
+//
+// Use the [ConversationItemGetResponseUnion.AsAny] method to switch on the
+// variant.
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type ConversationItemGetResponseUnion struct {
+	// This field is from variant [ConversationItemGetResponseMessage].
+	Content ConversationItemGetResponseMessageContentUnion `json:"content"`
+	// This field is from variant [ConversationItemGetResponseMessage].
+	Role   string `json:"role"`
+	ID     string `json:"id"`
+	Status string `json:"status"`
+	// Any of "message", "web_search_call", "file_search_call", "function_call",
+	// "function_call_output", "mcp_approval_request", "mcp_approval_response",
+	// "mcp_call", "mcp_list_tools".
+	Type string `json:"type"`
+	// This field is from variant [ConversationItemGetResponseFileSearchCall].
+	Queries []string `json:"queries"`
+	// This field is from variant [ConversationItemGetResponseFileSearchCall].
+	Results     []ConversationItemGetResponseFileSearchCallResult `json:"results"`
+	Arguments   string                                            `json:"arguments"`
+	CallID      string                                            `json:"call_id"`
+	Name        string                                            `json:"name"`
+	Output      string                                            `json:"output"`
+	ServerLabel string                                            `json:"server_label"`
+	// This field is from variant [ConversationItemGetResponseMcpApprovalResponse].
+	ApprovalRequestID string `json:"approval_request_id"`
+	// This field is from variant [ConversationItemGetResponseMcpApprovalResponse].
+	Approve bool `json:"approve"`
+	// This field is from variant [ConversationItemGetResponseMcpApprovalResponse].
+	Reason string `json:"reason"`
+	// This field is from variant [ConversationItemGetResponseMcpCall].
+	Error string `json:"error"`
+	// This field is from variant [ConversationItemGetResponseMcpListTools].
+	Tools []ConversationItemGetResponseMcpListToolsTool `json:"tools"`
+	JSON  struct {
+		Content           respjson.Field
+		Role              respjson.Field
+		ID                respjson.Field
+		Status            respjson.Field
+		Type              respjson.Field
+		Queries           respjson.Field
+		Results           respjson.Field
+		Arguments         respjson.Field
+		CallID            respjson.Field
+		Name              respjson.Field
+		Output            respjson.Field
+		ServerLabel       respjson.Field
+		ApprovalRequestID respjson.Field
+		Approve           respjson.Field
+		Reason            respjson.Field
+		Error             respjson.Field
+		Tools             respjson.Field
+		raw               string
+	} `json:"-"`
+}
+
+// anyConversationItemGetResponse is implemented by each variant of
+// [ConversationItemGetResponseUnion] to add type safety for the return type of
+// [ConversationItemGetResponseUnion.AsAny]
+type anyConversationItemGetResponse interface {
+	implConversationItemGetResponseUnion()
+}
+
+func (ConversationItemGetResponseMessage) implConversationItemGetResponseUnion()             {}
+func (ConversationItemGetResponseWebSearchCall) implConversationItemGetResponseUnion()       {}
+func (ConversationItemGetResponseFileSearchCall) implConversationItemGetResponseUnion()      {}
+func (ConversationItemGetResponseFunctionCall) implConversationItemGetResponseUnion()        {}
+func (ConversationItemGetResponseFunctionCallOutput) implConversationItemGetResponseUnion()  {}
+func (ConversationItemGetResponseMcpApprovalRequest) implConversationItemGetResponseUnion()  {}
+func (ConversationItemGetResponseMcpApprovalResponse) implConversationItemGetResponseUnion() {}
+func (ConversationItemGetResponseMcpCall) implConversationItemGetResponseUnion()             {}
+func (ConversationItemGetResponseMcpListTools) implConversationItemGetResponseUnion()        {}
+
+// Use the following switch statement to find the correct variant
+//
+//	switch variant := ConversationItemGetResponseUnion.AsAny().(type) {
+//	case llamastackclient.ConversationItemGetResponseMessage:
+//	case llamastackclient.ConversationItemGetResponseWebSearchCall:
+//	case llamastackclient.ConversationItemGetResponseFileSearchCall:
+//	case llamastackclient.ConversationItemGetResponseFunctionCall:
+//	case llamastackclient.ConversationItemGetResponseFunctionCallOutput:
+//	case llamastackclient.ConversationItemGetResponseMcpApprovalRequest:
+//	case llamastackclient.ConversationItemGetResponseMcpApprovalResponse:
+//	case llamastackclient.ConversationItemGetResponseMcpCall:
+//	case llamastackclient.ConversationItemGetResponseMcpListTools:
+//	default:
+//	  fmt.Errorf("no variant present")
+//	}
+func (u ConversationItemGetResponseUnion) AsAny() anyConversationItemGetResponse {
+	switch u.Type {
+	case "message":
+		return u.AsMessage()
+	case "web_search_call":
+		return u.AsWebSearchCall()
+	case "file_search_call":
+		return u.AsFileSearchCall()
+	case "function_call":
+		return u.AsFunctionCall()
+	case "function_call_output":
+		return u.AsFunctionCallOutput()
+	case "mcp_approval_request":
+		return u.AsMcpApprovalRequest()
+	case "mcp_approval_response":
+		return u.AsMcpApprovalResponse()
+	case "mcp_call":
+		return u.AsMcpCall()
+	case "mcp_list_tools":
+		return u.AsMcpListTools()
+	}
+	return nil
+}
+
+func (u ConversationItemGetResponseUnion) AsMessage() (v ConversationItemGetResponseMessage) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ConversationItemGetResponseUnion) AsWebSearchCall() (v ConversationItemGetResponseWebSearchCall) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ConversationItemGetResponseUnion) AsFileSearchCall() (v ConversationItemGetResponseFileSearchCall) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ConversationItemGetResponseUnion) AsFunctionCall() (v ConversationItemGetResponseFunctionCall) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ConversationItemGetResponseUnion) AsFunctionCallOutput() (v ConversationItemGetResponseFunctionCallOutput) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ConversationItemGetResponseUnion) AsMcpApprovalRequest() (v ConversationItemGetResponseMcpApprovalRequest) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ConversationItemGetResponseUnion) AsMcpApprovalResponse() (v ConversationItemGetResponseMcpApprovalResponse) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ConversationItemGetResponseUnion) AsMcpCall() (v ConversationItemGetResponseMcpCall) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ConversationItemGetResponseUnion) AsMcpListTools() (v ConversationItemGetResponseMcpListTools) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u ConversationItemGetResponseUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *ConversationItemGetResponseUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 // Corresponds to the various Message types in the Responses API. They are all
 // under one type because the Responses API gives them all the same "type" value,
 // and there is no way to tell them apart in certain scenarios.
-type ConversationItemGetResponse struct {
-	Content ConversationItemGetResponseContentUnion `json:"content,required"`
+type ConversationItemGetResponseMessage struct {
+	Content ConversationItemGetResponseMessageContentUnion `json:"content,required"`
 	// Any of "system", "developer", "user", "assistant".
-	Role   ConversationItemGetResponseRole `json:"role,required"`
-	ID     string                          `json:"id,nullable"`
-	Status string                          `json:"status,nullable"`
+	Role   string `json:"role,required"`
+	ID     string `json:"id,nullable"`
+	Status string `json:"status,nullable"`
 	// Any of "message".
-	Type ConversationItemGetResponseType `json:"type"`
+	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Content     respjson.Field
@@ -2413,95 +2579,95 @@ type ConversationItemGetResponse struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r ConversationItemGetResponse) RawJSON() string { return r.JSON.raw }
-func (r *ConversationItemGetResponse) UnmarshalJSON(data []byte) error {
+func (r ConversationItemGetResponseMessage) RawJSON() string { return r.JSON.raw }
+func (r *ConversationItemGetResponseMessage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ConversationItemGetResponseContentUnion contains all possible properties and
-// values from [string],
-// [[]ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion],
-// [[]ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion].
+// ConversationItemGetResponseMessageContentUnion contains all possible properties
+// and values from [string],
+// [[]ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion],
+// [[]ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 //
 // If the underlying value is not a json object, one of the following properties
 // will be valid: OfString
 // OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile
-// OfListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusal]
-type ConversationItemGetResponseContentUnion struct {
+// OfListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusal]
+type ConversationItemGetResponseMessageContentUnion struct {
 	// This field will be present if the value is a [string] instead of an object.
 	OfString string `json:",inline"`
 	// This field will be present if the value is a
-	// [[]ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion]
+	// [[]ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion]
 	// instead of an object.
-	OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile []ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion `json:",inline"`
+	OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile []ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion `json:",inline"`
 	// This field will be present if the value is a
-	// [[]ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion]
+	// [[]ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion]
 	// instead of an object.
-	OfListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusal []ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion `json:",inline"`
-	JSON                                                                               struct {
+	OfListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusal []ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion `json:",inline"`
+	JSON                                                                                     struct {
 		OfString                                                                                                               respjson.Field
 		OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile respjson.Field
-		OfListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusal                                     respjson.Field
+		OfListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusal                               respjson.Field
 		raw                                                                                                                    string
 	} `json:"-"`
 }
 
-func (u ConversationItemGetResponseContentUnion) AsString() (v string) {
+func (u ConversationItemGetResponseMessageContentUnion) AsString() (v string) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ConversationItemGetResponseContentUnion) AsListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile() (v []ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) {
+func (u ConversationItemGetResponseMessageContentUnion) AsListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile() (v []ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ConversationItemGetResponseContentUnion) AsListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusal() (v []ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion) {
+func (u ConversationItemGetResponseMessageContentUnion) AsListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusal() (v []ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
 // Returns the unmodified JSON received from the API
-func (u ConversationItemGetResponseContentUnion) RawJSON() string { return u.JSON.raw }
+func (u ConversationItemGetResponseMessageContentUnion) RawJSON() string { return u.JSON.raw }
 
-func (r *ConversationItemGetResponseContentUnion) UnmarshalJSON(data []byte) error {
+func (r *ConversationItemGetResponseMessageContentUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion
+// ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion
 // contains all possible properties and values from
-// [ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText],
-// [ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage],
-// [ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile].
+// [ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText],
+// [ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage],
+// [ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile].
 //
 // Use the
-// [ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion.AsAny]
+// [ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion.AsAny]
 // method to switch on the variant.
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
-type ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion struct {
+type ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion struct {
 	// This field is from variant
-	// [ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText].
+	// [ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText].
 	Text string `json:"text"`
 	// Any of "input_text", "input_image", "input_file".
 	Type string `json:"type"`
 	// This field is from variant
-	// [ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
+	// [ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
 	Detail string `json:"detail"`
 	FileID string `json:"file_id"`
 	// This field is from variant
-	// [ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
+	// [ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
 	ImageURL string `json:"image_url"`
 	// This field is from variant
-	// [ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile].
+	// [ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile].
 	FileData string `json:"file_data"`
 	// This field is from variant
-	// [ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile].
+	// [ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile].
 	FileURL string `json:"file_url"`
 	// This field is from variant
-	// [ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile].
+	// [ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile].
 	Filename string `json:"filename"`
 	JSON     struct {
 		Text     respjson.Field
@@ -2516,32 +2682,32 @@ type ConversationItemGetResponseContentListOpenAIResponseInputMessageContentText
 	} `json:"-"`
 }
 
-// anyConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItem
+// anyConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItem
 // is implemented by each variant of
-// [ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion]
+// [ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion]
 // to add type safety for the return type of
-// [ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion.AsAny]
-type anyConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItem interface {
-	implConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion()
+// [ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion.AsAny]
+type anyConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItem interface {
+	implConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion()
 }
 
-func (ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) implConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion() {
+func (ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) implConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion() {
 }
-func (ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) implConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion() {
+func (ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) implConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion() {
 }
-func (ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) implConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion() {
+func (ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) implConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion() {
 }
 
 // Use the following switch statement to find the correct variant
 //
-//	switch variant := ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion.AsAny().(type) {
-//	case llamastackclient.ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText:
-//	case llamastackclient.ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage:
-//	case llamastackclient.ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile:
+//	switch variant := ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion.AsAny().(type) {
+//	case llamastackclient.ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText:
+//	case llamastackclient.ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage:
+//	case llamastackclient.ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
-func (u ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) AsAny() anyConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItem {
+func (u ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) AsAny() anyConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItem {
 	switch u.Type {
 	case "input_text":
 		return u.AsInputText()
@@ -2553,32 +2719,32 @@ func (u ConversationItemGetResponseContentListOpenAIResponseInputMessageContentT
 	return nil
 }
 
-func (u ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) AsInputText() (v ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) {
+func (u ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) AsInputText() (v ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) AsInputImage() (v ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) {
+func (u ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) AsInputImage() (v ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) AsInputFile() (v ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) {
+func (u ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) AsInputFile() (v ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
 // Returns the unmodified JSON received from the API
-func (u ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) RawJSON() string {
+func (u ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) RawJSON() string {
 	return u.JSON.raw
 }
 
-func (r *ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) UnmarshalJSON(data []byte) error {
+func (r *ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Text content for input messages in OpenAI response format.
-type ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText struct {
+type ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText struct {
 	Text string `json:"text,required"`
 	// Any of "input_text".
 	Type string `json:"type"`
@@ -2592,15 +2758,15 @@ type ConversationItemGetResponseContentListOpenAIResponseInputMessageContentText
 }
 
 // Returns the unmodified JSON received from the API
-func (r ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) RawJSON() string {
+func (r ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) UnmarshalJSON(data []byte) error {
+func (r *ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Image content for input messages in OpenAI response format.
-type ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage struct {
+type ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage struct {
 	// Any of "low", "high", "auto".
 	Detail   string `json:"detail"`
 	FileID   string `json:"file_id,nullable"`
@@ -2619,15 +2785,15 @@ type ConversationItemGetResponseContentListOpenAIResponseInputMessageContentText
 }
 
 // Returns the unmodified JSON received from the API
-func (r ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) RawJSON() string {
+func (r ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) UnmarshalJSON(data []byte) error {
+func (r *ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // File content for input messages in OpenAI response format.
-type ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
+type ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
 	FileData string `json:"file_data,nullable"`
 	FileID   string `json:"file_id,nullable"`
 	FileURL  string `json:"file_url,nullable"`
@@ -2647,37 +2813,37 @@ type ConversationItemGetResponseContentListOpenAIResponseInputMessageContentText
 }
 
 // Returns the unmodified JSON received from the API
-func (r ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) RawJSON() string {
+func (r ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *ConversationItemGetResponseContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) UnmarshalJSON(data []byte) error {
+func (r *ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion
+// ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion
 // contains all possible properties and values from
-// [ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputText],
-// [ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemRefusal].
+// [ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputText],
+// [ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemRefusal].
 //
 // Use the
-// [ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion.AsAny]
+// [ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion.AsAny]
 // method to switch on the variant.
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
-type ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion struct {
+type ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion struct {
 	// This field is from variant
-	// [ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputText].
+	// [ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputText].
 	Text string `json:"text"`
 	// This field is from variant
-	// [ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputText].
-	Annotations []ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion `json:"annotations"`
+	// [ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputText].
+	Annotations []ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion `json:"annotations"`
 	// This field is from variant
-	// [ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputText].
-	Logprobs []ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprob `json:"logprobs"`
+	// [ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputText].
+	Logprobs []ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprob `json:"logprobs"`
 	// Any of "output_text", "refusal".
 	Type string `json:"type"`
 	// This field is from variant
-	// [ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemRefusal].
+	// [ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemRefusal].
 	Refusal string `json:"refusal"`
 	JSON    struct {
 		Text        respjson.Field
@@ -2689,29 +2855,29 @@ type ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOut
 	} `json:"-"`
 }
 
-// anyConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItem
+// anyConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItem
 // is implemented by each variant of
-// [ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion]
+// [ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion]
 // to add type safety for the return type of
-// [ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion.AsAny]
-type anyConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItem interface {
-	implConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion()
+// [ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion.AsAny]
+type anyConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItem interface {
+	implConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion()
 }
 
-func (ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputText) implConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion() {
+func (ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputText) implConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion() {
 }
-func (ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemRefusal) implConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion() {
+func (ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemRefusal) implConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion() {
 }
 
 // Use the following switch statement to find the correct variant
 //
-//	switch variant := ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion.AsAny().(type) {
-//	case llamastackclient.ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputText:
-//	case llamastackclient.ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemRefusal:
+//	switch variant := ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion.AsAny().(type) {
+//	case llamastackclient.ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputText:
+//	case llamastackclient.ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemRefusal:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
-func (u ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion) AsAny() anyConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItem {
+func (u ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion) AsAny() anyConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItem {
 	switch u.Type {
 	case "output_text":
 		return u.AsOutputText()
@@ -2721,29 +2887,29 @@ func (u ConversationItemGetResponseContentListOpenAIResponseOutputMessageContent
 	return nil
 }
 
-func (u ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion) AsOutputText() (v ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputText) {
+func (u ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion) AsOutputText() (v ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputText) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion) AsRefusal() (v ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemRefusal) {
+func (u ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion) AsRefusal() (v ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemRefusal) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
 // Returns the unmodified JSON received from the API
-func (u ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion) RawJSON() string {
+func (u ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion) RawJSON() string {
 	return u.JSON.raw
 }
 
-func (r *ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion) UnmarshalJSON(data []byte) error {
+func (r *ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputText struct {
-	Text        string                                                                                                                                            `json:"text,required"`
-	Annotations []ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion `json:"annotations"`
-	Logprobs    []ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprob         `json:"logprobs,nullable"`
+type ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputText struct {
+	Text        string                                                                                                                                                         `json:"text,required"`
+	Annotations []ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion `json:"annotations"`
+	Logprobs    []ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprob         `json:"logprobs,nullable"`
 	// Any of "output_text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -2758,26 +2924,26 @@ type ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOut
 }
 
 // Returns the unmodified JSON received from the API
-func (r ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputText) RawJSON() string {
+func (r ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputText) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputText) UnmarshalJSON(data []byte) error {
+func (r *ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputText) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion
+// ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion
 // contains all possible properties and values from
-// [ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation],
-// [ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation],
-// [ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation],
-// [ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath].
+// [ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation],
+// [ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation],
+// [ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation],
+// [ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath].
 //
 // Use the
-// [ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion.AsAny]
+// [ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion.AsAny]
 // method to switch on the variant.
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
-type ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion struct {
+type ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion struct {
 	FileID   string `json:"file_id"`
 	Filename string `json:"filename"`
 	Index    int64  `json:"index"`
@@ -2786,13 +2952,13 @@ type ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOut
 	EndIndex   int64  `json:"end_index"`
 	StartIndex int64  `json:"start_index"`
 	// This field is from variant
-	// [ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation].
+	// [ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation].
 	Title string `json:"title"`
 	// This field is from variant
-	// [ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation].
+	// [ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation].
 	URL string `json:"url"`
 	// This field is from variant
-	// [ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation].
+	// [ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation].
 	ContainerID string `json:"container_id"`
 	JSON        struct {
 		FileID      respjson.Field
@@ -2808,35 +2974,35 @@ type ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOut
 	} `json:"-"`
 }
 
-// anyConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotation
+// anyConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotation
 // is implemented by each variant of
-// [ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion]
+// [ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion]
 // to add type safety for the return type of
-// [ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion.AsAny]
-type anyConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotation interface {
-	implConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion()
+// [ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion.AsAny]
+type anyConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotation interface {
+	implConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion()
 }
 
-func (ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation) implConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion() {
+func (ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation) implConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion() {
 }
-func (ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation) implConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion() {
+func (ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation) implConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion() {
 }
-func (ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation) implConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion() {
+func (ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation) implConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion() {
 }
-func (ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath) implConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion() {
+func (ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath) implConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion() {
 }
 
 // Use the following switch statement to find the correct variant
 //
-//	switch variant := ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion.AsAny().(type) {
-//	case llamastackclient.ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation:
-//	case llamastackclient.ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation:
-//	case llamastackclient.ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation:
-//	case llamastackclient.ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath:
+//	switch variant := ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion.AsAny().(type) {
+//	case llamastackclient.ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation:
+//	case llamastackclient.ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation:
+//	case llamastackclient.ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation:
+//	case llamastackclient.ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
-func (u ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) AsAny() anyConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotation {
+func (u ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) AsAny() anyConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotation {
 	switch u.Type {
 	case "file_citation":
 		return u.AsFileCitation()
@@ -2850,37 +3016,37 @@ func (u ConversationItemGetResponseContentListOpenAIResponseOutputMessageContent
 	return nil
 }
 
-func (u ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) AsFileCitation() (v ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation) {
+func (u ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) AsFileCitation() (v ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) AsURLCitation() (v ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation) {
+func (u ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) AsURLCitation() (v ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) AsContainerFileCitation() (v ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation) {
+func (u ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) AsContainerFileCitation() (v ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
-func (u ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) AsFilePath() (v ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath) {
+func (u ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) AsFilePath() (v ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
 
 // Returns the unmodified JSON received from the API
-func (u ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) RawJSON() string {
+func (u ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) RawJSON() string {
 	return u.JSON.raw
 }
 
-func (r *ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) UnmarshalJSON(data []byte) error {
+func (r *ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // File citation annotation for referencing specific files in response content.
-type ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation struct {
+type ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation struct {
 	FileID   string `json:"file_id,required"`
 	Filename string `json:"filename,required"`
 	Index    int64  `json:"index,required"`
@@ -2898,15 +3064,15 @@ type ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOut
 }
 
 // Returns the unmodified JSON received from the API
-func (r ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation) RawJSON() string {
+func (r ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation) UnmarshalJSON(data []byte) error {
+func (r *ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // URL citation annotation for referencing external web resources.
-type ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation struct {
+type ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation struct {
 	EndIndex   int64  `json:"end_index,required"`
 	StartIndex int64  `json:"start_index,required"`
 	Title      string `json:"title,required"`
@@ -2926,14 +3092,14 @@ type ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOut
 }
 
 // Returns the unmodified JSON received from the API
-func (r ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation) RawJSON() string {
+func (r ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation) UnmarshalJSON(data []byte) error {
+func (r *ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation struct {
+type ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation struct {
 	ContainerID string `json:"container_id,required"`
 	EndIndex    int64  `json:"end_index,required"`
 	FileID      string `json:"file_id,required"`
@@ -2955,14 +3121,14 @@ type ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOut
 }
 
 // Returns the unmodified JSON received from the API
-func (r ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation) RawJSON() string {
+func (r ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation) UnmarshalJSON(data []byte) error {
+func (r *ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath struct {
+type ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath struct {
 	FileID string `json:"file_id,required"`
 	Index  int64  `json:"index,required"`
 	// Any of "file_path".
@@ -2978,23 +3144,24 @@ type ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOut
 }
 
 // Returns the unmodified JSON received from the API
-func (r ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath) RawJSON() string {
+func (r ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath) UnmarshalJSON(data []byte) error {
+func (r *ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token :top_logprobs: The top log probabilities for the token
-type ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprob struct {
-	Token       string                                                                                                                                              `json:"token,required"`
-	Logprob     float64                                                                                                                                             `json:"logprob,required"`
-	Bytes       []int64                                                                                                                                             `json:"bytes,nullable"`
-	TopLogprobs []ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob `json:"top_logprobs,nullable"`
+type ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprob struct {
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
+	Logprob float64 `json:"logprob,required"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
+	// The top log probabilities for the token.
+	TopLogprobs []ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob `json:"top_logprobs,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -3007,22 +3174,22 @@ type ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOut
 }
 
 // Returns the unmodified JSON received from the API
-func (r ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprob) RawJSON() string {
+func (r ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprob) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprob) UnmarshalJSON(data []byte) error {
+func (r *ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprob) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // The top log probability for a token from an OpenAI-compatible chat completion
 // response.
-//
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token
-type ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob struct {
-	Token   string  `json:"token,required"`
+type ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob struct {
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
 	Logprob float64 `json:"logprob,required"`
-	Bytes   []int64 `json:"bytes,nullable"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -3034,15 +3201,15 @@ type ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOut
 }
 
 // Returns the unmodified JSON received from the API
-func (r ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob) RawJSON() string {
+func (r ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob) UnmarshalJSON(data []byte) error {
+func (r *ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Refusal content within a streamed response part.
-type ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemRefusal struct {
+type ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemRefusal struct {
 	Refusal string `json:"refusal,required"`
 	// Any of "refusal".
 	Type string `json:"type"`
@@ -3056,29 +3223,271 @@ type ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOut
 }
 
 // Returns the unmodified JSON received from the API
-func (r ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemRefusal) RawJSON() string {
+func (r ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemRefusal) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *ConversationItemGetResponseContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemRefusal) UnmarshalJSON(data []byte) error {
+func (r *ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemRefusal) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type ConversationItemGetResponseRole string
+// Web search tool call output message for OpenAI responses.
+type ConversationItemGetResponseWebSearchCall struct {
+	ID     string `json:"id,required"`
+	Status string `json:"status,required"`
+	// Any of "web_search_call".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Status      respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
 
-const (
-	ConversationItemGetResponseRoleSystem    ConversationItemGetResponseRole = "system"
-	ConversationItemGetResponseRoleDeveloper ConversationItemGetResponseRole = "developer"
-	ConversationItemGetResponseRoleUser      ConversationItemGetResponseRole = "user"
-	ConversationItemGetResponseRoleAssistant ConversationItemGetResponseRole = "assistant"
-)
+// Returns the unmodified JSON received from the API
+func (r ConversationItemGetResponseWebSearchCall) RawJSON() string { return r.JSON.raw }
+func (r *ConversationItemGetResponseWebSearchCall) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
-type ConversationItemGetResponseType string
+// File search tool call output message for OpenAI responses.
+type ConversationItemGetResponseFileSearchCall struct {
+	ID      string                                            `json:"id,required"`
+	Queries []string                                          `json:"queries,required"`
+	Status  string                                            `json:"status,required"`
+	Results []ConversationItemGetResponseFileSearchCallResult `json:"results,nullable"`
+	// Any of "file_search_call".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Queries     respjson.Field
+		Status      respjson.Field
+		Results     respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
 
-const (
-	ConversationItemGetResponseTypeMessage ConversationItemGetResponseType = "message"
-)
+// Returns the unmodified JSON received from the API
+func (r ConversationItemGetResponseFileSearchCall) RawJSON() string { return r.JSON.raw }
+func (r *ConversationItemGetResponseFileSearchCall) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Search results returned by the file search operation.
+type ConversationItemGetResponseFileSearchCallResult struct {
+	Attributes map[string]any `json:"attributes,required"`
+	FileID     string         `json:"file_id,required"`
+	Filename   string         `json:"filename,required"`
+	Score      float64        `json:"score,required"`
+	Text       string         `json:"text,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Attributes  respjson.Field
+		FileID      respjson.Field
+		Filename    respjson.Field
+		Score       respjson.Field
+		Text        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemGetResponseFileSearchCallResult) RawJSON() string { return r.JSON.raw }
+func (r *ConversationItemGetResponseFileSearchCallResult) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Function tool call output message for OpenAI responses.
+type ConversationItemGetResponseFunctionCall struct {
+	Arguments string `json:"arguments,required"`
+	CallID    string `json:"call_id,required"`
+	Name      string `json:"name,required"`
+	ID        string `json:"id,nullable"`
+	Status    string `json:"status,nullable"`
+	// Any of "function_call".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Arguments   respjson.Field
+		CallID      respjson.Field
+		Name        respjson.Field
+		ID          respjson.Field
+		Status      respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemGetResponseFunctionCall) RawJSON() string { return r.JSON.raw }
+func (r *ConversationItemGetResponseFunctionCall) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// This represents the output of a function call that gets passed back to the
+// model.
+type ConversationItemGetResponseFunctionCallOutput struct {
+	CallID string `json:"call_id,required"`
+	Output string `json:"output,required"`
+	ID     string `json:"id,nullable"`
+	Status string `json:"status,nullable"`
+	// Any of "function_call_output".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		CallID      respjson.Field
+		Output      respjson.Field
+		ID          respjson.Field
+		Status      respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemGetResponseFunctionCallOutput) RawJSON() string { return r.JSON.raw }
+func (r *ConversationItemGetResponseFunctionCallOutput) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A request for human approval of a tool invocation.
+type ConversationItemGetResponseMcpApprovalRequest struct {
+	ID          string `json:"id,required"`
+	Arguments   string `json:"arguments,required"`
+	Name        string `json:"name,required"`
+	ServerLabel string `json:"server_label,required"`
+	// Any of "mcp_approval_request".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Arguments   respjson.Field
+		Name        respjson.Field
+		ServerLabel respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemGetResponseMcpApprovalRequest) RawJSON() string { return r.JSON.raw }
+func (r *ConversationItemGetResponseMcpApprovalRequest) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A response to an MCP approval request.
+type ConversationItemGetResponseMcpApprovalResponse struct {
+	ApprovalRequestID string `json:"approval_request_id,required"`
+	Approve           bool   `json:"approve,required"`
+	ID                string `json:"id,nullable"`
+	Reason            string `json:"reason,nullable"`
+	// Any of "mcp_approval_response".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ApprovalRequestID respjson.Field
+		Approve           respjson.Field
+		ID                respjson.Field
+		Reason            respjson.Field
+		Type              respjson.Field
+		ExtraFields       map[string]respjson.Field
+		raw               string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemGetResponseMcpApprovalResponse) RawJSON() string { return r.JSON.raw }
+func (r *ConversationItemGetResponseMcpApprovalResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Model Context Protocol (MCP) call output message for OpenAI responses.
+type ConversationItemGetResponseMcpCall struct {
+	ID          string `json:"id,required"`
+	Arguments   string `json:"arguments,required"`
+	Name        string `json:"name,required"`
+	ServerLabel string `json:"server_label,required"`
+	Error       string `json:"error,nullable"`
+	Output      string `json:"output,nullable"`
+	// Any of "mcp_call".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Arguments   respjson.Field
+		Name        respjson.Field
+		ServerLabel respjson.Field
+		Error       respjson.Field
+		Output      respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemGetResponseMcpCall) RawJSON() string { return r.JSON.raw }
+func (r *ConversationItemGetResponseMcpCall) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// MCP list tools output message containing available tools from an MCP server.
+type ConversationItemGetResponseMcpListTools struct {
+	ID          string                                        `json:"id,required"`
+	ServerLabel string                                        `json:"server_label,required"`
+	Tools       []ConversationItemGetResponseMcpListToolsTool `json:"tools,required"`
+	// Any of "mcp_list_tools".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		ServerLabel respjson.Field
+		Tools       respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemGetResponseMcpListTools) RawJSON() string { return r.JSON.raw }
+func (r *ConversationItemGetResponseMcpListTools) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Tool definition returned by MCP list tools operation.
+type ConversationItemGetResponseMcpListToolsTool struct {
+	InputSchema map[string]any `json:"input_schema,required"`
+	Name        string         `json:"name,required"`
+	Description string         `json:"description,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		InputSchema respjson.Field
+		Name        respjson.Field
+		Description respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemGetResponseMcpListToolsTool) RawJSON() string { return r.JSON.raw }
+func (r *ConversationItemGetResponseMcpListToolsTool) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 type ConversationItemNewParams struct {
+	// Items to include in the conversation context. You may add up to 20 items at a
+	// time.
 	Items []ConversationItemNewParamsItemUnion `json:"items,omitzero,required"`
 	paramObj
 }
@@ -3932,14 +4341,15 @@ func init() {
 // The log probability for a token from an OpenAI-compatible chat completion
 // response.
 //
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token :top_logprobs: The top log probabilities for the token
-//
 // The properties Token, Logprob are required.
 type ConversationItemNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprob struct {
-	Token       string                                                                                                                                                            `json:"token,required"`
-	Logprob     float64                                                                                                                                                           `json:"logprob,required"`
-	Bytes       []int64                                                                                                                                                           `json:"bytes,omitzero"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
+	Logprob float64 `json:"logprob,required"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,omitzero"`
+	// The top log probabilities for the token.
 	TopLogprobs []ConversationItemNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob `json:"top_logprobs,omitzero"`
 	paramObj
 }
@@ -3955,14 +4365,14 @@ func (r *ConversationItemNewParamsItemMessageContentListOpenAIResponseOutputMess
 // The top log probability for a token from an OpenAI-compatible chat completion
 // response.
 //
-// :token: The token :bytes: (Optional) The bytes for the token :logprob: The log
-// probability of the token
-//
 // The properties Token, Logprob are required.
 type ConversationItemNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob struct {
-	Token   string  `json:"token,required"`
+	// The token.
+	Token string `json:"token,required"`
+	// The log probability of the token.
 	Logprob float64 `json:"logprob,required"`
-	Bytes   []int64 `json:"bytes,omitzero"`
+	// The bytes for the token.
+	Bytes []int64 `json:"bytes,omitzero"`
 	paramObj
 }
 
@@ -4283,11 +4693,13 @@ const (
 )
 
 type ConversationItemDeleteParams struct {
+	// The conversation identifier.
 	ConversationID string `path:"conversation_id,required" json:"-"`
 	paramObj
 }
 
 type ConversationItemGetParams struct {
+	// The conversation identifier.
 	ConversationID string `path:"conversation_id,required" json:"-"`
 	paramObj
 }

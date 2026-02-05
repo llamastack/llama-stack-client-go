@@ -178,8 +178,14 @@ func TestVectorStoreSearchWithOptionalParams(t *testing.T) {
 			},
 			MaxNumResults: llamastackclient.Int(0),
 			RankingOptions: llamastackclient.VectorStoreSearchParamsRankingOptions{
+				Alpha:          llamastackclient.Float(0),
+				ImpactFactor:   llamastackclient.Float(0),
+				Model:          llamastackclient.String("model"),
 				Ranker:         llamastackclient.String("ranker"),
 				ScoreThreshold: llamastackclient.Float(0),
+				Weights: map[string]float64{
+					"foo": 0,
+				},
 			},
 			RewriteQuery: llamastackclient.Bool(true),
 			SearchMode:   llamastackclient.String("search_mode"),
