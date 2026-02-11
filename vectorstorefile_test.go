@@ -129,7 +129,7 @@ func TestVectorStoreFileListWithOptionalParams(t *testing.T) {
 			After:  llamastackclient.String("after"),
 			Before: llamastackclient.String("before"),
 			Filter: llamastackclient.VectorStoreFileListParamsFilterCompleted,
-			Limit:  llamastackclient.Int(0),
+			Limit:  llamastackclient.Int(1),
 			Order:  llamastackclient.String("order"),
 		},
 	)

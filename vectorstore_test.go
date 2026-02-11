@@ -122,7 +122,7 @@ func TestVectorStoreListWithOptionalParams(t *testing.T) {
 	_, err := client.VectorStores.List(context.TODO(), llamastackclient.VectorStoreListParams{
 		After:  llamastackclient.String("after"),
 		Before: llamastackclient.String("before"),
-		Limit:  llamastackclient.Int(0),
+		Limit:  llamastackclient.Int(1),
 		Order:  llamastackclient.String("order"),
 	})
 	if err != nil {
