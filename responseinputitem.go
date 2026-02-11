@@ -1179,7 +1179,7 @@ type ResponseInputItemListParams struct {
 	// "message.input_image.image_url", "message.output_text.logprobs",
 	// "reasoning.encrypted_content".
 	Include []string `query:"include,omitzero" json:"-"`
-	// Sort order for paginated responses.
+	// The order to return the input items in.
 	//
 	// Any of "asc", "desc".
 	Order ResponseInputItemListParamsOrder `query:"order,omitzero" json:"-"`
@@ -1195,7 +1195,7 @@ func (r ResponseInputItemListParams) URLQuery() (v url.Values, err error) {
 	})
 }
 
-// Sort order for paginated responses.
+// The order to return the input items in.
 type ResponseInputItemListParamsOrder string
 
 const (

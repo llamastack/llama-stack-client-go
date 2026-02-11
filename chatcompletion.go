@@ -6272,7 +6272,7 @@ type ChatCompletionListParams struct {
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	// The model to filter by.
 	Model param.Opt[string] `query:"model,omitzero" json:"-"`
-	// Sort order for paginated responses.
+	// The order to sort the chat completions by: "asc" or "desc". Defaults to "desc".
 	//
 	// Any of "asc", "desc".
 	Order ChatCompletionListParamsOrder `query:"order,omitzero" json:"-"`
@@ -6288,7 +6288,7 @@ func (r ChatCompletionListParams) URLQuery() (v url.Values, err error) {
 	})
 }
 
-// Sort order for paginated responses.
+// The order to sort the chat completions by: "asc" or "desc". Defaults to "desc".
 type ChatCompletionListParamsOrder string
 
 const (

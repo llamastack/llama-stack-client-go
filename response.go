@@ -12259,7 +12259,7 @@ type ResponseListParams struct {
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	// The model to filter responses by.
 	Model param.Opt[string] `query:"model,omitzero" json:"-"`
-	// Sort order for paginated responses.
+	// The order to sort responses by when sorted by created_at ('asc' or 'desc').
 	//
 	// Any of "asc", "desc".
 	Order ResponseListParamsOrder `query:"order,omitzero" json:"-"`
@@ -12274,7 +12274,7 @@ func (r ResponseListParams) URLQuery() (v url.Values, err error) {
 	})
 }
 
-// Sort order for paginated responses.
+// The order to sort responses by when sorted by created_at ('asc' or 'desc').
 type ResponseListParamsOrder string
 
 const (

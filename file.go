@@ -309,11 +309,11 @@ type FileListParams struct {
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
 	// Maximum number of files to return (1-10,000).
 	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
-	// Sort order for paginated responses.
+	// Sort order by created_at timestamp ('asc' or 'desc').
 	//
 	// Any of "asc", "desc".
 	Order FileListParamsOrder `query:"order,omitzero" json:"-"`
-	// Valid purpose values for OpenAI Files API.
+	// Filter files by purpose.
 	//
 	// Any of "assistants", "batch".
 	Purpose FileListParamsPurpose `query:"purpose,omitzero" json:"-"`
@@ -328,7 +328,7 @@ func (r FileListParams) URLQuery() (v url.Values, err error) {
 	})
 }
 
-// Sort order for paginated responses.
+// Sort order by created_at timestamp ('asc' or 'desc').
 type FileListParamsOrder string
 
 const (
@@ -336,7 +336,7 @@ const (
 	FileListParamsOrderDesc FileListParamsOrder = "desc"
 )
 
-// Valid purpose values for OpenAI Files API.
+// Filter files by purpose.
 type FileListParamsPurpose string
 
 const (
