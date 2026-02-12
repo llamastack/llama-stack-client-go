@@ -10067,6 +10067,11 @@ type ResponseNewParams struct {
 	ToolChoice ResponseNewParamsToolChoiceUnion `json:"tool_choice,omitzero"`
 	// List of tools available to the model.
 	Tools []ResponseNewParamsToolUnion `json:"tools,omitzero"`
+	// Controls how the service truncates input when it exceeds the model context
+	// window.
+	//
+	// Any of "auto", "disabled".
+	Truncation ResponseNewParamsTruncation `json:"truncation,omitzero"`
 	paramObj
 }
 
@@ -12251,6 +12256,15 @@ func (r ResponseNewParamsToolMcpRequireApprovalApprovalFilter) MarshalJSON() (da
 func (r *ResponseNewParamsToolMcpRequireApprovalApprovalFilter) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+// Controls how the service truncates input when it exceeds the model context
+// window.
+type ResponseNewParamsTruncation string
+
+const (
+	ResponseNewParamsTruncationAuto     ResponseNewParamsTruncation = "auto"
+	ResponseNewParamsTruncationDisabled ResponseNewParamsTruncation = "disabled"
+)
 
 type ResponseListParams struct {
 	// The ID of the last response to return.
