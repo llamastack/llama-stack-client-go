@@ -61,6 +61,7 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 			},
 			Version: llamastackclient.String("version"),
 		},
+		PromptCacheKey: llamastackclient.String("prompt_cache_key"),
 		Reasoning: llamastackclient.ResponseNewParamsReasoning{
 			Effort: "none",
 		},

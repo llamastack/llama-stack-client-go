@@ -136,7 +136,8 @@ type ResponseObject struct {
 	ParallelToolCalls  bool                 `json:"parallel_tool_calls,nullable"`
 	PreviousResponseID string               `json:"previous_response_id,nullable"`
 	// OpenAI compatible Prompt object that is used in OpenAI responses.
-	Prompt ResponseObjectPrompt `json:"prompt,nullable"`
+	Prompt         ResponseObjectPrompt `json:"prompt,nullable"`
+	PromptCacheKey string               `json:"prompt_cache_key,nullable"`
 	// Configuration for reasoning effort in OpenAI responses.
 	//
 	// Controls how much reasoning the model performs before generating a response.
@@ -170,6 +171,7 @@ type ResponseObject struct {
 		ParallelToolCalls  respjson.Field
 		PreviousResponseID respjson.Field
 		Prompt             respjson.Field
+		PromptCacheKey     respjson.Field
 		Reasoning          respjson.Field
 		SafetyIdentifier   respjson.Field
 		Temperature        respjson.Field
@@ -6983,7 +6985,8 @@ type ResponseListResponse struct {
 	ParallelToolCalls  bool                       `json:"parallel_tool_calls,nullable"`
 	PreviousResponseID string                     `json:"previous_response_id,nullable"`
 	// OpenAI compatible Prompt object that is used in OpenAI responses.
-	Prompt ResponseListResponsePrompt `json:"prompt,nullable"`
+	Prompt         ResponseListResponsePrompt `json:"prompt,nullable"`
+	PromptCacheKey string                     `json:"prompt_cache_key,nullable"`
 	// Configuration for reasoning effort in OpenAI responses.
 	//
 	// Controls how much reasoning the model performs before generating a response.
@@ -7018,6 +7021,7 @@ type ResponseListResponse struct {
 		ParallelToolCalls  respjson.Field
 		PreviousResponseID respjson.Field
 		Prompt             respjson.Field
+		PromptCacheKey     respjson.Field
 		Reasoning          respjson.Field
 		SafetyIdentifier   respjson.Field
 		Temperature        respjson.Field
@@ -10038,6 +10042,8 @@ type ResponseNewParams struct {
 	ParallelToolCalls param.Opt[bool] `json:"parallel_tool_calls,omitzero"`
 	// Optional ID of a previous response to continue from.
 	PreviousResponseID param.Opt[string] `json:"previous_response_id,omitzero"`
+	// A key to use when reading from or writing to the prompt cache.
+	PromptCacheKey param.Opt[string] `json:"prompt_cache_key,omitzero"`
 	// A stable identifier used for safety monitoring and abuse detection.
 	SafetyIdentifier param.Opt[string] `json:"safety_identifier,omitzero"`
 	// Whether to store the response in the database.

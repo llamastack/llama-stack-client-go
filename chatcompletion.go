@@ -5228,6 +5228,8 @@ type ChatCompletionNewParams struct {
 	ParallelToolCalls param.Opt[bool] `json:"parallel_tool_calls,omitzero"`
 	// The penalty for repeated tokens.
 	PresencePenalty param.Opt[float64] `json:"presence_penalty,omitzero"`
+	// A key to use when reading from or writing to the prompt cache.
+	PromptCacheKey param.Opt[string] `json:"prompt_cache_key,omitzero"`
 	// A stable identifier used for safety monitoring and abuse detection.
 	SafetyIdentifier param.Opt[string] `json:"safety_identifier,omitzero"`
 	// The seed to use.

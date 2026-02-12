@@ -57,6 +57,7 @@ func TestChatCompletionNewWithOptionalParams(t *testing.T) {
 		N:                   llamastackclient.Int(1),
 		ParallelToolCalls:   llamastackclient.Bool(true),
 		PresencePenalty:     llamastackclient.Float(-2),
+		PromptCacheKey:      llamastackclient.String("prompt_cache_key"),
 		ReasoningEffort:     llamastackclient.ChatCompletionNewParamsReasoningEffortNone,
 		ResponseFormat: llamastackclient.ChatCompletionNewParamsResponseFormatUnion{
 			OfText: &llamastackclient.ChatCompletionNewParamsResponseFormatText{
