@@ -132,7 +132,7 @@ type ChatCompletionNewResponseChoice struct {
 	// The index of the choice.
 	Index int64 `json:"index,required"`
 	// The message from the model.
-	Message ChatCompletionNewResponseChoiceMessageUnion `json:"message,required"`
+	Message ChatCompletionNewResponseChoiceMessage `json:"message,required"`
 	// The log probabilities for the tokens in the message from an OpenAI-compatible
 	// chat completion response.
 	Logprobs ChatCompletionNewResponseChoiceLogprobs `json:"logprobs,nullable"`
@@ -153,629 +153,71 @@ func (r *ChatCompletionNewResponseChoice) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ChatCompletionNewResponseChoiceMessageUnion contains all possible properties and
-// values from [ChatCompletionNewResponseChoiceMessageUser],
-// [ChatCompletionNewResponseChoiceMessageSystem],
-// [ChatCompletionNewResponseChoiceMessageAssistant],
-// [ChatCompletionNewResponseChoiceMessageTool],
-// [ChatCompletionNewResponseChoiceMessageDeveloper].
-//
-// Use the [ChatCompletionNewResponseChoiceMessageUnion.AsAny] method to switch on
-// the variant.
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-type ChatCompletionNewResponseChoiceMessageUnion struct {
-	// This field is a union of
-	// [ChatCompletionNewResponseChoiceMessageUserContentUnion],
-	// [ChatCompletionNewResponseChoiceMessageSystemContentUnion],
-	// [ChatCompletionNewResponseChoiceMessageAssistantContentUnion],
-	// [ChatCompletionNewResponseChoiceMessageToolContentUnion],
-	// [ChatCompletionNewResponseChoiceMessageDeveloperContentUnion]
-	Content ChatCompletionNewResponseChoiceMessageUnionContent `json:"content"`
-	Name    string                                             `json:"name"`
-	// Any of "user", "system", "assistant", "tool", "developer".
-	Role string `json:"role"`
-	// This field is from variant [ChatCompletionNewResponseChoiceMessageAssistant].
-	ToolCalls []ChatCompletionNewResponseChoiceMessageAssistantToolCall `json:"tool_calls"`
-	// This field is from variant [ChatCompletionNewResponseChoiceMessageTool].
-	ToolCallID string `json:"tool_call_id"`
-	JSON       struct {
-		Content    respjson.Field
-		Name       respjson.Field
-		Role       respjson.Field
-		ToolCalls  respjson.Field
-		ToolCallID respjson.Field
-		raw        string
-	} `json:"-"`
-}
-
-// anyChatCompletionNewResponseChoiceMessage is implemented by each variant of
-// [ChatCompletionNewResponseChoiceMessageUnion] to add type safety for the return
-// type of [ChatCompletionNewResponseChoiceMessageUnion.AsAny]
-type anyChatCompletionNewResponseChoiceMessage interface {
-	implChatCompletionNewResponseChoiceMessageUnion()
-}
-
-func (ChatCompletionNewResponseChoiceMessageUser) implChatCompletionNewResponseChoiceMessageUnion() {}
-func (ChatCompletionNewResponseChoiceMessageSystem) implChatCompletionNewResponseChoiceMessageUnion() {
-}
-func (ChatCompletionNewResponseChoiceMessageAssistant) implChatCompletionNewResponseChoiceMessageUnion() {
-}
-func (ChatCompletionNewResponseChoiceMessageTool) implChatCompletionNewResponseChoiceMessageUnion() {}
-func (ChatCompletionNewResponseChoiceMessageDeveloper) implChatCompletionNewResponseChoiceMessageUnion() {
-}
-
-// Use the following switch statement to find the correct variant
-//
-//	switch variant := ChatCompletionNewResponseChoiceMessageUnion.AsAny().(type) {
-//	case llamastackclient.ChatCompletionNewResponseChoiceMessageUser:
-//	case llamastackclient.ChatCompletionNewResponseChoiceMessageSystem:
-//	case llamastackclient.ChatCompletionNewResponseChoiceMessageAssistant:
-//	case llamastackclient.ChatCompletionNewResponseChoiceMessageTool:
-//	case llamastackclient.ChatCompletionNewResponseChoiceMessageDeveloper:
-//	default:
-//	  fmt.Errorf("no variant present")
-//	}
-func (u ChatCompletionNewResponseChoiceMessageUnion) AsAny() anyChatCompletionNewResponseChoiceMessage {
-	switch u.Role {
-	case "user":
-		return u.AsUser()
-	case "system":
-		return u.AsSystem()
-	case "assistant":
-		return u.AsAssistant()
-	case "tool":
-		return u.AsTool()
-	case "developer":
-		return u.AsDeveloper()
-	}
-	return nil
-}
-
-func (u ChatCompletionNewResponseChoiceMessageUnion) AsUser() (v ChatCompletionNewResponseChoiceMessageUser) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionNewResponseChoiceMessageUnion) AsSystem() (v ChatCompletionNewResponseChoiceMessageSystem) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionNewResponseChoiceMessageUnion) AsAssistant() (v ChatCompletionNewResponseChoiceMessageAssistant) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionNewResponseChoiceMessageUnion) AsTool() (v ChatCompletionNewResponseChoiceMessageTool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionNewResponseChoiceMessageUnion) AsDeveloper() (v ChatCompletionNewResponseChoiceMessageDeveloper) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ChatCompletionNewResponseChoiceMessageUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ChatCompletionNewResponseChoiceMessageUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ChatCompletionNewResponseChoiceMessageUnionContent is an implicit subunion of
-// [ChatCompletionNewResponseChoiceMessageUnion].
-// ChatCompletionNewResponseChoiceMessageUnionContent provides convenient access to
-// the sub-properties of the union.
-//
-// For type safety it is recommended to directly use a variant of the
-// [ChatCompletionNewResponseChoiceMessageUnion].
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString
-// OfListOpenAIChatCompletionContentPartTextOpenAIChatCompletionContentPartImageParamOpenAIFile
-// OfListOpenAIChatCompletionContentPartText]
-type ChatCompletionNewResponseChoiceMessageUnionContent struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a
-	// [[]ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion]
-	// instead of an object.
-	OfListOpenAIChatCompletionContentPartTextOpenAIChatCompletionContentPartImageParamOpenAIFile []ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion `json:",inline"`
-	// This field will be present if the value is a
-	// [[]ChatCompletionNewResponseChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem]
-	// instead of an object.
-	OfListOpenAIChatCompletionContentPartText []ChatCompletionNewResponseChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem `json:",inline"`
-	JSON                                      struct {
-		OfString                                                                                     respjson.Field
-		OfListOpenAIChatCompletionContentPartTextOpenAIChatCompletionContentPartImageParamOpenAIFile respjson.Field
-		OfListOpenAIChatCompletionContentPartText                                                    respjson.Field
-		raw                                                                                          string
-	} `json:"-"`
-}
-
-func (r *ChatCompletionNewResponseChoiceMessageUnionContent) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A message from the user in an OpenAI-compatible chat completion request.
-type ChatCompletionNewResponseChoiceMessageUser struct {
-	// The content of the message, which can include text and other media.
-	Content ChatCompletionNewResponseChoiceMessageUserContentUnion `json:"content,required"`
-	// The name of the user message participant.
-	Name string `json:"name,nullable"`
-	// Must be 'user' to identify this as a user message.
-	//
-	// Any of "user".
-	Role string `json:"role"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Content     respjson.Field
-		Name        respjson.Field
-		Role        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionNewResponseChoiceMessageUser) RawJSON() string { return r.JSON.raw }
-func (r *ChatCompletionNewResponseChoiceMessageUser) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ChatCompletionNewResponseChoiceMessageUserContentUnion contains all possible
-// properties and values from [string],
-// [[]ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString
-// OfListOpenAIChatCompletionContentPartTextOpenAIChatCompletionContentPartImageParamOpenAIFile]
-type ChatCompletionNewResponseChoiceMessageUserContentUnion struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a
-	// [[]ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion]
-	// instead of an object.
-	OfListOpenAIChatCompletionContentPartTextOpenAIChatCompletionContentPartImageParamOpenAIFile []ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion `json:",inline"`
-	JSON                                                                                         struct {
-		OfString                                                                                     respjson.Field
-		OfListOpenAIChatCompletionContentPartTextOpenAIChatCompletionContentPartImageParamOpenAIFile respjson.Field
-		raw                                                                                          string
-	} `json:"-"`
-}
-
-func (u ChatCompletionNewResponseChoiceMessageUserContentUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionNewResponseChoiceMessageUserContentUnion) AsListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFile() (v []ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ChatCompletionNewResponseChoiceMessageUserContentUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ChatCompletionNewResponseChoiceMessageUserContentUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion
-// contains all possible properties and values from
-// [ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText],
-// [ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL],
-// [ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile].
-//
-// Use the
-// [ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion.AsAny]
-// method to switch on the variant.
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-type ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion struct {
-	// This field is from variant
-	// [ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText].
-	Text string `json:"text"`
-	// Any of "text", "image_url", "file".
-	Type string `json:"type"`
-	// This field is from variant
-	// [ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL].
-	ImageURL ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL `json:"image_url"`
-	// This field is from variant
-	// [ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile].
-	File ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile `json:"file"`
-	JSON struct {
-		Text     respjson.Field
-		Type     respjson.Field
-		ImageURL respjson.Field
-		File     respjson.Field
-		raw      string
-	} `json:"-"`
-}
-
-// anyChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItem
-// is implemented by each variant of
-// [ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion]
-// to add type safety for the return type of
-// [ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion.AsAny]
-type anyChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItem interface {
-	implChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion()
-}
-
-func (ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText) implChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion() {
-}
-func (ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL) implChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion() {
-}
-func (ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile) implChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion() {
-}
-
-// Use the following switch statement to find the correct variant
-//
-//	switch variant := ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion.AsAny().(type) {
-//	case llamastackclient.ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText:
-//	case llamastackclient.ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL:
-//	case llamastackclient.ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile:
-//	default:
-//	  fmt.Errorf("no variant present")
-//	}
-func (u ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion) AsAny() anyChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItem {
-	switch u.Type {
-	case "text":
-		return u.AsText()
-	case "image_url":
-		return u.AsImageURL()
-	case "file":
-		return u.AsFile()
-	}
-	return nil
-}
-
-func (u ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion) AsText() (v ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion) AsImageURL() (v ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion) AsFile() (v ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion) RawJSON() string {
-	return u.JSON.raw
-}
-
-func (r *ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Text content part for OpenAI-compatible chat completion messages.
-type ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText struct {
-	// The text content of the message.
-	Text string `json:"text,required"`
-	// Must be 'text' to identify this as text content.
-	//
-	// Any of "text".
-	Type string `json:"type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Text        respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Image content part for OpenAI-compatible chat completion messages.
-type ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL struct {
-	// Image URL specification and processing details.
-	ImageURL ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL `json:"image_url,required"`
-	// Must be 'image_url' to identify this as image content.
-	//
-	// Any of "image_url".
-	Type string `json:"type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ImageURL    respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Image URL specification and processing details.
-type ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL struct {
-	// URL of the image to include in the message.
-	URL string `json:"url,required"`
-	// Level of detail for image processing. Can be 'low', 'high', or 'auto'.
-	//
-	// Any of "low", "high", "auto".
-	Detail string `json:"detail,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		URL         respjson.Field
-		Detail      respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile struct {
-	// File specification.
-	File ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile `json:"file,required"`
-	// Must be 'file' to identify this as file content.
-	//
-	// Any of "file".
-	Type string `json:"type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		File        respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// File specification.
-type ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile struct {
-	// Base64-encoded file data.
-	FileData string `json:"file_data,nullable"`
-	// ID of an uploaded file.
-	FileID string `json:"file_id,nullable"`
-	// Name of the file.
-	Filename string `json:"filename,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		FileData    respjson.Field
-		FileID      respjson.Field
-		Filename    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionNewResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A system message providing instructions or context to the model.
-type ChatCompletionNewResponseChoiceMessageSystem struct {
-	// The content of the 'system prompt'. If multiple system messages are provided,
-	// they are concatenated.
-	Content ChatCompletionNewResponseChoiceMessageSystemContentUnion `json:"content,required"`
-	// The name of the system message participant.
-	Name string `json:"name,nullable"`
-	// Must be 'system' to identify this as a system message.
-	//
-	// Any of "system".
-	Role string `json:"role"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Content     respjson.Field
-		Name        respjson.Field
-		Role        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionNewResponseChoiceMessageSystem) RawJSON() string { return r.JSON.raw }
-func (r *ChatCompletionNewResponseChoiceMessageSystem) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ChatCompletionNewResponseChoiceMessageSystemContentUnion contains all possible
-// properties and values from [string],
-// [[]ChatCompletionNewResponseChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString OfListOpenAIChatCompletionContentPartText]
-type ChatCompletionNewResponseChoiceMessageSystemContentUnion struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a
-	// [[]ChatCompletionNewResponseChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem]
-	// instead of an object.
-	OfListOpenAIChatCompletionContentPartText []ChatCompletionNewResponseChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem `json:",inline"`
-	JSON                                      struct {
-		OfString                                  respjson.Field
-		OfListOpenAIChatCompletionContentPartText respjson.Field
-		raw                                       string
-	} `json:"-"`
-}
-
-func (u ChatCompletionNewResponseChoiceMessageSystemContentUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionNewResponseChoiceMessageSystemContentUnion) AsListOpenAIChatCompletionContentPartTextParam() (v []ChatCompletionNewResponseChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ChatCompletionNewResponseChoiceMessageSystemContentUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ChatCompletionNewResponseChoiceMessageSystemContentUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Text content part for OpenAI-compatible chat completion messages.
-type ChatCompletionNewResponseChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem struct {
-	// The text content of the message.
-	Text string `json:"text,required"`
-	// Must be 'text' to identify this as text content.
-	//
-	// Any of "text".
-	Type string `json:"type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Text        respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionNewResponseChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionNewResponseChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A message containing the model's (assistant) response in an OpenAI-compatible
-// chat completion request.
-type ChatCompletionNewResponseChoiceMessageAssistant struct {
-	// The content of the model's response.
-	Content ChatCompletionNewResponseChoiceMessageAssistantContentUnion `json:"content,nullable"`
-	// The name of the assistant message participant.
-	Name string `json:"name,nullable"`
-	// Must be 'assistant' to identify this as the model's response.
+// The message from the model.
+type ChatCompletionNewResponseChoiceMessage struct {
+	// Annotations for the message, when applicable.
+	Annotations []map[string]any `json:"annotations"`
+	// Audio response data when using audio output modality.
+	Audio map[string]any `json:"audio,nullable"`
+	// The content of the message.
+	Content string `json:"content,nullable"`
+	// Deprecated: the name and arguments of a function that should be called.
+	FunctionCall ChatCompletionNewResponseChoiceMessageFunctionCall `json:"function_call"`
+	// The refusal message generated by the model.
+	Refusal string `json:"refusal,nullable"`
+	// The role of the message author, always 'assistant' in responses.
 	//
 	// Any of "assistant".
 	Role string `json:"role"`
-	// List of tool calls. Each tool call is an OpenAIChatCompletionToolCall object.
-	ToolCalls []ChatCompletionNewResponseChoiceMessageAssistantToolCall `json:"tool_calls,nullable"`
+	// The tool calls generated by the model.
+	ToolCalls []ChatCompletionNewResponseChoiceMessageToolCall `json:"tool_calls"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Content     respjson.Field
+		Annotations  respjson.Field
+		Audio        respjson.Field
+		Content      respjson.Field
+		FunctionCall respjson.Field
+		Refusal      respjson.Field
+		Role         respjson.Field
+		ToolCalls    respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionNewResponseChoiceMessage) RawJSON() string { return r.JSON.raw }
+func (r *ChatCompletionNewResponseChoiceMessage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Deprecated: the name and arguments of a function that should be called.
+type ChatCompletionNewResponseChoiceMessageFunctionCall struct {
+	// Arguments to pass to the function as a JSON string.
+	Arguments string `json:"arguments,nullable"`
+	// Name of the function to call.
+	Name string `json:"name,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Arguments   respjson.Field
 		Name        respjson.Field
-		Role        respjson.Field
-		ToolCalls   respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
-func (r ChatCompletionNewResponseChoiceMessageAssistant) RawJSON() string { return r.JSON.raw }
-func (r *ChatCompletionNewResponseChoiceMessageAssistant) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ChatCompletionNewResponseChoiceMessageAssistantContentUnion contains all
-// possible properties and values from [string],
-// [[]ChatCompletionNewResponseChoiceMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString OfListOpenAIChatCompletionContentPartText]
-type ChatCompletionNewResponseChoiceMessageAssistantContentUnion struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a
-	// [[]ChatCompletionNewResponseChoiceMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem]
-	// instead of an object.
-	OfListOpenAIChatCompletionContentPartText []ChatCompletionNewResponseChoiceMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem `json:",inline"`
-	JSON                                      struct {
-		OfString                                  respjson.Field
-		OfListOpenAIChatCompletionContentPartText respjson.Field
-		raw                                       string
-	} `json:"-"`
-}
-
-func (u ChatCompletionNewResponseChoiceMessageAssistantContentUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionNewResponseChoiceMessageAssistantContentUnion) AsListOpenAIChatCompletionContentPartTextParam() (v []ChatCompletionNewResponseChoiceMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ChatCompletionNewResponseChoiceMessageAssistantContentUnion) RawJSON() string {
-	return u.JSON.raw
-}
-
-func (r *ChatCompletionNewResponseChoiceMessageAssistantContentUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Text content part for OpenAI-compatible chat completion messages.
-type ChatCompletionNewResponseChoiceMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem struct {
-	// The text content of the message.
-	Text string `json:"text,required"`
-	// Must be 'text' to identify this as text content.
-	//
-	// Any of "text".
-	Type string `json:"type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Text        respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionNewResponseChoiceMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionNewResponseChoiceMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem) UnmarshalJSON(data []byte) error {
+func (r ChatCompletionNewResponseChoiceMessageFunctionCall) RawJSON() string { return r.JSON.raw }
+func (r *ChatCompletionNewResponseChoiceMessageFunctionCall) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Tool call specification for OpenAI-compatible chat completion responses.
-type ChatCompletionNewResponseChoiceMessageAssistantToolCall struct {
+type ChatCompletionNewResponseChoiceMessageToolCall struct {
 	// Unique identifier for the tool call.
 	ID string `json:"id,nullable"`
 	// Function call details for OpenAI-compatible tool calls.
-	Function ChatCompletionNewResponseChoiceMessageAssistantToolCallFunction `json:"function,nullable"`
+	Function ChatCompletionNewResponseChoiceMessageToolCallFunction `json:"function,nullable"`
 	// Index of the tool call in the list.
 	Index int64 `json:"index,nullable"`
 	// Must be 'function' to identify this as a function call.
@@ -794,13 +236,13 @@ type ChatCompletionNewResponseChoiceMessageAssistantToolCall struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r ChatCompletionNewResponseChoiceMessageAssistantToolCall) RawJSON() string { return r.JSON.raw }
-func (r *ChatCompletionNewResponseChoiceMessageAssistantToolCall) UnmarshalJSON(data []byte) error {
+func (r ChatCompletionNewResponseChoiceMessageToolCall) RawJSON() string { return r.JSON.raw }
+func (r *ChatCompletionNewResponseChoiceMessageToolCall) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Function call details for OpenAI-compatible tool calls.
-type ChatCompletionNewResponseChoiceMessageAssistantToolCallFunction struct {
+type ChatCompletionNewResponseChoiceMessageToolCallFunction struct {
 	// Arguments to pass to the function as a JSON string.
 	Arguments string `json:"arguments,nullable"`
 	// Name of the function to call.
@@ -815,193 +257,8 @@ type ChatCompletionNewResponseChoiceMessageAssistantToolCallFunction struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r ChatCompletionNewResponseChoiceMessageAssistantToolCallFunction) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionNewResponseChoiceMessageAssistantToolCallFunction) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A message representing the result of a tool invocation in an OpenAI-compatible
-// chat completion request.
-type ChatCompletionNewResponseChoiceMessageTool struct {
-	// The response content from the tool.
-	Content ChatCompletionNewResponseChoiceMessageToolContentUnion `json:"content,required"`
-	// Unique identifier for the tool call this response is for.
-	ToolCallID string `json:"tool_call_id,required"`
-	// Must be 'tool' to identify this as a tool response.
-	//
-	// Any of "tool".
-	Role string `json:"role"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Content     respjson.Field
-		ToolCallID  respjson.Field
-		Role        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionNewResponseChoiceMessageTool) RawJSON() string { return r.JSON.raw }
-func (r *ChatCompletionNewResponseChoiceMessageTool) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ChatCompletionNewResponseChoiceMessageToolContentUnion contains all possible
-// properties and values from [string],
-// [[]ChatCompletionNewResponseChoiceMessageToolContentListOpenAIChatCompletionContentPartTextParamItem].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString OfListOpenAIChatCompletionContentPartText]
-type ChatCompletionNewResponseChoiceMessageToolContentUnion struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a
-	// [[]ChatCompletionNewResponseChoiceMessageToolContentListOpenAIChatCompletionContentPartTextParamItem]
-	// instead of an object.
-	OfListOpenAIChatCompletionContentPartText []ChatCompletionNewResponseChoiceMessageToolContentListOpenAIChatCompletionContentPartTextParamItem `json:",inline"`
-	JSON                                      struct {
-		OfString                                  respjson.Field
-		OfListOpenAIChatCompletionContentPartText respjson.Field
-		raw                                       string
-	} `json:"-"`
-}
-
-func (u ChatCompletionNewResponseChoiceMessageToolContentUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionNewResponseChoiceMessageToolContentUnion) AsListOpenAIChatCompletionContentPartTextParam() (v []ChatCompletionNewResponseChoiceMessageToolContentListOpenAIChatCompletionContentPartTextParamItem) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ChatCompletionNewResponseChoiceMessageToolContentUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ChatCompletionNewResponseChoiceMessageToolContentUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Text content part for OpenAI-compatible chat completion messages.
-type ChatCompletionNewResponseChoiceMessageToolContentListOpenAIChatCompletionContentPartTextParamItem struct {
-	// The text content of the message.
-	Text string `json:"text,required"`
-	// Must be 'text' to identify this as text content.
-	//
-	// Any of "text".
-	Type string `json:"type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Text        respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionNewResponseChoiceMessageToolContentListOpenAIChatCompletionContentPartTextParamItem) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionNewResponseChoiceMessageToolContentListOpenAIChatCompletionContentPartTextParamItem) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A message from the developer in an OpenAI-compatible chat completion request.
-type ChatCompletionNewResponseChoiceMessageDeveloper struct {
-	// The content of the developer message.
-	Content ChatCompletionNewResponseChoiceMessageDeveloperContentUnion `json:"content,required"`
-	// The name of the developer message participant.
-	Name string `json:"name,nullable"`
-	// Must be 'developer' to identify this as a developer message.
-	//
-	// Any of "developer".
-	Role string `json:"role"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Content     respjson.Field
-		Name        respjson.Field
-		Role        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionNewResponseChoiceMessageDeveloper) RawJSON() string { return r.JSON.raw }
-func (r *ChatCompletionNewResponseChoiceMessageDeveloper) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ChatCompletionNewResponseChoiceMessageDeveloperContentUnion contains all
-// possible properties and values from [string],
-// [[]ChatCompletionNewResponseChoiceMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString OfListOpenAIChatCompletionContentPartText]
-type ChatCompletionNewResponseChoiceMessageDeveloperContentUnion struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a
-	// [[]ChatCompletionNewResponseChoiceMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem]
-	// instead of an object.
-	OfListOpenAIChatCompletionContentPartText []ChatCompletionNewResponseChoiceMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem `json:",inline"`
-	JSON                                      struct {
-		OfString                                  respjson.Field
-		OfListOpenAIChatCompletionContentPartText respjson.Field
-		raw                                       string
-	} `json:"-"`
-}
-
-func (u ChatCompletionNewResponseChoiceMessageDeveloperContentUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionNewResponseChoiceMessageDeveloperContentUnion) AsListOpenAIChatCompletionContentPartTextParam() (v []ChatCompletionNewResponseChoiceMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ChatCompletionNewResponseChoiceMessageDeveloperContentUnion) RawJSON() string {
-	return u.JSON.raw
-}
-
-func (r *ChatCompletionNewResponseChoiceMessageDeveloperContentUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Text content part for OpenAI-compatible chat completion messages.
-type ChatCompletionNewResponseChoiceMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem struct {
-	// The text content of the message.
-	Text string `json:"text,required"`
-	// Must be 'text' to identify this as text content.
-	//
-	// Any of "text".
-	Type string `json:"type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Text        respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionNewResponseChoiceMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionNewResponseChoiceMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem) UnmarshalJSON(data []byte) error {
+func (r ChatCompletionNewResponseChoiceMessageToolCallFunction) RawJSON() string { return r.JSON.raw }
+func (r *ChatCompletionNewResponseChoiceMessageToolCallFunction) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1252,7 +509,7 @@ type ChatCompletionGetResponseChoice struct {
 	// The index of the choice.
 	Index int64 `json:"index,required"`
 	// The message from the model.
-	Message ChatCompletionGetResponseChoiceMessageUnion `json:"message,required"`
+	Message ChatCompletionGetResponseChoiceMessage `json:"message,required"`
 	// The log probabilities for the tokens in the message from an OpenAI-compatible
 	// chat completion response.
 	Logprobs ChatCompletionGetResponseChoiceLogprobs `json:"logprobs,nullable"`
@@ -1273,629 +530,71 @@ func (r *ChatCompletionGetResponseChoice) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ChatCompletionGetResponseChoiceMessageUnion contains all possible properties and
-// values from [ChatCompletionGetResponseChoiceMessageUser],
-// [ChatCompletionGetResponseChoiceMessageSystem],
-// [ChatCompletionGetResponseChoiceMessageAssistant],
-// [ChatCompletionGetResponseChoiceMessageTool],
-// [ChatCompletionGetResponseChoiceMessageDeveloper].
-//
-// Use the [ChatCompletionGetResponseChoiceMessageUnion.AsAny] method to switch on
-// the variant.
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-type ChatCompletionGetResponseChoiceMessageUnion struct {
-	// This field is a union of
-	// [ChatCompletionGetResponseChoiceMessageUserContentUnion],
-	// [ChatCompletionGetResponseChoiceMessageSystemContentUnion],
-	// [ChatCompletionGetResponseChoiceMessageAssistantContentUnion],
-	// [ChatCompletionGetResponseChoiceMessageToolContentUnion],
-	// [ChatCompletionGetResponseChoiceMessageDeveloperContentUnion]
-	Content ChatCompletionGetResponseChoiceMessageUnionContent `json:"content"`
-	Name    string                                             `json:"name"`
-	// Any of "user", "system", "assistant", "tool", "developer".
-	Role string `json:"role"`
-	// This field is from variant [ChatCompletionGetResponseChoiceMessageAssistant].
-	ToolCalls []ChatCompletionGetResponseChoiceMessageAssistantToolCall `json:"tool_calls"`
-	// This field is from variant [ChatCompletionGetResponseChoiceMessageTool].
-	ToolCallID string `json:"tool_call_id"`
-	JSON       struct {
-		Content    respjson.Field
-		Name       respjson.Field
-		Role       respjson.Field
-		ToolCalls  respjson.Field
-		ToolCallID respjson.Field
-		raw        string
-	} `json:"-"`
-}
-
-// anyChatCompletionGetResponseChoiceMessage is implemented by each variant of
-// [ChatCompletionGetResponseChoiceMessageUnion] to add type safety for the return
-// type of [ChatCompletionGetResponseChoiceMessageUnion.AsAny]
-type anyChatCompletionGetResponseChoiceMessage interface {
-	implChatCompletionGetResponseChoiceMessageUnion()
-}
-
-func (ChatCompletionGetResponseChoiceMessageUser) implChatCompletionGetResponseChoiceMessageUnion() {}
-func (ChatCompletionGetResponseChoiceMessageSystem) implChatCompletionGetResponseChoiceMessageUnion() {
-}
-func (ChatCompletionGetResponseChoiceMessageAssistant) implChatCompletionGetResponseChoiceMessageUnion() {
-}
-func (ChatCompletionGetResponseChoiceMessageTool) implChatCompletionGetResponseChoiceMessageUnion() {}
-func (ChatCompletionGetResponseChoiceMessageDeveloper) implChatCompletionGetResponseChoiceMessageUnion() {
-}
-
-// Use the following switch statement to find the correct variant
-//
-//	switch variant := ChatCompletionGetResponseChoiceMessageUnion.AsAny().(type) {
-//	case llamastackclient.ChatCompletionGetResponseChoiceMessageUser:
-//	case llamastackclient.ChatCompletionGetResponseChoiceMessageSystem:
-//	case llamastackclient.ChatCompletionGetResponseChoiceMessageAssistant:
-//	case llamastackclient.ChatCompletionGetResponseChoiceMessageTool:
-//	case llamastackclient.ChatCompletionGetResponseChoiceMessageDeveloper:
-//	default:
-//	  fmt.Errorf("no variant present")
-//	}
-func (u ChatCompletionGetResponseChoiceMessageUnion) AsAny() anyChatCompletionGetResponseChoiceMessage {
-	switch u.Role {
-	case "user":
-		return u.AsUser()
-	case "system":
-		return u.AsSystem()
-	case "assistant":
-		return u.AsAssistant()
-	case "tool":
-		return u.AsTool()
-	case "developer":
-		return u.AsDeveloper()
-	}
-	return nil
-}
-
-func (u ChatCompletionGetResponseChoiceMessageUnion) AsUser() (v ChatCompletionGetResponseChoiceMessageUser) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionGetResponseChoiceMessageUnion) AsSystem() (v ChatCompletionGetResponseChoiceMessageSystem) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionGetResponseChoiceMessageUnion) AsAssistant() (v ChatCompletionGetResponseChoiceMessageAssistant) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionGetResponseChoiceMessageUnion) AsTool() (v ChatCompletionGetResponseChoiceMessageTool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionGetResponseChoiceMessageUnion) AsDeveloper() (v ChatCompletionGetResponseChoiceMessageDeveloper) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ChatCompletionGetResponseChoiceMessageUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ChatCompletionGetResponseChoiceMessageUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ChatCompletionGetResponseChoiceMessageUnionContent is an implicit subunion of
-// [ChatCompletionGetResponseChoiceMessageUnion].
-// ChatCompletionGetResponseChoiceMessageUnionContent provides convenient access to
-// the sub-properties of the union.
-//
-// For type safety it is recommended to directly use a variant of the
-// [ChatCompletionGetResponseChoiceMessageUnion].
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString
-// OfListOpenAIChatCompletionContentPartTextOpenAIChatCompletionContentPartImageParamOpenAIFile
-// OfListOpenAIChatCompletionContentPartText]
-type ChatCompletionGetResponseChoiceMessageUnionContent struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a
-	// [[]ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion]
-	// instead of an object.
-	OfListOpenAIChatCompletionContentPartTextOpenAIChatCompletionContentPartImageParamOpenAIFile []ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion `json:",inline"`
-	// This field will be present if the value is a
-	// [[]ChatCompletionGetResponseChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem]
-	// instead of an object.
-	OfListOpenAIChatCompletionContentPartText []ChatCompletionGetResponseChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem `json:",inline"`
-	JSON                                      struct {
-		OfString                                                                                     respjson.Field
-		OfListOpenAIChatCompletionContentPartTextOpenAIChatCompletionContentPartImageParamOpenAIFile respjson.Field
-		OfListOpenAIChatCompletionContentPartText                                                    respjson.Field
-		raw                                                                                          string
-	} `json:"-"`
-}
-
-func (r *ChatCompletionGetResponseChoiceMessageUnionContent) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A message from the user in an OpenAI-compatible chat completion request.
-type ChatCompletionGetResponseChoiceMessageUser struct {
-	// The content of the message, which can include text and other media.
-	Content ChatCompletionGetResponseChoiceMessageUserContentUnion `json:"content,required"`
-	// The name of the user message participant.
-	Name string `json:"name,nullable"`
-	// Must be 'user' to identify this as a user message.
-	//
-	// Any of "user".
-	Role string `json:"role"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Content     respjson.Field
-		Name        respjson.Field
-		Role        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionGetResponseChoiceMessageUser) RawJSON() string { return r.JSON.raw }
-func (r *ChatCompletionGetResponseChoiceMessageUser) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ChatCompletionGetResponseChoiceMessageUserContentUnion contains all possible
-// properties and values from [string],
-// [[]ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString
-// OfListOpenAIChatCompletionContentPartTextOpenAIChatCompletionContentPartImageParamOpenAIFile]
-type ChatCompletionGetResponseChoiceMessageUserContentUnion struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a
-	// [[]ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion]
-	// instead of an object.
-	OfListOpenAIChatCompletionContentPartTextOpenAIChatCompletionContentPartImageParamOpenAIFile []ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion `json:",inline"`
-	JSON                                                                                         struct {
-		OfString                                                                                     respjson.Field
-		OfListOpenAIChatCompletionContentPartTextOpenAIChatCompletionContentPartImageParamOpenAIFile respjson.Field
-		raw                                                                                          string
-	} `json:"-"`
-}
-
-func (u ChatCompletionGetResponseChoiceMessageUserContentUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionGetResponseChoiceMessageUserContentUnion) AsListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFile() (v []ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ChatCompletionGetResponseChoiceMessageUserContentUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ChatCompletionGetResponseChoiceMessageUserContentUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion
-// contains all possible properties and values from
-// [ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText],
-// [ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL],
-// [ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile].
-//
-// Use the
-// [ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion.AsAny]
-// method to switch on the variant.
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-type ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion struct {
-	// This field is from variant
-	// [ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText].
-	Text string `json:"text"`
-	// Any of "text", "image_url", "file".
-	Type string `json:"type"`
-	// This field is from variant
-	// [ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL].
-	ImageURL ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL `json:"image_url"`
-	// This field is from variant
-	// [ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile].
-	File ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile `json:"file"`
-	JSON struct {
-		Text     respjson.Field
-		Type     respjson.Field
-		ImageURL respjson.Field
-		File     respjson.Field
-		raw      string
-	} `json:"-"`
-}
-
-// anyChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItem
-// is implemented by each variant of
-// [ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion]
-// to add type safety for the return type of
-// [ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion.AsAny]
-type anyChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItem interface {
-	implChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion()
-}
-
-func (ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText) implChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion() {
-}
-func (ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL) implChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion() {
-}
-func (ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile) implChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion() {
-}
-
-// Use the following switch statement to find the correct variant
-//
-//	switch variant := ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion.AsAny().(type) {
-//	case llamastackclient.ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText:
-//	case llamastackclient.ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL:
-//	case llamastackclient.ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile:
-//	default:
-//	  fmt.Errorf("no variant present")
-//	}
-func (u ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion) AsAny() anyChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItem {
-	switch u.Type {
-	case "text":
-		return u.AsText()
-	case "image_url":
-		return u.AsImageURL()
-	case "file":
-		return u.AsFile()
-	}
-	return nil
-}
-
-func (u ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion) AsText() (v ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion) AsImageURL() (v ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion) AsFile() (v ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion) RawJSON() string {
-	return u.JSON.raw
-}
-
-func (r *ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Text content part for OpenAI-compatible chat completion messages.
-type ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText struct {
-	// The text content of the message.
-	Text string `json:"text,required"`
-	// Must be 'text' to identify this as text content.
-	//
-	// Any of "text".
-	Type string `json:"type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Text        respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Image content part for OpenAI-compatible chat completion messages.
-type ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL struct {
-	// Image URL specification and processing details.
-	ImageURL ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL `json:"image_url,required"`
-	// Must be 'image_url' to identify this as image content.
-	//
-	// Any of "image_url".
-	Type string `json:"type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ImageURL    respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Image URL specification and processing details.
-type ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL struct {
-	// URL of the image to include in the message.
-	URL string `json:"url,required"`
-	// Level of detail for image processing. Can be 'low', 'high', or 'auto'.
-	//
-	// Any of "low", "high", "auto".
-	Detail string `json:"detail,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		URL         respjson.Field
-		Detail      respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile struct {
-	// File specification.
-	File ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile `json:"file,required"`
-	// Must be 'file' to identify this as file content.
-	//
-	// Any of "file".
-	Type string `json:"type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		File        respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// File specification.
-type ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile struct {
-	// Base64-encoded file data.
-	FileData string `json:"file_data,nullable"`
-	// ID of an uploaded file.
-	FileID string `json:"file_id,nullable"`
-	// Name of the file.
-	Filename string `json:"filename,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		FileData    respjson.Field
-		FileID      respjson.Field
-		Filename    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionGetResponseChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A system message providing instructions or context to the model.
-type ChatCompletionGetResponseChoiceMessageSystem struct {
-	// The content of the 'system prompt'. If multiple system messages are provided,
-	// they are concatenated.
-	Content ChatCompletionGetResponseChoiceMessageSystemContentUnion `json:"content,required"`
-	// The name of the system message participant.
-	Name string `json:"name,nullable"`
-	// Must be 'system' to identify this as a system message.
-	//
-	// Any of "system".
-	Role string `json:"role"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Content     respjson.Field
-		Name        respjson.Field
-		Role        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionGetResponseChoiceMessageSystem) RawJSON() string { return r.JSON.raw }
-func (r *ChatCompletionGetResponseChoiceMessageSystem) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ChatCompletionGetResponseChoiceMessageSystemContentUnion contains all possible
-// properties and values from [string],
-// [[]ChatCompletionGetResponseChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString OfListOpenAIChatCompletionContentPartText]
-type ChatCompletionGetResponseChoiceMessageSystemContentUnion struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a
-	// [[]ChatCompletionGetResponseChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem]
-	// instead of an object.
-	OfListOpenAIChatCompletionContentPartText []ChatCompletionGetResponseChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem `json:",inline"`
-	JSON                                      struct {
-		OfString                                  respjson.Field
-		OfListOpenAIChatCompletionContentPartText respjson.Field
-		raw                                       string
-	} `json:"-"`
-}
-
-func (u ChatCompletionGetResponseChoiceMessageSystemContentUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionGetResponseChoiceMessageSystemContentUnion) AsListOpenAIChatCompletionContentPartTextParam() (v []ChatCompletionGetResponseChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ChatCompletionGetResponseChoiceMessageSystemContentUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ChatCompletionGetResponseChoiceMessageSystemContentUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Text content part for OpenAI-compatible chat completion messages.
-type ChatCompletionGetResponseChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem struct {
-	// The text content of the message.
-	Text string `json:"text,required"`
-	// Must be 'text' to identify this as text content.
-	//
-	// Any of "text".
-	Type string `json:"type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Text        respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionGetResponseChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionGetResponseChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A message containing the model's (assistant) response in an OpenAI-compatible
-// chat completion request.
-type ChatCompletionGetResponseChoiceMessageAssistant struct {
-	// The content of the model's response.
-	Content ChatCompletionGetResponseChoiceMessageAssistantContentUnion `json:"content,nullable"`
-	// The name of the assistant message participant.
-	Name string `json:"name,nullable"`
-	// Must be 'assistant' to identify this as the model's response.
+// The message from the model.
+type ChatCompletionGetResponseChoiceMessage struct {
+	// Annotations for the message, when applicable.
+	Annotations []map[string]any `json:"annotations"`
+	// Audio response data when using audio output modality.
+	Audio map[string]any `json:"audio,nullable"`
+	// The content of the message.
+	Content string `json:"content,nullable"`
+	// Deprecated: the name and arguments of a function that should be called.
+	FunctionCall ChatCompletionGetResponseChoiceMessageFunctionCall `json:"function_call"`
+	// The refusal message generated by the model.
+	Refusal string `json:"refusal,nullable"`
+	// The role of the message author, always 'assistant' in responses.
 	//
 	// Any of "assistant".
 	Role string `json:"role"`
-	// List of tool calls. Each tool call is an OpenAIChatCompletionToolCall object.
-	ToolCalls []ChatCompletionGetResponseChoiceMessageAssistantToolCall `json:"tool_calls,nullable"`
+	// The tool calls generated by the model.
+	ToolCalls []ChatCompletionGetResponseChoiceMessageToolCall `json:"tool_calls"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Content     respjson.Field
+		Annotations  respjson.Field
+		Audio        respjson.Field
+		Content      respjson.Field
+		FunctionCall respjson.Field
+		Refusal      respjson.Field
+		Role         respjson.Field
+		ToolCalls    respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionGetResponseChoiceMessage) RawJSON() string { return r.JSON.raw }
+func (r *ChatCompletionGetResponseChoiceMessage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Deprecated: the name and arguments of a function that should be called.
+type ChatCompletionGetResponseChoiceMessageFunctionCall struct {
+	// Arguments to pass to the function as a JSON string.
+	Arguments string `json:"arguments,nullable"`
+	// Name of the function to call.
+	Name string `json:"name,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Arguments   respjson.Field
 		Name        respjson.Field
-		Role        respjson.Field
-		ToolCalls   respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
-func (r ChatCompletionGetResponseChoiceMessageAssistant) RawJSON() string { return r.JSON.raw }
-func (r *ChatCompletionGetResponseChoiceMessageAssistant) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ChatCompletionGetResponseChoiceMessageAssistantContentUnion contains all
-// possible properties and values from [string],
-// [[]ChatCompletionGetResponseChoiceMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString OfListOpenAIChatCompletionContentPartText]
-type ChatCompletionGetResponseChoiceMessageAssistantContentUnion struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a
-	// [[]ChatCompletionGetResponseChoiceMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem]
-	// instead of an object.
-	OfListOpenAIChatCompletionContentPartText []ChatCompletionGetResponseChoiceMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem `json:",inline"`
-	JSON                                      struct {
-		OfString                                  respjson.Field
-		OfListOpenAIChatCompletionContentPartText respjson.Field
-		raw                                       string
-	} `json:"-"`
-}
-
-func (u ChatCompletionGetResponseChoiceMessageAssistantContentUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionGetResponseChoiceMessageAssistantContentUnion) AsListOpenAIChatCompletionContentPartTextParam() (v []ChatCompletionGetResponseChoiceMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ChatCompletionGetResponseChoiceMessageAssistantContentUnion) RawJSON() string {
-	return u.JSON.raw
-}
-
-func (r *ChatCompletionGetResponseChoiceMessageAssistantContentUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Text content part for OpenAI-compatible chat completion messages.
-type ChatCompletionGetResponseChoiceMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem struct {
-	// The text content of the message.
-	Text string `json:"text,required"`
-	// Must be 'text' to identify this as text content.
-	//
-	// Any of "text".
-	Type string `json:"type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Text        respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionGetResponseChoiceMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionGetResponseChoiceMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem) UnmarshalJSON(data []byte) error {
+func (r ChatCompletionGetResponseChoiceMessageFunctionCall) RawJSON() string { return r.JSON.raw }
+func (r *ChatCompletionGetResponseChoiceMessageFunctionCall) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Tool call specification for OpenAI-compatible chat completion responses.
-type ChatCompletionGetResponseChoiceMessageAssistantToolCall struct {
+type ChatCompletionGetResponseChoiceMessageToolCall struct {
 	// Unique identifier for the tool call.
 	ID string `json:"id,nullable"`
 	// Function call details for OpenAI-compatible tool calls.
-	Function ChatCompletionGetResponseChoiceMessageAssistantToolCallFunction `json:"function,nullable"`
+	Function ChatCompletionGetResponseChoiceMessageToolCallFunction `json:"function,nullable"`
 	// Index of the tool call in the list.
 	Index int64 `json:"index,nullable"`
 	// Must be 'function' to identify this as a function call.
@@ -1914,13 +613,13 @@ type ChatCompletionGetResponseChoiceMessageAssistantToolCall struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r ChatCompletionGetResponseChoiceMessageAssistantToolCall) RawJSON() string { return r.JSON.raw }
-func (r *ChatCompletionGetResponseChoiceMessageAssistantToolCall) UnmarshalJSON(data []byte) error {
+func (r ChatCompletionGetResponseChoiceMessageToolCall) RawJSON() string { return r.JSON.raw }
+func (r *ChatCompletionGetResponseChoiceMessageToolCall) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Function call details for OpenAI-compatible tool calls.
-type ChatCompletionGetResponseChoiceMessageAssistantToolCallFunction struct {
+type ChatCompletionGetResponseChoiceMessageToolCallFunction struct {
 	// Arguments to pass to the function as a JSON string.
 	Arguments string `json:"arguments,nullable"`
 	// Name of the function to call.
@@ -1935,193 +634,8 @@ type ChatCompletionGetResponseChoiceMessageAssistantToolCallFunction struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r ChatCompletionGetResponseChoiceMessageAssistantToolCallFunction) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionGetResponseChoiceMessageAssistantToolCallFunction) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A message representing the result of a tool invocation in an OpenAI-compatible
-// chat completion request.
-type ChatCompletionGetResponseChoiceMessageTool struct {
-	// The response content from the tool.
-	Content ChatCompletionGetResponseChoiceMessageToolContentUnion `json:"content,required"`
-	// Unique identifier for the tool call this response is for.
-	ToolCallID string `json:"tool_call_id,required"`
-	// Must be 'tool' to identify this as a tool response.
-	//
-	// Any of "tool".
-	Role string `json:"role"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Content     respjson.Field
-		ToolCallID  respjson.Field
-		Role        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionGetResponseChoiceMessageTool) RawJSON() string { return r.JSON.raw }
-func (r *ChatCompletionGetResponseChoiceMessageTool) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ChatCompletionGetResponseChoiceMessageToolContentUnion contains all possible
-// properties and values from [string],
-// [[]ChatCompletionGetResponseChoiceMessageToolContentListOpenAIChatCompletionContentPartTextParamItem].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString OfListOpenAIChatCompletionContentPartText]
-type ChatCompletionGetResponseChoiceMessageToolContentUnion struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a
-	// [[]ChatCompletionGetResponseChoiceMessageToolContentListOpenAIChatCompletionContentPartTextParamItem]
-	// instead of an object.
-	OfListOpenAIChatCompletionContentPartText []ChatCompletionGetResponseChoiceMessageToolContentListOpenAIChatCompletionContentPartTextParamItem `json:",inline"`
-	JSON                                      struct {
-		OfString                                  respjson.Field
-		OfListOpenAIChatCompletionContentPartText respjson.Field
-		raw                                       string
-	} `json:"-"`
-}
-
-func (u ChatCompletionGetResponseChoiceMessageToolContentUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionGetResponseChoiceMessageToolContentUnion) AsListOpenAIChatCompletionContentPartTextParam() (v []ChatCompletionGetResponseChoiceMessageToolContentListOpenAIChatCompletionContentPartTextParamItem) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ChatCompletionGetResponseChoiceMessageToolContentUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ChatCompletionGetResponseChoiceMessageToolContentUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Text content part for OpenAI-compatible chat completion messages.
-type ChatCompletionGetResponseChoiceMessageToolContentListOpenAIChatCompletionContentPartTextParamItem struct {
-	// The text content of the message.
-	Text string `json:"text,required"`
-	// Must be 'text' to identify this as text content.
-	//
-	// Any of "text".
-	Type string `json:"type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Text        respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionGetResponseChoiceMessageToolContentListOpenAIChatCompletionContentPartTextParamItem) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionGetResponseChoiceMessageToolContentListOpenAIChatCompletionContentPartTextParamItem) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A message from the developer in an OpenAI-compatible chat completion request.
-type ChatCompletionGetResponseChoiceMessageDeveloper struct {
-	// The content of the developer message.
-	Content ChatCompletionGetResponseChoiceMessageDeveloperContentUnion `json:"content,required"`
-	// The name of the developer message participant.
-	Name string `json:"name,nullable"`
-	// Must be 'developer' to identify this as a developer message.
-	//
-	// Any of "developer".
-	Role string `json:"role"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Content     respjson.Field
-		Name        respjson.Field
-		Role        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionGetResponseChoiceMessageDeveloper) RawJSON() string { return r.JSON.raw }
-func (r *ChatCompletionGetResponseChoiceMessageDeveloper) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ChatCompletionGetResponseChoiceMessageDeveloperContentUnion contains all
-// possible properties and values from [string],
-// [[]ChatCompletionGetResponseChoiceMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString OfListOpenAIChatCompletionContentPartText]
-type ChatCompletionGetResponseChoiceMessageDeveloperContentUnion struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a
-	// [[]ChatCompletionGetResponseChoiceMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem]
-	// instead of an object.
-	OfListOpenAIChatCompletionContentPartText []ChatCompletionGetResponseChoiceMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem `json:",inline"`
-	JSON                                      struct {
-		OfString                                  respjson.Field
-		OfListOpenAIChatCompletionContentPartText respjson.Field
-		raw                                       string
-	} `json:"-"`
-}
-
-func (u ChatCompletionGetResponseChoiceMessageDeveloperContentUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionGetResponseChoiceMessageDeveloperContentUnion) AsListOpenAIChatCompletionContentPartTextParam() (v []ChatCompletionGetResponseChoiceMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ChatCompletionGetResponseChoiceMessageDeveloperContentUnion) RawJSON() string {
-	return u.JSON.raw
-}
-
-func (r *ChatCompletionGetResponseChoiceMessageDeveloperContentUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Text content part for OpenAI-compatible chat completion messages.
-type ChatCompletionGetResponseChoiceMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem struct {
-	// The text content of the message.
-	Text string `json:"text,required"`
-	// Must be 'text' to identify this as text content.
-	//
-	// Any of "text".
-	Type string `json:"type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Text        respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionGetResponseChoiceMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionGetResponseChoiceMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem) UnmarshalJSON(data []byte) error {
+func (r ChatCompletionGetResponseChoiceMessageToolCallFunction) RawJSON() string { return r.JSON.raw }
+func (r *ChatCompletionGetResponseChoiceMessageToolCallFunction) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -3255,7 +1769,7 @@ type ChatCompletionListResponseDataChoice struct {
 	// The index of the choice.
 	Index int64 `json:"index,required"`
 	// The message from the model.
-	Message ChatCompletionListResponseDataChoiceMessageUnion `json:"message,required"`
+	Message ChatCompletionListResponseDataChoiceMessage `json:"message,required"`
 	// The log probabilities for the tokens in the message from an OpenAI-compatible
 	// chat completion response.
 	Logprobs ChatCompletionListResponseDataChoiceLogprobs `json:"logprobs,nullable"`
@@ -3276,636 +1790,71 @@ func (r *ChatCompletionListResponseDataChoice) UnmarshalJSON(data []byte) error 
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// ChatCompletionListResponseDataChoiceMessageUnion contains all possible
-// properties and values from [ChatCompletionListResponseDataChoiceMessageUser],
-// [ChatCompletionListResponseDataChoiceMessageSystem],
-// [ChatCompletionListResponseDataChoiceMessageAssistant],
-// [ChatCompletionListResponseDataChoiceMessageTool],
-// [ChatCompletionListResponseDataChoiceMessageDeveloper].
-//
-// Use the [ChatCompletionListResponseDataChoiceMessageUnion.AsAny] method to
-// switch on the variant.
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-type ChatCompletionListResponseDataChoiceMessageUnion struct {
-	// This field is a union of
-	// [ChatCompletionListResponseDataChoiceMessageUserContentUnion],
-	// [ChatCompletionListResponseDataChoiceMessageSystemContentUnion],
-	// [ChatCompletionListResponseDataChoiceMessageAssistantContentUnion],
-	// [ChatCompletionListResponseDataChoiceMessageToolContentUnion],
-	// [ChatCompletionListResponseDataChoiceMessageDeveloperContentUnion]
-	Content ChatCompletionListResponseDataChoiceMessageUnionContent `json:"content"`
-	Name    string                                                  `json:"name"`
-	// Any of "user", "system", "assistant", "tool", "developer".
-	Role string `json:"role"`
-	// This field is from variant
-	// [ChatCompletionListResponseDataChoiceMessageAssistant].
-	ToolCalls []ChatCompletionListResponseDataChoiceMessageAssistantToolCall `json:"tool_calls"`
-	// This field is from variant [ChatCompletionListResponseDataChoiceMessageTool].
-	ToolCallID string `json:"tool_call_id"`
-	JSON       struct {
-		Content    respjson.Field
-		Name       respjson.Field
-		Role       respjson.Field
-		ToolCalls  respjson.Field
-		ToolCallID respjson.Field
-		raw        string
-	} `json:"-"`
-}
-
-// anyChatCompletionListResponseDataChoiceMessage is implemented by each variant of
-// [ChatCompletionListResponseDataChoiceMessageUnion] to add type safety for the
-// return type of [ChatCompletionListResponseDataChoiceMessageUnion.AsAny]
-type anyChatCompletionListResponseDataChoiceMessage interface {
-	implChatCompletionListResponseDataChoiceMessageUnion()
-}
-
-func (ChatCompletionListResponseDataChoiceMessageUser) implChatCompletionListResponseDataChoiceMessageUnion() {
-}
-func (ChatCompletionListResponseDataChoiceMessageSystem) implChatCompletionListResponseDataChoiceMessageUnion() {
-}
-func (ChatCompletionListResponseDataChoiceMessageAssistant) implChatCompletionListResponseDataChoiceMessageUnion() {
-}
-func (ChatCompletionListResponseDataChoiceMessageTool) implChatCompletionListResponseDataChoiceMessageUnion() {
-}
-func (ChatCompletionListResponseDataChoiceMessageDeveloper) implChatCompletionListResponseDataChoiceMessageUnion() {
-}
-
-// Use the following switch statement to find the correct variant
-//
-//	switch variant := ChatCompletionListResponseDataChoiceMessageUnion.AsAny().(type) {
-//	case llamastackclient.ChatCompletionListResponseDataChoiceMessageUser:
-//	case llamastackclient.ChatCompletionListResponseDataChoiceMessageSystem:
-//	case llamastackclient.ChatCompletionListResponseDataChoiceMessageAssistant:
-//	case llamastackclient.ChatCompletionListResponseDataChoiceMessageTool:
-//	case llamastackclient.ChatCompletionListResponseDataChoiceMessageDeveloper:
-//	default:
-//	  fmt.Errorf("no variant present")
-//	}
-func (u ChatCompletionListResponseDataChoiceMessageUnion) AsAny() anyChatCompletionListResponseDataChoiceMessage {
-	switch u.Role {
-	case "user":
-		return u.AsUser()
-	case "system":
-		return u.AsSystem()
-	case "assistant":
-		return u.AsAssistant()
-	case "tool":
-		return u.AsTool()
-	case "developer":
-		return u.AsDeveloper()
-	}
-	return nil
-}
-
-func (u ChatCompletionListResponseDataChoiceMessageUnion) AsUser() (v ChatCompletionListResponseDataChoiceMessageUser) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionListResponseDataChoiceMessageUnion) AsSystem() (v ChatCompletionListResponseDataChoiceMessageSystem) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionListResponseDataChoiceMessageUnion) AsAssistant() (v ChatCompletionListResponseDataChoiceMessageAssistant) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionListResponseDataChoiceMessageUnion) AsTool() (v ChatCompletionListResponseDataChoiceMessageTool) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionListResponseDataChoiceMessageUnion) AsDeveloper() (v ChatCompletionListResponseDataChoiceMessageDeveloper) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ChatCompletionListResponseDataChoiceMessageUnion) RawJSON() string { return u.JSON.raw }
-
-func (r *ChatCompletionListResponseDataChoiceMessageUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ChatCompletionListResponseDataChoiceMessageUnionContent is an implicit subunion
-// of [ChatCompletionListResponseDataChoiceMessageUnion].
-// ChatCompletionListResponseDataChoiceMessageUnionContent provides convenient
-// access to the sub-properties of the union.
-//
-// For type safety it is recommended to directly use a variant of the
-// [ChatCompletionListResponseDataChoiceMessageUnion].
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString
-// OfListOpenAIChatCompletionContentPartTextOpenAIChatCompletionContentPartImageParamOpenAIFile
-// OfListOpenAIChatCompletionContentPartText]
-type ChatCompletionListResponseDataChoiceMessageUnionContent struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a
-	// [[]ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion]
-	// instead of an object.
-	OfListOpenAIChatCompletionContentPartTextOpenAIChatCompletionContentPartImageParamOpenAIFile []ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion `json:",inline"`
-	// This field will be present if the value is a
-	// [[]ChatCompletionListResponseDataChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem]
-	// instead of an object.
-	OfListOpenAIChatCompletionContentPartText []ChatCompletionListResponseDataChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem `json:",inline"`
-	JSON                                      struct {
-		OfString                                                                                     respjson.Field
-		OfListOpenAIChatCompletionContentPartTextOpenAIChatCompletionContentPartImageParamOpenAIFile respjson.Field
-		OfListOpenAIChatCompletionContentPartText                                                    respjson.Field
-		raw                                                                                          string
-	} `json:"-"`
-}
-
-func (r *ChatCompletionListResponseDataChoiceMessageUnionContent) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A message from the user in an OpenAI-compatible chat completion request.
-type ChatCompletionListResponseDataChoiceMessageUser struct {
-	// The content of the message, which can include text and other media.
-	Content ChatCompletionListResponseDataChoiceMessageUserContentUnion `json:"content,required"`
-	// The name of the user message participant.
-	Name string `json:"name,nullable"`
-	// Must be 'user' to identify this as a user message.
-	//
-	// Any of "user".
-	Role string `json:"role"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Content     respjson.Field
-		Name        respjson.Field
-		Role        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionListResponseDataChoiceMessageUser) RawJSON() string { return r.JSON.raw }
-func (r *ChatCompletionListResponseDataChoiceMessageUser) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ChatCompletionListResponseDataChoiceMessageUserContentUnion contains all
-// possible properties and values from [string],
-// [[]ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString
-// OfListOpenAIChatCompletionContentPartTextOpenAIChatCompletionContentPartImageParamOpenAIFile]
-type ChatCompletionListResponseDataChoiceMessageUserContentUnion struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a
-	// [[]ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion]
-	// instead of an object.
-	OfListOpenAIChatCompletionContentPartTextOpenAIChatCompletionContentPartImageParamOpenAIFile []ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion `json:",inline"`
-	JSON                                                                                         struct {
-		OfString                                                                                     respjson.Field
-		OfListOpenAIChatCompletionContentPartTextOpenAIChatCompletionContentPartImageParamOpenAIFile respjson.Field
-		raw                                                                                          string
-	} `json:"-"`
-}
-
-func (u ChatCompletionListResponseDataChoiceMessageUserContentUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionListResponseDataChoiceMessageUserContentUnion) AsListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFile() (v []ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ChatCompletionListResponseDataChoiceMessageUserContentUnion) RawJSON() string {
-	return u.JSON.raw
-}
-
-func (r *ChatCompletionListResponseDataChoiceMessageUserContentUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion
-// contains all possible properties and values from
-// [ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText],
-// [ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL],
-// [ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile].
-//
-// Use the
-// [ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion.AsAny]
-// method to switch on the variant.
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-type ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion struct {
-	// This field is from variant
-	// [ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText].
-	Text string `json:"text"`
-	// Any of "text", "image_url", "file".
-	Type string `json:"type"`
-	// This field is from variant
-	// [ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL].
-	ImageURL ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL `json:"image_url"`
-	// This field is from variant
-	// [ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile].
-	File ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile `json:"file"`
-	JSON struct {
-		Text     respjson.Field
-		Type     respjson.Field
-		ImageURL respjson.Field
-		File     respjson.Field
-		raw      string
-	} `json:"-"`
-}
-
-// anyChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItem
-// is implemented by each variant of
-// [ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion]
-// to add type safety for the return type of
-// [ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion.AsAny]
-type anyChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItem interface {
-	implChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion()
-}
-
-func (ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText) implChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion() {
-}
-func (ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL) implChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion() {
-}
-func (ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile) implChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion() {
-}
-
-// Use the following switch statement to find the correct variant
-//
-//	switch variant := ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion.AsAny().(type) {
-//	case llamastackclient.ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText:
-//	case llamastackclient.ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL:
-//	case llamastackclient.ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile:
-//	default:
-//	  fmt.Errorf("no variant present")
-//	}
-func (u ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion) AsAny() anyChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItem {
-	switch u.Type {
-	case "text":
-		return u.AsText()
-	case "image_url":
-		return u.AsImageURL()
-	case "file":
-		return u.AsFile()
-	}
-	return nil
-}
-
-func (u ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion) AsText() (v ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion) AsImageURL() (v ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion) AsFile() (v ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion) RawJSON() string {
-	return u.JSON.raw
-}
-
-func (r *ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Text content part for OpenAI-compatible chat completion messages.
-type ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText struct {
-	// The text content of the message.
-	Text string `json:"text,required"`
-	// Must be 'text' to identify this as text content.
-	//
-	// Any of "text".
-	Type string `json:"type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Text        respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Image content part for OpenAI-compatible chat completion messages.
-type ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL struct {
-	// Image URL specification and processing details.
-	ImageURL ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL `json:"image_url,required"`
-	// Must be 'image_url' to identify this as image content.
-	//
-	// Any of "image_url".
-	Type string `json:"type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ImageURL    respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Image URL specification and processing details.
-type ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL struct {
-	// URL of the image to include in the message.
-	URL string `json:"url,required"`
-	// Level of detail for image processing. Can be 'low', 'high', or 'auto'.
-	//
-	// Any of "low", "high", "auto".
-	Detail string `json:"detail,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		URL         respjson.Field
-		Detail      respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-type ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile struct {
-	// File specification.
-	File ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile `json:"file,required"`
-	// Must be 'file' to identify this as file content.
-	//
-	// Any of "file".
-	Type string `json:"type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		File        respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// File specification.
-type ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile struct {
-	// Base64-encoded file data.
-	FileData string `json:"file_data,nullable"`
-	// ID of an uploaded file.
-	FileID string `json:"file_id,nullable"`
-	// Name of the file.
-	Filename string `json:"filename,nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		FileData    respjson.Field
-		FileID      respjson.Field
-		Filename    respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionListResponseDataChoiceMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A system message providing instructions or context to the model.
-type ChatCompletionListResponseDataChoiceMessageSystem struct {
-	// The content of the 'system prompt'. If multiple system messages are provided,
-	// they are concatenated.
-	Content ChatCompletionListResponseDataChoiceMessageSystemContentUnion `json:"content,required"`
-	// The name of the system message participant.
-	Name string `json:"name,nullable"`
-	// Must be 'system' to identify this as a system message.
-	//
-	// Any of "system".
-	Role string `json:"role"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Content     respjson.Field
-		Name        respjson.Field
-		Role        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionListResponseDataChoiceMessageSystem) RawJSON() string { return r.JSON.raw }
-func (r *ChatCompletionListResponseDataChoiceMessageSystem) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ChatCompletionListResponseDataChoiceMessageSystemContentUnion contains all
-// possible properties and values from [string],
-// [[]ChatCompletionListResponseDataChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString OfListOpenAIChatCompletionContentPartText]
-type ChatCompletionListResponseDataChoiceMessageSystemContentUnion struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a
-	// [[]ChatCompletionListResponseDataChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem]
-	// instead of an object.
-	OfListOpenAIChatCompletionContentPartText []ChatCompletionListResponseDataChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem `json:",inline"`
-	JSON                                      struct {
-		OfString                                  respjson.Field
-		OfListOpenAIChatCompletionContentPartText respjson.Field
-		raw                                       string
-	} `json:"-"`
-}
-
-func (u ChatCompletionListResponseDataChoiceMessageSystemContentUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionListResponseDataChoiceMessageSystemContentUnion) AsListOpenAIChatCompletionContentPartTextParam() (v []ChatCompletionListResponseDataChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ChatCompletionListResponseDataChoiceMessageSystemContentUnion) RawJSON() string {
-	return u.JSON.raw
-}
-
-func (r *ChatCompletionListResponseDataChoiceMessageSystemContentUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Text content part for OpenAI-compatible chat completion messages.
-type ChatCompletionListResponseDataChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem struct {
-	// The text content of the message.
-	Text string `json:"text,required"`
-	// Must be 'text' to identify this as text content.
-	//
-	// Any of "text".
-	Type string `json:"type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Text        respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionListResponseDataChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionListResponseDataChoiceMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A message containing the model's (assistant) response in an OpenAI-compatible
-// chat completion request.
-type ChatCompletionListResponseDataChoiceMessageAssistant struct {
-	// The content of the model's response.
-	Content ChatCompletionListResponseDataChoiceMessageAssistantContentUnion `json:"content,nullable"`
-	// The name of the assistant message participant.
-	Name string `json:"name,nullable"`
-	// Must be 'assistant' to identify this as the model's response.
+// The message from the model.
+type ChatCompletionListResponseDataChoiceMessage struct {
+	// Annotations for the message, when applicable.
+	Annotations []map[string]any `json:"annotations"`
+	// Audio response data when using audio output modality.
+	Audio map[string]any `json:"audio,nullable"`
+	// The content of the message.
+	Content string `json:"content,nullable"`
+	// Deprecated: the name and arguments of a function that should be called.
+	FunctionCall ChatCompletionListResponseDataChoiceMessageFunctionCall `json:"function_call"`
+	// The refusal message generated by the model.
+	Refusal string `json:"refusal,nullable"`
+	// The role of the message author, always 'assistant' in responses.
 	//
 	// Any of "assistant".
 	Role string `json:"role"`
-	// List of tool calls. Each tool call is an OpenAIChatCompletionToolCall object.
-	ToolCalls []ChatCompletionListResponseDataChoiceMessageAssistantToolCall `json:"tool_calls,nullable"`
+	// The tool calls generated by the model.
+	ToolCalls []ChatCompletionListResponseDataChoiceMessageToolCall `json:"tool_calls"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Content     respjson.Field
+		Annotations  respjson.Field
+		Audio        respjson.Field
+		Content      respjson.Field
+		FunctionCall respjson.Field
+		Refusal      respjson.Field
+		Role         respjson.Field
+		ToolCalls    respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ChatCompletionListResponseDataChoiceMessage) RawJSON() string { return r.JSON.raw }
+func (r *ChatCompletionListResponseDataChoiceMessage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Deprecated: the name and arguments of a function that should be called.
+type ChatCompletionListResponseDataChoiceMessageFunctionCall struct {
+	// Arguments to pass to the function as a JSON string.
+	Arguments string `json:"arguments,nullable"`
+	// Name of the function to call.
+	Name string `json:"name,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Arguments   respjson.Field
 		Name        respjson.Field
-		Role        respjson.Field
-		ToolCalls   respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
 }
 
 // Returns the unmodified JSON received from the API
-func (r ChatCompletionListResponseDataChoiceMessageAssistant) RawJSON() string { return r.JSON.raw }
-func (r *ChatCompletionListResponseDataChoiceMessageAssistant) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ChatCompletionListResponseDataChoiceMessageAssistantContentUnion contains all
-// possible properties and values from [string],
-// [[]ChatCompletionListResponseDataChoiceMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString OfListOpenAIChatCompletionContentPartText]
-type ChatCompletionListResponseDataChoiceMessageAssistantContentUnion struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a
-	// [[]ChatCompletionListResponseDataChoiceMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem]
-	// instead of an object.
-	OfListOpenAIChatCompletionContentPartText []ChatCompletionListResponseDataChoiceMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem `json:",inline"`
-	JSON                                      struct {
-		OfString                                  respjson.Field
-		OfListOpenAIChatCompletionContentPartText respjson.Field
-		raw                                       string
-	} `json:"-"`
-}
-
-func (u ChatCompletionListResponseDataChoiceMessageAssistantContentUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionListResponseDataChoiceMessageAssistantContentUnion) AsListOpenAIChatCompletionContentPartTextParam() (v []ChatCompletionListResponseDataChoiceMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ChatCompletionListResponseDataChoiceMessageAssistantContentUnion) RawJSON() string {
-	return u.JSON.raw
-}
-
-func (r *ChatCompletionListResponseDataChoiceMessageAssistantContentUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Text content part for OpenAI-compatible chat completion messages.
-type ChatCompletionListResponseDataChoiceMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem struct {
-	// The text content of the message.
-	Text string `json:"text,required"`
-	// Must be 'text' to identify this as text content.
-	//
-	// Any of "text".
-	Type string `json:"type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Text        respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionListResponseDataChoiceMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionListResponseDataChoiceMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem) UnmarshalJSON(data []byte) error {
+func (r ChatCompletionListResponseDataChoiceMessageFunctionCall) RawJSON() string { return r.JSON.raw }
+func (r *ChatCompletionListResponseDataChoiceMessageFunctionCall) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Tool call specification for OpenAI-compatible chat completion responses.
-type ChatCompletionListResponseDataChoiceMessageAssistantToolCall struct {
+type ChatCompletionListResponseDataChoiceMessageToolCall struct {
 	// Unique identifier for the tool call.
 	ID string `json:"id,nullable"`
 	// Function call details for OpenAI-compatible tool calls.
-	Function ChatCompletionListResponseDataChoiceMessageAssistantToolCallFunction `json:"function,nullable"`
+	Function ChatCompletionListResponseDataChoiceMessageToolCallFunction `json:"function,nullable"`
 	// Index of the tool call in the list.
 	Index int64 `json:"index,nullable"`
 	// Must be 'function' to identify this as a function call.
@@ -3924,15 +1873,13 @@ type ChatCompletionListResponseDataChoiceMessageAssistantToolCall struct {
 }
 
 // Returns the unmodified JSON received from the API
-func (r ChatCompletionListResponseDataChoiceMessageAssistantToolCall) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionListResponseDataChoiceMessageAssistantToolCall) UnmarshalJSON(data []byte) error {
+func (r ChatCompletionListResponseDataChoiceMessageToolCall) RawJSON() string { return r.JSON.raw }
+func (r *ChatCompletionListResponseDataChoiceMessageToolCall) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
 // Function call details for OpenAI-compatible tool calls.
-type ChatCompletionListResponseDataChoiceMessageAssistantToolCallFunction struct {
+type ChatCompletionListResponseDataChoiceMessageToolCallFunction struct {
 	// Arguments to pass to the function as a JSON string.
 	Arguments string `json:"arguments,nullable"`
 	// Name of the function to call.
@@ -3947,195 +1894,10 @@ type ChatCompletionListResponseDataChoiceMessageAssistantToolCallFunction struct
 }
 
 // Returns the unmodified JSON received from the API
-func (r ChatCompletionListResponseDataChoiceMessageAssistantToolCallFunction) RawJSON() string {
+func (r ChatCompletionListResponseDataChoiceMessageToolCallFunction) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *ChatCompletionListResponseDataChoiceMessageAssistantToolCallFunction) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A message representing the result of a tool invocation in an OpenAI-compatible
-// chat completion request.
-type ChatCompletionListResponseDataChoiceMessageTool struct {
-	// The response content from the tool.
-	Content ChatCompletionListResponseDataChoiceMessageToolContentUnion `json:"content,required"`
-	// Unique identifier for the tool call this response is for.
-	ToolCallID string `json:"tool_call_id,required"`
-	// Must be 'tool' to identify this as a tool response.
-	//
-	// Any of "tool".
-	Role string `json:"role"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Content     respjson.Field
-		ToolCallID  respjson.Field
-		Role        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionListResponseDataChoiceMessageTool) RawJSON() string { return r.JSON.raw }
-func (r *ChatCompletionListResponseDataChoiceMessageTool) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ChatCompletionListResponseDataChoiceMessageToolContentUnion contains all
-// possible properties and values from [string],
-// [[]ChatCompletionListResponseDataChoiceMessageToolContentListOpenAIChatCompletionContentPartTextParamItem].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString OfListOpenAIChatCompletionContentPartText]
-type ChatCompletionListResponseDataChoiceMessageToolContentUnion struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a
-	// [[]ChatCompletionListResponseDataChoiceMessageToolContentListOpenAIChatCompletionContentPartTextParamItem]
-	// instead of an object.
-	OfListOpenAIChatCompletionContentPartText []ChatCompletionListResponseDataChoiceMessageToolContentListOpenAIChatCompletionContentPartTextParamItem `json:",inline"`
-	JSON                                      struct {
-		OfString                                  respjson.Field
-		OfListOpenAIChatCompletionContentPartText respjson.Field
-		raw                                       string
-	} `json:"-"`
-}
-
-func (u ChatCompletionListResponseDataChoiceMessageToolContentUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionListResponseDataChoiceMessageToolContentUnion) AsListOpenAIChatCompletionContentPartTextParam() (v []ChatCompletionListResponseDataChoiceMessageToolContentListOpenAIChatCompletionContentPartTextParamItem) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ChatCompletionListResponseDataChoiceMessageToolContentUnion) RawJSON() string {
-	return u.JSON.raw
-}
-
-func (r *ChatCompletionListResponseDataChoiceMessageToolContentUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Text content part for OpenAI-compatible chat completion messages.
-type ChatCompletionListResponseDataChoiceMessageToolContentListOpenAIChatCompletionContentPartTextParamItem struct {
-	// The text content of the message.
-	Text string `json:"text,required"`
-	// Must be 'text' to identify this as text content.
-	//
-	// Any of "text".
-	Type string `json:"type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Text        respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionListResponseDataChoiceMessageToolContentListOpenAIChatCompletionContentPartTextParamItem) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionListResponseDataChoiceMessageToolContentListOpenAIChatCompletionContentPartTextParamItem) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// A message from the developer in an OpenAI-compatible chat completion request.
-type ChatCompletionListResponseDataChoiceMessageDeveloper struct {
-	// The content of the developer message.
-	Content ChatCompletionListResponseDataChoiceMessageDeveloperContentUnion `json:"content,required"`
-	// The name of the developer message participant.
-	Name string `json:"name,nullable"`
-	// Must be 'developer' to identify this as a developer message.
-	//
-	// Any of "developer".
-	Role string `json:"role"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Content     respjson.Field
-		Name        respjson.Field
-		Role        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionListResponseDataChoiceMessageDeveloper) RawJSON() string { return r.JSON.raw }
-func (r *ChatCompletionListResponseDataChoiceMessageDeveloper) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// ChatCompletionListResponseDataChoiceMessageDeveloperContentUnion contains all
-// possible properties and values from [string],
-// [[]ChatCompletionListResponseDataChoiceMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem].
-//
-// Use the methods beginning with 'As' to cast the union to one of its variants.
-//
-// If the underlying value is not a json object, one of the following properties
-// will be valid: OfString OfListOpenAIChatCompletionContentPartText]
-type ChatCompletionListResponseDataChoiceMessageDeveloperContentUnion struct {
-	// This field will be present if the value is a [string] instead of an object.
-	OfString string `json:",inline"`
-	// This field will be present if the value is a
-	// [[]ChatCompletionListResponseDataChoiceMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem]
-	// instead of an object.
-	OfListOpenAIChatCompletionContentPartText []ChatCompletionListResponseDataChoiceMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem `json:",inline"`
-	JSON                                      struct {
-		OfString                                  respjson.Field
-		OfListOpenAIChatCompletionContentPartText respjson.Field
-		raw                                       string
-	} `json:"-"`
-}
-
-func (u ChatCompletionListResponseDataChoiceMessageDeveloperContentUnion) AsString() (v string) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-func (u ChatCompletionListResponseDataChoiceMessageDeveloperContentUnion) AsListOpenAIChatCompletionContentPartTextParam() (v []ChatCompletionListResponseDataChoiceMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem) {
-	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
-	return
-}
-
-// Returns the unmodified JSON received from the API
-func (u ChatCompletionListResponseDataChoiceMessageDeveloperContentUnion) RawJSON() string {
-	return u.JSON.raw
-}
-
-func (r *ChatCompletionListResponseDataChoiceMessageDeveloperContentUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Text content part for OpenAI-compatible chat completion messages.
-type ChatCompletionListResponseDataChoiceMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem struct {
-	// The text content of the message.
-	Text string `json:"text,required"`
-	// Must be 'text' to identify this as text content.
-	//
-	// Any of "text".
-	Type string `json:"type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Text        respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ChatCompletionListResponseDataChoiceMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem) RawJSON() string {
-	return r.JSON.raw
-}
-func (r *ChatCompletionListResponseDataChoiceMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem) UnmarshalJSON(data []byte) error {
+func (r *ChatCompletionListResponseDataChoiceMessageToolCallFunction) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
