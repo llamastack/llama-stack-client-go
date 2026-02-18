@@ -49,7 +49,9 @@ type ChatCompletionChunk struct {
 	//
 	// Any of "chat.completion.chunk".
 	Object ChatCompletionChunkObject `json:"object"`
-	// Usage information for OpenAI chat completion.
+	// The service tier that was used for this response.
+	ServiceTier string `json:"service_tier,nullable"`
+	// Token usage information (typically included in final chunk with stream_options).
 	Usage ChatCompletionChunkUsage `json:"usage,nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -58,6 +60,7 @@ type ChatCompletionChunk struct {
 		Created     respjson.Field
 		Model       respjson.Field
 		Object      respjson.Field
+		ServiceTier respjson.Field
 		Usage       respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -315,25 +318,25 @@ const (
 	ChatCompletionChunkObjectChatCompletionChunk ChatCompletionChunkObject = "chat.completion.chunk"
 )
 
-// Usage information for OpenAI chat completion.
+// Token usage information (typically included in final chunk with stream_options).
 type ChatCompletionChunkUsage struct {
 	// Number of tokens in the completion.
-	CompletionTokens int64 `json:"completion_tokens,required"`
+	CompletionTokens int64 `json:"completion_tokens"`
+	// Detailed breakdown of output token usage.
+	CompletionTokensDetails ChatCompletionChunkUsageCompletionTokensDetails `json:"completion_tokens_details"`
 	// Number of tokens in the prompt.
-	PromptTokens int64 `json:"prompt_tokens,required"`
+	PromptTokens int64 `json:"prompt_tokens"`
+	// Detailed breakdown of input token usage.
+	PromptTokensDetails ChatCompletionChunkUsagePromptTokensDetails `json:"prompt_tokens_details"`
 	// Total tokens used (prompt + completion).
-	TotalTokens int64 `json:"total_tokens,required"`
-	// Token details for output tokens in OpenAI chat completion usage.
-	CompletionTokensDetails ChatCompletionChunkUsageCompletionTokensDetails `json:"completion_tokens_details,nullable"`
-	// Token details for prompt tokens in OpenAI chat completion usage.
-	PromptTokensDetails ChatCompletionChunkUsagePromptTokensDetails `json:"prompt_tokens_details,nullable"`
+	TotalTokens int64 `json:"total_tokens"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CompletionTokens        respjson.Field
-		PromptTokens            respjson.Field
-		TotalTokens             respjson.Field
 		CompletionTokensDetails respjson.Field
+		PromptTokens            respjson.Field
 		PromptTokensDetails     respjson.Field
+		TotalTokens             respjson.Field
 		ExtraFields             map[string]respjson.Field
 		raw                     string
 	} `json:"-"`
@@ -345,10 +348,10 @@ func (r *ChatCompletionChunkUsage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Token details for output tokens in OpenAI chat completion usage.
+// Detailed breakdown of output token usage.
 type ChatCompletionChunkUsageCompletionTokensDetails struct {
 	// Number of tokens used for reasoning (o1/o3 models).
-	ReasoningTokens int64 `json:"reasoning_tokens,nullable"`
+	ReasoningTokens int64 `json:"reasoning_tokens"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ReasoningTokens respjson.Field
@@ -363,10 +366,10 @@ func (r *ChatCompletionChunkUsageCompletionTokensDetails) UnmarshalJSON(data []b
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Token details for prompt tokens in OpenAI chat completion usage.
+// Detailed breakdown of input token usage.
 type ChatCompletionChunkUsagePromptTokensDetails struct {
 	// Number of tokens retrieved from cache.
-	CachedTokens int64 `json:"cached_tokens,nullable"`
+	CachedTokens int64 `json:"cached_tokens"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CachedTokens respjson.Field

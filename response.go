@@ -126,11 +126,13 @@ type ResponseObject struct {
 	Store       bool                        `json:"store,required"`
 	CompletedAt int64                       `json:"completed_at,nullable"`
 	// Error details for failed OpenAI response requests.
-	Error           ResponseObjectError `json:"error,nullable"`
-	Instructions    string              `json:"instructions,nullable"`
-	MaxOutputTokens int64               `json:"max_output_tokens,nullable"`
-	MaxToolCalls    int64               `json:"max_tool_calls,nullable"`
-	Metadata        map[string]string   `json:"metadata,nullable"`
+	Error ResponseObjectError `json:"error,nullable"`
+	// Details explaining why a response was incomplete.
+	IncompleteDetails ResponseObjectIncompleteDetails `json:"incomplete_details,nullable"`
+	Instructions      string                          `json:"instructions,nullable"`
+	MaxOutputTokens   int64                           `json:"max_output_tokens,nullable"`
+	MaxToolCalls      int64                           `json:"max_tool_calls,nullable"`
+	Metadata          map[string]string               `json:"metadata,nullable"`
 	// Any of "response".
 	Object             ResponseObjectObject `json:"object"`
 	ParallelToolCalls  bool                 `json:"parallel_tool_calls,nullable"`
@@ -143,6 +145,7 @@ type ResponseObject struct {
 	// Controls how much reasoning the model performs before generating a response.
 	Reasoning        ResponseObjectReasoning `json:"reasoning,nullable"`
 	SafetyIdentifier string                  `json:"safety_identifier,nullable"`
+	ServiceTier      string                  `json:"service_tier,nullable"`
 	Temperature      float64                 `json:"temperature,nullable"`
 	// Text response configuration for OpenAI responses.
 	Text ResponseObjectText `json:"text"`
@@ -163,6 +166,7 @@ type ResponseObject struct {
 		Store              respjson.Field
 		CompletedAt        respjson.Field
 		Error              respjson.Field
+		IncompleteDetails  respjson.Field
 		Instructions       respjson.Field
 		MaxOutputTokens    respjson.Field
 		MaxToolCalls       respjson.Field
@@ -174,6 +178,7 @@ type ResponseObject struct {
 		PromptCacheKey     respjson.Field
 		Reasoning          respjson.Field
 		SafetyIdentifier   respjson.Field
+		ServiceTier        respjson.Field
 		Temperature        respjson.Field
 		Text               respjson.Field
 		ToolChoice         respjson.Field
@@ -1228,6 +1233,23 @@ type ResponseObjectError struct {
 // Returns the unmodified JSON received from the API
 func (r ResponseObjectError) RawJSON() string { return r.JSON.raw }
 func (r *ResponseObjectError) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Details explaining why a response was incomplete.
+type ResponseObjectIncompleteDetails struct {
+	Reason string `json:"reason,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Reason      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectIncompleteDetails) RawJSON() string { return r.JSON.raw }
+func (r *ResponseObjectIncompleteDetails) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -6975,11 +6997,13 @@ type ResponseListResponse struct {
 	Store       bool                              `json:"store,required"`
 	CompletedAt int64                             `json:"completed_at,nullable"`
 	// Error details for failed OpenAI response requests.
-	Error           ResponseListResponseError `json:"error,nullable"`
-	Instructions    string                    `json:"instructions,nullable"`
-	MaxOutputTokens int64                     `json:"max_output_tokens,nullable"`
-	MaxToolCalls    int64                     `json:"max_tool_calls,nullable"`
-	Metadata        map[string]string         `json:"metadata,nullable"`
+	Error ResponseListResponseError `json:"error,nullable"`
+	// Details explaining why a response was incomplete.
+	IncompleteDetails ResponseListResponseIncompleteDetails `json:"incomplete_details,nullable"`
+	Instructions      string                                `json:"instructions,nullable"`
+	MaxOutputTokens   int64                                 `json:"max_output_tokens,nullable"`
+	MaxToolCalls      int64                                 `json:"max_tool_calls,nullable"`
+	Metadata          map[string]string                     `json:"metadata,nullable"`
 	// Any of "response".
 	Object             ResponseListResponseObject `json:"object"`
 	ParallelToolCalls  bool                       `json:"parallel_tool_calls,nullable"`
@@ -6992,6 +7016,7 @@ type ResponseListResponse struct {
 	// Controls how much reasoning the model performs before generating a response.
 	Reasoning        ResponseListResponseReasoning `json:"reasoning,nullable"`
 	SafetyIdentifier string                        `json:"safety_identifier,nullable"`
+	ServiceTier      string                        `json:"service_tier,nullable"`
 	Temperature      float64                       `json:"temperature,nullable"`
 	// Text response configuration for OpenAI responses.
 	Text ResponseListResponseText `json:"text"`
@@ -7013,6 +7038,7 @@ type ResponseListResponse struct {
 		Store              respjson.Field
 		CompletedAt        respjson.Field
 		Error              respjson.Field
+		IncompleteDetails  respjson.Field
 		Instructions       respjson.Field
 		MaxOutputTokens    respjson.Field
 		MaxToolCalls       respjson.Field
@@ -7024,6 +7050,7 @@ type ResponseListResponse struct {
 		PromptCacheKey     respjson.Field
 		Reasoning          respjson.Field
 		SafetyIdentifier   respjson.Field
+		ServiceTier        respjson.Field
 		Temperature        respjson.Field
 		Text               respjson.Field
 		ToolChoice         respjson.Field
@@ -9162,6 +9189,23 @@ func (r *ResponseListResponseError) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Details explaining why a response was incomplete.
+type ResponseListResponseIncompleteDetails struct {
+	Reason string `json:"reason,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Reason      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseListResponseIncompleteDetails) RawJSON() string { return r.JSON.raw }
+func (r *ResponseListResponseIncompleteDetails) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type ResponseListResponseObject string
 
 const (
@@ -10067,6 +10111,10 @@ type ResponseNewParams struct {
 	//
 	// Controls how much reasoning the model performs before generating a response.
 	Reasoning ResponseNewParamsReasoning `json:"reasoning,omitzero"`
+	// The service tier for the request.
+	//
+	// Any of "auto", "default", "flex", "priority".
+	ServiceTier ResponseNewParamsServiceTier `json:"service_tier,omitzero"`
 	// Text response configuration for OpenAI responses.
 	Text ResponseNewParamsText `json:"text,omitzero"`
 	// How the model should select which tool to call (if any).
@@ -11527,6 +11575,16 @@ func init() {
 		"effort", "none", "minimal", "low", "medium", "high", "xhigh",
 	)
 }
+
+// The service tier for the request.
+type ResponseNewParamsServiceTier string
+
+const (
+	ResponseNewParamsServiceTierAuto     ResponseNewParamsServiceTier = "auto"
+	ResponseNewParamsServiceTierDefault  ResponseNewParamsServiceTier = "default"
+	ResponseNewParamsServiceTierFlex     ResponseNewParamsServiceTier = "flex"
+	ResponseNewParamsServiceTierPriority ResponseNewParamsServiceTier = "priority"
+)
 
 // Text response configuration for OpenAI responses.
 type ResponseNewParamsText struct {

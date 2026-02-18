@@ -66,6 +66,7 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 			Effort: "none",
 		},
 		SafetyIdentifier: llamastackclient.String("safety_identifier"),
+		ServiceTier:      llamastackclient.ResponseNewParamsServiceTierAuto,
 		Store:            llamastackclient.Bool(true),
 		Temperature:      llamastackclient.Float(0),
 		Text: llamastackclient.ResponseNewParamsText{

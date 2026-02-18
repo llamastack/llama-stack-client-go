@@ -66,6 +66,7 @@ func TestChatCompletionNewWithOptionalParams(t *testing.T) {
 		},
 		SafetyIdentifier: llamastackclient.String("safety_identifier"),
 		Seed:             llamastackclient.Int(0),
+		ServiceTier:      llamastackclient.ChatCompletionNewParamsServiceTierAuto,
 		Stop: llamastackclient.ChatCompletionNewParamsStopUnion{
 			OfString: llamastackclient.String("string"),
 		},
