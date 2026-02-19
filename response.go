@@ -124,6 +124,7 @@ type ResponseObject struct {
 	Output      []ResponseObjectOutputUnion `json:"output,required"`
 	Status      string                      `json:"status,required"`
 	Store       bool                        `json:"store,required"`
+	Background  bool                        `json:"background"`
 	CompletedAt int64                       `json:"completed_at,nullable"`
 	// Error details for failed OpenAI response requests.
 	Error ResponseObjectError `json:"error,nullable"`
@@ -164,6 +165,7 @@ type ResponseObject struct {
 		Output             respjson.Field
 		Status             respjson.Field
 		Store              respjson.Field
+		Background         respjson.Field
 		CompletedAt        respjson.Field
 		Error              respjson.Field
 		IncompleteDetails  respjson.Field
@@ -6995,6 +6997,7 @@ type ResponseListResponse struct {
 	Output      []ResponseListResponseOutputUnion `json:"output,required"`
 	Status      string                            `json:"status,required"`
 	Store       bool                              `json:"store,required"`
+	Background  bool                              `json:"background"`
 	CompletedAt int64                             `json:"completed_at,nullable"`
 	// Error details for failed OpenAI response requests.
 	Error ResponseListResponseError `json:"error,nullable"`
@@ -7036,6 +7039,7 @@ type ResponseListResponse struct {
 		Output             respjson.Field
 		Status             respjson.Field
 		Store              respjson.Field
+		Background         respjson.Field
 		CompletedAt        respjson.Field
 		Error              respjson.Field
 		IncompleteDetails  respjson.Field
@@ -10094,6 +10098,9 @@ type ResponseNewParams struct {
 	Store param.Opt[bool] `json:"store,omitzero"`
 	// Sampling temperature.
 	Temperature param.Opt[float64] `json:"temperature,omitzero"`
+	// Whether to run the model response in the background. When true, returns
+	// immediately with status 'queued'.
+	Background param.Opt[bool] `json:"background,omitzero"`
 	// List of guardrails to apply during response generation.
 	Guardrails []ResponseNewParamsGuardrailUnion `json:"guardrails,omitzero"`
 	// Additional fields to include in the response.
