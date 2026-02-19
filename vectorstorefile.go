@@ -192,21 +192,25 @@ func (r *VectorStoreFile) UnmarshalJSON(data []byte) error {
 
 // VectorStoreFileChunkingStrategyUnion contains all possible properties and values
 // from [VectorStoreFileChunkingStrategyAuto],
-// [VectorStoreFileChunkingStrategyStatic].
+// [VectorStoreFileChunkingStrategyStatic],
+// [VectorStoreFileChunkingStrategyContextual].
 //
 // Use the [VectorStoreFileChunkingStrategyUnion.AsAny] method to switch on the
 // variant.
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type VectorStoreFileChunkingStrategyUnion struct {
-	// Any of "auto", "static".
+	// Any of "auto", "static", "contextual".
 	Type string `json:"type"`
 	// This field is from variant [VectorStoreFileChunkingStrategyStatic].
 	Static VectorStoreFileChunkingStrategyStaticStatic `json:"static"`
-	JSON   struct {
-		Type   respjson.Field
-		Static respjson.Field
-		raw    string
+	// This field is from variant [VectorStoreFileChunkingStrategyContextual].
+	Contextual VectorStoreFileChunkingStrategyContextualContextual `json:"contextual"`
+	JSON       struct {
+		Type       respjson.Field
+		Static     respjson.Field
+		Contextual respjson.Field
+		raw        string
 	} `json:"-"`
 }
 
@@ -217,14 +221,16 @@ type anyVectorStoreFileChunkingStrategy interface {
 	implVectorStoreFileChunkingStrategyUnion()
 }
 
-func (VectorStoreFileChunkingStrategyAuto) implVectorStoreFileChunkingStrategyUnion()   {}
-func (VectorStoreFileChunkingStrategyStatic) implVectorStoreFileChunkingStrategyUnion() {}
+func (VectorStoreFileChunkingStrategyAuto) implVectorStoreFileChunkingStrategyUnion()       {}
+func (VectorStoreFileChunkingStrategyStatic) implVectorStoreFileChunkingStrategyUnion()     {}
+func (VectorStoreFileChunkingStrategyContextual) implVectorStoreFileChunkingStrategyUnion() {}
 
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := VectorStoreFileChunkingStrategyUnion.AsAny().(type) {
 //	case llamastackclient.VectorStoreFileChunkingStrategyAuto:
 //	case llamastackclient.VectorStoreFileChunkingStrategyStatic:
+//	case llamastackclient.VectorStoreFileChunkingStrategyContextual:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -234,6 +240,8 @@ func (u VectorStoreFileChunkingStrategyUnion) AsAny() anyVectorStoreFileChunking
 		return u.AsAuto()
 	case "static":
 		return u.AsStatic()
+	case "contextual":
+		return u.AsContextual()
 	}
 	return nil
 }
@@ -244,6 +252,11 @@ func (u VectorStoreFileChunkingStrategyUnion) AsAuto() (v VectorStoreFileChunkin
 }
 
 func (u VectorStoreFileChunkingStrategyUnion) AsStatic() (v VectorStoreFileChunkingStrategyStatic) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u VectorStoreFileChunkingStrategyUnion) AsContextual() (v VectorStoreFileChunkingStrategyContextual) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -310,6 +323,66 @@ type VectorStoreFileChunkingStrategyStaticStatic struct {
 // Returns the unmodified JSON received from the API
 func (r VectorStoreFileChunkingStrategyStaticStatic) RawJSON() string { return r.JSON.raw }
 func (r *VectorStoreFileChunkingStrategyStaticStatic) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Contextual chunking strategy that uses an LLM to situate chunks within the
+// document.
+type VectorStoreFileChunkingStrategyContextual struct {
+	// Configuration for contextual chunking.
+	Contextual VectorStoreFileChunkingStrategyContextualContextual `json:"contextual,required"`
+	// Strategy type identifier.
+	//
+	// Any of "contextual".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Contextual  respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r VectorStoreFileChunkingStrategyContextual) RawJSON() string { return r.JSON.raw }
+func (r *VectorStoreFileChunkingStrategyContextual) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Configuration for contextual chunking.
+type VectorStoreFileChunkingStrategyContextualContextual struct {
+	// Tokens to overlap between adjacent chunks. Must be less than
+	// max_chunk_size_tokens.
+	ChunkOverlapTokens int64 `json:"chunk_overlap_tokens"`
+	// Prompt template for contextual retrieval. Uses WHOLE_DOCUMENT and CHUNK_CONTENT
+	// placeholders wrapped in double curly braces.
+	ContextPrompt string `json:"context_prompt"`
+	// Maximum tokens per chunk. Suggested ~700 to allow room for prepended context.
+	MaxChunkSizeTokens int64 `json:"max_chunk_size_tokens"`
+	// Maximum concurrent LLM calls. Falls back to config default if not provided.
+	MaxConcurrency int64 `json:"max_concurrency,nullable"`
+	// LLM model for generating context. Falls back to
+	// VectorStoresConfig.contextual_retrieval_params.model if not provided.
+	ModelID string `json:"model_id,nullable"`
+	// Timeout per LLM call in seconds. Falls back to config default if not provided.
+	TimeoutSeconds int64 `json:"timeout_seconds,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ChunkOverlapTokens respjson.Field
+		ContextPrompt      respjson.Field
+		MaxChunkSizeTokens respjson.Field
+		MaxConcurrency     respjson.Field
+		ModelID            respjson.Field
+		TimeoutSeconds     respjson.Field
+		ExtraFields        map[string]respjson.Field
+		raw                string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r VectorStoreFileChunkingStrategyContextualContextual) RawJSON() string { return r.JSON.raw }
+func (r *VectorStoreFileChunkingStrategyContextualContextual) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -528,13 +601,14 @@ func (r *VectorStoreFileNewParams) UnmarshalJSON(data []byte) error {
 //
 // Use [param.IsOmitted] to confirm if a field is set.
 type VectorStoreFileNewParamsChunkingStrategyUnion struct {
-	OfAuto   *VectorStoreFileNewParamsChunkingStrategyAuto   `json:",omitzero,inline"`
-	OfStatic *VectorStoreFileNewParamsChunkingStrategyStatic `json:",omitzero,inline"`
+	OfAuto       *VectorStoreFileNewParamsChunkingStrategyAuto       `json:",omitzero,inline"`
+	OfStatic     *VectorStoreFileNewParamsChunkingStrategyStatic     `json:",omitzero,inline"`
+	OfContextual *VectorStoreFileNewParamsChunkingStrategyContextual `json:",omitzero,inline"`
 	paramUnion
 }
 
 func (u VectorStoreFileNewParamsChunkingStrategyUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfAuto, u.OfStatic)
+	return param.MarshalUnion(u, u.OfAuto, u.OfStatic, u.OfContextual)
 }
 func (u *VectorStoreFileNewParamsChunkingStrategyUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -545,6 +619,8 @@ func (u *VectorStoreFileNewParamsChunkingStrategyUnion) asAny() any {
 		return u.OfAuto
 	} else if !param.IsOmitted(u.OfStatic) {
 		return u.OfStatic
+	} else if !param.IsOmitted(u.OfContextual) {
+		return u.OfContextual
 	}
 	return nil
 }
@@ -558,10 +634,20 @@ func (u VectorStoreFileNewParamsChunkingStrategyUnion) GetStatic() *VectorStoreF
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u VectorStoreFileNewParamsChunkingStrategyUnion) GetContextual() *VectorStoreFileNewParamsChunkingStrategyContextualContextual {
+	if vt := u.OfContextual; vt != nil {
+		return &vt.Contextual
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u VectorStoreFileNewParamsChunkingStrategyUnion) GetType() *string {
 	if vt := u.OfAuto; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfStatic; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfContextual; vt != nil {
 		return (*string)(&vt.Type)
 	}
 	return nil
@@ -572,6 +658,7 @@ func init() {
 		"type",
 		apijson.Discriminator[VectorStoreFileNewParamsChunkingStrategyAuto]("auto"),
 		apijson.Discriminator[VectorStoreFileNewParamsChunkingStrategyStatic]("static"),
+		apijson.Discriminator[VectorStoreFileNewParamsChunkingStrategyContextual]("contextual"),
 	)
 }
 
@@ -633,6 +720,62 @@ func (r VectorStoreFileNewParamsChunkingStrategyStaticStatic) MarshalJSON() (dat
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *VectorStoreFileNewParamsChunkingStrategyStaticStatic) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Contextual chunking strategy that uses an LLM to situate chunks within the
+// document.
+//
+// The property Contextual is required.
+type VectorStoreFileNewParamsChunkingStrategyContextual struct {
+	// Configuration for contextual chunking.
+	Contextual VectorStoreFileNewParamsChunkingStrategyContextualContextual `json:"contextual,omitzero,required"`
+	// Strategy type identifier.
+	//
+	// Any of "contextual".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r VectorStoreFileNewParamsChunkingStrategyContextual) MarshalJSON() (data []byte, err error) {
+	type shadow VectorStoreFileNewParamsChunkingStrategyContextual
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *VectorStoreFileNewParamsChunkingStrategyContextual) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[VectorStoreFileNewParamsChunkingStrategyContextual](
+		"type", "contextual",
+	)
+}
+
+// Configuration for contextual chunking.
+type VectorStoreFileNewParamsChunkingStrategyContextualContextual struct {
+	// Maximum concurrent LLM calls. Falls back to config default if not provided.
+	MaxConcurrency param.Opt[int64] `json:"max_concurrency,omitzero"`
+	// LLM model for generating context. Falls back to
+	// VectorStoresConfig.contextual_retrieval_params.model if not provided.
+	ModelID param.Opt[string] `json:"model_id,omitzero"`
+	// Timeout per LLM call in seconds. Falls back to config default if not provided.
+	TimeoutSeconds param.Opt[int64] `json:"timeout_seconds,omitzero"`
+	// Tokens to overlap between adjacent chunks. Must be less than
+	// max_chunk_size_tokens.
+	ChunkOverlapTokens param.Opt[int64] `json:"chunk_overlap_tokens,omitzero"`
+	// Prompt template for contextual retrieval. Uses WHOLE_DOCUMENT and CHUNK_CONTENT
+	// placeholders wrapped in double curly braces.
+	ContextPrompt param.Opt[string] `json:"context_prompt,omitzero"`
+	// Maximum tokens per chunk. Suggested ~700 to allow room for prepended context.
+	MaxChunkSizeTokens param.Opt[int64] `json:"max_chunk_size_tokens,omitzero"`
+	paramObj
+}
+
+func (r VectorStoreFileNewParamsChunkingStrategyContextualContextual) MarshalJSON() (data []byte, err error) {
+	type shadow VectorStoreFileNewParamsChunkingStrategyContextualContextual
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *VectorStoreFileNewParamsChunkingStrategyContextualContextual) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

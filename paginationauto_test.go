@@ -30,7 +30,7 @@ func TestAutoPagination(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	iter := client.Responses.ListAutoPaging(context.TODO(), llamastackclient.ResponseListParams{})
-	// Prism mock isn't going to give us real pagination
+	// The mock server isn't going to give us real pagination
 	for i := 0; i < 3 && iter.Next(); i++ {
 		response := iter.Current()
 		t.Logf("%+v\n", response.ID)
