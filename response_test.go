@@ -90,6 +90,7 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 				Type:              "web_search",
 			},
 		}},
+		TopP:       llamastackclient.Float(0),
 		Truncation: llamastackclient.ResponseNewParamsTruncationAuto,
 	})
 	if err != nil {

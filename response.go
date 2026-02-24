@@ -10098,6 +10098,9 @@ type ResponseNewParams struct {
 	Store param.Opt[bool] `json:"store,omitzero"`
 	// Sampling temperature.
 	Temperature param.Opt[float64] `json:"temperature,omitzero"`
+	// Nucleus sampling parameter that controls response diversity (lower values
+	// increase focus).
+	TopP param.Opt[float64] `json:"top_p,omitzero"`
 	// Whether to run the model response in the background. When true, returns
 	// immediately with status 'queued'.
 	Background param.Opt[bool] `json:"background,omitzero"`
