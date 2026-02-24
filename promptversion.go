@@ -59,7 +59,7 @@ func (r *PromptVersionService) List(ctx context.Context, promptID string, opts .
 
 // Response model to list prompts.
 type ListPromptsResponse struct {
-	Data []Prompt `json:"data,required"`
+	Data []Prompt `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field

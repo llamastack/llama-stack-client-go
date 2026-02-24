@@ -121,10 +121,10 @@ func (r *VectorStoreFileBatchService) ListFilesAutoPaging(ctx context.Context, b
 
 // Response from listing files in a vector store file batch.
 type ListVectorStoreFilesInBatchResponse struct {
-	Data    []VectorStoreFile `json:"data,required"`
-	FirstID string            `json:"first_id,nullable"`
+	Data    []VectorStoreFile `json:"data" api:"required"`
+	FirstID string            `json:"first_id" api:"nullable"`
 	HasMore bool              `json:"has_more"`
-	LastID  string            `json:"last_id,nullable"`
+	LastID  string            `json:"last_id" api:"nullable"`
 	Object  string            `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -146,13 +146,13 @@ func (r *ListVectorStoreFilesInBatchResponse) UnmarshalJSON(data []byte) error {
 
 // OpenAI Vector Store File Batch object.
 type VectorStoreFileBatches struct {
-	ID        string `json:"id,required"`
-	CreatedAt int64  `json:"created_at,required"`
+	ID        string `json:"id" api:"required"`
+	CreatedAt int64  `json:"created_at" api:"required"`
 	// File processing status counts for a vector store.
-	FileCounts VectorStoreFileBatchesFileCounts `json:"file_counts,required"`
+	FileCounts VectorStoreFileBatchesFileCounts `json:"file_counts" api:"required"`
 	// Any of "completed", "in_progress", "cancelled", "failed".
-	Status        VectorStoreFileBatchesStatus `json:"status,required"`
-	VectorStoreID string                       `json:"vector_store_id,required"`
+	Status        VectorStoreFileBatchesStatus `json:"status" api:"required"`
+	VectorStoreID string                       `json:"vector_store_id" api:"required"`
 	Object        string                       `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -175,11 +175,11 @@ func (r *VectorStoreFileBatches) UnmarshalJSON(data []byte) error {
 
 // File processing status counts for a vector store.
 type VectorStoreFileBatchesFileCounts struct {
-	Cancelled  int64 `json:"cancelled,required"`
-	Completed  int64 `json:"completed,required"`
-	Failed     int64 `json:"failed,required"`
-	InProgress int64 `json:"in_progress,required"`
-	Total      int64 `json:"total,required"`
+	Cancelled  int64 `json:"cancelled" api:"required"`
+	Completed  int64 `json:"completed" api:"required"`
+	Failed     int64 `json:"failed" api:"required"`
+	InProgress int64 `json:"in_progress" api:"required"`
+	Total      int64 `json:"total" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Cancelled   respjson.Field
@@ -208,7 +208,7 @@ const (
 )
 
 type VectorStoreFileBatchNewParams struct {
-	FileIDs    []string       `json:"file_ids,omitzero,required"`
+	FileIDs    []string       `json:"file_ids,omitzero" api:"required"`
 	Attributes map[string]any `json:"attributes,omitzero"`
 	// Automatic chunking strategy for vector store files.
 	ChunkingStrategy VectorStoreFileBatchNewParamsChunkingStrategyUnion `json:"chunking_strategy,omitzero"`
@@ -314,7 +314,7 @@ func init() {
 // The property Static is required.
 type VectorStoreFileBatchNewParamsChunkingStrategyStatic struct {
 	// Configuration for static chunking strategy.
-	Static VectorStoreFileBatchNewParamsChunkingStrategyStaticStatic `json:"static,omitzero,required"`
+	Static VectorStoreFileBatchNewParamsChunkingStrategyStaticStatic `json:"static,omitzero" api:"required"`
 	// Any of "static".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -355,7 +355,7 @@ func (r *VectorStoreFileBatchNewParamsChunkingStrategyStaticStatic) UnmarshalJSO
 // The property Contextual is required.
 type VectorStoreFileBatchNewParamsChunkingStrategyContextual struct {
 	// Configuration for contextual chunking.
-	Contextual VectorStoreFileBatchNewParamsChunkingStrategyContextualContextual `json:"contextual,omitzero,required"`
+	Contextual VectorStoreFileBatchNewParamsChunkingStrategyContextualContextual `json:"contextual,omitzero" api:"required"`
 	// Strategy type identifier.
 	//
 	// Any of "contextual".
@@ -407,19 +407,19 @@ func (r *VectorStoreFileBatchNewParamsChunkingStrategyContextualContextual) Unma
 
 type VectorStoreFileBatchGetParams struct {
 	// The vector store identifier.
-	VectorStoreID string `path:"vector_store_id,required" json:"-"`
+	VectorStoreID string `path:"vector_store_id" api:"required" json:"-"`
 	paramObj
 }
 
 type VectorStoreFileBatchCancelParams struct {
 	// The vector store identifier.
-	VectorStoreID string `path:"vector_store_id,required" json:"-"`
+	VectorStoreID string `path:"vector_store_id" api:"required" json:"-"`
 	paramObj
 }
 
 type VectorStoreFileBatchListFilesParams struct {
 	// The vector store identifier.
-	VectorStoreID string `path:"vector_store_id,required" json:"-"`
+	VectorStoreID string `path:"vector_store_id" api:"required" json:"-"`
 	// Pagination cursor (after).
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
 	// Pagination cursor (before).

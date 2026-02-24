@@ -96,7 +96,7 @@ func (r *ScoringFunctionService) Unregister(ctx context.Context, scoringFnID str
 // Response containing a list of scoring function objects.
 type ListScoringFunctionsResponse struct {
 	// List of scoring function objects.
-	Data []ScoringFn `json:"data,required"`
+	Data []ScoringFn `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -114,18 +114,18 @@ func (r *ListScoringFunctionsResponse) UnmarshalJSON(data []byte) error {
 // A scoring function resource for evaluating model outputs.
 type ScoringFn struct {
 	// Unique identifier for this resource in llama stack
-	Identifier string `json:"identifier,required"`
+	Identifier string `json:"identifier" api:"required"`
 	// ID of the provider that owns this resource
-	ProviderID  string              `json:"provider_id,required"`
-	ReturnType  ScoringFnReturnType `json:"return_type,required"`
-	Description string              `json:"description,nullable"`
+	ProviderID  string              `json:"provider_id" api:"required"`
+	ReturnType  ScoringFnReturnType `json:"return_type" api:"required"`
+	Description string              `json:"description" api:"nullable"`
 	// Any additional metadata for this definition
 	Metadata map[string]any `json:"metadata"`
 	// The parameters for the scoring function for benchmark eval, these can be
 	// overridden for app eval
-	Params ScoringFnParamsUnion `json:"params,nullable"`
+	Params ScoringFnParamsUnion `json:"params" api:"nullable"`
 	// Unique identifier for this resource in the provider
-	ProviderResourceID string `json:"provider_resource_id,nullable"`
+	ProviderResourceID string `json:"provider_resource_id" api:"nullable"`
 	// Any of "scoring_function".
 	Type ScoringFnType `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -152,7 +152,7 @@ func (r *ScoringFn) UnmarshalJSON(data []byte) error {
 type ScoringFnReturnType struct {
 	// Any of "string", "number", "boolean", "array", "object", "json", "union",
 	// "chat_completion_input", "completion_input", "agent_turn_input".
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Type        respjson.Field
@@ -252,14 +252,14 @@ func (r *ScoringFnParamsUnion) UnmarshalJSON(data []byte) error {
 
 // Parameters for LLM-as-judge scoring function configuration.
 type ScoringFnParamsLlmAsJudge struct {
-	JudgeModel string `json:"judge_model,required"`
+	JudgeModel string `json:"judge_model" api:"required"`
 	// Aggregation functions to apply to the scores of each row
 	//
 	// Any of "average", "weighted_average", "median", "categorical_count", "accuracy".
 	AggregationFunctions []string `json:"aggregation_functions"`
 	// Regexes to extract the answer from generated response
 	JudgeScoreRegexes []string `json:"judge_score_regexes"`
-	PromptTemplate    string   `json:"prompt_template,nullable"`
+	PromptTemplate    string   `json:"prompt_template" api:"nullable"`
 	// Any of "llm_as_judge".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -337,10 +337,10 @@ const (
 
 type ScoringFunctionRegisterParams struct {
 	// The description of the scoring function.
-	Description string                                  `json:"description,required"`
-	ReturnType  ScoringFunctionRegisterParamsReturnType `json:"return_type,omitzero,required"`
+	Description string                                  `json:"description" api:"required"`
+	ReturnType  ScoringFunctionRegisterParamsReturnType `json:"return_type,omitzero" api:"required"`
 	// The ID of the scoring function to register.
-	ScoringFnID string `json:"scoring_fn_id,required"`
+	ScoringFnID string `json:"scoring_fn_id" api:"required"`
 	// The ID of the provider to use for the scoring function.
 	ProviderID param.Opt[string] `json:"provider_id,omitzero"`
 	// The ID of the provider scoring function to use for the scoring function.
@@ -363,7 +363,7 @@ func (r *ScoringFunctionRegisterParams) UnmarshalJSON(data []byte) error {
 type ScoringFunctionRegisterParamsReturnType struct {
 	// Any of "string", "number", "boolean", "array", "object", "json", "union",
 	// "chat_completion_input", "completion_input", "agent_turn_input".
-	Type string `json:"type,omitzero,required"`
+	Type string `json:"type,omitzero" api:"required"`
 	paramObj
 }
 
@@ -479,7 +479,7 @@ func init() {
 //
 // The property JudgeModel is required.
 type ScoringFunctionRegisterParamsParamsLlmAsJudge struct {
-	JudgeModel     string            `json:"judge_model,required"`
+	JudgeModel     string            `json:"judge_model" api:"required"`
 	PromptTemplate param.Opt[string] `json:"prompt_template,omitzero"`
 	// Aggregation functions to apply to the scores of each row
 	//

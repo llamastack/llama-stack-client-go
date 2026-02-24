@@ -87,7 +87,7 @@ func (r ToolListParams) URLQuery() (v url.Values, err error) {
 
 // Response containing a list of tool definitions.
 type ToolListResponseEnvelope struct {
-	Data []ToolDef `json:"data,required"`
+	Data []ToolDef `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field

@@ -50,7 +50,7 @@ func (r *SafetyService) RunShield(ctx context.Context, body SafetyRunShieldParam
 // Response from running a safety shield.
 type RunShieldResponse struct {
 	// Details of a safety violation detected by content moderation.
-	Violation SafetyViolation `json:"violation,nullable"`
+	Violation SafetyViolation `json:"violation" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Violation   respjson.Field
@@ -67,9 +67,9 @@ func (r *RunShieldResponse) UnmarshalJSON(data []byte) error {
 
 type SafetyRunShieldParams struct {
 	// The messages to run the shield on
-	Messages []SafetyRunShieldParamsMessageUnion `json:"messages,omitzero,required"`
+	Messages []SafetyRunShieldParamsMessageUnion `json:"messages,omitzero" api:"required"`
 	// The identifier of the shield to run
-	ShieldID string `json:"shield_id,required"`
+	ShieldID string `json:"shield_id" api:"required"`
 	paramObj
 }
 
@@ -221,7 +221,7 @@ func init() {
 // The property Content is required.
 type SafetyRunShieldParamsMessageUser struct {
 	// The content of the message, which can include text and other media.
-	Content SafetyRunShieldParamsMessageUserContentUnion `json:"content,omitzero,required"`
+	Content SafetyRunShieldParamsMessageUserContentUnion `json:"content,omitzero" api:"required"`
 	// The name of the user message participant.
 	Name param.Opt[string] `json:"name,omitzero"`
 	// Must be 'user' to identify this as a user message.
@@ -348,7 +348,7 @@ func init() {
 // The property Text is required.
 type SafetyRunShieldParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText struct {
 	// The text content of the message.
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Must be 'text' to identify this as text content.
 	//
 	// Any of "text".
@@ -375,7 +375,7 @@ func init() {
 // The property ImageURL is required.
 type SafetyRunShieldParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL struct {
 	// Image URL specification and processing details.
-	ImageURL SafetyRunShieldParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL `json:"image_url,omitzero,required"`
+	ImageURL SafetyRunShieldParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL `json:"image_url,omitzero" api:"required"`
 	// Must be 'image_url' to identify this as image content.
 	//
 	// Any of "image_url".
@@ -402,7 +402,7 @@ func init() {
 // The property URL is required.
 type SafetyRunShieldParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURLImageURL struct {
 	// URL of the image to include in the message.
-	URL string `json:"url,required"`
+	URL string `json:"url" api:"required"`
 	// Level of detail for image processing. Can be 'low', 'high', or 'auto'.
 	//
 	// Any of "low", "high", "auto".
@@ -427,7 +427,7 @@ func init() {
 // The property File is required.
 type SafetyRunShieldParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile struct {
 	// File specification.
-	File SafetyRunShieldParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile `json:"file,omitzero,required"`
+	File SafetyRunShieldParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile `json:"file,omitzero" api:"required"`
 	// Must be 'file' to identify this as file content.
 	//
 	// Any of "file".
@@ -474,7 +474,7 @@ func (r *SafetyRunShieldParamsMessageUserContentListOpenAIChatCompletionContentP
 type SafetyRunShieldParamsMessageSystem struct {
 	// The content of the 'system prompt'. If multiple system messages are provided,
 	// they are concatenated.
-	Content SafetyRunShieldParamsMessageSystemContentUnion `json:"content,omitzero,required"`
+	Content SafetyRunShieldParamsMessageSystemContentUnion `json:"content,omitzero" api:"required"`
 	// The name of the system message participant.
 	Name param.Opt[string] `json:"name,omitzero"`
 	// Must be 'system' to identify this as a system message.
@@ -528,7 +528,7 @@ func (u *SafetyRunShieldParamsMessageSystemContentUnion) asAny() any {
 // The property Text is required.
 type SafetyRunShieldParamsMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem struct {
 	// The text content of the message.
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Must be 'text' to identify this as text content.
 	//
 	// Any of "text".
@@ -610,7 +610,7 @@ func (u *SafetyRunShieldParamsMessageAssistantContentUnion) asAny() any {
 // The property Text is required.
 type SafetyRunShieldParamsMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem struct {
 	// The text content of the message.
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Must be 'text' to identify this as text content.
 	//
 	// Any of "text".
@@ -684,9 +684,9 @@ func (r *SafetyRunShieldParamsMessageAssistantToolCallFunction) UnmarshalJSON(da
 // The properties Content, ToolCallID are required.
 type SafetyRunShieldParamsMessageTool struct {
 	// The response content from the tool.
-	Content SafetyRunShieldParamsMessageToolContentUnion `json:"content,omitzero,required"`
+	Content SafetyRunShieldParamsMessageToolContentUnion `json:"content,omitzero" api:"required"`
 	// Unique identifier for the tool call this response is for.
-	ToolCallID string `json:"tool_call_id,required"`
+	ToolCallID string `json:"tool_call_id" api:"required"`
 	// Must be 'tool' to identify this as a tool response.
 	//
 	// Any of "tool".
@@ -738,7 +738,7 @@ func (u *SafetyRunShieldParamsMessageToolContentUnion) asAny() any {
 // The property Text is required.
 type SafetyRunShieldParamsMessageToolContentListOpenAIChatCompletionContentPartTextParamItem struct {
 	// The text content of the message.
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Must be 'text' to identify this as text content.
 	//
 	// Any of "text".
@@ -765,7 +765,7 @@ func init() {
 // The property Content is required.
 type SafetyRunShieldParamsMessageDeveloper struct {
 	// The content of the developer message.
-	Content SafetyRunShieldParamsMessageDeveloperContentUnion `json:"content,omitzero,required"`
+	Content SafetyRunShieldParamsMessageDeveloperContentUnion `json:"content,omitzero" api:"required"`
 	// The name of the developer message participant.
 	Name param.Opt[string] `json:"name,omitzero"`
 	// Must be 'developer' to identify this as a developer message.
@@ -819,7 +819,7 @@ func (u *SafetyRunShieldParamsMessageDeveloperContentUnion) asAny() any {
 // The property Text is required.
 type SafetyRunShieldParamsMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem struct {
 	// The text content of the message.
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Must be 'text' to identify this as text content.
 	//
 	// Any of "text".

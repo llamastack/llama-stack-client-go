@@ -90,17 +90,17 @@ func (r *ConversationService) Delete(ctx context.Context, conversationID string,
 // OpenAI-compatible conversation object.
 type ConversationObject struct {
 	// The unique ID of the conversation.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The time at which the conversation was created, measured in seconds since the
 	// Unix epoch.
-	CreatedAt int64 `json:"created_at,required"`
+	CreatedAt int64 `json:"created_at" api:"required"`
 	// Initial items to include in the conversation context. You may add up to 20 items
 	// at a time.
-	Items []map[string]any `json:"items,nullable"`
+	Items []map[string]any `json:"items" api:"nullable"`
 	// Set of 16 key-value pairs that can be attached to an object. This can be useful
 	// for storing additional information about the object in a structured format, and
 	// querying for objects via API or the dashboard.
-	Metadata map[string]string `json:"metadata,nullable"`
+	Metadata map[string]string `json:"metadata" api:"nullable"`
 	// The object type, which is always conversation.
 	//
 	// Any of "conversation".
@@ -133,7 +133,7 @@ const (
 // Response for deleted conversation.
 type ConversationDeleteResponse struct {
 	// The deleted conversation identifier
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Whether the object was deleted
 	Deleted bool `json:"deleted"`
 	// Object type
@@ -437,9 +437,9 @@ func init() {
 //
 // The properties Content, Role are required.
 type ConversationNewParamsItemMessage struct {
-	Content ConversationNewParamsItemMessageContentUnion `json:"content,omitzero,required"`
+	Content ConversationNewParamsItemMessageContentUnion `json:"content,omitzero" api:"required"`
 	// Any of "system", "developer", "user", "assistant".
-	Role   string            `json:"role,omitzero,required"`
+	Role   string            `json:"role,omitzero" api:"required"`
 	ID     param.Opt[string] `json:"id,omitzero"`
 	Status param.Opt[string] `json:"status,omitzero"`
 	// Any of "message".
@@ -603,7 +603,7 @@ func init() {
 //
 // The property Text is required.
 type ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText struct {
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Any of "input_text".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -753,7 +753,7 @@ func init() {
 
 // The property Text is required.
 type ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputText struct {
-	Text        string                                                                                                                                                      `json:"text,required"`
+	Text        string                                                                                                                                                      `json:"text" api:"required"`
 	Logprobs    []ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprob         `json:"logprobs,omitzero"`
 	Annotations []ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion `json:"annotations,omitzero"`
 	// Any of "output_text".
@@ -910,9 +910,9 @@ func init() {
 //
 // The properties FileID, Filename, Index are required.
 type ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation struct {
-	FileID   string `json:"file_id,required"`
-	Filename string `json:"filename,required"`
-	Index    int64  `json:"index,required"`
+	FileID   string `json:"file_id" api:"required"`
+	Filename string `json:"filename" api:"required"`
+	Index    int64  `json:"index" api:"required"`
 	// Any of "file_citation".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -936,10 +936,10 @@ func init() {
 //
 // The properties EndIndex, StartIndex, Title, URL are required.
 type ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation struct {
-	EndIndex   int64  `json:"end_index,required"`
-	StartIndex int64  `json:"start_index,required"`
-	Title      string `json:"title,required"`
-	URL        string `json:"url,required"`
+	EndIndex   int64  `json:"end_index" api:"required"`
+	StartIndex int64  `json:"start_index" api:"required"`
+	Title      string `json:"title" api:"required"`
+	URL        string `json:"url" api:"required"`
 	// Any of "url_citation".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -961,11 +961,11 @@ func init() {
 
 // The properties ContainerID, EndIndex, FileID, Filename, StartIndex are required.
 type ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation struct {
-	ContainerID string `json:"container_id,required"`
-	EndIndex    int64  `json:"end_index,required"`
-	FileID      string `json:"file_id,required"`
-	Filename    string `json:"filename,required"`
-	StartIndex  int64  `json:"start_index,required"`
+	ContainerID string `json:"container_id" api:"required"`
+	EndIndex    int64  `json:"end_index" api:"required"`
+	FileID      string `json:"file_id" api:"required"`
+	Filename    string `json:"filename" api:"required"`
+	StartIndex  int64  `json:"start_index" api:"required"`
 	// Any of "container_file_citation".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -987,8 +987,8 @@ func init() {
 
 // The properties FileID, Index are required.
 type ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath struct {
-	FileID string `json:"file_id,required"`
-	Index  int64  `json:"index,required"`
+	FileID string `json:"file_id" api:"required"`
+	Index  int64  `json:"index" api:"required"`
 	// Any of "file_path".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -1014,9 +1014,9 @@ func init() {
 // The properties Token, Logprob are required.
 type ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprob struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
 	Bytes []int64 `json:"bytes,omitzero"`
 	// The top log probabilities for the token.
@@ -1038,9 +1038,9 @@ func (r *ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageC
 // The properties Token, Logprob are required.
 type ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
 	Bytes []int64 `json:"bytes,omitzero"`
 	paramObj
@@ -1058,7 +1058,7 @@ func (r *ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageC
 //
 // The property Refusal is required.
 type ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemRefusal struct {
-	Refusal string `json:"refusal,required"`
+	Refusal string `json:"refusal" api:"required"`
 	// Any of "refusal".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -1082,8 +1082,8 @@ func init() {
 //
 // The properties ID, Status are required.
 type ConversationNewParamsItemWebSearchCall struct {
-	ID     string `json:"id,required"`
-	Status string `json:"status,required"`
+	ID     string `json:"id" api:"required"`
+	Status string `json:"status" api:"required"`
 	// Any of "web_search_call".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -1107,9 +1107,9 @@ func init() {
 //
 // The properties ID, Queries, Status are required.
 type ConversationNewParamsItemFileSearchCall struct {
-	ID      string                                          `json:"id,required"`
-	Queries []string                                        `json:"queries,omitzero,required"`
-	Status  string                                          `json:"status,required"`
+	ID      string                                          `json:"id" api:"required"`
+	Queries []string                                        `json:"queries,omitzero" api:"required"`
+	Status  string                                          `json:"status" api:"required"`
 	Results []ConversationNewParamsItemFileSearchCallResult `json:"results,omitzero"`
 	// Any of "file_search_call".
 	Type string `json:"type,omitzero"`
@@ -1134,11 +1134,11 @@ func init() {
 //
 // The properties Attributes, FileID, Filename, Score, Text are required.
 type ConversationNewParamsItemFileSearchCallResult struct {
-	Attributes map[string]any `json:"attributes,omitzero,required"`
-	FileID     string         `json:"file_id,required"`
-	Filename   string         `json:"filename,required"`
-	Score      float64        `json:"score,required"`
-	Text       string         `json:"text,required"`
+	Attributes map[string]any `json:"attributes,omitzero" api:"required"`
+	FileID     string         `json:"file_id" api:"required"`
+	Filename   string         `json:"filename" api:"required"`
+	Score      float64        `json:"score" api:"required"`
+	Text       string         `json:"text" api:"required"`
 	paramObj
 }
 
@@ -1154,9 +1154,9 @@ func (r *ConversationNewParamsItemFileSearchCallResult) UnmarshalJSON(data []byt
 //
 // The properties Arguments, CallID, Name are required.
 type ConversationNewParamsItemFunctionCall struct {
-	Arguments string            `json:"arguments,required"`
-	CallID    string            `json:"call_id,required"`
-	Name      string            `json:"name,required"`
+	Arguments string            `json:"arguments" api:"required"`
+	CallID    string            `json:"call_id" api:"required"`
+	Name      string            `json:"name" api:"required"`
 	ID        param.Opt[string] `json:"id,omitzero"`
 	Status    param.Opt[string] `json:"status,omitzero"`
 	// Any of "function_call".
@@ -1183,8 +1183,8 @@ func init() {
 //
 // The properties CallID, Output are required.
 type ConversationNewParamsItemFunctionCallOutput struct {
-	CallID string            `json:"call_id,required"`
-	Output string            `json:"output,required"`
+	CallID string            `json:"call_id" api:"required"`
+	Output string            `json:"output" api:"required"`
 	ID     param.Opt[string] `json:"id,omitzero"`
 	Status param.Opt[string] `json:"status,omitzero"`
 	// Any of "function_call_output".
@@ -1210,10 +1210,10 @@ func init() {
 //
 // The properties ID, Arguments, Name, ServerLabel are required.
 type ConversationNewParamsItemMcpApprovalRequest struct {
-	ID          string `json:"id,required"`
-	Arguments   string `json:"arguments,required"`
-	Name        string `json:"name,required"`
-	ServerLabel string `json:"server_label,required"`
+	ID          string `json:"id" api:"required"`
+	Arguments   string `json:"arguments" api:"required"`
+	Name        string `json:"name" api:"required"`
+	ServerLabel string `json:"server_label" api:"required"`
 	// Any of "mcp_approval_request".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -1237,8 +1237,8 @@ func init() {
 //
 // The properties ApprovalRequestID, Approve are required.
 type ConversationNewParamsItemMcpApprovalResponse struct {
-	ApprovalRequestID string            `json:"approval_request_id,required"`
-	Approve           bool              `json:"approve,required"`
+	ApprovalRequestID string            `json:"approval_request_id" api:"required"`
+	Approve           bool              `json:"approve" api:"required"`
 	ID                param.Opt[string] `json:"id,omitzero"`
 	Reason            param.Opt[string] `json:"reason,omitzero"`
 	// Any of "mcp_approval_response".
@@ -1264,10 +1264,10 @@ func init() {
 //
 // The properties ID, Arguments, Name, ServerLabel are required.
 type ConversationNewParamsItemMcpCall struct {
-	ID          string            `json:"id,required"`
-	Arguments   string            `json:"arguments,required"`
-	Name        string            `json:"name,required"`
-	ServerLabel string            `json:"server_label,required"`
+	ID          string            `json:"id" api:"required"`
+	Arguments   string            `json:"arguments" api:"required"`
+	Name        string            `json:"name" api:"required"`
+	ServerLabel string            `json:"server_label" api:"required"`
 	Error       param.Opt[string] `json:"error,omitzero"`
 	Output      param.Opt[string] `json:"output,omitzero"`
 	// Any of "mcp_call".
@@ -1293,9 +1293,9 @@ func init() {
 //
 // The properties ID, ServerLabel, Tools are required.
 type ConversationNewParamsItemMcpListTools struct {
-	ID          string                                      `json:"id,required"`
-	ServerLabel string                                      `json:"server_label,required"`
-	Tools       []ConversationNewParamsItemMcpListToolsTool `json:"tools,omitzero,required"`
+	ID          string                                      `json:"id" api:"required"`
+	ServerLabel string                                      `json:"server_label" api:"required"`
+	Tools       []ConversationNewParamsItemMcpListToolsTool `json:"tools,omitzero" api:"required"`
 	// Any of "mcp_list_tools".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -1319,8 +1319,8 @@ func init() {
 //
 // The properties InputSchema, Name are required.
 type ConversationNewParamsItemMcpListToolsTool struct {
-	InputSchema map[string]any    `json:"input_schema,omitzero,required"`
-	Name        string            `json:"name,required"`
+	InputSchema map[string]any    `json:"input_schema,omitzero" api:"required"`
+	Name        string            `json:"name" api:"required"`
 	Description param.Opt[string] `json:"description,omitzero"`
 	paramObj
 }
@@ -1335,7 +1335,7 @@ func (r *ConversationNewParamsItemMcpListToolsTool) UnmarshalJSON(data []byte) e
 
 type ConversationUpdateParams struct {
 	// Set of key-value pairs that can be attached to an object.
-	Metadata map[string]string `json:"metadata,omitzero,required"`
+	Metadata map[string]string `json:"metadata,omitzero" api:"required"`
 	paramObj
 }
 

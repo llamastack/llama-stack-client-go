@@ -101,31 +101,31 @@ func (r *BatchService) Cancel(ctx context.Context, batchID string, opts ...optio
 }
 
 type BatchNewResponse struct {
-	ID               string         `json:"id,required"`
-	CompletionWindow string         `json:"completion_window,required"`
-	CreatedAt        int64          `json:"created_at,required"`
-	Endpoint         string         `json:"endpoint,required"`
-	InputFileID      string         `json:"input_file_id,required"`
-	Object           constant.Batch `json:"object,required"`
+	ID               string         `json:"id" api:"required"`
+	CompletionWindow string         `json:"completion_window" api:"required"`
+	CreatedAt        int64          `json:"created_at" api:"required"`
+	Endpoint         string         `json:"endpoint" api:"required"`
+	InputFileID      string         `json:"input_file_id" api:"required"`
+	Object           constant.Batch `json:"object" api:"required"`
 	// Any of "validating", "failed", "in_progress", "finalizing", "completed",
 	// "expired", "cancelling", "cancelled".
-	Status        BatchNewResponseStatus        `json:"status,required"`
-	CancelledAt   int64                         `json:"cancelled_at,nullable"`
-	CancellingAt  int64                         `json:"cancelling_at,nullable"`
-	CompletedAt   int64                         `json:"completed_at,nullable"`
-	ErrorFileID   string                        `json:"error_file_id,nullable"`
-	Errors        BatchNewResponseErrors        `json:"errors,nullable"`
-	ExpiredAt     int64                         `json:"expired_at,nullable"`
-	ExpiresAt     int64                         `json:"expires_at,nullable"`
-	FailedAt      int64                         `json:"failed_at,nullable"`
-	FinalizingAt  int64                         `json:"finalizing_at,nullable"`
-	InProgressAt  int64                         `json:"in_progress_at,nullable"`
-	Metadata      map[string]string             `json:"metadata,nullable"`
-	Model         string                        `json:"model,nullable"`
-	OutputFileID  string                        `json:"output_file_id,nullable"`
-	RequestCounts BatchNewResponseRequestCounts `json:"request_counts,nullable"`
-	Usage         BatchNewResponseUsage         `json:"usage,nullable"`
-	ExtraFields   map[string]any                `json:",extras"`
+	Status        BatchNewResponseStatus        `json:"status" api:"required"`
+	CancelledAt   int64                         `json:"cancelled_at" api:"nullable"`
+	CancellingAt  int64                         `json:"cancelling_at" api:"nullable"`
+	CompletedAt   int64                         `json:"completed_at" api:"nullable"`
+	ErrorFileID   string                        `json:"error_file_id" api:"nullable"`
+	Errors        BatchNewResponseErrors        `json:"errors" api:"nullable"`
+	ExpiredAt     int64                         `json:"expired_at" api:"nullable"`
+	ExpiresAt     int64                         `json:"expires_at" api:"nullable"`
+	FailedAt      int64                         `json:"failed_at" api:"nullable"`
+	FinalizingAt  int64                         `json:"finalizing_at" api:"nullable"`
+	InProgressAt  int64                         `json:"in_progress_at" api:"nullable"`
+	Metadata      map[string]string             `json:"metadata" api:"nullable"`
+	Model         string                        `json:"model" api:"nullable"`
+	OutputFileID  string                        `json:"output_file_id" api:"nullable"`
+	RequestCounts BatchNewResponseRequestCounts `json:"request_counts" api:"nullable"`
+	Usage         BatchNewResponseUsage         `json:"usage" api:"nullable"`
+	ExtraFields   map[string]any                `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID               respjson.Field
@@ -175,9 +175,9 @@ const (
 )
 
 type BatchNewResponseErrors struct {
-	Data        []BatchNewResponseErrorsData `json:"data,nullable"`
-	Object      string                       `json:"object,nullable"`
-	ExtraFields map[string]any               `json:",extras"`
+	Data        []BatchNewResponseErrorsData `json:"data" api:"nullable"`
+	Object      string                       `json:"object" api:"nullable"`
+	ExtraFields map[string]any               `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -194,11 +194,11 @@ func (r *BatchNewResponseErrors) UnmarshalJSON(data []byte) error {
 }
 
 type BatchNewResponseErrorsData struct {
-	Code        string         `json:"code,nullable"`
-	Line        int64          `json:"line,nullable"`
-	Message     string         `json:"message,nullable"`
-	Param       string         `json:"param,nullable"`
-	ExtraFields map[string]any `json:",extras"`
+	Code        string         `json:"code" api:"nullable"`
+	Line        int64          `json:"line" api:"nullable"`
+	Message     string         `json:"message" api:"nullable"`
+	Param       string         `json:"param" api:"nullable"`
+	ExtraFields map[string]any `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Code        respjson.Field
@@ -217,10 +217,10 @@ func (r *BatchNewResponseErrorsData) UnmarshalJSON(data []byte) error {
 }
 
 type BatchNewResponseRequestCounts struct {
-	Completed   int64          `json:"completed,required"`
-	Failed      int64          `json:"failed,required"`
-	Total       int64          `json:"total,required"`
-	ExtraFields map[string]any `json:",extras"`
+	Completed   int64          `json:"completed" api:"required"`
+	Failed      int64          `json:"failed" api:"required"`
+	Total       int64          `json:"total" api:"required"`
+	ExtraFields map[string]any `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Completed   respjson.Field
@@ -238,12 +238,12 @@ func (r *BatchNewResponseRequestCounts) UnmarshalJSON(data []byte) error {
 }
 
 type BatchNewResponseUsage struct {
-	InputTokens         int64                                    `json:"input_tokens,required"`
-	InputTokensDetails  BatchNewResponseUsageInputTokensDetails  `json:"input_tokens_details,required"`
-	OutputTokens        int64                                    `json:"output_tokens,required"`
-	OutputTokensDetails BatchNewResponseUsageOutputTokensDetails `json:"output_tokens_details,required"`
-	TotalTokens         int64                                    `json:"total_tokens,required"`
-	ExtraFields         map[string]any                           `json:",extras"`
+	InputTokens         int64                                    `json:"input_tokens" api:"required"`
+	InputTokensDetails  BatchNewResponseUsageInputTokensDetails  `json:"input_tokens_details" api:"required"`
+	OutputTokens        int64                                    `json:"output_tokens" api:"required"`
+	OutputTokensDetails BatchNewResponseUsageOutputTokensDetails `json:"output_tokens_details" api:"required"`
+	TotalTokens         int64                                    `json:"total_tokens" api:"required"`
+	ExtraFields         map[string]any                           `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		InputTokens         respjson.Field
@@ -263,8 +263,8 @@ func (r *BatchNewResponseUsage) UnmarshalJSON(data []byte) error {
 }
 
 type BatchNewResponseUsageInputTokensDetails struct {
-	CachedTokens int64          `json:"cached_tokens,required"`
-	ExtraFields  map[string]any `json:",extras"`
+	CachedTokens int64          `json:"cached_tokens" api:"required"`
+	ExtraFields  map[string]any `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CachedTokens respjson.Field
@@ -280,8 +280,8 @@ func (r *BatchNewResponseUsageInputTokensDetails) UnmarshalJSON(data []byte) err
 }
 
 type BatchNewResponseUsageOutputTokensDetails struct {
-	ReasoningTokens int64          `json:"reasoning_tokens,required"`
-	ExtraFields     map[string]any `json:",extras"`
+	ReasoningTokens int64          `json:"reasoning_tokens" api:"required"`
+	ExtraFields     map[string]any `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ReasoningTokens respjson.Field
@@ -297,31 +297,31 @@ func (r *BatchNewResponseUsageOutputTokensDetails) UnmarshalJSON(data []byte) er
 }
 
 type BatchGetResponse struct {
-	ID               string         `json:"id,required"`
-	CompletionWindow string         `json:"completion_window,required"`
-	CreatedAt        int64          `json:"created_at,required"`
-	Endpoint         string         `json:"endpoint,required"`
-	InputFileID      string         `json:"input_file_id,required"`
-	Object           constant.Batch `json:"object,required"`
+	ID               string         `json:"id" api:"required"`
+	CompletionWindow string         `json:"completion_window" api:"required"`
+	CreatedAt        int64          `json:"created_at" api:"required"`
+	Endpoint         string         `json:"endpoint" api:"required"`
+	InputFileID      string         `json:"input_file_id" api:"required"`
+	Object           constant.Batch `json:"object" api:"required"`
 	// Any of "validating", "failed", "in_progress", "finalizing", "completed",
 	// "expired", "cancelling", "cancelled".
-	Status        BatchGetResponseStatus        `json:"status,required"`
-	CancelledAt   int64                         `json:"cancelled_at,nullable"`
-	CancellingAt  int64                         `json:"cancelling_at,nullable"`
-	CompletedAt   int64                         `json:"completed_at,nullable"`
-	ErrorFileID   string                        `json:"error_file_id,nullable"`
-	Errors        BatchGetResponseErrors        `json:"errors,nullable"`
-	ExpiredAt     int64                         `json:"expired_at,nullable"`
-	ExpiresAt     int64                         `json:"expires_at,nullable"`
-	FailedAt      int64                         `json:"failed_at,nullable"`
-	FinalizingAt  int64                         `json:"finalizing_at,nullable"`
-	InProgressAt  int64                         `json:"in_progress_at,nullable"`
-	Metadata      map[string]string             `json:"metadata,nullable"`
-	Model         string                        `json:"model,nullable"`
-	OutputFileID  string                        `json:"output_file_id,nullable"`
-	RequestCounts BatchGetResponseRequestCounts `json:"request_counts,nullable"`
-	Usage         BatchGetResponseUsage         `json:"usage,nullable"`
-	ExtraFields   map[string]any                `json:",extras"`
+	Status        BatchGetResponseStatus        `json:"status" api:"required"`
+	CancelledAt   int64                         `json:"cancelled_at" api:"nullable"`
+	CancellingAt  int64                         `json:"cancelling_at" api:"nullable"`
+	CompletedAt   int64                         `json:"completed_at" api:"nullable"`
+	ErrorFileID   string                        `json:"error_file_id" api:"nullable"`
+	Errors        BatchGetResponseErrors        `json:"errors" api:"nullable"`
+	ExpiredAt     int64                         `json:"expired_at" api:"nullable"`
+	ExpiresAt     int64                         `json:"expires_at" api:"nullable"`
+	FailedAt      int64                         `json:"failed_at" api:"nullable"`
+	FinalizingAt  int64                         `json:"finalizing_at" api:"nullable"`
+	InProgressAt  int64                         `json:"in_progress_at" api:"nullable"`
+	Metadata      map[string]string             `json:"metadata" api:"nullable"`
+	Model         string                        `json:"model" api:"nullable"`
+	OutputFileID  string                        `json:"output_file_id" api:"nullable"`
+	RequestCounts BatchGetResponseRequestCounts `json:"request_counts" api:"nullable"`
+	Usage         BatchGetResponseUsage         `json:"usage" api:"nullable"`
+	ExtraFields   map[string]any                `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID               respjson.Field
@@ -371,9 +371,9 @@ const (
 )
 
 type BatchGetResponseErrors struct {
-	Data        []BatchGetResponseErrorsData `json:"data,nullable"`
-	Object      string                       `json:"object,nullable"`
-	ExtraFields map[string]any               `json:",extras"`
+	Data        []BatchGetResponseErrorsData `json:"data" api:"nullable"`
+	Object      string                       `json:"object" api:"nullable"`
+	ExtraFields map[string]any               `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -390,11 +390,11 @@ func (r *BatchGetResponseErrors) UnmarshalJSON(data []byte) error {
 }
 
 type BatchGetResponseErrorsData struct {
-	Code        string         `json:"code,nullable"`
-	Line        int64          `json:"line,nullable"`
-	Message     string         `json:"message,nullable"`
-	Param       string         `json:"param,nullable"`
-	ExtraFields map[string]any `json:",extras"`
+	Code        string         `json:"code" api:"nullable"`
+	Line        int64          `json:"line" api:"nullable"`
+	Message     string         `json:"message" api:"nullable"`
+	Param       string         `json:"param" api:"nullable"`
+	ExtraFields map[string]any `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Code        respjson.Field
@@ -413,10 +413,10 @@ func (r *BatchGetResponseErrorsData) UnmarshalJSON(data []byte) error {
 }
 
 type BatchGetResponseRequestCounts struct {
-	Completed   int64          `json:"completed,required"`
-	Failed      int64          `json:"failed,required"`
-	Total       int64          `json:"total,required"`
-	ExtraFields map[string]any `json:",extras"`
+	Completed   int64          `json:"completed" api:"required"`
+	Failed      int64          `json:"failed" api:"required"`
+	Total       int64          `json:"total" api:"required"`
+	ExtraFields map[string]any `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Completed   respjson.Field
@@ -434,12 +434,12 @@ func (r *BatchGetResponseRequestCounts) UnmarshalJSON(data []byte) error {
 }
 
 type BatchGetResponseUsage struct {
-	InputTokens         int64                                    `json:"input_tokens,required"`
-	InputTokensDetails  BatchGetResponseUsageInputTokensDetails  `json:"input_tokens_details,required"`
-	OutputTokens        int64                                    `json:"output_tokens,required"`
-	OutputTokensDetails BatchGetResponseUsageOutputTokensDetails `json:"output_tokens_details,required"`
-	TotalTokens         int64                                    `json:"total_tokens,required"`
-	ExtraFields         map[string]any                           `json:",extras"`
+	InputTokens         int64                                    `json:"input_tokens" api:"required"`
+	InputTokensDetails  BatchGetResponseUsageInputTokensDetails  `json:"input_tokens_details" api:"required"`
+	OutputTokens        int64                                    `json:"output_tokens" api:"required"`
+	OutputTokensDetails BatchGetResponseUsageOutputTokensDetails `json:"output_tokens_details" api:"required"`
+	TotalTokens         int64                                    `json:"total_tokens" api:"required"`
+	ExtraFields         map[string]any                           `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		InputTokens         respjson.Field
@@ -459,8 +459,8 @@ func (r *BatchGetResponseUsage) UnmarshalJSON(data []byte) error {
 }
 
 type BatchGetResponseUsageInputTokensDetails struct {
-	CachedTokens int64          `json:"cached_tokens,required"`
-	ExtraFields  map[string]any `json:",extras"`
+	CachedTokens int64          `json:"cached_tokens" api:"required"`
+	ExtraFields  map[string]any `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CachedTokens respjson.Field
@@ -476,8 +476,8 @@ func (r *BatchGetResponseUsageInputTokensDetails) UnmarshalJSON(data []byte) err
 }
 
 type BatchGetResponseUsageOutputTokensDetails struct {
-	ReasoningTokens int64          `json:"reasoning_tokens,required"`
-	ExtraFields     map[string]any `json:",extras"`
+	ReasoningTokens int64          `json:"reasoning_tokens" api:"required"`
+	ExtraFields     map[string]any `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ReasoningTokens respjson.Field
@@ -493,31 +493,31 @@ func (r *BatchGetResponseUsageOutputTokensDetails) UnmarshalJSON(data []byte) er
 }
 
 type BatchListResponse struct {
-	ID               string         `json:"id,required"`
-	CompletionWindow string         `json:"completion_window,required"`
-	CreatedAt        int64          `json:"created_at,required"`
-	Endpoint         string         `json:"endpoint,required"`
-	InputFileID      string         `json:"input_file_id,required"`
-	Object           constant.Batch `json:"object,required"`
+	ID               string         `json:"id" api:"required"`
+	CompletionWindow string         `json:"completion_window" api:"required"`
+	CreatedAt        int64          `json:"created_at" api:"required"`
+	Endpoint         string         `json:"endpoint" api:"required"`
+	InputFileID      string         `json:"input_file_id" api:"required"`
+	Object           constant.Batch `json:"object" api:"required"`
 	// Any of "validating", "failed", "in_progress", "finalizing", "completed",
 	// "expired", "cancelling", "cancelled".
-	Status        BatchListResponseStatus        `json:"status,required"`
-	CancelledAt   int64                          `json:"cancelled_at,nullable"`
-	CancellingAt  int64                          `json:"cancelling_at,nullable"`
-	CompletedAt   int64                          `json:"completed_at,nullable"`
-	ErrorFileID   string                         `json:"error_file_id,nullable"`
-	Errors        BatchListResponseErrors        `json:"errors,nullable"`
-	ExpiredAt     int64                          `json:"expired_at,nullable"`
-	ExpiresAt     int64                          `json:"expires_at,nullable"`
-	FailedAt      int64                          `json:"failed_at,nullable"`
-	FinalizingAt  int64                          `json:"finalizing_at,nullable"`
-	InProgressAt  int64                          `json:"in_progress_at,nullable"`
-	Metadata      map[string]string              `json:"metadata,nullable"`
-	Model         string                         `json:"model,nullable"`
-	OutputFileID  string                         `json:"output_file_id,nullable"`
-	RequestCounts BatchListResponseRequestCounts `json:"request_counts,nullable"`
-	Usage         BatchListResponseUsage         `json:"usage,nullable"`
-	ExtraFields   map[string]any                 `json:",extras"`
+	Status        BatchListResponseStatus        `json:"status" api:"required"`
+	CancelledAt   int64                          `json:"cancelled_at" api:"nullable"`
+	CancellingAt  int64                          `json:"cancelling_at" api:"nullable"`
+	CompletedAt   int64                          `json:"completed_at" api:"nullable"`
+	ErrorFileID   string                         `json:"error_file_id" api:"nullable"`
+	Errors        BatchListResponseErrors        `json:"errors" api:"nullable"`
+	ExpiredAt     int64                          `json:"expired_at" api:"nullable"`
+	ExpiresAt     int64                          `json:"expires_at" api:"nullable"`
+	FailedAt      int64                          `json:"failed_at" api:"nullable"`
+	FinalizingAt  int64                          `json:"finalizing_at" api:"nullable"`
+	InProgressAt  int64                          `json:"in_progress_at" api:"nullable"`
+	Metadata      map[string]string              `json:"metadata" api:"nullable"`
+	Model         string                         `json:"model" api:"nullable"`
+	OutputFileID  string                         `json:"output_file_id" api:"nullable"`
+	RequestCounts BatchListResponseRequestCounts `json:"request_counts" api:"nullable"`
+	Usage         BatchListResponseUsage         `json:"usage" api:"nullable"`
+	ExtraFields   map[string]any                 `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID               respjson.Field
@@ -567,9 +567,9 @@ const (
 )
 
 type BatchListResponseErrors struct {
-	Data        []BatchListResponseErrorsData `json:"data,nullable"`
-	Object      string                        `json:"object,nullable"`
-	ExtraFields map[string]any                `json:",extras"`
+	Data        []BatchListResponseErrorsData `json:"data" api:"nullable"`
+	Object      string                        `json:"object" api:"nullable"`
+	ExtraFields map[string]any                `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -586,11 +586,11 @@ func (r *BatchListResponseErrors) UnmarshalJSON(data []byte) error {
 }
 
 type BatchListResponseErrorsData struct {
-	Code        string         `json:"code,nullable"`
-	Line        int64          `json:"line,nullable"`
-	Message     string         `json:"message,nullable"`
-	Param       string         `json:"param,nullable"`
-	ExtraFields map[string]any `json:",extras"`
+	Code        string         `json:"code" api:"nullable"`
+	Line        int64          `json:"line" api:"nullable"`
+	Message     string         `json:"message" api:"nullable"`
+	Param       string         `json:"param" api:"nullable"`
+	ExtraFields map[string]any `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Code        respjson.Field
@@ -609,10 +609,10 @@ func (r *BatchListResponseErrorsData) UnmarshalJSON(data []byte) error {
 }
 
 type BatchListResponseRequestCounts struct {
-	Completed   int64          `json:"completed,required"`
-	Failed      int64          `json:"failed,required"`
-	Total       int64          `json:"total,required"`
-	ExtraFields map[string]any `json:",extras"`
+	Completed   int64          `json:"completed" api:"required"`
+	Failed      int64          `json:"failed" api:"required"`
+	Total       int64          `json:"total" api:"required"`
+	ExtraFields map[string]any `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Completed   respjson.Field
@@ -630,12 +630,12 @@ func (r *BatchListResponseRequestCounts) UnmarshalJSON(data []byte) error {
 }
 
 type BatchListResponseUsage struct {
-	InputTokens         int64                                     `json:"input_tokens,required"`
-	InputTokensDetails  BatchListResponseUsageInputTokensDetails  `json:"input_tokens_details,required"`
-	OutputTokens        int64                                     `json:"output_tokens,required"`
-	OutputTokensDetails BatchListResponseUsageOutputTokensDetails `json:"output_tokens_details,required"`
-	TotalTokens         int64                                     `json:"total_tokens,required"`
-	ExtraFields         map[string]any                            `json:",extras"`
+	InputTokens         int64                                     `json:"input_tokens" api:"required"`
+	InputTokensDetails  BatchListResponseUsageInputTokensDetails  `json:"input_tokens_details" api:"required"`
+	OutputTokens        int64                                     `json:"output_tokens" api:"required"`
+	OutputTokensDetails BatchListResponseUsageOutputTokensDetails `json:"output_tokens_details" api:"required"`
+	TotalTokens         int64                                     `json:"total_tokens" api:"required"`
+	ExtraFields         map[string]any                            `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		InputTokens         respjson.Field
@@ -655,8 +655,8 @@ func (r *BatchListResponseUsage) UnmarshalJSON(data []byte) error {
 }
 
 type BatchListResponseUsageInputTokensDetails struct {
-	CachedTokens int64          `json:"cached_tokens,required"`
-	ExtraFields  map[string]any `json:",extras"`
+	CachedTokens int64          `json:"cached_tokens" api:"required"`
+	ExtraFields  map[string]any `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CachedTokens respjson.Field
@@ -672,8 +672,8 @@ func (r *BatchListResponseUsageInputTokensDetails) UnmarshalJSON(data []byte) er
 }
 
 type BatchListResponseUsageOutputTokensDetails struct {
-	ReasoningTokens int64          `json:"reasoning_tokens,required"`
-	ExtraFields     map[string]any `json:",extras"`
+	ReasoningTokens int64          `json:"reasoning_tokens" api:"required"`
+	ExtraFields     map[string]any `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ReasoningTokens respjson.Field
@@ -689,31 +689,31 @@ func (r *BatchListResponseUsageOutputTokensDetails) UnmarshalJSON(data []byte) e
 }
 
 type BatchCancelResponse struct {
-	ID               string         `json:"id,required"`
-	CompletionWindow string         `json:"completion_window,required"`
-	CreatedAt        int64          `json:"created_at,required"`
-	Endpoint         string         `json:"endpoint,required"`
-	InputFileID      string         `json:"input_file_id,required"`
-	Object           constant.Batch `json:"object,required"`
+	ID               string         `json:"id" api:"required"`
+	CompletionWindow string         `json:"completion_window" api:"required"`
+	CreatedAt        int64          `json:"created_at" api:"required"`
+	Endpoint         string         `json:"endpoint" api:"required"`
+	InputFileID      string         `json:"input_file_id" api:"required"`
+	Object           constant.Batch `json:"object" api:"required"`
 	// Any of "validating", "failed", "in_progress", "finalizing", "completed",
 	// "expired", "cancelling", "cancelled".
-	Status        BatchCancelResponseStatus        `json:"status,required"`
-	CancelledAt   int64                            `json:"cancelled_at,nullable"`
-	CancellingAt  int64                            `json:"cancelling_at,nullable"`
-	CompletedAt   int64                            `json:"completed_at,nullable"`
-	ErrorFileID   string                           `json:"error_file_id,nullable"`
-	Errors        BatchCancelResponseErrors        `json:"errors,nullable"`
-	ExpiredAt     int64                            `json:"expired_at,nullable"`
-	ExpiresAt     int64                            `json:"expires_at,nullable"`
-	FailedAt      int64                            `json:"failed_at,nullable"`
-	FinalizingAt  int64                            `json:"finalizing_at,nullable"`
-	InProgressAt  int64                            `json:"in_progress_at,nullable"`
-	Metadata      map[string]string                `json:"metadata,nullable"`
-	Model         string                           `json:"model,nullable"`
-	OutputFileID  string                           `json:"output_file_id,nullable"`
-	RequestCounts BatchCancelResponseRequestCounts `json:"request_counts,nullable"`
-	Usage         BatchCancelResponseUsage         `json:"usage,nullable"`
-	ExtraFields   map[string]any                   `json:",extras"`
+	Status        BatchCancelResponseStatus        `json:"status" api:"required"`
+	CancelledAt   int64                            `json:"cancelled_at" api:"nullable"`
+	CancellingAt  int64                            `json:"cancelling_at" api:"nullable"`
+	CompletedAt   int64                            `json:"completed_at" api:"nullable"`
+	ErrorFileID   string                           `json:"error_file_id" api:"nullable"`
+	Errors        BatchCancelResponseErrors        `json:"errors" api:"nullable"`
+	ExpiredAt     int64                            `json:"expired_at" api:"nullable"`
+	ExpiresAt     int64                            `json:"expires_at" api:"nullable"`
+	FailedAt      int64                            `json:"failed_at" api:"nullable"`
+	FinalizingAt  int64                            `json:"finalizing_at" api:"nullable"`
+	InProgressAt  int64                            `json:"in_progress_at" api:"nullable"`
+	Metadata      map[string]string                `json:"metadata" api:"nullable"`
+	Model         string                           `json:"model" api:"nullable"`
+	OutputFileID  string                           `json:"output_file_id" api:"nullable"`
+	RequestCounts BatchCancelResponseRequestCounts `json:"request_counts" api:"nullable"`
+	Usage         BatchCancelResponseUsage         `json:"usage" api:"nullable"`
+	ExtraFields   map[string]any                   `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID               respjson.Field
@@ -763,9 +763,9 @@ const (
 )
 
 type BatchCancelResponseErrors struct {
-	Data        []BatchCancelResponseErrorsData `json:"data,nullable"`
-	Object      string                          `json:"object,nullable"`
-	ExtraFields map[string]any                  `json:",extras"`
+	Data        []BatchCancelResponseErrorsData `json:"data" api:"nullable"`
+	Object      string                          `json:"object" api:"nullable"`
+	ExtraFields map[string]any                  `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -782,11 +782,11 @@ func (r *BatchCancelResponseErrors) UnmarshalJSON(data []byte) error {
 }
 
 type BatchCancelResponseErrorsData struct {
-	Code        string         `json:"code,nullable"`
-	Line        int64          `json:"line,nullable"`
-	Message     string         `json:"message,nullable"`
-	Param       string         `json:"param,nullable"`
-	ExtraFields map[string]any `json:",extras"`
+	Code        string         `json:"code" api:"nullable"`
+	Line        int64          `json:"line" api:"nullable"`
+	Message     string         `json:"message" api:"nullable"`
+	Param       string         `json:"param" api:"nullable"`
+	ExtraFields map[string]any `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Code        respjson.Field
@@ -805,10 +805,10 @@ func (r *BatchCancelResponseErrorsData) UnmarshalJSON(data []byte) error {
 }
 
 type BatchCancelResponseRequestCounts struct {
-	Completed   int64          `json:"completed,required"`
-	Failed      int64          `json:"failed,required"`
-	Total       int64          `json:"total,required"`
-	ExtraFields map[string]any `json:",extras"`
+	Completed   int64          `json:"completed" api:"required"`
+	Failed      int64          `json:"failed" api:"required"`
+	Total       int64          `json:"total" api:"required"`
+	ExtraFields map[string]any `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Completed   respjson.Field
@@ -826,12 +826,12 @@ func (r *BatchCancelResponseRequestCounts) UnmarshalJSON(data []byte) error {
 }
 
 type BatchCancelResponseUsage struct {
-	InputTokens         int64                                       `json:"input_tokens,required"`
-	InputTokensDetails  BatchCancelResponseUsageInputTokensDetails  `json:"input_tokens_details,required"`
-	OutputTokens        int64                                       `json:"output_tokens,required"`
-	OutputTokensDetails BatchCancelResponseUsageOutputTokensDetails `json:"output_tokens_details,required"`
-	TotalTokens         int64                                       `json:"total_tokens,required"`
-	ExtraFields         map[string]any                              `json:",extras"`
+	InputTokens         int64                                       `json:"input_tokens" api:"required"`
+	InputTokensDetails  BatchCancelResponseUsageInputTokensDetails  `json:"input_tokens_details" api:"required"`
+	OutputTokens        int64                                       `json:"output_tokens" api:"required"`
+	OutputTokensDetails BatchCancelResponseUsageOutputTokensDetails `json:"output_tokens_details" api:"required"`
+	TotalTokens         int64                                       `json:"total_tokens" api:"required"`
+	ExtraFields         map[string]any                              `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		InputTokens         respjson.Field
@@ -851,8 +851,8 @@ func (r *BatchCancelResponseUsage) UnmarshalJSON(data []byte) error {
 }
 
 type BatchCancelResponseUsageInputTokensDetails struct {
-	CachedTokens int64          `json:"cached_tokens,required"`
-	ExtraFields  map[string]any `json:",extras"`
+	CachedTokens int64          `json:"cached_tokens" api:"required"`
+	ExtraFields  map[string]any `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CachedTokens respjson.Field
@@ -868,8 +868,8 @@ func (r *BatchCancelResponseUsageInputTokensDetails) UnmarshalJSON(data []byte) 
 }
 
 type BatchCancelResponseUsageOutputTokensDetails struct {
-	ReasoningTokens int64          `json:"reasoning_tokens,required"`
-	ExtraFields     map[string]any `json:",extras"`
+	ReasoningTokens int64          `json:"reasoning_tokens" api:"required"`
+	ExtraFields     map[string]any `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ReasoningTokens respjson.Field
@@ -886,9 +886,9 @@ func (r *BatchCancelResponseUsageOutputTokensDetails) UnmarshalJSON(data []byte)
 
 type BatchNewParams struct {
 	// The endpoint to be used for all requests in the batch.
-	Endpoint string `json:"endpoint,required"`
+	Endpoint string `json:"endpoint" api:"required"`
 	// The ID of an uploaded file containing requests for the batch.
-	InputFileID string `json:"input_file_id,required"`
+	InputFileID string `json:"input_file_id" api:"required"`
 	// Optional idempotency key. When provided, enables idempotent behavior.
 	IdempotencyKey param.Opt[string] `json:"idempotency_key,omitzero"`
 	// Optional metadata for the batch.
@@ -896,7 +896,7 @@ type BatchNewParams struct {
 	// The time window within which the batch should be processed.
 	//
 	// This field can be elided, and will marshal its zero value as "24h".
-	CompletionWindow constant.String24h `json:"completion_window,required"`
+	CompletionWindow constant.String24h `json:"completion_window" api:"required"`
 	paramObj
 }
 

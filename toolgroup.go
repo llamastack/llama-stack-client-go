@@ -98,7 +98,7 @@ func (r *ToolgroupService) Unregister(ctx context.Context, toolgroupID string, o
 
 // Response containing a list of tool groups.
 type ListToolGroupsResponse struct {
-	Data []ToolGroup `json:"data,required"`
+	Data []ToolGroup `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -116,14 +116,14 @@ func (r *ListToolGroupsResponse) UnmarshalJSON(data []byte) error {
 // A group of related tools managed together.
 type ToolGroup struct {
 	// Unique identifier for this resource in llama stack
-	Identifier string `json:"identifier,required"`
+	Identifier string `json:"identifier" api:"required"`
 	// ID of the provider that owns this resource
-	ProviderID string         `json:"provider_id,required"`
-	Args       map[string]any `json:"args,nullable"`
+	ProviderID string         `json:"provider_id" api:"required"`
+	Args       map[string]any `json:"args" api:"nullable"`
 	// A URL reference to external content.
-	McpEndpoint ToolGroupMcpEndpoint `json:"mcp_endpoint,nullable"`
+	McpEndpoint ToolGroupMcpEndpoint `json:"mcp_endpoint" api:"nullable"`
 	// Unique identifier for this resource in the provider
-	ProviderResourceID string `json:"provider_resource_id,nullable"`
+	ProviderResourceID string `json:"provider_resource_id" api:"nullable"`
 	// Any of "tool_group".
 	Type ToolGroupType `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -147,7 +147,7 @@ func (r *ToolGroup) UnmarshalJSON(data []byte) error {
 
 // A URL reference to external content.
 type ToolGroupMcpEndpoint struct {
-	Uri string `json:"uri,required"`
+	Uri string `json:"uri" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Uri         respjson.Field
@@ -169,8 +169,8 @@ const (
 )
 
 type ToolgroupRegisterParams struct {
-	ProviderID  string         `json:"provider_id,required"`
-	ToolgroupID string         `json:"toolgroup_id,required"`
+	ProviderID  string         `json:"provider_id" api:"required"`
+	ToolgroupID string         `json:"toolgroup_id" api:"required"`
 	Args        map[string]any `json:"args,omitzero"`
 	// A URL reference to external content.
 	McpEndpoint ToolgroupRegisterParamsMcpEndpoint `json:"mcp_endpoint,omitzero"`
@@ -189,7 +189,7 @@ func (r *ToolgroupRegisterParams) UnmarshalJSON(data []byte) error {
 //
 // The property Uri is required.
 type ToolgroupRegisterParamsMcpEndpoint struct {
-	Uri string `json:"uri,required"`
+	Uri string `json:"uri" api:"required"`
 	paramObj
 }
 

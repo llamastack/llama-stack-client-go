@@ -131,10 +131,10 @@ func (r *VectorStoreService) Search(ctx context.Context, vectorStoreID string, b
 
 // Response from listing vector stores.
 type ListVectorStoresResponse struct {
-	Data    []VectorStore `json:"data,required"`
-	FirstID string        `json:"first_id,nullable"`
+	Data    []VectorStore `json:"data" api:"required"`
+	FirstID string        `json:"first_id" api:"nullable"`
 	HasMore bool          `json:"has_more"`
-	LastID  string        `json:"last_id,nullable"`
+	LastID  string        `json:"last_id" api:"nullable"`
 	Object  string        `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -156,15 +156,15 @@ func (r *ListVectorStoresResponse) UnmarshalJSON(data []byte) error {
 
 // OpenAI Vector Store object.
 type VectorStore struct {
-	ID        string `json:"id,required"`
-	CreatedAt int64  `json:"created_at,required"`
+	ID        string `json:"id" api:"required"`
+	CreatedAt int64  `json:"created_at" api:"required"`
 	// File processing status counts for a vector store.
-	FileCounts   VectorStoreFileCounts `json:"file_counts,required"`
-	ExpiresAfter map[string]any        `json:"expires_after,nullable"`
-	ExpiresAt    int64                 `json:"expires_at,nullable"`
-	LastActiveAt int64                 `json:"last_active_at,nullable"`
+	FileCounts   VectorStoreFileCounts `json:"file_counts" api:"required"`
+	ExpiresAfter map[string]any        `json:"expires_after" api:"nullable"`
+	ExpiresAt    int64                 `json:"expires_at" api:"nullable"`
+	LastActiveAt int64                 `json:"last_active_at" api:"nullable"`
 	Metadata     map[string]any        `json:"metadata"`
-	Name         string                `json:"name,nullable"`
+	Name         string                `json:"name" api:"nullable"`
 	Object       string                `json:"object"`
 	Status       string                `json:"status"`
 	UsageBytes   int64                 `json:"usage_bytes"`
@@ -194,11 +194,11 @@ func (r *VectorStore) UnmarshalJSON(data []byte) error {
 
 // File processing status counts for a vector store.
 type VectorStoreFileCounts struct {
-	Cancelled  int64 `json:"cancelled,required"`
-	Completed  int64 `json:"completed,required"`
-	Failed     int64 `json:"failed,required"`
-	InProgress int64 `json:"in_progress,required"`
-	Total      int64 `json:"total,required"`
+	Cancelled  int64 `json:"cancelled" api:"required"`
+	Completed  int64 `json:"completed" api:"required"`
+	Failed     int64 `json:"failed" api:"required"`
+	InProgress int64 `json:"in_progress" api:"required"`
+	Total      int64 `json:"total" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Cancelled   respjson.Field
@@ -219,7 +219,7 @@ func (r *VectorStoreFileCounts) UnmarshalJSON(data []byte) error {
 
 // Response from deleting a vector store.
 type VectorStoreDeleteResponse struct {
-	ID      string `json:"id,required"`
+	ID      string `json:"id" api:"required"`
 	Deleted bool   `json:"deleted"`
 	Object  string `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -240,10 +240,10 @@ func (r *VectorStoreDeleteResponse) UnmarshalJSON(data []byte) error {
 
 // Paginated response from searching a vector store.
 type VectorStoreSearchResponse struct {
-	Data        []VectorStoreSearchResponseData `json:"data,required"`
-	SearchQuery []string                        `json:"search_query,required"`
+	Data        []VectorStoreSearchResponseData `json:"data" api:"required"`
+	SearchQuery []string                        `json:"search_query" api:"required"`
 	HasMore     bool                            `json:"has_more"`
-	NextPage    string                          `json:"next_page,nullable"`
+	NextPage    string                          `json:"next_page" api:"nullable"`
 	Object      string                          `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -265,11 +265,11 @@ func (r *VectorStoreSearchResponse) UnmarshalJSON(data []byte) error {
 
 // Response from searching a vector store.
 type VectorStoreSearchResponseData struct {
-	Content    []VectorStoreSearchResponseDataContent                 `json:"content,required"`
-	FileID     string                                                 `json:"file_id,required"`
-	Filename   string                                                 `json:"filename,required"`
-	Score      float64                                                `json:"score,required"`
-	Attributes map[string]VectorStoreSearchResponseDataAttributeUnion `json:"attributes,nullable"`
+	Content    []VectorStoreSearchResponseDataContent                 `json:"content" api:"required"`
+	FileID     string                                                 `json:"file_id" api:"required"`
+	Filename   string                                                 `json:"filename" api:"required"`
+	Score      float64                                                `json:"score" api:"required"`
+	Attributes map[string]VectorStoreSearchResponseDataAttributeUnion `json:"attributes" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Content     respjson.Field
@@ -290,17 +290,17 @@ func (r *VectorStoreSearchResponseData) UnmarshalJSON(data []byte) error {
 
 // Content item from a vector store file or search result.
 type VectorStoreSearchResponseDataContent struct {
-	Text string        `json:"text,required"`
-	Type constant.Text `json:"type,required"`
+	Text string        `json:"text" api:"required"`
+	Type constant.Text `json:"type" api:"required"`
 	// `ChunkMetadata` is backend metadata for a `Chunk` that is used to store
 	// additional information about the chunk that will not be used in the context
 	// during inference, but is required for backend functionality. The `ChunkMetadata`
 	// is set during chunk creation in `MemoryToolRuntimeImpl().insert()`and is not
 	// expected to change after. Use `Chunk.metadata` for metadata that will be used in
 	// the context during inference.
-	ChunkMetadata VectorStoreSearchResponseDataContentChunkMetadata `json:"chunk_metadata,nullable"`
-	Embedding     []float64                                         `json:"embedding,nullable"`
-	Metadata      map[string]any                                    `json:"metadata,nullable"`
+	ChunkMetadata VectorStoreSearchResponseDataContentChunkMetadata `json:"chunk_metadata" api:"nullable"`
+	Embedding     []float64                                         `json:"embedding" api:"nullable"`
+	Metadata      map[string]any                                    `json:"metadata" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Text          respjson.Field
@@ -326,15 +326,15 @@ func (r *VectorStoreSearchResponseDataContent) UnmarshalJSON(data []byte) error 
 // expected to change after. Use `Chunk.metadata` for metadata that will be used in
 // the context during inference.
 type VectorStoreSearchResponseDataContentChunkMetadata struct {
-	ChunkID            string `json:"chunk_id,nullable"`
-	ChunkTokenizer     string `json:"chunk_tokenizer,nullable"`
-	ChunkWindow        string `json:"chunk_window,nullable"`
-	ContentTokenCount  int64  `json:"content_token_count,nullable"`
-	CreatedTimestamp   int64  `json:"created_timestamp,nullable"`
-	DocumentID         string `json:"document_id,nullable"`
-	MetadataTokenCount int64  `json:"metadata_token_count,nullable"`
-	Source             string `json:"source,nullable"`
-	UpdatedTimestamp   int64  `json:"updated_timestamp,nullable"`
+	ChunkID            string `json:"chunk_id" api:"nullable"`
+	ChunkTokenizer     string `json:"chunk_tokenizer" api:"nullable"`
+	ChunkWindow        string `json:"chunk_window" api:"nullable"`
+	ContentTokenCount  int64  `json:"content_token_count" api:"nullable"`
+	CreatedTimestamp   int64  `json:"created_timestamp" api:"nullable"`
+	DocumentID         string `json:"document_id" api:"nullable"`
+	MetadataTokenCount int64  `json:"metadata_token_count" api:"nullable"`
+	Source             string `json:"source" api:"nullable"`
+	UpdatedTimestamp   int64  `json:"updated_timestamp" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ChunkID            respjson.Field
@@ -510,7 +510,7 @@ func init() {
 // The property Static is required.
 type VectorStoreNewParamsChunkingStrategyStatic struct {
 	// Configuration for static chunking strategy.
-	Static VectorStoreNewParamsChunkingStrategyStaticStatic `json:"static,omitzero,required"`
+	Static VectorStoreNewParamsChunkingStrategyStaticStatic `json:"static,omitzero" api:"required"`
 	// Any of "static".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -551,7 +551,7 @@ func (r *VectorStoreNewParamsChunkingStrategyStaticStatic) UnmarshalJSON(data []
 // The property Contextual is required.
 type VectorStoreNewParamsChunkingStrategyContextual struct {
 	// Configuration for contextual chunking.
-	Contextual VectorStoreNewParamsChunkingStrategyContextualContextual `json:"contextual,omitzero,required"`
+	Contextual VectorStoreNewParamsChunkingStrategyContextualContextual `json:"contextual,omitzero" api:"required"`
 	// Strategy type identifier.
 	//
 	// Any of "contextual".
@@ -641,7 +641,7 @@ func (r VectorStoreListParams) URLQuery() (v url.Values, err error) {
 
 type VectorStoreSearchParams struct {
 	// The search query string or list of query strings.
-	Query VectorStoreSearchParamsQueryUnion `json:"query,omitzero,required"`
+	Query VectorStoreSearchParamsQueryUnion `json:"query,omitzero" api:"required"`
 	// Maximum number of results to return.
 	MaxNumResults param.Opt[int64] `json:"max_num_results,omitzero"`
 	// Whether to rewrite the query for better results.

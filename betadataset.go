@@ -132,7 +132,7 @@ func (r *BetaDatasetService) Unregister(ctx context.Context, datasetID string, o
 // Response from listing datasets.
 type ListDatasetsResponse struct {
 	// List of datasets
-	Data []ListDatasetsResponseData `json:"data,required"`
+	Data []ListDatasetsResponseData `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -150,19 +150,19 @@ func (r *ListDatasetsResponse) UnmarshalJSON(data []byte) error {
 // Dataset resource for storing and accessing training or evaluation data.
 type ListDatasetsResponseData struct {
 	// Unique identifier for this resource in llama stack
-	Identifier string `json:"identifier,required"`
+	Identifier string `json:"identifier" api:"required"`
 	// ID of the provider that owns this resource
-	ProviderID string `json:"provider_id,required"`
+	ProviderID string `json:"provider_id" api:"required"`
 	// Purpose of the dataset indicating its intended use
 	//
 	// Any of "post-training/messages", "eval/question-answer", "eval/messages-answer".
-	Purpose string `json:"purpose,required"`
+	Purpose string `json:"purpose" api:"required"`
 	// Data source configuration for the dataset
-	Source ListDatasetsResponseDataSourceUnion `json:"source,required"`
+	Source ListDatasetsResponseDataSourceUnion `json:"source" api:"required"`
 	// Any additional metadata for this dataset
 	Metadata map[string]any `json:"metadata"`
 	// Unique identifier for this resource in the provider
-	ProviderResourceID string `json:"provider_resource_id,nullable"`
+	ProviderResourceID string `json:"provider_resource_id" api:"nullable"`
 	// Type of resource, always 'dataset' for datasets
 	//
 	// Any of "dataset".
@@ -259,7 +259,7 @@ type ListDatasetsResponseDataSourceUri struct {
 	// The dataset can be obtained from a URI. E.g.
 	// "https://mywebsite.com/mydata.jsonl", "lsfs://mydata.jsonl",
 	// "data:csv;base64,{base64_content}"
-	Uri string `json:"uri,required"`
+	Uri string `json:"uri" api:"required"`
 	// The type of data source.
 	//
 	// Any of "uri".
@@ -283,7 +283,7 @@ func (r *ListDatasetsResponseDataSourceUri) UnmarshalJSON(data []byte) error {
 type ListDatasetsResponseDataSourceRows struct {
 	// The dataset is stored in rows. E.g. [{"messages": [{"role": "user", "content":
 	// "Hello, world!"}, {"role": "assistant", "content": "Hello, world!"}]}]
-	Rows []map[string]any `json:"rows,required"`
+	Rows []map[string]any `json:"rows" api:"required"`
 	// The type of data source.
 	//
 	// Any of "rows".
@@ -306,19 +306,19 @@ func (r *ListDatasetsResponseDataSourceRows) UnmarshalJSON(data []byte) error {
 // Dataset resource for storing and accessing training or evaluation data.
 type BetaDatasetGetResponse struct {
 	// Unique identifier for this resource in llama stack
-	Identifier string `json:"identifier,required"`
+	Identifier string `json:"identifier" api:"required"`
 	// ID of the provider that owns this resource
-	ProviderID string `json:"provider_id,required"`
+	ProviderID string `json:"provider_id" api:"required"`
 	// Purpose of the dataset indicating its intended use
 	//
 	// Any of "post-training/messages", "eval/question-answer", "eval/messages-answer".
-	Purpose BetaDatasetGetResponsePurpose `json:"purpose,required"`
+	Purpose BetaDatasetGetResponsePurpose `json:"purpose" api:"required"`
 	// Data source configuration for the dataset
-	Source BetaDatasetGetResponseSourceUnion `json:"source,required"`
+	Source BetaDatasetGetResponseSourceUnion `json:"source" api:"required"`
 	// Any additional metadata for this dataset
 	Metadata map[string]any `json:"metadata"`
 	// Unique identifier for this resource in the provider
-	ProviderResourceID string `json:"provider_resource_id,nullable"`
+	ProviderResourceID string `json:"provider_resource_id" api:"nullable"`
 	// Type of resource, always 'dataset' for datasets
 	//
 	// Any of "dataset".
@@ -424,7 +424,7 @@ type BetaDatasetGetResponseSourceUri struct {
 	// The dataset can be obtained from a URI. E.g.
 	// "https://mywebsite.com/mydata.jsonl", "lsfs://mydata.jsonl",
 	// "data:csv;base64,{base64_content}"
-	Uri string `json:"uri,required"`
+	Uri string `json:"uri" api:"required"`
 	// The type of data source.
 	//
 	// Any of "uri".
@@ -448,7 +448,7 @@ func (r *BetaDatasetGetResponseSourceUri) UnmarshalJSON(data []byte) error {
 type BetaDatasetGetResponseSourceRows struct {
 	// The dataset is stored in rows. E.g. [{"messages": [{"role": "user", "content":
 	// "Hello, world!"}, {"role": "assistant", "content": "Hello, world!"}]}]
-	Rows []map[string]any `json:"rows,required"`
+	Rows []map[string]any `json:"rows" api:"required"`
 	// The type of data source.
 	//
 	// Any of "rows".
@@ -477,9 +477,9 @@ const (
 
 // A generic paginated response that follows a simple format.
 type BetaDatasetIterrowsResponse struct {
-	Data    []map[string]any `json:"data,required"`
-	HasMore bool             `json:"has_more,required"`
-	URL     string           `json:"url,nullable"`
+	Data    []map[string]any `json:"data" api:"required"`
+	HasMore bool             `json:"has_more" api:"required"`
+	URL     string           `json:"url" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -499,19 +499,19 @@ func (r *BetaDatasetIterrowsResponse) UnmarshalJSON(data []byte) error {
 // Dataset resource for storing and accessing training or evaluation data.
 type BetaDatasetRegisterResponse struct {
 	// Unique identifier for this resource in llama stack
-	Identifier string `json:"identifier,required"`
+	Identifier string `json:"identifier" api:"required"`
 	// ID of the provider that owns this resource
-	ProviderID string `json:"provider_id,required"`
+	ProviderID string `json:"provider_id" api:"required"`
 	// Purpose of the dataset indicating its intended use
 	//
 	// Any of "post-training/messages", "eval/question-answer", "eval/messages-answer".
-	Purpose BetaDatasetRegisterResponsePurpose `json:"purpose,required"`
+	Purpose BetaDatasetRegisterResponsePurpose `json:"purpose" api:"required"`
 	// Data source configuration for the dataset
-	Source BetaDatasetRegisterResponseSourceUnion `json:"source,required"`
+	Source BetaDatasetRegisterResponseSourceUnion `json:"source" api:"required"`
 	// Any additional metadata for this dataset
 	Metadata map[string]any `json:"metadata"`
 	// Unique identifier for this resource in the provider
-	ProviderResourceID string `json:"provider_resource_id,nullable"`
+	ProviderResourceID string `json:"provider_resource_id" api:"nullable"`
 	// Type of resource, always 'dataset' for datasets
 	//
 	// Any of "dataset".
@@ -618,7 +618,7 @@ type BetaDatasetRegisterResponseSourceUri struct {
 	// The dataset can be obtained from a URI. E.g.
 	// "https://mywebsite.com/mydata.jsonl", "lsfs://mydata.jsonl",
 	// "data:csv;base64,{base64_content}"
-	Uri string `json:"uri,required"`
+	Uri string `json:"uri" api:"required"`
 	// The type of data source.
 	//
 	// Any of "uri".
@@ -642,7 +642,7 @@ func (r *BetaDatasetRegisterResponseSourceUri) UnmarshalJSON(data []byte) error 
 type BetaDatasetRegisterResponseSourceRows struct {
 	// The dataset is stored in rows. E.g. [{"messages": [{"role": "user", "content":
 	// "Hello, world!"}, {"role": "assistant", "content": "Hello, world!"}]}]
-	Rows []map[string]any `json:"rows,required"`
+	Rows []map[string]any `json:"rows" api:"required"`
 	// The type of data source.
 	//
 	// Any of "rows".
@@ -671,9 +671,9 @@ const (
 
 type BetaDatasetAppendrowsParams struct {
 	// The ID of the dataset to append the rows to.
-	DatasetID string `json:"dataset_id,required"`
+	DatasetID string `json:"dataset_id" api:"required"`
 	// The rows to append to the dataset.
-	Rows []map[string]any `json:"rows,omitzero,required"`
+	Rows []map[string]any `json:"rows,omitzero" api:"required"`
 	paramObj
 }
 
@@ -706,9 +706,9 @@ type BetaDatasetRegisterParams struct {
 	// The purpose of the dataset.
 	//
 	// Any of "post-training/messages", "eval/question-answer", "eval/messages-answer".
-	Purpose BetaDatasetRegisterParamsPurpose `json:"purpose,omitzero,required"`
+	Purpose BetaDatasetRegisterParamsPurpose `json:"purpose,omitzero" api:"required"`
 	// The data source of the dataset.
-	Source BetaDatasetRegisterParamsSourceUnion `json:"source,omitzero,required"`
+	Source BetaDatasetRegisterParamsSourceUnion `json:"source,omitzero" api:"required"`
 	// The ID of the dataset. If not provided, an ID will be generated.
 	DatasetID param.Opt[string] `json:"dataset_id,omitzero"`
 	// The metadata for the dataset.
@@ -799,7 +799,7 @@ type BetaDatasetRegisterParamsSourceUri struct {
 	// The dataset can be obtained from a URI. E.g.
 	// "https://mywebsite.com/mydata.jsonl", "lsfs://mydata.jsonl",
 	// "data:csv;base64,{base64_content}"
-	Uri string `json:"uri,required"`
+	Uri string `json:"uri" api:"required"`
 	// The type of data source.
 	//
 	// Any of "uri".
@@ -827,7 +827,7 @@ func init() {
 type BetaDatasetRegisterParamsSourceRows struct {
 	// The dataset is stored in rows. E.g. [{"messages": [{"role": "user", "content":
 	// "Hello, world!"}, {"role": "assistant", "content": "Hello, world!"}]}]
-	Rows []map[string]any `json:"rows,omitzero,required"`
+	Rows []map[string]any `json:"rows,omitzero" api:"required"`
 	// The type of data source.
 	//
 	// Any of "rows".

@@ -99,7 +99,7 @@ func (r *AlphaAdminService) Version(ctx context.Context, opts ...option.RequestO
 // Response containing a list of all available providers.
 type ListProvidersResponse struct {
 	// List of provider information objects
-	Data []ProviderInfo `json:"data,required"`
+	Data []ProviderInfo `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -150,7 +150,7 @@ const (
 // Response containing a list of all available API routes.
 type ListRoutesResponse struct {
 	// List of available API routes
-	Data []RouteInfo `json:"data,required"`
+	Data []RouteInfo `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field

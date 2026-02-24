@@ -69,12 +69,12 @@ func (r *ToolRuntimeService) ListTools(ctx context.Context, query ToolRuntimeLis
 
 // Tool definition used in runtime contexts.
 type ToolDef struct {
-	Name         string         `json:"name,required"`
-	Description  string         `json:"description,nullable"`
-	InputSchema  map[string]any `json:"input_schema,nullable"`
-	Metadata     map[string]any `json:"metadata,nullable"`
-	OutputSchema map[string]any `json:"output_schema,nullable"`
-	ToolgroupID  string         `json:"toolgroup_id,nullable"`
+	Name         string         `json:"name" api:"required"`
+	Description  string         `json:"description" api:"nullable"`
+	InputSchema  map[string]any `json:"input_schema" api:"nullable"`
+	Metadata     map[string]any `json:"metadata" api:"nullable"`
+	OutputSchema map[string]any `json:"output_schema" api:"nullable"`
+	ToolgroupID  string         `json:"toolgroup_id" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Name         respjson.Field
@@ -97,10 +97,10 @@ func (r *ToolDef) UnmarshalJSON(data []byte) error {
 // Result of a tool invocation.
 type ToolInvocationResult struct {
 	// A image content item
-	Content      ToolInvocationResultContentUnion `json:"content,nullable"`
-	ErrorCode    int64                            `json:"error_code,nullable"`
-	ErrorMessage string                           `json:"error_message,nullable"`
-	Metadata     map[string]any                   `json:"metadata,nullable"`
+	Content      ToolInvocationResultContentUnion `json:"content" api:"nullable"`
+	ErrorCode    int64                            `json:"error_code" api:"nullable"`
+	ErrorMessage string                           `json:"error_message" api:"nullable"`
+	Metadata     map[string]any                   `json:"metadata" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Content      respjson.Field
@@ -179,7 +179,7 @@ func (r *ToolInvocationResultContentUnion) UnmarshalJSON(data []byte) error {
 // A image content item
 type ToolInvocationResultContentImageContentItemOutput struct {
 	// A URL or a base64 encoded string
-	Image ToolInvocationResultContentImageContentItemOutputImage `json:"image,required"`
+	Image ToolInvocationResultContentImageContentItemOutputImage `json:"image" api:"required"`
 	// Any of "image".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -199,9 +199,9 @@ func (r *ToolInvocationResultContentImageContentItemOutput) UnmarshalJSON(data [
 
 // A URL or a base64 encoded string
 type ToolInvocationResultContentImageContentItemOutputImage struct {
-	Data string `json:"data,nullable"`
+	Data string `json:"data" api:"nullable"`
 	// A URL reference to external content.
-	URL ToolInvocationResultContentImageContentItemOutputImageURL `json:"url,nullable"`
+	URL ToolInvocationResultContentImageContentItemOutputImageURL `json:"url" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -219,7 +219,7 @@ func (r *ToolInvocationResultContentImageContentItemOutputImage) UnmarshalJSON(d
 
 // A URL reference to external content.
 type ToolInvocationResultContentImageContentItemOutputImageURL struct {
-	Uri string `json:"uri,required"`
+	Uri string `json:"uri" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Uri         respjson.Field
@@ -238,7 +238,7 @@ func (r *ToolInvocationResultContentImageContentItemOutputImageURL) UnmarshalJSO
 
 // A text content item
 type ToolInvocationResultContentTextContentItem struct {
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -337,7 +337,7 @@ func (r *ToolInvocationResultContentListImageContentItemOutputTextContentItemIte
 // A image content item
 type ToolInvocationResultContentListImageContentItemOutputTextContentItemItemImage struct {
 	// A URL or a base64 encoded string
-	Image ToolInvocationResultContentListImageContentItemOutputTextContentItemItemImageImage `json:"image,required"`
+	Image ToolInvocationResultContentListImageContentItemOutputTextContentItemItemImageImage `json:"image" api:"required"`
 	// Any of "image".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -359,9 +359,9 @@ func (r *ToolInvocationResultContentListImageContentItemOutputTextContentItemIte
 
 // A URL or a base64 encoded string
 type ToolInvocationResultContentListImageContentItemOutputTextContentItemItemImageImage struct {
-	Data string `json:"data,nullable"`
+	Data string `json:"data" api:"nullable"`
 	// A URL reference to external content.
-	URL ToolInvocationResultContentListImageContentItemOutputTextContentItemItemImageImageURL `json:"url,nullable"`
+	URL ToolInvocationResultContentListImageContentItemOutputTextContentItemItemImageImageURL `json:"url" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -381,7 +381,7 @@ func (r *ToolInvocationResultContentListImageContentItemOutputTextContentItemIte
 
 // A URL reference to external content.
 type ToolInvocationResultContentListImageContentItemOutputTextContentItemItemImageImageURL struct {
-	Uri string `json:"uri,required"`
+	Uri string `json:"uri" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Uri         respjson.Field
@@ -400,7 +400,7 @@ func (r *ToolInvocationResultContentListImageContentItemOutputTextContentItemIte
 
 // A text content item
 type ToolInvocationResultContentListImageContentItemOutputTextContentItemItemText struct {
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -421,8 +421,8 @@ func (r *ToolInvocationResultContentListImageContentItemOutputTextContentItemIte
 }
 
 type ToolRuntimeInvokeToolParams struct {
-	Kwargs        map[string]any    `json:"kwargs,omitzero,required"`
-	ToolName      string            `json:"tool_name,required"`
+	Kwargs        map[string]any    `json:"kwargs,omitzero" api:"required"`
+	ToolName      string            `json:"tool_name" api:"required"`
 	Authorization param.Opt[string] `json:"authorization,omitzero"`
 	paramObj
 }
@@ -456,7 +456,7 @@ func (r ToolRuntimeListToolsParams) URLQuery() (v url.Values, err error) {
 //
 // The property Uri is required.
 type ToolRuntimeListToolsParamsMcpEndpoint struct {
-	Uri string `query:"uri,required" json:"-"`
+	Uri string `query:"uri" api:"required" json:"-"`
 	paramObj
 }
 
@@ -471,7 +471,7 @@ func (r ToolRuntimeListToolsParamsMcpEndpoint) URLQuery() (v url.Values, err err
 
 // Response containing a list of tool definitions.
 type ToolRuntimeListToolsResponseEnvelope struct {
-	Data []ToolDef `json:"data,required"`
+	Data []ToolDef `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field

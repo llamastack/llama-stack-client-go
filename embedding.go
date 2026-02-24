@@ -52,11 +52,11 @@ func (r *EmbeddingService) New(ctx context.Context, body EmbeddingNewParams, opt
 // Response from an OpenAI-compatible embeddings request.
 type CreateEmbeddingsResponse struct {
 	// List of embedding data objects.
-	Data []CreateEmbeddingsResponseData `json:"data,required"`
+	Data []CreateEmbeddingsResponseData `json:"data" api:"required"`
 	// The model that was used to generate the embeddings.
-	Model string `json:"model,required"`
+	Model string `json:"model" api:"required"`
 	// Usage information.
-	Usage CreateEmbeddingsResponseUsage `json:"usage,required"`
+	Usage CreateEmbeddingsResponseUsage `json:"usage" api:"required"`
 	// The object type.
 	//
 	// Any of "list".
@@ -82,9 +82,9 @@ func (r *CreateEmbeddingsResponse) UnmarshalJSON(data []byte) error {
 type CreateEmbeddingsResponseData struct {
 	// The embedding vector as a list of floats (when encoding_format='float') or as a
 	// base64-encoded string.
-	Embedding CreateEmbeddingsResponseDataEmbeddingUnion `json:"embedding,required"`
+	Embedding CreateEmbeddingsResponseDataEmbeddingUnion `json:"embedding" api:"required"`
 	// The index of the embedding in the input list.
-	Index int64 `json:"index,required"`
+	Index int64 `json:"index" api:"required"`
 	// The object type.
 	//
 	// Any of "embedding".
@@ -144,9 +144,9 @@ func (r *CreateEmbeddingsResponseDataEmbeddingUnion) UnmarshalJSON(data []byte) 
 // Usage information.
 type CreateEmbeddingsResponseUsage struct {
 	// The number of tokens in the input.
-	PromptTokens int64 `json:"prompt_tokens,required"`
+	PromptTokens int64 `json:"prompt_tokens" api:"required"`
 	// The total number of tokens used.
-	TotalTokens int64 `json:"total_tokens,required"`
+	TotalTokens int64 `json:"total_tokens" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		PromptTokens respjson.Field
@@ -171,9 +171,9 @@ const (
 
 type EmbeddingNewParams struct {
 	// Input text to embed, encoded as a string or array of tokens.
-	Input EmbeddingNewParamsInputUnion `json:"input,omitzero,required"`
+	Input EmbeddingNewParamsInputUnion `json:"input,omitzero" api:"required"`
 	// The identifier of the model to use.
-	Model string `json:"model,required"`
+	Model string `json:"model" api:"required"`
 	// The number of dimensions for output embeddings.
 	Dimensions param.Opt[int64] `json:"dimensions,omitzero"`
 	// A unique identifier representing your end-user.

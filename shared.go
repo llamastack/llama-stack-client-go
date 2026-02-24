@@ -19,7 +19,7 @@ type HealthInfo struct {
 	// The health status of the service
 	//
 	// Any of "OK", "Error", "Not Implemented".
-	Status HealthInfoStatus `json:"status,required"`
+	Status HealthInfoStatus `json:"status" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Status      respjson.Field
@@ -46,7 +46,7 @@ const (
 // Response containing a list of all available providers.
 type ListProvidersResponse struct {
 	// List of provider information objects
-	Data []ProviderInfo `json:"data,required"`
+	Data []ProviderInfo `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -64,7 +64,7 @@ func (r *ListProvidersResponse) UnmarshalJSON(data []byte) error {
 // Response containing a list of all available API routes.
 type ListRoutesResponse struct {
 	// List of available API routes
-	Data []RouteInfo `json:"data,required"`
+	Data []RouteInfo `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -83,15 +83,15 @@ func (r *ListRoutesResponse) UnmarshalJSON(data []byte) error {
 // status.
 type ProviderInfo struct {
 	// The API name this provider implements
-	API string `json:"api,required"`
+	API string `json:"api" api:"required"`
 	// Configuration parameters for the provider
-	Config map[string]any `json:"config,required"`
+	Config map[string]any `json:"config" api:"required"`
 	// Current health status of the provider
-	Health map[string]any `json:"health,required"`
+	Health map[string]any `json:"health" api:"required"`
 	// Unique identifier for the provider
-	ProviderID string `json:"provider_id,required"`
+	ProviderID string `json:"provider_id" api:"required"`
 	// The type of provider implementation
-	ProviderType string `json:"provider_type,required"`
+	ProviderType string `json:"provider_type" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		API          respjson.Field
@@ -114,11 +114,11 @@ func (r *ProviderInfo) UnmarshalJSON(data []byte) error {
 // providers.
 type RouteInfo struct {
 	// The HTTP method for the route
-	Method string `json:"method,required"`
+	Method string `json:"method" api:"required"`
 	// List of provider types implementing this route
-	ProviderTypes []string `json:"provider_types,required"`
+	ProviderTypes []string `json:"provider_types" api:"required"`
 	// The API route path
-	Route string `json:"route,required"`
+	Route string `json:"route" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Method        respjson.Field
@@ -140,11 +140,11 @@ type SafetyViolation struct {
 	// Severity level of the violation
 	//
 	// Any of "info", "warn", "error".
-	ViolationLevel SafetyViolationViolationLevel `json:"violation_level,required"`
+	ViolationLevel SafetyViolationViolationLevel `json:"violation_level" api:"required"`
 	// Additional metadata including specific violation codes
 	Metadata map[string]any `json:"metadata"`
 	// Message to convey to the user about the violation
-	UserMessage string `json:"user_message,nullable"`
+	UserMessage string `json:"user_message" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ViolationLevel respjson.Field
@@ -297,7 +297,7 @@ func init() {
 // The property Temperature is required.
 type SamplingParamsStrategyTopP struct {
 	// Controls randomness in sampling. Higher values increase randomness.
-	Temperature float64 `json:"temperature,required"`
+	Temperature float64 `json:"temperature" api:"required"`
 	// Cumulative probability threshold for nucleus sampling.
 	TopP param.Opt[float64] `json:"top_p,omitzero"`
 	// Must be 'top_p' to identify this sampling strategy.
@@ -326,7 +326,7 @@ func init() {
 // The property TopK is required.
 type SamplingParamsStrategyTopK struct {
 	// Number of top tokens to consider for sampling. Must be at least 1.
-	TopK int64 `json:"top_k,required"`
+	TopK int64 `json:"top_k" api:"required"`
 	// Must be 'top_k' to identify this sampling strategy.
 	//
 	// Any of "top_k".
@@ -351,9 +351,9 @@ func init() {
 // A scoring result for a single row.
 type ScoringResult struct {
 	// Map of metric name to aggregated value
-	AggregatedResults map[string]any `json:"aggregated_results,required"`
+	AggregatedResults map[string]any `json:"aggregated_results" api:"required"`
 	// The scoring result for each row. Each row is a map of column name to value.
-	ScoreRows []map[string]any `json:"score_rows,required"`
+	ScoreRows []map[string]any `json:"score_rows" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		AggregatedResults respjson.Field
@@ -376,7 +376,7 @@ type SystemMessageParam struct {
 	// The content of the 'system prompt'. If multiple system messages are provided,
 	// they are concatenated. The underlying Llama Stack code may also add other system
 	// messages.
-	Content SystemMessageContentUnionParam `json:"content,omitzero,required"`
+	Content SystemMessageContentUnionParam `json:"content,omitzero" api:"required"`
 	// Must be 'system' to identify this as a system message.
 	//
 	// Any of "system".
@@ -454,7 +454,7 @@ func (u SystemMessageContentUnionParam) GetType() *string {
 // The property Image is required.
 type SystemMessageContentImageContentItemInputParam struct {
 	// A URL or a base64 encoded string
-	Image SystemMessageContentImageContentItemInputImageParam `json:"image,omitzero,required"`
+	Image SystemMessageContentImageContentItemInputImageParam `json:"image,omitzero" api:"required"`
 	// Any of "image".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -494,7 +494,7 @@ func (r *SystemMessageContentImageContentItemInputImageParam) UnmarshalJSON(data
 //
 // The property Uri is required.
 type SystemMessageContentImageContentItemInputImageURLParam struct {
-	Uri string `json:"uri,required"`
+	Uri string `json:"uri" api:"required"`
 	paramObj
 }
 
@@ -510,7 +510,7 @@ func (r *SystemMessageContentImageContentItemInputImageURLParam) UnmarshalJSON(d
 //
 // The property Text is required.
 type SystemMessageContentTextContentItemParam struct {
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Any of "text".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -594,7 +594,7 @@ func init() {
 // The property Image is required.
 type SystemMessageContentListImageContentItemInputTextContentItemItemImageParam struct {
 	// A URL or a base64 encoded string
-	Image SystemMessageContentListImageContentItemInputTextContentItemItemImageImageParam `json:"image,omitzero,required"`
+	Image SystemMessageContentListImageContentItemInputTextContentItemItemImageImageParam `json:"image,omitzero" api:"required"`
 	// Any of "image".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -634,7 +634,7 @@ func (r *SystemMessageContentListImageContentItemInputTextContentItemItemImageIm
 //
 // The property Uri is required.
 type SystemMessageContentListImageContentItemInputTextContentItemItemImageImageURLParam struct {
-	Uri string `json:"uri,required"`
+	Uri string `json:"uri" api:"required"`
 	paramObj
 }
 
@@ -650,7 +650,7 @@ func (r *SystemMessageContentListImageContentItemInputTextContentItemItemImageIm
 //
 // The property Text is required.
 type SystemMessageContentListImageContentItemInputTextContentItemItemTextParam struct {
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Any of "text".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -680,7 +680,7 @@ const (
 // Version information for the service.
 type VersionInfo struct {
 	// The version string of the service
-	Version string `json:"version,required"`
+	Version string `json:"version" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Version     respjson.Field

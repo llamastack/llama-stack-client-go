@@ -119,9 +119,9 @@ func (r *FileService) Content(ctx context.Context, fileID string, opts ...option
 // Response for deleting a file in OpenAI Files API.
 type DeleteFileResponse struct {
 	// The file identifier that was deleted.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Whether the file was successfully deleted.
-	Deleted bool `json:"deleted,required"`
+	Deleted bool `json:"deleted" api:"required"`
 	// The object type, which is always 'file'.
 	//
 	// Any of "file".
@@ -152,19 +152,19 @@ const (
 // OpenAI File object as defined in the OpenAI Files API.
 type File struct {
 	// The file identifier, which can be referenced in the API endpoints.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The size of the file, in bytes.
-	Bytes int64 `json:"bytes,required"`
+	Bytes int64 `json:"bytes" api:"required"`
 	// The Unix timestamp (in seconds) for when the file was created.
-	CreatedAt int64 `json:"created_at,required"`
+	CreatedAt int64 `json:"created_at" api:"required"`
 	// The Unix timestamp (in seconds) for when the file expires.
-	ExpiresAt int64 `json:"expires_at,required"`
+	ExpiresAt int64 `json:"expires_at" api:"required"`
 	// The name of the file.
-	Filename string `json:"filename,required"`
+	Filename string `json:"filename" api:"required"`
 	// The intended purpose of the file.
 	//
 	// Any of "assistants", "batch".
-	Purpose FilePurpose `json:"purpose,required"`
+	Purpose FilePurpose `json:"purpose" api:"required"`
 	// The object type, which is always 'file'.
 	//
 	// Any of "file".
@@ -207,13 +207,13 @@ const (
 // Response for listing files in OpenAI Files API.
 type ListFilesResponse struct {
 	// The list of files.
-	Data []File `json:"data,required"`
+	Data []File `json:"data" api:"required"`
 	// The ID of the first file in the list for pagination.
-	FirstID string `json:"first_id,required"`
+	FirstID string `json:"first_id" api:"required"`
 	// Whether there are more files available beyond this page.
-	HasMore bool `json:"has_more,required"`
+	HasMore bool `json:"has_more" api:"required"`
 	// The ID of the last file in the list for pagination.
-	LastID string `json:"last_id,required"`
+	LastID string `json:"last_id" api:"required"`
 	// The object type, which is always 'list'.
 	//
 	// Any of "list".
@@ -247,11 +247,11 @@ type FileContentResponse = any
 
 type FileNewParams struct {
 	// The file to upload.
-	File io.Reader `json:"file,omitzero,required" format:"binary"`
+	File io.Reader `json:"file,omitzero" api:"required" format:"binary"`
 	// The intended purpose of the uploaded file.
 	//
 	// Any of "assistants", "batch".
-	Purpose FileNewParamsPurpose `json:"purpose,omitzero,required"`
+	Purpose FileNewParamsPurpose `json:"purpose,omitzero" api:"required"`
 	// Control expiration of uploaded files.
 	ExpiresAfter FileNewParamsExpiresAfter `json:"expires_after,omitzero"`
 	paramObj
@@ -288,11 +288,11 @@ const (
 // The properties Anchor, Seconds are required.
 type FileNewParamsExpiresAfter struct {
 	// Seconds until expiration, between 3600 (1 hour) and 2592000 (30 days).
-	Seconds int64 `json:"seconds,required"`
+	Seconds int64 `json:"seconds" api:"required"`
 	// The anchor point for expiration, must be 'created_at'.
 	//
 	// This field can be elided, and will marshal its zero value as "created_at".
-	Anchor constant.CreatedAt `json:"anchor,required"`
+	Anchor constant.CreatedAt `json:"anchor" api:"required"`
 	paramObj
 }
 

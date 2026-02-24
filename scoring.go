@@ -58,7 +58,7 @@ func (r *ScoringService) ScoreBatch(ctx context.Context, body ScoringScoreBatchP
 // The response from scoring.
 type ScoringScoreResponse struct {
 	// A map of scoring function name to ScoringResult.
-	Results map[string]ScoringResult `json:"results,required"`
+	Results map[string]ScoringResult `json:"results" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Results     respjson.Field
@@ -76,9 +76,9 @@ func (r *ScoringScoreResponse) UnmarshalJSON(data []byte) error {
 // Response from batch scoring operations on datasets.
 type ScoringScoreBatchResponse struct {
 	// A map of scoring function name to ScoringResult
-	Results map[string]ScoringResult `json:"results,required"`
+	Results map[string]ScoringResult `json:"results" api:"required"`
 	// (Optional) The identifier of the dataset that was scored
-	DatasetID string `json:"dataset_id,nullable"`
+	DatasetID string `json:"dataset_id" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Results     respjson.Field
@@ -96,9 +96,9 @@ func (r *ScoringScoreBatchResponse) UnmarshalJSON(data []byte) error {
 
 type ScoringScoreParams struct {
 	// The rows to score.
-	InputRows []map[string]any `json:"input_rows,omitzero,required"`
+	InputRows []map[string]any `json:"input_rows,omitzero" api:"required"`
 	// The scoring functions to use for the scoring.
-	ScoringFunctions map[string]ScoringScoreParamsScoringFunctionUnion `json:"scoring_functions,omitzero,required"`
+	ScoringFunctions map[string]ScoringScoreParamsScoringFunctionUnion `json:"scoring_functions,omitzero" api:"required"`
 	paramObj
 }
 
@@ -208,7 +208,7 @@ func init() {
 //
 // The property JudgeModel is required.
 type ScoringScoreParamsScoringFunctionLlmAsJudge struct {
-	JudgeModel     string            `json:"judge_model,required"`
+	JudgeModel     string            `json:"judge_model" api:"required"`
 	PromptTemplate param.Opt[string] `json:"prompt_template,omitzero"`
 	// Aggregation functions to apply to the scores of each row
 	//
@@ -289,9 +289,9 @@ func init() {
 
 type ScoringScoreBatchParams struct {
 	// The ID of the dataset to score.
-	DatasetID string `json:"dataset_id,required"`
+	DatasetID string `json:"dataset_id" api:"required"`
 	// The scoring functions to use for the scoring.
-	ScoringFunctions map[string]ScoringScoreBatchParamsScoringFunctionUnion `json:"scoring_functions,omitzero,required"`
+	ScoringFunctions map[string]ScoringScoreBatchParamsScoringFunctionUnion `json:"scoring_functions,omitzero" api:"required"`
 	// Whether to save the results to a dataset.
 	SaveResultsDataset param.Opt[bool] `json:"save_results_dataset,omitzero"`
 	paramObj
@@ -403,7 +403,7 @@ func init() {
 //
 // The property JudgeModel is required.
 type ScoringScoreBatchParamsScoringFunctionLlmAsJudge struct {
-	JudgeModel     string            `json:"judge_model,required"`
+	JudgeModel     string            `json:"judge_model" api:"required"`
 	PromptTemplate param.Opt[string] `json:"prompt_template,omitzero"`
 	// Aggregation functions to apply to the scores of each row
 	//

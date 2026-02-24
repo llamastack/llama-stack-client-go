@@ -151,13 +151,13 @@ func (r *VectorStoreFileService) Content(ctx context.Context, fileID string, par
 
 // OpenAI Vector Store File object.
 type VectorStoreFile struct {
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// Automatic chunking strategy for vector store files.
-	ChunkingStrategy VectorStoreFileChunkingStrategyUnion `json:"chunking_strategy,required"`
-	CreatedAt        int64                                `json:"created_at,required"`
+	ChunkingStrategy VectorStoreFileChunkingStrategyUnion `json:"chunking_strategy" api:"required"`
+	CreatedAt        int64                                `json:"created_at" api:"required"`
 	// Any of "completed", "in_progress", "cancelled", "failed".
-	Status        VectorStoreFileStatus `json:"status,required"`
-	VectorStoreID string                `json:"vector_store_id,required"`
+	Status        VectorStoreFileStatus `json:"status" api:"required"`
+	VectorStoreID string                `json:"vector_store_id" api:"required"`
 	// Set of 16 key-value pairs that can be attached to an object. This can be useful
 	// for storing additional information about the object in a structured format, and
 	// querying for objects via API or the dashboard. Keys are strings with a maximum
@@ -165,7 +165,7 @@ type VectorStoreFile struct {
 	// characters, booleans, or numbers.
 	Attributes map[string]VectorStoreFileAttributeUnion `json:"attributes"`
 	// Error information for failed vector store file processing.
-	LastError  VectorStoreFileLastError `json:"last_error,nullable"`
+	LastError  VectorStoreFileLastError `json:"last_error" api:"nullable"`
 	Object     string                   `json:"object"`
 	UsageBytes int64                    `json:"usage_bytes"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -289,7 +289,7 @@ func (r *VectorStoreFileChunkingStrategyAuto) UnmarshalJSON(data []byte) error {
 // Static chunking strategy with configurable parameters.
 type VectorStoreFileChunkingStrategyStatic struct {
 	// Configuration for static chunking strategy.
-	Static VectorStoreFileChunkingStrategyStaticStatic `json:"static,required"`
+	Static VectorStoreFileChunkingStrategyStaticStatic `json:"static" api:"required"`
 	// Any of "static".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -330,7 +330,7 @@ func (r *VectorStoreFileChunkingStrategyStaticStatic) UnmarshalJSON(data []byte)
 // document.
 type VectorStoreFileChunkingStrategyContextual struct {
 	// Configuration for contextual chunking.
-	Contextual VectorStoreFileChunkingStrategyContextualContextual `json:"contextual,required"`
+	Contextual VectorStoreFileChunkingStrategyContextualContextual `json:"contextual" api:"required"`
 	// Strategy type identifier.
 	//
 	// Any of "contextual".
@@ -361,12 +361,12 @@ type VectorStoreFileChunkingStrategyContextualContextual struct {
 	// Maximum tokens per chunk. Suggested ~700 to allow room for prepended context.
 	MaxChunkSizeTokens int64 `json:"max_chunk_size_tokens"`
 	// Maximum concurrent LLM calls. Falls back to config default if not provided.
-	MaxConcurrency int64 `json:"max_concurrency,nullable"`
+	MaxConcurrency int64 `json:"max_concurrency" api:"nullable"`
 	// LLM model for generating context. Falls back to
 	// VectorStoresConfig.contextual_retrieval_params.model if not provided.
-	ModelID string `json:"model_id,nullable"`
+	ModelID string `json:"model_id" api:"nullable"`
 	// Timeout per LLM call in seconds. Falls back to config default if not provided.
-	TimeoutSeconds int64 `json:"timeout_seconds,nullable"`
+	TimeoutSeconds int64 `json:"timeout_seconds" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ChunkOverlapTokens respjson.Field
@@ -442,8 +442,8 @@ func (r *VectorStoreFileAttributeUnion) UnmarshalJSON(data []byte) error {
 // Error information for failed vector store file processing.
 type VectorStoreFileLastError struct {
 	// Any of "server_error", "rate_limit_exceeded".
-	Code    string `json:"code,required"`
-	Message string `json:"message,required"`
+	Code    string `json:"code" api:"required"`
+	Message string `json:"message" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Code        respjson.Field
@@ -461,7 +461,7 @@ func (r *VectorStoreFileLastError) UnmarshalJSON(data []byte) error {
 
 // Response from deleting a vector store file.
 type VectorStoreFileDeleteResponse struct {
-	ID      string `json:"id,required"`
+	ID      string `json:"id" api:"required"`
 	Deleted bool   `json:"deleted"`
 	Object  string `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -482,9 +482,9 @@ func (r *VectorStoreFileDeleteResponse) UnmarshalJSON(data []byte) error {
 
 // Represents the parsed content of a vector store file.
 type VectorStoreFileContentResponse struct {
-	Data     []VectorStoreFileContentResponseData `json:"data,required"`
+	Data     []VectorStoreFileContentResponseData `json:"data" api:"required"`
 	HasMore  bool                                 `json:"has_more"`
-	NextPage string                               `json:"next_page,nullable"`
+	NextPage string                               `json:"next_page" api:"nullable"`
 	// Any of "vector_store.file_content.page".
 	Object VectorStoreFileContentResponseObject `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -506,17 +506,17 @@ func (r *VectorStoreFileContentResponse) UnmarshalJSON(data []byte) error {
 
 // Content item from a vector store file or search result.
 type VectorStoreFileContentResponseData struct {
-	Text string        `json:"text,required"`
-	Type constant.Text `json:"type,required"`
+	Text string        `json:"text" api:"required"`
+	Type constant.Text `json:"type" api:"required"`
 	// `ChunkMetadata` is backend metadata for a `Chunk` that is used to store
 	// additional information about the chunk that will not be used in the context
 	// during inference, but is required for backend functionality. The `ChunkMetadata`
 	// is set during chunk creation in `MemoryToolRuntimeImpl().insert()`and is not
 	// expected to change after. Use `Chunk.metadata` for metadata that will be used in
 	// the context during inference.
-	ChunkMetadata VectorStoreFileContentResponseDataChunkMetadata `json:"chunk_metadata,nullable"`
-	Embedding     []float64                                       `json:"embedding,nullable"`
-	Metadata      map[string]any                                  `json:"metadata,nullable"`
+	ChunkMetadata VectorStoreFileContentResponseDataChunkMetadata `json:"chunk_metadata" api:"nullable"`
+	Embedding     []float64                                       `json:"embedding" api:"nullable"`
+	Metadata      map[string]any                                  `json:"metadata" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Text          respjson.Field
@@ -542,15 +542,15 @@ func (r *VectorStoreFileContentResponseData) UnmarshalJSON(data []byte) error {
 // expected to change after. Use `Chunk.metadata` for metadata that will be used in
 // the context during inference.
 type VectorStoreFileContentResponseDataChunkMetadata struct {
-	ChunkID            string `json:"chunk_id,nullable"`
-	ChunkTokenizer     string `json:"chunk_tokenizer,nullable"`
-	ChunkWindow        string `json:"chunk_window,nullable"`
-	ContentTokenCount  int64  `json:"content_token_count,nullable"`
-	CreatedTimestamp   int64  `json:"created_timestamp,nullable"`
-	DocumentID         string `json:"document_id,nullable"`
-	MetadataTokenCount int64  `json:"metadata_token_count,nullable"`
-	Source             string `json:"source,nullable"`
-	UpdatedTimestamp   int64  `json:"updated_timestamp,nullable"`
+	ChunkID            string `json:"chunk_id" api:"nullable"`
+	ChunkTokenizer     string `json:"chunk_tokenizer" api:"nullable"`
+	ChunkWindow        string `json:"chunk_window" api:"nullable"`
+	ContentTokenCount  int64  `json:"content_token_count" api:"nullable"`
+	CreatedTimestamp   int64  `json:"created_timestamp" api:"nullable"`
+	DocumentID         string `json:"document_id" api:"nullable"`
+	MetadataTokenCount int64  `json:"metadata_token_count" api:"nullable"`
+	Source             string `json:"source" api:"nullable"`
+	UpdatedTimestamp   int64  `json:"updated_timestamp" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ChunkID            respjson.Field
@@ -581,7 +581,7 @@ const (
 
 type VectorStoreFileNewParams struct {
 	// The ID of the file to attach.
-	FileID string `json:"file_id,required"`
+	FileID string `json:"file_id" api:"required"`
 	// Attributes to associate with the file.
 	Attributes map[string]any `json:"attributes,omitzero"`
 	// Strategy for chunking the file content.
@@ -688,7 +688,7 @@ func init() {
 // The property Static is required.
 type VectorStoreFileNewParamsChunkingStrategyStatic struct {
 	// Configuration for static chunking strategy.
-	Static VectorStoreFileNewParamsChunkingStrategyStaticStatic `json:"static,omitzero,required"`
+	Static VectorStoreFileNewParamsChunkingStrategyStaticStatic `json:"static,omitzero" api:"required"`
 	// Any of "static".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -729,7 +729,7 @@ func (r *VectorStoreFileNewParamsChunkingStrategyStaticStatic) UnmarshalJSON(dat
 // The property Contextual is required.
 type VectorStoreFileNewParamsChunkingStrategyContextual struct {
 	// Configuration for contextual chunking.
-	Contextual VectorStoreFileNewParamsChunkingStrategyContextualContextual `json:"contextual,omitzero,required"`
+	Contextual VectorStoreFileNewParamsChunkingStrategyContextualContextual `json:"contextual,omitzero" api:"required"`
 	// Strategy type identifier.
 	//
 	// Any of "contextual".
@@ -781,15 +781,15 @@ func (r *VectorStoreFileNewParamsChunkingStrategyContextualContextual) Unmarshal
 
 type VectorStoreFileGetParams struct {
 	// The vector store identifier.
-	VectorStoreID string `path:"vector_store_id,required" json:"-"`
+	VectorStoreID string `path:"vector_store_id" api:"required" json:"-"`
 	paramObj
 }
 
 type VectorStoreFileUpdateParams struct {
 	// The vector store identifier.
-	VectorStoreID string `path:"vector_store_id,required" json:"-"`
+	VectorStoreID string `path:"vector_store_id" api:"required" json:"-"`
 	// The new attributes for the file.
-	Attributes map[string]any `json:"attributes,omitzero,required"`
+	Attributes map[string]any `json:"attributes,omitzero" api:"required"`
 	paramObj
 }
 
@@ -838,13 +838,13 @@ const (
 
 type VectorStoreFileDeleteParams struct {
 	// The vector store identifier.
-	VectorStoreID string `path:"vector_store_id,required" json:"-"`
+	VectorStoreID string `path:"vector_store_id" api:"required" json:"-"`
 	paramObj
 }
 
 type VectorStoreFileContentParams struct {
 	// The vector store identifier.
-	VectorStoreID string `path:"vector_store_id,required" json:"-"`
+	VectorStoreID string `path:"vector_store_id" api:"required" json:"-"`
 	// Include embedding vectors.
 	IncludeEmbeddings param.Opt[bool] `query:"include_embeddings,omitzero" json:"-"`
 	// Include chunk metadata.

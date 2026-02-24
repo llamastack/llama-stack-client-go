@@ -68,7 +68,7 @@ func (r *ProviderService) List(ctx context.Context, opts ...option.RequestOption
 // Response containing a list of all available providers.
 type ListProvidersResponse struct {
 	// List of provider information objects
-	Data []ProviderInfo `json:"data,required"`
+	Data []ProviderInfo `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field

@@ -66,13 +66,13 @@ func (r *CompletionService) NewStreaming(ctx context.Context, body CompletionNew
 // Response from an OpenAI-compatible completion request.
 type CompletionNewResponse struct {
 	// The ID of the completion.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// List of choices.
-	Choices []CompletionNewResponseChoice `json:"choices,required"`
+	Choices []CompletionNewResponseChoice `json:"choices" api:"required"`
 	// The Unix timestamp in seconds when the completion was created.
-	Created int64 `json:"created,required"`
+	Created int64 `json:"created" api:"required"`
 	// The model that was used to generate the completion.
-	Model string `json:"model,required"`
+	Model string `json:"model" api:"required"`
 	// The object type.
 	//
 	// Any of "text_completion".
@@ -100,14 +100,14 @@ type CompletionNewResponseChoice struct {
 	// The reason the model stopped generating.
 	//
 	// Any of "stop", "length", "tool_calls", "content_filter", "function_call".
-	FinishReason string `json:"finish_reason,required"`
+	FinishReason string `json:"finish_reason" api:"required"`
 	// The index of the choice.
-	Index int64 `json:"index,required"`
+	Index int64 `json:"index" api:"required"`
 	// The text of the choice.
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// The log probabilities for the tokens in the message from an OpenAI-compatible
 	// chat completion response.
-	Logprobs CompletionNewResponseChoiceLogprobs `json:"logprobs,nullable"`
+	Logprobs CompletionNewResponseChoiceLogprobs `json:"logprobs" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		FinishReason respjson.Field
@@ -129,9 +129,9 @@ func (r *CompletionNewResponseChoice) UnmarshalJSON(data []byte) error {
 // chat completion response.
 type CompletionNewResponseChoiceLogprobs struct {
 	// The log probabilities for the tokens in the message.
-	Content []CompletionNewResponseChoiceLogprobsContent `json:"content,nullable"`
+	Content []CompletionNewResponseChoiceLogprobsContent `json:"content" api:"nullable"`
 	// The log probabilities for the refusal tokens.
-	Refusal []CompletionNewResponseChoiceLogprobsRefusal `json:"refusal,nullable"`
+	Refusal []CompletionNewResponseChoiceLogprobsRefusal `json:"refusal" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Content     respjson.Field
@@ -151,13 +151,13 @@ func (r *CompletionNewResponseChoiceLogprobs) UnmarshalJSON(data []byte) error {
 // response.
 type CompletionNewResponseChoiceLogprobsContent struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
-	Bytes []int64 `json:"bytes,nullable"`
+	Bytes []int64 `json:"bytes" api:"nullable"`
 	// The top log probabilities for the token.
-	TopLogprobs []CompletionNewResponseChoiceLogprobsContentTopLogprob `json:"top_logprobs,nullable"`
+	TopLogprobs []CompletionNewResponseChoiceLogprobsContentTopLogprob `json:"top_logprobs" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -179,11 +179,11 @@ func (r *CompletionNewResponseChoiceLogprobsContent) UnmarshalJSON(data []byte) 
 // response.
 type CompletionNewResponseChoiceLogprobsContentTopLogprob struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
-	Bytes []int64 `json:"bytes,nullable"`
+	Bytes []int64 `json:"bytes" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -204,13 +204,13 @@ func (r *CompletionNewResponseChoiceLogprobsContentTopLogprob) UnmarshalJSON(dat
 // response.
 type CompletionNewResponseChoiceLogprobsRefusal struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
-	Bytes []int64 `json:"bytes,nullable"`
+	Bytes []int64 `json:"bytes" api:"nullable"`
 	// The top log probabilities for the token.
-	TopLogprobs []CompletionNewResponseChoiceLogprobsRefusalTopLogprob `json:"top_logprobs,nullable"`
+	TopLogprobs []CompletionNewResponseChoiceLogprobsRefusalTopLogprob `json:"top_logprobs" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -232,11 +232,11 @@ func (r *CompletionNewResponseChoiceLogprobsRefusal) UnmarshalJSON(data []byte) 
 // response.
 type CompletionNewResponseChoiceLogprobsRefusalTopLogprob struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
-	Bytes []int64 `json:"bytes,nullable"`
+	Bytes []int64 `json:"bytes" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -262,9 +262,9 @@ const (
 
 type CompletionNewParams struct {
 	// The identifier of the model to use.
-	Model string `json:"model,required"`
+	Model string `json:"model" api:"required"`
 	// The prompt to generate a completion for.
-	Prompt CompletionNewParamsPromptUnion `json:"prompt,omitzero,required"`
+	Prompt CompletionNewParamsPromptUnion `json:"prompt,omitzero" api:"required"`
 	// The number of completions to generate.
 	BestOf param.Opt[int64] `json:"best_of,omitzero"`
 	// Whether to echo the prompt.

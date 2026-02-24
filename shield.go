@@ -94,7 +94,7 @@ func (r *ShieldService) Register(ctx context.Context, body ShieldRegisterParams,
 // Response containing a list of all shields.
 type ListShieldsResponse struct {
 	// List of shield objects
-	Data []Shield `json:"data,required"`
+	Data []Shield `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -112,12 +112,12 @@ func (r *ListShieldsResponse) UnmarshalJSON(data []byte) error {
 // A safety shield resource that can be used to check content.
 type Shield struct {
 	// Unique identifier for this resource in llama stack
-	Identifier string `json:"identifier,required"`
+	Identifier string `json:"identifier" api:"required"`
 	// ID of the provider that owns this resource
-	ProviderID string         `json:"provider_id,required"`
-	Params     map[string]any `json:"params,nullable"`
+	ProviderID string         `json:"provider_id" api:"required"`
+	Params     map[string]any `json:"params" api:"nullable"`
 	// Unique identifier for this resource in the provider
-	ProviderResourceID string `json:"provider_resource_id,nullable"`
+	ProviderResourceID string `json:"provider_resource_id" api:"nullable"`
 	// Any of "shield".
 	Type ShieldType `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -146,7 +146,7 @@ const (
 
 type ShieldRegisterParams struct {
 	// The identifier of the shield to register.
-	ShieldID string `json:"shield_id,required"`
+	ShieldID string `json:"shield_id" api:"required"`
 	// The identifier of the provider.
 	ProviderID param.Opt[string] `json:"provider_id,omitzero"`
 	// The identifier of the shield in the provider.

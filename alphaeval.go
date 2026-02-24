@@ -96,7 +96,7 @@ func (r *AlphaEvalService) RunEvalAlpha(ctx context.Context, benchmarkID string,
 // The property EvalCandidate is required.
 type BenchmarkConfigParam struct {
 	// The candidate to evaluate
-	EvalCandidate BenchmarkConfigEvalCandidateParam `json:"eval_candidate,omitzero,required"`
+	EvalCandidate BenchmarkConfigEvalCandidateParam `json:"eval_candidate,omitzero" api:"required"`
 	// Number of examples to evaluate (useful for testing), if not provided, all
 	// examples in the dataset will be evaluated
 	NumExamples param.Opt[int64] `json:"num_examples,omitzero"`
@@ -119,9 +119,9 @@ func (r *BenchmarkConfigParam) UnmarshalJSON(data []byte) error {
 // The properties Model, SamplingParams are required.
 type BenchmarkConfigEvalCandidateParam struct {
 	// The model ID to evaluate
-	Model string `json:"model,required"`
+	Model string `json:"model" api:"required"`
 	// The sampling parameters for the model
-	SamplingParams SamplingParams `json:"sampling_params,omitzero,required"`
+	SamplingParams SamplingParams `json:"sampling_params,omitzero" api:"required"`
 	// A system message providing instructions or context to the model.
 	SystemMessage SystemMessageParam `json:"system_message,omitzero"`
 	// Any of "model".
@@ -241,7 +241,7 @@ func init() {
 //
 // The property JudgeModel is required.
 type BenchmarkConfigScoringParamLlmAsJudgeParam struct {
-	JudgeModel     string            `json:"judge_model,required"`
+	JudgeModel     string            `json:"judge_model" api:"required"`
 	PromptTemplate param.Opt[string] `json:"prompt_template,omitzero"`
 	// Aggregation functions to apply to the scores of each row
 	//
@@ -323,9 +323,9 @@ func init() {
 // The response from an evaluation.
 type EvaluateResponse struct {
 	// The generations from the evaluation
-	Generations []map[string]any `json:"generations,required"`
+	Generations []map[string]any `json:"generations" api:"required"`
 	// The scores from the evaluation. Each key in the dict is a scoring function name
-	Scores map[string]ScoringResult `json:"scores,required"`
+	Scores map[string]ScoringResult `json:"scores" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Generations respjson.Field
@@ -343,11 +343,11 @@ func (r *EvaluateResponse) UnmarshalJSON(data []byte) error {
 
 // A job execution instance with status tracking.
 type Job struct {
-	JobID string `json:"job_id,required"`
+	JobID string `json:"job_id" api:"required"`
 	// Status of a job execution.
 	//
 	// Any of "completed", "in_progress", "failed", "scheduled", "cancelled".
-	Status JobStatus `json:"status,required"`
+	Status JobStatus `json:"status" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		JobID       respjson.Field
@@ -376,11 +376,11 @@ const (
 
 type AlphaEvalEvaluateRowsParams struct {
 	// The configuration for the benchmark
-	BenchmarkConfig BenchmarkConfigParam `json:"benchmark_config,omitzero,required"`
+	BenchmarkConfig BenchmarkConfigParam `json:"benchmark_config,omitzero" api:"required"`
 	// The rows to evaluate
-	InputRows []map[string]any `json:"input_rows,omitzero,required"`
+	InputRows []map[string]any `json:"input_rows,omitzero" api:"required"`
 	// The scoring functions to use for the evaluation
-	ScoringFunctions []string `json:"scoring_functions,omitzero,required"`
+	ScoringFunctions []string `json:"scoring_functions,omitzero" api:"required"`
 	paramObj
 }
 
@@ -394,11 +394,11 @@ func (r *AlphaEvalEvaluateRowsParams) UnmarshalJSON(data []byte) error {
 
 type AlphaEvalEvaluateRowsAlphaParams struct {
 	// The configuration for the benchmark
-	BenchmarkConfig BenchmarkConfigParam `json:"benchmark_config,omitzero,required"`
+	BenchmarkConfig BenchmarkConfigParam `json:"benchmark_config,omitzero" api:"required"`
 	// The rows to evaluate
-	InputRows []map[string]any `json:"input_rows,omitzero,required"`
+	InputRows []map[string]any `json:"input_rows,omitzero" api:"required"`
 	// The scoring functions to use for the evaluation
-	ScoringFunctions []string `json:"scoring_functions,omitzero,required"`
+	ScoringFunctions []string `json:"scoring_functions,omitzero" api:"required"`
 	paramObj
 }
 
@@ -412,7 +412,7 @@ func (r *AlphaEvalEvaluateRowsAlphaParams) UnmarshalJSON(data []byte) error {
 
 type AlphaEvalRunEvalParams struct {
 	// The configuration for the benchmark
-	BenchmarkConfig BenchmarkConfigParam `json:"benchmark_config,omitzero,required"`
+	BenchmarkConfig BenchmarkConfigParam `json:"benchmark_config,omitzero" api:"required"`
 	paramObj
 }
 
@@ -426,7 +426,7 @@ func (r *AlphaEvalRunEvalParams) UnmarshalJSON(data []byte) error {
 
 type AlphaEvalRunEvalAlphaParams struct {
 	// The configuration for the benchmark
-	BenchmarkConfig BenchmarkConfigParam `json:"benchmark_config,omitzero,required"`
+	BenchmarkConfig BenchmarkConfigParam `json:"benchmark_config,omitzero" api:"required"`
 	paramObj
 }
 

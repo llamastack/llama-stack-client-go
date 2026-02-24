@@ -50,11 +50,11 @@ func (r *ModerationService) New(ctx context.Context, body ModerationNewParams, o
 // A moderation object containing the results of content classification.
 type CreateResponse struct {
 	// The unique identifier for the moderation request
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// The model used to generate the moderation results
-	Model string `json:"model,required"`
+	Model string `json:"model" api:"required"`
 	// A list of moderation result objects
-	Results []CreateResponseResult `json:"results,required"`
+	Results []CreateResponseResult `json:"results" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -74,18 +74,18 @@ func (r *CreateResponse) UnmarshalJSON(data []byte) error {
 // A moderation result object containing flagged status and category information.
 type CreateResponseResult struct {
 	// Whether any of the below categories are flagged
-	Flagged bool `json:"flagged,required"`
+	Flagged bool `json:"flagged" api:"required"`
 	// A dictionary of the categories, and whether they are flagged or not
-	Categories map[string]bool `json:"categories,nullable"`
+	Categories map[string]bool `json:"categories" api:"nullable"`
 	// A dictionary of the categories along with the input type(s) that the score
 	// applies to
-	CategoryAppliedInputTypes map[string][]string `json:"category_applied_input_types,nullable"`
+	CategoryAppliedInputTypes map[string][]string `json:"category_applied_input_types" api:"nullable"`
 	// A dictionary of the categories along with their scores as predicted by model
-	CategoryScores map[string]float64 `json:"category_scores,nullable"`
+	CategoryScores map[string]float64 `json:"category_scores" api:"nullable"`
 	// Additional metadata about the moderation
 	Metadata map[string]any `json:"metadata"`
 	// A message to convey to the user about the moderation result
-	UserMessage string `json:"user_message,nullable"`
+	UserMessage string `json:"user_message" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Flagged                   respjson.Field
@@ -107,7 +107,7 @@ func (r *CreateResponseResult) UnmarshalJSON(data []byte) error {
 
 type ModerationNewParams struct {
 	// Input (or inputs) to classify. Can be a single string or an array of strings.
-	Input ModerationNewParamsInputUnion `json:"input,omitzero,required"`
+	Input ModerationNewParamsInputUnion `json:"input,omitzero" api:"required"`
 	// The content moderation model to use. If not specified, the default shield will
 	// be used.
 	Model param.Opt[string] `json:"model,omitzero"`

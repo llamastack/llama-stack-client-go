@@ -118,45 +118,45 @@ func (r *ResponseService) Delete(ctx context.Context, responseID string, opts ..
 
 // Complete OpenAI response object containing generation results and metadata.
 type ResponseObject struct {
-	ID          string                      `json:"id,required"`
-	CreatedAt   int64                       `json:"created_at,required"`
-	Model       string                      `json:"model,required"`
-	Output      []ResponseObjectOutputUnion `json:"output,required"`
-	Status      string                      `json:"status,required"`
-	Store       bool                        `json:"store,required"`
+	ID          string                      `json:"id" api:"required"`
+	CreatedAt   int64                       `json:"created_at" api:"required"`
+	Model       string                      `json:"model" api:"required"`
+	Output      []ResponseObjectOutputUnion `json:"output" api:"required"`
+	Status      string                      `json:"status" api:"required"`
+	Store       bool                        `json:"store" api:"required"`
 	Background  bool                        `json:"background"`
-	CompletedAt int64                       `json:"completed_at,nullable"`
+	CompletedAt int64                       `json:"completed_at" api:"nullable"`
 	// Error details for failed OpenAI response requests.
-	Error ResponseObjectError `json:"error,nullable"`
+	Error ResponseObjectError `json:"error" api:"nullable"`
 	// Details explaining why a response was incomplete.
-	IncompleteDetails ResponseObjectIncompleteDetails `json:"incomplete_details,nullable"`
-	Instructions      string                          `json:"instructions,nullable"`
-	MaxOutputTokens   int64                           `json:"max_output_tokens,nullable"`
-	MaxToolCalls      int64                           `json:"max_tool_calls,nullable"`
-	Metadata          map[string]string               `json:"metadata,nullable"`
+	IncompleteDetails ResponseObjectIncompleteDetails `json:"incomplete_details" api:"nullable"`
+	Instructions      string                          `json:"instructions" api:"nullable"`
+	MaxOutputTokens   int64                           `json:"max_output_tokens" api:"nullable"`
+	MaxToolCalls      int64                           `json:"max_tool_calls" api:"nullable"`
+	Metadata          map[string]string               `json:"metadata" api:"nullable"`
 	// Any of "response".
 	Object             ResponseObjectObject `json:"object"`
-	ParallelToolCalls  bool                 `json:"parallel_tool_calls,nullable"`
-	PreviousResponseID string               `json:"previous_response_id,nullable"`
+	ParallelToolCalls  bool                 `json:"parallel_tool_calls" api:"nullable"`
+	PreviousResponseID string               `json:"previous_response_id" api:"nullable"`
 	// OpenAI compatible Prompt object that is used in OpenAI responses.
-	Prompt         ResponseObjectPrompt `json:"prompt,nullable"`
-	PromptCacheKey string               `json:"prompt_cache_key,nullable"`
+	Prompt         ResponseObjectPrompt `json:"prompt" api:"nullable"`
+	PromptCacheKey string               `json:"prompt_cache_key" api:"nullable"`
 	// Configuration for reasoning effort in OpenAI responses.
 	//
 	// Controls how much reasoning the model performs before generating a response.
-	Reasoning        ResponseObjectReasoning `json:"reasoning,nullable"`
-	SafetyIdentifier string                  `json:"safety_identifier,nullable"`
-	ServiceTier      string                  `json:"service_tier,nullable"`
-	Temperature      float64                 `json:"temperature,nullable"`
+	Reasoning        ResponseObjectReasoning `json:"reasoning" api:"nullable"`
+	SafetyIdentifier string                  `json:"safety_identifier" api:"nullable"`
+	ServiceTier      string                  `json:"service_tier" api:"nullable"`
+	Temperature      float64                 `json:"temperature" api:"nullable"`
 	// Text response configuration for OpenAI responses.
 	Text ResponseObjectText `json:"text"`
 	// Constrains the tools available to the model to a pre-defined set.
-	ToolChoice ResponseObjectToolChoiceUnion `json:"tool_choice,nullable"`
-	Tools      []ResponseObjectToolUnion     `json:"tools,nullable"`
-	TopP       float64                       `json:"top_p,nullable"`
-	Truncation string                        `json:"truncation,nullable"`
+	ToolChoice ResponseObjectToolChoiceUnion `json:"tool_choice" api:"nullable"`
+	Tools      []ResponseObjectToolUnion     `json:"tools" api:"nullable"`
+	TopP       float64                       `json:"top_p" api:"nullable"`
+	Truncation string                        `json:"truncation" api:"nullable"`
 	// Usage information for OpenAI response.
-	Usage ResponseObjectUsage `json:"usage,nullable"`
+	Usage ResponseObjectUsage `json:"usage" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                 respjson.Field
@@ -346,11 +346,11 @@ func (r *ResponseObjectOutputUnion) UnmarshalJSON(data []byte) error {
 // under one type because the Responses API gives them all the same "type" value,
 // and there is no way to tell them apart in certain scenarios.
 type ResponseObjectOutputMessage struct {
-	Content ResponseObjectOutputMessageContentUnion `json:"content,required"`
+	Content ResponseObjectOutputMessageContentUnion `json:"content" api:"required"`
 	// Any of "system", "developer", "user", "assistant".
-	Role   string `json:"role,required"`
-	ID     string `json:"id,nullable"`
-	Status string `json:"status,nullable"`
+	Role   string `json:"role" api:"required"`
+	ID     string `json:"id" api:"nullable"`
+	Status string `json:"status" api:"nullable"`
 	// Any of "message".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -532,7 +532,7 @@ func (r *ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContent
 
 // Text content for input messages in OpenAI response format.
 type ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText struct {
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Any of "input_text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -556,8 +556,8 @@ func (r *ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContent
 type ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage struct {
 	// Any of "low", "high", "auto".
 	Detail   string `json:"detail"`
-	FileID   string `json:"file_id,nullable"`
-	ImageURL string `json:"image_url,nullable"`
+	FileID   string `json:"file_id" api:"nullable"`
+	ImageURL string `json:"image_url" api:"nullable"`
 	// Any of "input_image".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -581,10 +581,10 @@ func (r *ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContent
 
 // File content for input messages in OpenAI response format.
 type ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
-	FileData string `json:"file_data,nullable"`
-	FileID   string `json:"file_id,nullable"`
-	FileURL  string `json:"file_url,nullable"`
-	Filename string `json:"filename,nullable"`
+	FileData string `json:"file_data" api:"nullable"`
+	FileID   string `json:"file_id" api:"nullable"`
+	FileURL  string `json:"file_url" api:"nullable"`
+	Filename string `json:"filename" api:"nullable"`
 	// Any of "input_file".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -694,9 +694,9 @@ func (r *ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageConten
 }
 
 type ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputText struct {
-	Text        string                                                                                                                                                  `json:"text,required"`
+	Text        string                                                                                                                                                  `json:"text" api:"required"`
 	Annotations []ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion `json:"annotations"`
-	Logprobs    []ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprob         `json:"logprobs,nullable"`
+	Logprobs    []ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprob         `json:"logprobs" api:"nullable"`
 	// Any of "output_text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -834,9 +834,9 @@ func (r *ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageConten
 
 // File citation annotation for referencing specific files in response content.
 type ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation struct {
-	FileID   string `json:"file_id,required"`
-	Filename string `json:"filename,required"`
-	Index    int64  `json:"index,required"`
+	FileID   string `json:"file_id" api:"required"`
+	Filename string `json:"filename" api:"required"`
+	Index    int64  `json:"index" api:"required"`
 	// Any of "file_citation".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -860,10 +860,10 @@ func (r *ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageConten
 
 // URL citation annotation for referencing external web resources.
 type ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation struct {
-	EndIndex   int64  `json:"end_index,required"`
-	StartIndex int64  `json:"start_index,required"`
-	Title      string `json:"title,required"`
-	URL        string `json:"url,required"`
+	EndIndex   int64  `json:"end_index" api:"required"`
+	StartIndex int64  `json:"start_index" api:"required"`
+	Title      string `json:"title" api:"required"`
+	URL        string `json:"url" api:"required"`
 	// Any of "url_citation".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -887,11 +887,11 @@ func (r *ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageConten
 }
 
 type ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation struct {
-	ContainerID string `json:"container_id,required"`
-	EndIndex    int64  `json:"end_index,required"`
-	FileID      string `json:"file_id,required"`
-	Filename    string `json:"filename,required"`
-	StartIndex  int64  `json:"start_index,required"`
+	ContainerID string `json:"container_id" api:"required"`
+	EndIndex    int64  `json:"end_index" api:"required"`
+	FileID      string `json:"file_id" api:"required"`
+	Filename    string `json:"filename" api:"required"`
+	StartIndex  int64  `json:"start_index" api:"required"`
 	// Any of "container_file_citation".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -916,8 +916,8 @@ func (r *ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageConten
 }
 
 type ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath struct {
-	FileID string `json:"file_id,required"`
-	Index  int64  `json:"index,required"`
+	FileID string `json:"file_id" api:"required"`
+	Index  int64  `json:"index" api:"required"`
 	// Any of "file_path".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -942,13 +942,13 @@ func (r *ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageConten
 // response.
 type ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprob struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
-	Bytes []int64 `json:"bytes,nullable"`
+	Bytes []int64 `json:"bytes" api:"nullable"`
 	// The top log probabilities for the token.
-	TopLogprobs []ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob `json:"top_logprobs,nullable"`
+	TopLogprobs []ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob `json:"top_logprobs" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -972,11 +972,11 @@ func (r *ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageConten
 // response.
 type ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
-	Bytes []int64 `json:"bytes,nullable"`
+	Bytes []int64 `json:"bytes" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -997,7 +997,7 @@ func (r *ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageConten
 
 // Refusal content within a streamed response part.
 type ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemRefusal struct {
-	Refusal string `json:"refusal,required"`
+	Refusal string `json:"refusal" api:"required"`
 	// Any of "refusal".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1019,8 +1019,8 @@ func (r *ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageConten
 
 // Web search tool call output message for OpenAI responses.
 type ResponseObjectOutputWebSearchCall struct {
-	ID     string `json:"id,required"`
-	Status string `json:"status,required"`
+	ID     string `json:"id" api:"required"`
+	Status string `json:"status" api:"required"`
 	// Any of "web_search_call".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1041,10 +1041,10 @@ func (r *ResponseObjectOutputWebSearchCall) UnmarshalJSON(data []byte) error {
 
 // File search tool call output message for OpenAI responses.
 type ResponseObjectOutputFileSearchCall struct {
-	ID      string                                     `json:"id,required"`
-	Queries []string                                   `json:"queries,required"`
-	Status  string                                     `json:"status,required"`
-	Results []ResponseObjectOutputFileSearchCallResult `json:"results,nullable"`
+	ID      string                                     `json:"id" api:"required"`
+	Queries []string                                   `json:"queries" api:"required"`
+	Status  string                                     `json:"status" api:"required"`
+	Results []ResponseObjectOutputFileSearchCallResult `json:"results" api:"nullable"`
 	// Any of "file_search_call".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1067,11 +1067,11 @@ func (r *ResponseObjectOutputFileSearchCall) UnmarshalJSON(data []byte) error {
 
 // Search results returned by the file search operation.
 type ResponseObjectOutputFileSearchCallResult struct {
-	Attributes map[string]any `json:"attributes,required"`
-	FileID     string         `json:"file_id,required"`
-	Filename   string         `json:"filename,required"`
-	Score      float64        `json:"score,required"`
-	Text       string         `json:"text,required"`
+	Attributes map[string]any `json:"attributes" api:"required"`
+	FileID     string         `json:"file_id" api:"required"`
+	Filename   string         `json:"filename" api:"required"`
+	Score      float64        `json:"score" api:"required"`
+	Text       string         `json:"text" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Attributes  respjson.Field
@@ -1092,11 +1092,11 @@ func (r *ResponseObjectOutputFileSearchCallResult) UnmarshalJSON(data []byte) er
 
 // Function tool call output message for OpenAI responses.
 type ResponseObjectOutputFunctionCall struct {
-	Arguments string `json:"arguments,required"`
-	CallID    string `json:"call_id,required"`
-	Name      string `json:"name,required"`
-	ID        string `json:"id,nullable"`
-	Status    string `json:"status,nullable"`
+	Arguments string `json:"arguments" api:"required"`
+	CallID    string `json:"call_id" api:"required"`
+	Name      string `json:"name" api:"required"`
+	ID        string `json:"id" api:"nullable"`
+	Status    string `json:"status" api:"nullable"`
 	// Any of "function_call".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1120,12 +1120,12 @@ func (r *ResponseObjectOutputFunctionCall) UnmarshalJSON(data []byte) error {
 
 // Model Context Protocol (MCP) call output message for OpenAI responses.
 type ResponseObjectOutputMcpCall struct {
-	ID          string `json:"id,required"`
-	Arguments   string `json:"arguments,required"`
-	Name        string `json:"name,required"`
-	ServerLabel string `json:"server_label,required"`
-	Error       string `json:"error,nullable"`
-	Output      string `json:"output,nullable"`
+	ID          string `json:"id" api:"required"`
+	Arguments   string `json:"arguments" api:"required"`
+	Name        string `json:"name" api:"required"`
+	ServerLabel string `json:"server_label" api:"required"`
+	Error       string `json:"error" api:"nullable"`
+	Output      string `json:"output" api:"nullable"`
 	// Any of "mcp_call".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1150,9 +1150,9 @@ func (r *ResponseObjectOutputMcpCall) UnmarshalJSON(data []byte) error {
 
 // MCP list tools output message containing available tools from an MCP server.
 type ResponseObjectOutputMcpListTools struct {
-	ID          string                                 `json:"id,required"`
-	ServerLabel string                                 `json:"server_label,required"`
-	Tools       []ResponseObjectOutputMcpListToolsTool `json:"tools,required"`
+	ID          string                                 `json:"id" api:"required"`
+	ServerLabel string                                 `json:"server_label" api:"required"`
+	Tools       []ResponseObjectOutputMcpListToolsTool `json:"tools" api:"required"`
 	// Any of "mcp_list_tools".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1174,9 +1174,9 @@ func (r *ResponseObjectOutputMcpListTools) UnmarshalJSON(data []byte) error {
 
 // Tool definition returned by MCP list tools operation.
 type ResponseObjectOutputMcpListToolsTool struct {
-	InputSchema map[string]any `json:"input_schema,required"`
-	Name        string         `json:"name,required"`
-	Description string         `json:"description,nullable"`
+	InputSchema map[string]any `json:"input_schema" api:"required"`
+	Name        string         `json:"name" api:"required"`
+	Description string         `json:"description" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		InputSchema respjson.Field
@@ -1195,10 +1195,10 @@ func (r *ResponseObjectOutputMcpListToolsTool) UnmarshalJSON(data []byte) error 
 
 // A request for human approval of a tool invocation.
 type ResponseObjectOutputMcpApprovalRequest struct {
-	ID          string `json:"id,required"`
-	Arguments   string `json:"arguments,required"`
-	Name        string `json:"name,required"`
-	ServerLabel string `json:"server_label,required"`
+	ID          string `json:"id" api:"required"`
+	Arguments   string `json:"arguments" api:"required"`
+	Name        string `json:"name" api:"required"`
+	ServerLabel string `json:"server_label" api:"required"`
 	// Any of "mcp_approval_request".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1221,8 +1221,8 @@ func (r *ResponseObjectOutputMcpApprovalRequest) UnmarshalJSON(data []byte) erro
 
 // Error details for failed OpenAI response requests.
 type ResponseObjectError struct {
-	Code    string `json:"code,required"`
-	Message string `json:"message,required"`
+	Code    string `json:"code" api:"required"`
+	Message string `json:"message" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Code        respjson.Field
@@ -1240,7 +1240,7 @@ func (r *ResponseObjectError) UnmarshalJSON(data []byte) error {
 
 // Details explaining why a response was incomplete.
 type ResponseObjectIncompleteDetails struct {
-	Reason string `json:"reason,required"`
+	Reason string `json:"reason" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Reason      respjson.Field
@@ -1263,9 +1263,9 @@ const (
 
 // OpenAI compatible Prompt object that is used in OpenAI responses.
 type ResponseObjectPrompt struct {
-	ID        string                                       `json:"id,required"`
-	Variables map[string]ResponseObjectPromptVariableUnion `json:"variables,nullable"`
-	Version   string                                       `json:"version,nullable"`
+	ID        string                                       `json:"id" api:"required"`
+	Variables map[string]ResponseObjectPromptVariableUnion `json:"variables" api:"nullable"`
+	Version   string                                       `json:"version" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -1376,7 +1376,7 @@ func (r *ResponseObjectPromptVariableUnion) UnmarshalJSON(data []byte) error {
 
 // Text content for input messages in OpenAI response format.
 type ResponseObjectPromptVariableInputText struct {
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Any of "input_text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1398,8 +1398,8 @@ func (r *ResponseObjectPromptVariableInputText) UnmarshalJSON(data []byte) error
 type ResponseObjectPromptVariableInputImage struct {
 	// Any of "low", "high", "auto".
 	Detail   string `json:"detail"`
-	FileID   string `json:"file_id,nullable"`
-	ImageURL string `json:"image_url,nullable"`
+	FileID   string `json:"file_id" api:"nullable"`
+	ImageURL string `json:"image_url" api:"nullable"`
 	// Any of "input_image".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1421,10 +1421,10 @@ func (r *ResponseObjectPromptVariableInputImage) UnmarshalJSON(data []byte) erro
 
 // File content for input messages in OpenAI response format.
 type ResponseObjectPromptVariableInputFile struct {
-	FileData string `json:"file_data,nullable"`
-	FileID   string `json:"file_id,nullable"`
-	FileURL  string `json:"file_url,nullable"`
-	Filename string `json:"filename,nullable"`
+	FileData string `json:"file_data" api:"nullable"`
+	FileID   string `json:"file_id" api:"nullable"`
+	FileURL  string `json:"file_url" api:"nullable"`
+	Filename string `json:"filename" api:"nullable"`
 	// Any of "input_file".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1450,7 +1450,7 @@ func (r *ResponseObjectPromptVariableInputFile) UnmarshalJSON(data []byte) error
 // Controls how much reasoning the model performs before generating a response.
 type ResponseObjectReasoning struct {
 	// Any of "none", "minimal", "low", "medium", "high", "xhigh".
-	Effort string `json:"effort,nullable"`
+	Effort string `json:"effort" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Effort      respjson.Field
@@ -1468,7 +1468,7 @@ func (r *ResponseObjectReasoning) UnmarshalJSON(data []byte) error {
 // Text response configuration for OpenAI responses.
 type ResponseObjectText struct {
 	// Configuration for Responses API text format.
-	Format ResponseObjectTextFormat `json:"format,nullable"`
+	Format ResponseObjectTextFormat `json:"format" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Format      respjson.Field
@@ -1485,10 +1485,10 @@ func (r *ResponseObjectText) UnmarshalJSON(data []byte) error {
 
 // Configuration for Responses API text format.
 type ResponseObjectTextFormat struct {
-	Description string         `json:"description,nullable"`
-	Name        string         `json:"name,nullable"`
-	Schema      map[string]any `json:"schema,nullable"`
-	Strict      bool           `json:"strict,nullable"`
+	Description string         `json:"description" api:"nullable"`
+	Name        string         `json:"name" api:"nullable"`
+	Schema      map[string]any `json:"schema" api:"nullable"`
+	Strict      bool           `json:"strict" api:"nullable"`
 	// Any of "text", "json_schema", "json_object".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1598,7 +1598,7 @@ const (
 
 // Constrains the tools available to the model to a pre-defined set.
 type ResponseObjectToolChoiceOpenAIResponseInputToolChoiceAllowedTools struct {
-	Tools []map[string]string `json:"tools,required"`
+	Tools []map[string]string `json:"tools" api:"required"`
 	// Any of "auto", "required".
 	Mode string `json:"mode"`
 	// Any of "allowed_tools".
@@ -1664,7 +1664,7 @@ func (r *ResponseObjectToolChoiceOpenAIResponseInputToolChoiceWebSearch) Unmarsh
 
 // Forces the model to call a specific function.
 type ResponseObjectToolChoiceOpenAIResponseInputToolChoiceFunctionTool struct {
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// Any of "function".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1686,8 +1686,8 @@ func (r *ResponseObjectToolChoiceOpenAIResponseInputToolChoiceFunctionTool) Unma
 
 // Forces the model to call a specific tool on a remote MCP server
 type ResponseObjectToolChoiceOpenAIResponseInputToolChoiceMcpTool struct {
-	ServerLabel string `json:"server_label,required"`
-	Name        string `json:"name,nullable"`
+	ServerLabel string `json:"server_label" api:"required"`
+	Name        string `json:"name" api:"nullable"`
 	// Any of "mcp".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1710,7 +1710,7 @@ func (r *ResponseObjectToolChoiceOpenAIResponseInputToolChoiceMcpTool) Unmarshal
 
 // Forces the model to call a custom tool.
 type ResponseObjectToolChoiceOpenAIResponseInputToolChoiceCustomTool struct {
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// Any of "custom".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1809,7 +1809,7 @@ func (r *ResponseObjectToolUnion) UnmarshalJSON(data []byte) error {
 
 // Web search tool configuration for OpenAI response inputs.
 type ResponseObjectToolOpenAIResponseInputToolWebSearch struct {
-	SearchContextSize string `json:"search_context_size,nullable"`
+	SearchContextSize string `json:"search_context_size" api:"nullable"`
 	// Any of "web_search", "web_search_preview", "web_search_preview_2025_03_11",
 	// "web_search_2025_08_26".
 	Type string `json:"type"`
@@ -1830,9 +1830,9 @@ func (r *ResponseObjectToolOpenAIResponseInputToolWebSearch) UnmarshalJSON(data 
 
 // File search tool configuration for OpenAI response inputs.
 type ResponseObjectToolFileSearch struct {
-	VectorStoreIDs []string       `json:"vector_store_ids,required"`
-	Filters        map[string]any `json:"filters,nullable"`
-	MaxNumResults  int64          `json:"max_num_results,nullable"`
+	VectorStoreIDs []string       `json:"vector_store_ids" api:"required"`
+	Filters        map[string]any `json:"filters" api:"nullable"`
+	MaxNumResults  int64          `json:"max_num_results" api:"nullable"`
 	// Options for ranking and filtering search results.
 	//
 	// This class configures how search results are ranked and filtered. You can use
@@ -1850,7 +1850,7 @@ type ResponseObjectToolFileSearch struct {
 	//
 	//	# Score threshold filtering
 	//	SearchRankingOptions(ranker="weighted", score_threshold=0.5)
-	RankingOptions ResponseObjectToolFileSearchRankingOptions `json:"ranking_options,nullable"`
+	RankingOptions ResponseObjectToolFileSearchRankingOptions `json:"ranking_options" api:"nullable"`
 	// Any of "file_search".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1890,16 +1890,16 @@ func (r *ResponseObjectToolFileSearch) UnmarshalJSON(data []byte) error {
 //	SearchRankingOptions(ranker="weighted", score_threshold=0.5)
 type ResponseObjectToolFileSearchRankingOptions struct {
 	// Weight factor for weighted ranker
-	Alpha float64 `json:"alpha,nullable"`
+	Alpha float64 `json:"alpha" api:"nullable"`
 	// Impact factor for RRF algorithm
-	ImpactFactor float64 `json:"impact_factor,nullable"`
+	ImpactFactor float64 `json:"impact_factor" api:"nullable"`
 	// Model identifier for neural reranker
-	Model          string  `json:"model,nullable"`
-	Ranker         string  `json:"ranker,nullable"`
-	ScoreThreshold float64 `json:"score_threshold,nullable"`
+	Model          string  `json:"model" api:"nullable"`
+	Ranker         string  `json:"ranker" api:"nullable"`
+	ScoreThreshold float64 `json:"score_threshold" api:"nullable"`
 	// Weights for combining vector, keyword, and neural scores. Keys: 'vector',
 	// 'keyword', 'neural'
-	Weights map[string]float64 `json:"weights,nullable"`
+	Weights map[string]float64 `json:"weights" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Alpha          respjson.Field
@@ -1921,10 +1921,10 @@ func (r *ResponseObjectToolFileSearchRankingOptions) UnmarshalJSON(data []byte) 
 
 // Function tool configuration for OpenAI response inputs.
 type ResponseObjectToolFunction struct {
-	Name        string         `json:"name,required"`
-	Parameters  map[string]any `json:"parameters,required"`
-	Description string         `json:"description,nullable"`
-	Strict      bool           `json:"strict,nullable"`
+	Name        string         `json:"name" api:"required"`
+	Parameters  map[string]any `json:"parameters" api:"required"`
+	Description string         `json:"description" api:"nullable"`
+	Strict      bool           `json:"strict" api:"nullable"`
 	// Any of "function".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1947,9 +1947,9 @@ func (r *ResponseObjectToolFunction) UnmarshalJSON(data []byte) error {
 
 // Model Context Protocol (MCP) tool configuration for OpenAI response object.
 type ResponseObjectToolMcp struct {
-	ServerLabel string `json:"server_label,required"`
+	ServerLabel string `json:"server_label" api:"required"`
 	// Filter configuration for restricting which MCP tools can be used.
-	AllowedTools ResponseObjectToolMcpAllowedToolsUnion `json:"allowed_tools,nullable"`
+	AllowedTools ResponseObjectToolMcpAllowedToolsUnion `json:"allowed_tools" api:"nullable"`
 	// Any of "mcp".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -2007,7 +2007,7 @@ func (r *ResponseObjectToolMcpAllowedToolsUnion) UnmarshalJSON(data []byte) erro
 
 // Filter configuration for restricting which MCP tools can be used.
 type ResponseObjectToolMcpAllowedToolsAllowedToolsFilter struct {
-	ToolNames []string `json:"tool_names,nullable"`
+	ToolNames []string `json:"tool_names" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ToolNames   respjson.Field
@@ -2024,13 +2024,13 @@ func (r *ResponseObjectToolMcpAllowedToolsAllowedToolsFilter) UnmarshalJSON(data
 
 // Usage information for OpenAI response.
 type ResponseObjectUsage struct {
-	InputTokens int64 `json:"input_tokens,required"`
+	InputTokens int64 `json:"input_tokens" api:"required"`
 	// Token details for input tokens in OpenAI response usage.
-	InputTokensDetails ResponseObjectUsageInputTokensDetails `json:"input_tokens_details,required"`
-	OutputTokens       int64                                 `json:"output_tokens,required"`
+	InputTokensDetails ResponseObjectUsageInputTokensDetails `json:"input_tokens_details" api:"required"`
+	OutputTokens       int64                                 `json:"output_tokens" api:"required"`
 	// Token details for output tokens in OpenAI response usage.
-	OutputTokensDetails ResponseObjectUsageOutputTokensDetails `json:"output_tokens_details,required"`
-	TotalTokens         int64                                  `json:"total_tokens,required"`
+	OutputTokensDetails ResponseObjectUsageOutputTokensDetails `json:"output_tokens_details" api:"required"`
+	TotalTokens         int64                                  `json:"total_tokens" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		InputTokens         respjson.Field
@@ -2051,7 +2051,7 @@ func (r *ResponseObjectUsage) UnmarshalJSON(data []byte) error {
 
 // Token details for input tokens in OpenAI response usage.
 type ResponseObjectUsageInputTokensDetails struct {
-	CachedTokens int64 `json:"cached_tokens,required"`
+	CachedTokens int64 `json:"cached_tokens" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CachedTokens respjson.Field
@@ -2068,7 +2068,7 @@ func (r *ResponseObjectUsageInputTokensDetails) UnmarshalJSON(data []byte) error
 
 // Token details for output tokens in OpenAI response usage.
 type ResponseObjectUsageOutputTokensDetails struct {
-	ReasoningTokens int64 `json:"reasoning_tokens,required"`
+	ReasoningTokens int64 `json:"reasoning_tokens" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ReasoningTokens respjson.Field
@@ -2777,7 +2777,7 @@ func (r *ResponseObjectStreamUnionPartLogprobs) UnmarshalJSON(data []byte) error
 // Streaming event indicating a new response has been created.
 type ResponseObjectStreamResponseCreated struct {
 	// Complete OpenAI response object containing generation results and metadata.
-	Response ResponseObject `json:"response,required"`
+	Response ResponseObject `json:"response" api:"required"`
 	// Any of "response.created".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -2798,8 +2798,8 @@ func (r *ResponseObjectStreamResponseCreated) UnmarshalJSON(data []byte) error {
 // Streaming event indicating the response remains in progress.
 type ResponseObjectStreamResponseInProgress struct {
 	// Complete OpenAI response object containing generation results and metadata.
-	Response       ResponseObject `json:"response,required"`
-	SequenceNumber int64          `json:"sequence_number,required"`
+	Response       ResponseObject `json:"response" api:"required"`
+	SequenceNumber int64          `json:"sequence_number" api:"required"`
 	// Any of "response.in_progress".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -2823,10 +2823,10 @@ type ResponseObjectStreamResponseOutputItemAdded struct {
 	// Corresponds to the various Message types in the Responses API. They are all
 	// under one type because the Responses API gives them all the same "type" value,
 	// and there is no way to tell them apart in certain scenarios.
-	Item           ResponseObjectStreamResponseOutputItemAddedItemUnion `json:"item,required"`
-	OutputIndex    int64                                                `json:"output_index,required"`
-	ResponseID     string                                               `json:"response_id,required"`
-	SequenceNumber int64                                                `json:"sequence_number,required"`
+	Item           ResponseObjectStreamResponseOutputItemAddedItemUnion `json:"item" api:"required"`
+	OutputIndex    int64                                                `json:"output_index" api:"required"`
+	ResponseID     string                                               `json:"response_id" api:"required"`
+	SequenceNumber int64                                                `json:"sequence_number" api:"required"`
 	// Any of "response.output_item.added".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3015,11 +3015,11 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemUnion) UnmarshalJSON(dat
 // under one type because the Responses API gives them all the same "type" value,
 // and there is no way to tell them apart in certain scenarios.
 type ResponseObjectStreamResponseOutputItemAddedItemMessage struct {
-	Content ResponseObjectStreamResponseOutputItemAddedItemMessageContentUnion `json:"content,required"`
+	Content ResponseObjectStreamResponseOutputItemAddedItemMessageContentUnion `json:"content" api:"required"`
 	// Any of "system", "developer", "user", "assistant".
-	Role   string `json:"role,required"`
-	ID     string `json:"id,nullable"`
-	Status string `json:"status,nullable"`
+	Role   string `json:"role" api:"required"`
+	ID     string `json:"id" api:"nullable"`
+	Status string `json:"status" api:"nullable"`
 	// Any of "message".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3203,7 +3203,7 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAI
 
 // Text content for input messages in OpenAI response format.
 type ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText struct {
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Any of "input_text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3227,8 +3227,8 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAI
 type ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage struct {
 	// Any of "low", "high", "auto".
 	Detail   string `json:"detail"`
-	FileID   string `json:"file_id,nullable"`
-	ImageURL string `json:"image_url,nullable"`
+	FileID   string `json:"file_id" api:"nullable"`
+	ImageURL string `json:"image_url" api:"nullable"`
 	// Any of "input_image".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3252,10 +3252,10 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAI
 
 // File content for input messages in OpenAI response format.
 type ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
-	FileData string `json:"file_data,nullable"`
-	FileID   string `json:"file_id,nullable"`
-	FileURL  string `json:"file_url,nullable"`
-	Filename string `json:"filename,nullable"`
+	FileData string `json:"file_data" api:"nullable"`
+	FileID   string `json:"file_id" api:"nullable"`
+	FileURL  string `json:"file_url" api:"nullable"`
+	Filename string `json:"filename" api:"nullable"`
 	// Any of "input_file".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3365,9 +3365,9 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAI
 }
 
 type ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputText struct {
-	Text        string                                                                                                                                                                       `json:"text,required"`
+	Text        string                                                                                                                                                                       `json:"text" api:"required"`
 	Annotations []ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion `json:"annotations"`
-	Logprobs    []ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprob         `json:"logprobs,nullable"`
+	Logprobs    []ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprob         `json:"logprobs" api:"nullable"`
 	// Any of "output_text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3505,9 +3505,9 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAI
 
 // File citation annotation for referencing specific files in response content.
 type ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation struct {
-	FileID   string `json:"file_id,required"`
-	Filename string `json:"filename,required"`
-	Index    int64  `json:"index,required"`
+	FileID   string `json:"file_id" api:"required"`
+	Filename string `json:"filename" api:"required"`
+	Index    int64  `json:"index" api:"required"`
 	// Any of "file_citation".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3531,10 +3531,10 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAI
 
 // URL citation annotation for referencing external web resources.
 type ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation struct {
-	EndIndex   int64  `json:"end_index,required"`
-	StartIndex int64  `json:"start_index,required"`
-	Title      string `json:"title,required"`
-	URL        string `json:"url,required"`
+	EndIndex   int64  `json:"end_index" api:"required"`
+	StartIndex int64  `json:"start_index" api:"required"`
+	Title      string `json:"title" api:"required"`
+	URL        string `json:"url" api:"required"`
 	// Any of "url_citation".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3558,11 +3558,11 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAI
 }
 
 type ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation struct {
-	ContainerID string `json:"container_id,required"`
-	EndIndex    int64  `json:"end_index,required"`
-	FileID      string `json:"file_id,required"`
-	Filename    string `json:"filename,required"`
-	StartIndex  int64  `json:"start_index,required"`
+	ContainerID string `json:"container_id" api:"required"`
+	EndIndex    int64  `json:"end_index" api:"required"`
+	FileID      string `json:"file_id" api:"required"`
+	Filename    string `json:"filename" api:"required"`
+	StartIndex  int64  `json:"start_index" api:"required"`
 	// Any of "container_file_citation".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3587,8 +3587,8 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAI
 }
 
 type ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath struct {
-	FileID string `json:"file_id,required"`
-	Index  int64  `json:"index,required"`
+	FileID string `json:"file_id" api:"required"`
+	Index  int64  `json:"index" api:"required"`
 	// Any of "file_path".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3613,13 +3613,13 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAI
 // response.
 type ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprob struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
-	Bytes []int64 `json:"bytes,nullable"`
+	Bytes []int64 `json:"bytes" api:"nullable"`
 	// The top log probabilities for the token.
-	TopLogprobs []ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob `json:"top_logprobs,nullable"`
+	TopLogprobs []ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob `json:"top_logprobs" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -3643,11 +3643,11 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAI
 // response.
 type ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
-	Bytes []int64 `json:"bytes,nullable"`
+	Bytes []int64 `json:"bytes" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -3668,7 +3668,7 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAI
 
 // Refusal content within a streamed response part.
 type ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemRefusal struct {
-	Refusal string `json:"refusal,required"`
+	Refusal string `json:"refusal" api:"required"`
 	// Any of "refusal".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3690,8 +3690,8 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAI
 
 // Web search tool call output message for OpenAI responses.
 type ResponseObjectStreamResponseOutputItemAddedItemWebSearchCall struct {
-	ID     string `json:"id,required"`
-	Status string `json:"status,required"`
+	ID     string `json:"id" api:"required"`
+	Status string `json:"status" api:"required"`
 	// Any of "web_search_call".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3714,10 +3714,10 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemWebSearchCall) Unmarshal
 
 // File search tool call output message for OpenAI responses.
 type ResponseObjectStreamResponseOutputItemAddedItemFileSearchCall struct {
-	ID      string                                                                `json:"id,required"`
-	Queries []string                                                              `json:"queries,required"`
-	Status  string                                                                `json:"status,required"`
-	Results []ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResult `json:"results,nullable"`
+	ID      string                                                                `json:"id" api:"required"`
+	Queries []string                                                              `json:"queries" api:"required"`
+	Status  string                                                                `json:"status" api:"required"`
+	Results []ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResult `json:"results" api:"nullable"`
 	// Any of "file_search_call".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3742,11 +3742,11 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemFileSearchCall) Unmarsha
 
 // Search results returned by the file search operation.
 type ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResult struct {
-	Attributes map[string]any `json:"attributes,required"`
-	FileID     string         `json:"file_id,required"`
-	Filename   string         `json:"filename,required"`
-	Score      float64        `json:"score,required"`
-	Text       string         `json:"text,required"`
+	Attributes map[string]any `json:"attributes" api:"required"`
+	FileID     string         `json:"file_id" api:"required"`
+	Filename   string         `json:"filename" api:"required"`
+	Score      float64        `json:"score" api:"required"`
+	Text       string         `json:"text" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Attributes  respjson.Field
@@ -3769,11 +3769,11 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemFileSearchCallResult) Un
 
 // Function tool call output message for OpenAI responses.
 type ResponseObjectStreamResponseOutputItemAddedItemFunctionCall struct {
-	Arguments string `json:"arguments,required"`
-	CallID    string `json:"call_id,required"`
-	Name      string `json:"name,required"`
-	ID        string `json:"id,nullable"`
-	Status    string `json:"status,nullable"`
+	Arguments string `json:"arguments" api:"required"`
+	CallID    string `json:"call_id" api:"required"`
+	Name      string `json:"name" api:"required"`
+	ID        string `json:"id" api:"nullable"`
+	Status    string `json:"status" api:"nullable"`
 	// Any of "function_call".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3799,12 +3799,12 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemFunctionCall) UnmarshalJ
 
 // Model Context Protocol (MCP) call output message for OpenAI responses.
 type ResponseObjectStreamResponseOutputItemAddedItemMcpCall struct {
-	ID          string `json:"id,required"`
-	Arguments   string `json:"arguments,required"`
-	Name        string `json:"name,required"`
-	ServerLabel string `json:"server_label,required"`
-	Error       string `json:"error,nullable"`
-	Output      string `json:"output,nullable"`
+	ID          string `json:"id" api:"required"`
+	Arguments   string `json:"arguments" api:"required"`
+	Name        string `json:"name" api:"required"`
+	ServerLabel string `json:"server_label" api:"required"`
+	Error       string `json:"error" api:"nullable"`
+	Output      string `json:"output" api:"nullable"`
 	// Any of "mcp_call".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3829,9 +3829,9 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMcpCall) UnmarshalJSON(d
 
 // MCP list tools output message containing available tools from an MCP server.
 type ResponseObjectStreamResponseOutputItemAddedItemMcpListTools struct {
-	ID          string                                                            `json:"id,required"`
-	ServerLabel string                                                            `json:"server_label,required"`
-	Tools       []ResponseObjectStreamResponseOutputItemAddedItemMcpListToolsTool `json:"tools,required"`
+	ID          string                                                            `json:"id" api:"required"`
+	ServerLabel string                                                            `json:"server_label" api:"required"`
+	Tools       []ResponseObjectStreamResponseOutputItemAddedItemMcpListToolsTool `json:"tools" api:"required"`
 	// Any of "mcp_list_tools".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3855,9 +3855,9 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMcpListTools) UnmarshalJ
 
 // Tool definition returned by MCP list tools operation.
 type ResponseObjectStreamResponseOutputItemAddedItemMcpListToolsTool struct {
-	InputSchema map[string]any `json:"input_schema,required"`
-	Name        string         `json:"name,required"`
-	Description string         `json:"description,nullable"`
+	InputSchema map[string]any `json:"input_schema" api:"required"`
+	Name        string         `json:"name" api:"required"`
+	Description string         `json:"description" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		InputSchema respjson.Field
@@ -3878,10 +3878,10 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMcpListToolsTool) Unmars
 
 // A request for human approval of a tool invocation.
 type ResponseObjectStreamResponseOutputItemAddedItemMcpApprovalRequest struct {
-	ID          string `json:"id,required"`
-	Arguments   string `json:"arguments,required"`
-	Name        string `json:"name,required"`
-	ServerLabel string `json:"server_label,required"`
+	ID          string `json:"id" api:"required"`
+	Arguments   string `json:"arguments" api:"required"`
+	Name        string `json:"name" api:"required"`
+	ServerLabel string `json:"server_label" api:"required"`
 	// Any of "mcp_approval_request".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3909,10 +3909,10 @@ type ResponseObjectStreamResponseOutputItemDone struct {
 	// Corresponds to the various Message types in the Responses API. They are all
 	// under one type because the Responses API gives them all the same "type" value,
 	// and there is no way to tell them apart in certain scenarios.
-	Item           ResponseObjectStreamResponseOutputItemDoneItemUnion `json:"item,required"`
-	OutputIndex    int64                                               `json:"output_index,required"`
-	ResponseID     string                                              `json:"response_id,required"`
-	SequenceNumber int64                                               `json:"sequence_number,required"`
+	Item           ResponseObjectStreamResponseOutputItemDoneItemUnion `json:"item" api:"required"`
+	OutputIndex    int64                                               `json:"output_index" api:"required"`
+	ResponseID     string                                              `json:"response_id" api:"required"`
+	SequenceNumber int64                                               `json:"sequence_number" api:"required"`
 	// Any of "response.output_item.done".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4100,11 +4100,11 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemUnion) UnmarshalJSON(data
 // under one type because the Responses API gives them all the same "type" value,
 // and there is no way to tell them apart in certain scenarios.
 type ResponseObjectStreamResponseOutputItemDoneItemMessage struct {
-	Content ResponseObjectStreamResponseOutputItemDoneItemMessageContentUnion `json:"content,required"`
+	Content ResponseObjectStreamResponseOutputItemDoneItemMessageContentUnion `json:"content" api:"required"`
 	// Any of "system", "developer", "user", "assistant".
-	Role   string `json:"role,required"`
-	ID     string `json:"id,nullable"`
-	Status string `json:"status,nullable"`
+	Role   string `json:"role" api:"required"`
+	ID     string `json:"id" api:"nullable"`
+	Status string `json:"status" api:"nullable"`
 	// Any of "message".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4288,7 +4288,7 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIR
 
 // Text content for input messages in OpenAI response format.
 type ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText struct {
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Any of "input_text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4312,8 +4312,8 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIR
 type ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage struct {
 	// Any of "low", "high", "auto".
 	Detail   string `json:"detail"`
-	FileID   string `json:"file_id,nullable"`
-	ImageURL string `json:"image_url,nullable"`
+	FileID   string `json:"file_id" api:"nullable"`
+	ImageURL string `json:"image_url" api:"nullable"`
 	// Any of "input_image".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4337,10 +4337,10 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIR
 
 // File content for input messages in OpenAI response format.
 type ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
-	FileData string `json:"file_data,nullable"`
-	FileID   string `json:"file_id,nullable"`
-	FileURL  string `json:"file_url,nullable"`
-	Filename string `json:"filename,nullable"`
+	FileData string `json:"file_data" api:"nullable"`
+	FileID   string `json:"file_id" api:"nullable"`
+	FileURL  string `json:"file_url" api:"nullable"`
+	Filename string `json:"filename" api:"nullable"`
 	// Any of "input_file".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4450,9 +4450,9 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIR
 }
 
 type ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputText struct {
-	Text        string                                                                                                                                                                      `json:"text,required"`
+	Text        string                                                                                                                                                                      `json:"text" api:"required"`
 	Annotations []ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion `json:"annotations"`
-	Logprobs    []ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprob         `json:"logprobs,nullable"`
+	Logprobs    []ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprob         `json:"logprobs" api:"nullable"`
 	// Any of "output_text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4590,9 +4590,9 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIR
 
 // File citation annotation for referencing specific files in response content.
 type ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation struct {
-	FileID   string `json:"file_id,required"`
-	Filename string `json:"filename,required"`
-	Index    int64  `json:"index,required"`
+	FileID   string `json:"file_id" api:"required"`
+	Filename string `json:"filename" api:"required"`
+	Index    int64  `json:"index" api:"required"`
 	// Any of "file_citation".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4616,10 +4616,10 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIR
 
 // URL citation annotation for referencing external web resources.
 type ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation struct {
-	EndIndex   int64  `json:"end_index,required"`
-	StartIndex int64  `json:"start_index,required"`
-	Title      string `json:"title,required"`
-	URL        string `json:"url,required"`
+	EndIndex   int64  `json:"end_index" api:"required"`
+	StartIndex int64  `json:"start_index" api:"required"`
+	Title      string `json:"title" api:"required"`
+	URL        string `json:"url" api:"required"`
 	// Any of "url_citation".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4643,11 +4643,11 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIR
 }
 
 type ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation struct {
-	ContainerID string `json:"container_id,required"`
-	EndIndex    int64  `json:"end_index,required"`
-	FileID      string `json:"file_id,required"`
-	Filename    string `json:"filename,required"`
-	StartIndex  int64  `json:"start_index,required"`
+	ContainerID string `json:"container_id" api:"required"`
+	EndIndex    int64  `json:"end_index" api:"required"`
+	FileID      string `json:"file_id" api:"required"`
+	Filename    string `json:"filename" api:"required"`
+	StartIndex  int64  `json:"start_index" api:"required"`
 	// Any of "container_file_citation".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4672,8 +4672,8 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIR
 }
 
 type ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath struct {
-	FileID string `json:"file_id,required"`
-	Index  int64  `json:"index,required"`
+	FileID string `json:"file_id" api:"required"`
+	Index  int64  `json:"index" api:"required"`
 	// Any of "file_path".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4698,13 +4698,13 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIR
 // response.
 type ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprob struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
-	Bytes []int64 `json:"bytes,nullable"`
+	Bytes []int64 `json:"bytes" api:"nullable"`
 	// The top log probabilities for the token.
-	TopLogprobs []ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob `json:"top_logprobs,nullable"`
+	TopLogprobs []ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob `json:"top_logprobs" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -4728,11 +4728,11 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIR
 // response.
 type ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
-	Bytes []int64 `json:"bytes,nullable"`
+	Bytes []int64 `json:"bytes" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -4753,7 +4753,7 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIR
 
 // Refusal content within a streamed response part.
 type ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemRefusal struct {
-	Refusal string `json:"refusal,required"`
+	Refusal string `json:"refusal" api:"required"`
 	// Any of "refusal".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4775,8 +4775,8 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIR
 
 // Web search tool call output message for OpenAI responses.
 type ResponseObjectStreamResponseOutputItemDoneItemWebSearchCall struct {
-	ID     string `json:"id,required"`
-	Status string `json:"status,required"`
+	ID     string `json:"id" api:"required"`
+	Status string `json:"status" api:"required"`
 	// Any of "web_search_call".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4799,10 +4799,10 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemWebSearchCall) UnmarshalJ
 
 // File search tool call output message for OpenAI responses.
 type ResponseObjectStreamResponseOutputItemDoneItemFileSearchCall struct {
-	ID      string                                                               `json:"id,required"`
-	Queries []string                                                             `json:"queries,required"`
-	Status  string                                                               `json:"status,required"`
-	Results []ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResult `json:"results,nullable"`
+	ID      string                                                               `json:"id" api:"required"`
+	Queries []string                                                             `json:"queries" api:"required"`
+	Status  string                                                               `json:"status" api:"required"`
+	Results []ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResult `json:"results" api:"nullable"`
 	// Any of "file_search_call".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4827,11 +4827,11 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemFileSearchCall) Unmarshal
 
 // Search results returned by the file search operation.
 type ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResult struct {
-	Attributes map[string]any `json:"attributes,required"`
-	FileID     string         `json:"file_id,required"`
-	Filename   string         `json:"filename,required"`
-	Score      float64        `json:"score,required"`
-	Text       string         `json:"text,required"`
+	Attributes map[string]any `json:"attributes" api:"required"`
+	FileID     string         `json:"file_id" api:"required"`
+	Filename   string         `json:"filename" api:"required"`
+	Score      float64        `json:"score" api:"required"`
+	Text       string         `json:"text" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Attributes  respjson.Field
@@ -4854,11 +4854,11 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemFileSearchCallResult) Unm
 
 // Function tool call output message for OpenAI responses.
 type ResponseObjectStreamResponseOutputItemDoneItemFunctionCall struct {
-	Arguments string `json:"arguments,required"`
-	CallID    string `json:"call_id,required"`
-	Name      string `json:"name,required"`
-	ID        string `json:"id,nullable"`
-	Status    string `json:"status,nullable"`
+	Arguments string `json:"arguments" api:"required"`
+	CallID    string `json:"call_id" api:"required"`
+	Name      string `json:"name" api:"required"`
+	ID        string `json:"id" api:"nullable"`
+	Status    string `json:"status" api:"nullable"`
 	// Any of "function_call".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4884,12 +4884,12 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemFunctionCall) UnmarshalJS
 
 // Model Context Protocol (MCP) call output message for OpenAI responses.
 type ResponseObjectStreamResponseOutputItemDoneItemMcpCall struct {
-	ID          string `json:"id,required"`
-	Arguments   string `json:"arguments,required"`
-	Name        string `json:"name,required"`
-	ServerLabel string `json:"server_label,required"`
-	Error       string `json:"error,nullable"`
-	Output      string `json:"output,nullable"`
+	ID          string `json:"id" api:"required"`
+	Arguments   string `json:"arguments" api:"required"`
+	Name        string `json:"name" api:"required"`
+	ServerLabel string `json:"server_label" api:"required"`
+	Error       string `json:"error" api:"nullable"`
+	Output      string `json:"output" api:"nullable"`
 	// Any of "mcp_call".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4914,9 +4914,9 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMcpCall) UnmarshalJSON(da
 
 // MCP list tools output message containing available tools from an MCP server.
 type ResponseObjectStreamResponseOutputItemDoneItemMcpListTools struct {
-	ID          string                                                           `json:"id,required"`
-	ServerLabel string                                                           `json:"server_label,required"`
-	Tools       []ResponseObjectStreamResponseOutputItemDoneItemMcpListToolsTool `json:"tools,required"`
+	ID          string                                                           `json:"id" api:"required"`
+	ServerLabel string                                                           `json:"server_label" api:"required"`
+	Tools       []ResponseObjectStreamResponseOutputItemDoneItemMcpListToolsTool `json:"tools" api:"required"`
 	// Any of "mcp_list_tools".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4940,9 +4940,9 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMcpListTools) UnmarshalJS
 
 // Tool definition returned by MCP list tools operation.
 type ResponseObjectStreamResponseOutputItemDoneItemMcpListToolsTool struct {
-	InputSchema map[string]any `json:"input_schema,required"`
-	Name        string         `json:"name,required"`
-	Description string         `json:"description,nullable"`
+	InputSchema map[string]any `json:"input_schema" api:"required"`
+	Name        string         `json:"name" api:"required"`
+	Description string         `json:"description" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		InputSchema respjson.Field
@@ -4963,10 +4963,10 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMcpListToolsTool) Unmarsh
 
 // A request for human approval of a tool invocation.
 type ResponseObjectStreamResponseOutputItemDoneItemMcpApprovalRequest struct {
-	ID          string `json:"id,required"`
-	Arguments   string `json:"arguments,required"`
-	Name        string `json:"name,required"`
-	ServerLabel string `json:"server_label,required"`
+	ID          string `json:"id" api:"required"`
+	Arguments   string `json:"arguments" api:"required"`
+	Name        string `json:"name" api:"required"`
+	ServerLabel string `json:"server_label" api:"required"`
 	// Any of "mcp_approval_request".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4991,12 +4991,12 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMcpApprovalRequest) Unmar
 
 // Streaming event for incremental text content updates.
 type ResponseObjectStreamResponseOutputTextDelta struct {
-	ContentIndex   int64                                                `json:"content_index,required"`
-	Delta          string                                               `json:"delta,required"`
-	ItemID         string                                               `json:"item_id,required"`
-	OutputIndex    int64                                                `json:"output_index,required"`
-	SequenceNumber int64                                                `json:"sequence_number,required"`
-	Logprobs       []ResponseObjectStreamResponseOutputTextDeltaLogprob `json:"logprobs,nullable"`
+	ContentIndex   int64                                                `json:"content_index" api:"required"`
+	Delta          string                                               `json:"delta" api:"required"`
+	ItemID         string                                               `json:"item_id" api:"required"`
+	OutputIndex    int64                                                `json:"output_index" api:"required"`
+	SequenceNumber int64                                                `json:"sequence_number" api:"required"`
+	Logprobs       []ResponseObjectStreamResponseOutputTextDeltaLogprob `json:"logprobs" api:"nullable"`
 	// Any of "response.output_text.delta".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -5023,13 +5023,13 @@ func (r *ResponseObjectStreamResponseOutputTextDelta) UnmarshalJSON(data []byte)
 // response.
 type ResponseObjectStreamResponseOutputTextDeltaLogprob struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
-	Bytes []int64 `json:"bytes,nullable"`
+	Bytes []int64 `json:"bytes" api:"nullable"`
 	// The top log probabilities for the token.
-	TopLogprobs []ResponseObjectStreamResponseOutputTextDeltaLogprobTopLogprob `json:"top_logprobs,nullable"`
+	TopLogprobs []ResponseObjectStreamResponseOutputTextDeltaLogprobTopLogprob `json:"top_logprobs" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -5051,11 +5051,11 @@ func (r *ResponseObjectStreamResponseOutputTextDeltaLogprob) UnmarshalJSON(data 
 // response.
 type ResponseObjectStreamResponseOutputTextDeltaLogprobTopLogprob struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
-	Bytes []int64 `json:"bytes,nullable"`
+	Bytes []int64 `json:"bytes" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -5076,11 +5076,11 @@ func (r *ResponseObjectStreamResponseOutputTextDeltaLogprobTopLogprob) Unmarshal
 
 // Streaming event for when text output is completed.
 type ResponseObjectStreamResponseOutputTextDone struct {
-	ContentIndex   int64  `json:"content_index,required"`
-	ItemID         string `json:"item_id,required"`
-	OutputIndex    int64  `json:"output_index,required"`
-	SequenceNumber int64  `json:"sequence_number,required"`
-	Text           string `json:"text,required"`
+	ContentIndex   int64  `json:"content_index" api:"required"`
+	ItemID         string `json:"item_id" api:"required"`
+	OutputIndex    int64  `json:"output_index" api:"required"`
+	SequenceNumber int64  `json:"sequence_number" api:"required"`
+	Text           string `json:"text" api:"required"`
 	// Any of "response.output_text.done".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -5104,10 +5104,10 @@ func (r *ResponseObjectStreamResponseOutputTextDone) UnmarshalJSON(data []byte) 
 
 // Streaming event for incremental function call argument updates.
 type ResponseObjectStreamResponseFunctionCallArgumentsDelta struct {
-	Delta          string `json:"delta,required"`
-	ItemID         string `json:"item_id,required"`
-	OutputIndex    int64  `json:"output_index,required"`
-	SequenceNumber int64  `json:"sequence_number,required"`
+	Delta          string `json:"delta" api:"required"`
+	ItemID         string `json:"item_id" api:"required"`
+	OutputIndex    int64  `json:"output_index" api:"required"`
+	SequenceNumber int64  `json:"sequence_number" api:"required"`
 	// Any of "response.function_call_arguments.delta".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -5130,10 +5130,10 @@ func (r *ResponseObjectStreamResponseFunctionCallArgumentsDelta) UnmarshalJSON(d
 
 // Streaming event for when function call arguments are completed.
 type ResponseObjectStreamResponseFunctionCallArgumentsDone struct {
-	Arguments      string `json:"arguments,required"`
-	ItemID         string `json:"item_id,required"`
-	OutputIndex    int64  `json:"output_index,required"`
-	SequenceNumber int64  `json:"sequence_number,required"`
+	Arguments      string `json:"arguments" api:"required"`
+	ItemID         string `json:"item_id" api:"required"`
+	OutputIndex    int64  `json:"output_index" api:"required"`
+	SequenceNumber int64  `json:"sequence_number" api:"required"`
 	// Any of "response.function_call_arguments.done".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -5156,9 +5156,9 @@ func (r *ResponseObjectStreamResponseFunctionCallArgumentsDone) UnmarshalJSON(da
 
 // Streaming event for web search calls in progress.
 type ResponseObjectStreamResponseWebSearchCallInProgress struct {
-	ItemID         string `json:"item_id,required"`
-	OutputIndex    int64  `json:"output_index,required"`
-	SequenceNumber int64  `json:"sequence_number,required"`
+	ItemID         string `json:"item_id" api:"required"`
+	OutputIndex    int64  `json:"output_index" api:"required"`
+	SequenceNumber int64  `json:"sequence_number" api:"required"`
 	// Any of "response.web_search_call.in_progress".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -5179,9 +5179,9 @@ func (r *ResponseObjectStreamResponseWebSearchCallInProgress) UnmarshalJSON(data
 }
 
 type ResponseObjectStreamResponseWebSearchCallSearching struct {
-	ItemID         string `json:"item_id,required"`
-	OutputIndex    int64  `json:"output_index,required"`
-	SequenceNumber int64  `json:"sequence_number,required"`
+	ItemID         string `json:"item_id" api:"required"`
+	OutputIndex    int64  `json:"output_index" api:"required"`
+	SequenceNumber int64  `json:"sequence_number" api:"required"`
 	// Any of "response.web_search_call.searching".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -5203,9 +5203,9 @@ func (r *ResponseObjectStreamResponseWebSearchCallSearching) UnmarshalJSON(data 
 
 // Streaming event for completed web search calls.
 type ResponseObjectStreamResponseWebSearchCallCompleted struct {
-	ItemID         string `json:"item_id,required"`
-	OutputIndex    int64  `json:"output_index,required"`
-	SequenceNumber int64  `json:"sequence_number,required"`
+	ItemID         string `json:"item_id" api:"required"`
+	OutputIndex    int64  `json:"output_index" api:"required"`
+	SequenceNumber int64  `json:"sequence_number" api:"required"`
 	// Any of "response.web_search_call.completed".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -5226,7 +5226,7 @@ func (r *ResponseObjectStreamResponseWebSearchCallCompleted) UnmarshalJSON(data 
 }
 
 type ResponseObjectStreamResponseMcpListToolsInProgress struct {
-	SequenceNumber int64 `json:"sequence_number,required"`
+	SequenceNumber int64 `json:"sequence_number" api:"required"`
 	// Any of "response.mcp_list_tools.in_progress".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -5245,7 +5245,7 @@ func (r *ResponseObjectStreamResponseMcpListToolsInProgress) UnmarshalJSON(data 
 }
 
 type ResponseObjectStreamResponseMcpListToolsFailed struct {
-	SequenceNumber int64 `json:"sequence_number,required"`
+	SequenceNumber int64 `json:"sequence_number" api:"required"`
 	// Any of "response.mcp_list_tools.failed".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -5264,7 +5264,7 @@ func (r *ResponseObjectStreamResponseMcpListToolsFailed) UnmarshalJSON(data []by
 }
 
 type ResponseObjectStreamResponseMcpListToolsCompleted struct {
-	SequenceNumber int64 `json:"sequence_number,required"`
+	SequenceNumber int64 `json:"sequence_number" api:"required"`
 	// Any of "response.mcp_list_tools.completed".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -5283,10 +5283,10 @@ func (r *ResponseObjectStreamResponseMcpListToolsCompleted) UnmarshalJSON(data [
 }
 
 type ResponseObjectStreamResponseMcpCallArgumentsDelta struct {
-	Delta          string `json:"delta,required"`
-	ItemID         string `json:"item_id,required"`
-	OutputIndex    int64  `json:"output_index,required"`
-	SequenceNumber int64  `json:"sequence_number,required"`
+	Delta          string `json:"delta" api:"required"`
+	ItemID         string `json:"item_id" api:"required"`
+	OutputIndex    int64  `json:"output_index" api:"required"`
+	SequenceNumber int64  `json:"sequence_number" api:"required"`
 	// Any of "response.mcp_call.arguments.delta".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -5308,10 +5308,10 @@ func (r *ResponseObjectStreamResponseMcpCallArgumentsDelta) UnmarshalJSON(data [
 }
 
 type ResponseObjectStreamResponseMcpCallArgumentsDone struct {
-	Arguments      string `json:"arguments,required"`
-	ItemID         string `json:"item_id,required"`
-	OutputIndex    int64  `json:"output_index,required"`
-	SequenceNumber int64  `json:"sequence_number,required"`
+	Arguments      string `json:"arguments" api:"required"`
+	ItemID         string `json:"item_id" api:"required"`
+	OutputIndex    int64  `json:"output_index" api:"required"`
+	SequenceNumber int64  `json:"sequence_number" api:"required"`
 	// Any of "response.mcp_call.arguments.done".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -5334,9 +5334,9 @@ func (r *ResponseObjectStreamResponseMcpCallArgumentsDone) UnmarshalJSON(data []
 
 // Streaming event for MCP calls in progress.
 type ResponseObjectStreamResponseMcpCallInProgress struct {
-	ItemID         string `json:"item_id,required"`
-	OutputIndex    int64  `json:"output_index,required"`
-	SequenceNumber int64  `json:"sequence_number,required"`
+	ItemID         string `json:"item_id" api:"required"`
+	OutputIndex    int64  `json:"output_index" api:"required"`
+	SequenceNumber int64  `json:"sequence_number" api:"required"`
 	// Any of "response.mcp_call.in_progress".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -5358,7 +5358,7 @@ func (r *ResponseObjectStreamResponseMcpCallInProgress) UnmarshalJSON(data []byt
 
 // Streaming event for failed MCP calls.
 type ResponseObjectStreamResponseMcpCallFailed struct {
-	SequenceNumber int64 `json:"sequence_number,required"`
+	SequenceNumber int64 `json:"sequence_number" api:"required"`
 	// Any of "response.mcp_call.failed".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -5378,7 +5378,7 @@ func (r *ResponseObjectStreamResponseMcpCallFailed) UnmarshalJSON(data []byte) e
 
 // Streaming event for completed MCP calls.
 type ResponseObjectStreamResponseMcpCallCompleted struct {
-	SequenceNumber int64 `json:"sequence_number,required"`
+	SequenceNumber int64 `json:"sequence_number" api:"required"`
 	// Any of "response.mcp_call.completed".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -5398,13 +5398,13 @@ func (r *ResponseObjectStreamResponseMcpCallCompleted) UnmarshalJSON(data []byte
 
 // Streaming event for when a new content part is added to a response item.
 type ResponseObjectStreamResponseContentPartAdded struct {
-	ContentIndex int64  `json:"content_index,required"`
-	ItemID       string `json:"item_id,required"`
-	OutputIndex  int64  `json:"output_index,required"`
+	ContentIndex int64  `json:"content_index" api:"required"`
+	ItemID       string `json:"item_id" api:"required"`
+	OutputIndex  int64  `json:"output_index" api:"required"`
 	// Text content within a streamed response part.
-	Part           ResponseObjectStreamResponseContentPartAddedPartUnion `json:"part,required"`
-	ResponseID     string                                                `json:"response_id,required"`
-	SequenceNumber int64                                                 `json:"sequence_number,required"`
+	Part           ResponseObjectStreamResponseContentPartAddedPartUnion `json:"part" api:"required"`
+	ResponseID     string                                                `json:"response_id" api:"required"`
+	SequenceNumber int64                                                 `json:"sequence_number" api:"required"`
 	// Any of "response.content_part.added".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -5520,9 +5520,9 @@ func (r *ResponseObjectStreamResponseContentPartAddedPartUnion) UnmarshalJSON(da
 
 // Text content within a streamed response part.
 type ResponseObjectStreamResponseContentPartAddedPartOutputText struct {
-	Text        string                                                                      `json:"text,required"`
+	Text        string                                                                      `json:"text" api:"required"`
 	Annotations []ResponseObjectStreamResponseContentPartAddedPartOutputTextAnnotationUnion `json:"annotations"`
-	Logprobs    []ResponseObjectStreamResponseContentPartAddedPartOutputTextLogprob         `json:"logprobs,nullable"`
+	Logprobs    []ResponseObjectStreamResponseContentPartAddedPartOutputTextLogprob         `json:"logprobs" api:"nullable"`
 	// Any of "output_text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -5660,9 +5660,9 @@ func (r *ResponseObjectStreamResponseContentPartAddedPartOutputTextAnnotationUni
 
 // File citation annotation for referencing specific files in response content.
 type ResponseObjectStreamResponseContentPartAddedPartOutputTextAnnotationFileCitation struct {
-	FileID   string `json:"file_id,required"`
-	Filename string `json:"filename,required"`
-	Index    int64  `json:"index,required"`
+	FileID   string `json:"file_id" api:"required"`
+	Filename string `json:"filename" api:"required"`
+	Index    int64  `json:"index" api:"required"`
 	// Any of "file_citation".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -5686,10 +5686,10 @@ func (r *ResponseObjectStreamResponseContentPartAddedPartOutputTextAnnotationFil
 
 // URL citation annotation for referencing external web resources.
 type ResponseObjectStreamResponseContentPartAddedPartOutputTextAnnotationURLCitation struct {
-	EndIndex   int64  `json:"end_index,required"`
-	StartIndex int64  `json:"start_index,required"`
-	Title      string `json:"title,required"`
-	URL        string `json:"url,required"`
+	EndIndex   int64  `json:"end_index" api:"required"`
+	StartIndex int64  `json:"start_index" api:"required"`
+	Title      string `json:"title" api:"required"`
+	URL        string `json:"url" api:"required"`
 	// Any of "url_citation".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -5713,11 +5713,11 @@ func (r *ResponseObjectStreamResponseContentPartAddedPartOutputTextAnnotationURL
 }
 
 type ResponseObjectStreamResponseContentPartAddedPartOutputTextAnnotationContainerFileCitation struct {
-	ContainerID string `json:"container_id,required"`
-	EndIndex    int64  `json:"end_index,required"`
-	FileID      string `json:"file_id,required"`
-	Filename    string `json:"filename,required"`
-	StartIndex  int64  `json:"start_index,required"`
+	ContainerID string `json:"container_id" api:"required"`
+	EndIndex    int64  `json:"end_index" api:"required"`
+	FileID      string `json:"file_id" api:"required"`
+	Filename    string `json:"filename" api:"required"`
+	StartIndex  int64  `json:"start_index" api:"required"`
 	// Any of "container_file_citation".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -5742,8 +5742,8 @@ func (r *ResponseObjectStreamResponseContentPartAddedPartOutputTextAnnotationCon
 }
 
 type ResponseObjectStreamResponseContentPartAddedPartOutputTextAnnotationFilePath struct {
-	FileID string `json:"file_id,required"`
-	Index  int64  `json:"index,required"`
+	FileID string `json:"file_id" api:"required"`
+	Index  int64  `json:"index" api:"required"`
 	// Any of "file_path".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -5768,13 +5768,13 @@ func (r *ResponseObjectStreamResponseContentPartAddedPartOutputTextAnnotationFil
 // response.
 type ResponseObjectStreamResponseContentPartAddedPartOutputTextLogprob struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
-	Bytes []int64 `json:"bytes,nullable"`
+	Bytes []int64 `json:"bytes" api:"nullable"`
 	// The top log probabilities for the token.
-	TopLogprobs []ResponseObjectStreamResponseContentPartAddedPartOutputTextLogprobTopLogprob `json:"top_logprobs,nullable"`
+	TopLogprobs []ResponseObjectStreamResponseContentPartAddedPartOutputTextLogprobTopLogprob `json:"top_logprobs" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -5798,11 +5798,11 @@ func (r *ResponseObjectStreamResponseContentPartAddedPartOutputTextLogprob) Unma
 // response.
 type ResponseObjectStreamResponseContentPartAddedPartOutputTextLogprobTopLogprob struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
-	Bytes []int64 `json:"bytes,nullable"`
+	Bytes []int64 `json:"bytes" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -5823,7 +5823,7 @@ func (r *ResponseObjectStreamResponseContentPartAddedPartOutputTextLogprobTopLog
 
 // Refusal content within a streamed response part.
 type ResponseObjectStreamResponseContentPartAddedPartRefusal struct {
-	Refusal string `json:"refusal,required"`
+	Refusal string `json:"refusal" api:"required"`
 	// Any of "refusal".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -5843,7 +5843,7 @@ func (r *ResponseObjectStreamResponseContentPartAddedPartRefusal) UnmarshalJSON(
 
 // Reasoning text emitted as part of a streamed response.
 type ResponseObjectStreamResponseContentPartAddedPartReasoningText struct {
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Any of "reasoning_text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -5865,13 +5865,13 @@ func (r *ResponseObjectStreamResponseContentPartAddedPartReasoningText) Unmarsha
 
 // Streaming event for when a content part is completed.
 type ResponseObjectStreamResponseContentPartDone struct {
-	ContentIndex int64  `json:"content_index,required"`
-	ItemID       string `json:"item_id,required"`
-	OutputIndex  int64  `json:"output_index,required"`
+	ContentIndex int64  `json:"content_index" api:"required"`
+	ItemID       string `json:"item_id" api:"required"`
+	OutputIndex  int64  `json:"output_index" api:"required"`
 	// Text content within a streamed response part.
-	Part           ResponseObjectStreamResponseContentPartDonePartUnion `json:"part,required"`
-	ResponseID     string                                               `json:"response_id,required"`
-	SequenceNumber int64                                                `json:"sequence_number,required"`
+	Part           ResponseObjectStreamResponseContentPartDonePartUnion `json:"part" api:"required"`
+	ResponseID     string                                               `json:"response_id" api:"required"`
+	SequenceNumber int64                                                `json:"sequence_number" api:"required"`
 	// Any of "response.content_part.done".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -5987,9 +5987,9 @@ func (r *ResponseObjectStreamResponseContentPartDonePartUnion) UnmarshalJSON(dat
 
 // Text content within a streamed response part.
 type ResponseObjectStreamResponseContentPartDonePartOutputText struct {
-	Text        string                                                                     `json:"text,required"`
+	Text        string                                                                     `json:"text" api:"required"`
 	Annotations []ResponseObjectStreamResponseContentPartDonePartOutputTextAnnotationUnion `json:"annotations"`
-	Logprobs    []ResponseObjectStreamResponseContentPartDonePartOutputTextLogprob         `json:"logprobs,nullable"`
+	Logprobs    []ResponseObjectStreamResponseContentPartDonePartOutputTextLogprob         `json:"logprobs" api:"nullable"`
 	// Any of "output_text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6127,9 +6127,9 @@ func (r *ResponseObjectStreamResponseContentPartDonePartOutputTextAnnotationUnio
 
 // File citation annotation for referencing specific files in response content.
 type ResponseObjectStreamResponseContentPartDonePartOutputTextAnnotationFileCitation struct {
-	FileID   string `json:"file_id,required"`
-	Filename string `json:"filename,required"`
-	Index    int64  `json:"index,required"`
+	FileID   string `json:"file_id" api:"required"`
+	Filename string `json:"filename" api:"required"`
+	Index    int64  `json:"index" api:"required"`
 	// Any of "file_citation".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6153,10 +6153,10 @@ func (r *ResponseObjectStreamResponseContentPartDonePartOutputTextAnnotationFile
 
 // URL citation annotation for referencing external web resources.
 type ResponseObjectStreamResponseContentPartDonePartOutputTextAnnotationURLCitation struct {
-	EndIndex   int64  `json:"end_index,required"`
-	StartIndex int64  `json:"start_index,required"`
-	Title      string `json:"title,required"`
-	URL        string `json:"url,required"`
+	EndIndex   int64  `json:"end_index" api:"required"`
+	StartIndex int64  `json:"start_index" api:"required"`
+	Title      string `json:"title" api:"required"`
+	URL        string `json:"url" api:"required"`
 	// Any of "url_citation".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6180,11 +6180,11 @@ func (r *ResponseObjectStreamResponseContentPartDonePartOutputTextAnnotationURLC
 }
 
 type ResponseObjectStreamResponseContentPartDonePartOutputTextAnnotationContainerFileCitation struct {
-	ContainerID string `json:"container_id,required"`
-	EndIndex    int64  `json:"end_index,required"`
-	FileID      string `json:"file_id,required"`
-	Filename    string `json:"filename,required"`
-	StartIndex  int64  `json:"start_index,required"`
+	ContainerID string `json:"container_id" api:"required"`
+	EndIndex    int64  `json:"end_index" api:"required"`
+	FileID      string `json:"file_id" api:"required"`
+	Filename    string `json:"filename" api:"required"`
+	StartIndex  int64  `json:"start_index" api:"required"`
 	// Any of "container_file_citation".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6209,8 +6209,8 @@ func (r *ResponseObjectStreamResponseContentPartDonePartOutputTextAnnotationCont
 }
 
 type ResponseObjectStreamResponseContentPartDonePartOutputTextAnnotationFilePath struct {
-	FileID string `json:"file_id,required"`
-	Index  int64  `json:"index,required"`
+	FileID string `json:"file_id" api:"required"`
+	Index  int64  `json:"index" api:"required"`
 	// Any of "file_path".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6235,13 +6235,13 @@ func (r *ResponseObjectStreamResponseContentPartDonePartOutputTextAnnotationFile
 // response.
 type ResponseObjectStreamResponseContentPartDonePartOutputTextLogprob struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
-	Bytes []int64 `json:"bytes,nullable"`
+	Bytes []int64 `json:"bytes" api:"nullable"`
 	// The top log probabilities for the token.
-	TopLogprobs []ResponseObjectStreamResponseContentPartDonePartOutputTextLogprobTopLogprob `json:"top_logprobs,nullable"`
+	TopLogprobs []ResponseObjectStreamResponseContentPartDonePartOutputTextLogprobTopLogprob `json:"top_logprobs" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -6265,11 +6265,11 @@ func (r *ResponseObjectStreamResponseContentPartDonePartOutputTextLogprob) Unmar
 // response.
 type ResponseObjectStreamResponseContentPartDonePartOutputTextLogprobTopLogprob struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
-	Bytes []int64 `json:"bytes,nullable"`
+	Bytes []int64 `json:"bytes" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -6290,7 +6290,7 @@ func (r *ResponseObjectStreamResponseContentPartDonePartOutputTextLogprobTopLogp
 
 // Refusal content within a streamed response part.
 type ResponseObjectStreamResponseContentPartDonePartRefusal struct {
-	Refusal string `json:"refusal,required"`
+	Refusal string `json:"refusal" api:"required"`
 	// Any of "refusal".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6310,7 +6310,7 @@ func (r *ResponseObjectStreamResponseContentPartDonePartRefusal) UnmarshalJSON(d
 
 // Reasoning text emitted as part of a streamed response.
 type ResponseObjectStreamResponseContentPartDonePartReasoningText struct {
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Any of "reasoning_text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6332,11 +6332,11 @@ func (r *ResponseObjectStreamResponseContentPartDonePartReasoningText) Unmarshal
 
 // Streaming event for incremental reasoning text updates.
 type ResponseObjectStreamResponseReasoningTextDelta struct {
-	ContentIndex   int64  `json:"content_index,required"`
-	Delta          string `json:"delta,required"`
-	ItemID         string `json:"item_id,required"`
-	OutputIndex    int64  `json:"output_index,required"`
-	SequenceNumber int64  `json:"sequence_number,required"`
+	ContentIndex   int64  `json:"content_index" api:"required"`
+	Delta          string `json:"delta" api:"required"`
+	ItemID         string `json:"item_id" api:"required"`
+	OutputIndex    int64  `json:"output_index" api:"required"`
+	SequenceNumber int64  `json:"sequence_number" api:"required"`
 	// Any of "response.reasoning_text.delta".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6360,11 +6360,11 @@ func (r *ResponseObjectStreamResponseReasoningTextDelta) UnmarshalJSON(data []by
 
 // Streaming event for when reasoning text is completed.
 type ResponseObjectStreamResponseReasoningTextDone struct {
-	ContentIndex   int64  `json:"content_index,required"`
-	ItemID         string `json:"item_id,required"`
-	OutputIndex    int64  `json:"output_index,required"`
-	SequenceNumber int64  `json:"sequence_number,required"`
-	Text           string `json:"text,required"`
+	ContentIndex   int64  `json:"content_index" api:"required"`
+	ItemID         string `json:"item_id" api:"required"`
+	OutputIndex    int64  `json:"output_index" api:"required"`
+	SequenceNumber int64  `json:"sequence_number" api:"required"`
+	Text           string `json:"text" api:"required"`
 	// Any of "response.reasoning_text.done".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6388,12 +6388,12 @@ func (r *ResponseObjectStreamResponseReasoningTextDone) UnmarshalJSON(data []byt
 
 // Streaming event for when a new reasoning summary part is added.
 type ResponseObjectStreamResponseReasoningSummaryPartAdded struct {
-	ItemID      string `json:"item_id,required"`
-	OutputIndex int64  `json:"output_index,required"`
+	ItemID      string `json:"item_id" api:"required"`
+	OutputIndex int64  `json:"output_index" api:"required"`
 	// Reasoning summary part in a streamed response.
-	Part           ResponseObjectStreamResponseReasoningSummaryPartAddedPart `json:"part,required"`
-	SequenceNumber int64                                                     `json:"sequence_number,required"`
-	SummaryIndex   int64                                                     `json:"summary_index,required"`
+	Part           ResponseObjectStreamResponseReasoningSummaryPartAddedPart `json:"part" api:"required"`
+	SequenceNumber int64                                                     `json:"sequence_number" api:"required"`
+	SummaryIndex   int64                                                     `json:"summary_index" api:"required"`
 	// Any of "response.reasoning_summary_part.added".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6417,7 +6417,7 @@ func (r *ResponseObjectStreamResponseReasoningSummaryPartAdded) UnmarshalJSON(da
 
 // Reasoning summary part in a streamed response.
 type ResponseObjectStreamResponseReasoningSummaryPartAddedPart struct {
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Any of "summary_text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6439,12 +6439,12 @@ func (r *ResponseObjectStreamResponseReasoningSummaryPartAddedPart) UnmarshalJSO
 
 // Streaming event for when a reasoning summary part is completed.
 type ResponseObjectStreamResponseReasoningSummaryPartDone struct {
-	ItemID      string `json:"item_id,required"`
-	OutputIndex int64  `json:"output_index,required"`
+	ItemID      string `json:"item_id" api:"required"`
+	OutputIndex int64  `json:"output_index" api:"required"`
 	// Reasoning summary part in a streamed response.
-	Part           ResponseObjectStreamResponseReasoningSummaryPartDonePart `json:"part,required"`
-	SequenceNumber int64                                                    `json:"sequence_number,required"`
-	SummaryIndex   int64                                                    `json:"summary_index,required"`
+	Part           ResponseObjectStreamResponseReasoningSummaryPartDonePart `json:"part" api:"required"`
+	SequenceNumber int64                                                    `json:"sequence_number" api:"required"`
+	SummaryIndex   int64                                                    `json:"summary_index" api:"required"`
 	// Any of "response.reasoning_summary_part.done".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6468,7 +6468,7 @@ func (r *ResponseObjectStreamResponseReasoningSummaryPartDone) UnmarshalJSON(dat
 
 // Reasoning summary part in a streamed response.
 type ResponseObjectStreamResponseReasoningSummaryPartDonePart struct {
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Any of "summary_text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6488,11 +6488,11 @@ func (r *ResponseObjectStreamResponseReasoningSummaryPartDonePart) UnmarshalJSON
 
 // Streaming event for incremental reasoning summary text updates.
 type ResponseObjectStreamResponseReasoningSummaryTextDelta struct {
-	Delta          string `json:"delta,required"`
-	ItemID         string `json:"item_id,required"`
-	OutputIndex    int64  `json:"output_index,required"`
-	SequenceNumber int64  `json:"sequence_number,required"`
-	SummaryIndex   int64  `json:"summary_index,required"`
+	Delta          string `json:"delta" api:"required"`
+	ItemID         string `json:"item_id" api:"required"`
+	OutputIndex    int64  `json:"output_index" api:"required"`
+	SequenceNumber int64  `json:"sequence_number" api:"required"`
+	SummaryIndex   int64  `json:"summary_index" api:"required"`
 	// Any of "response.reasoning_summary_text.delta".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6516,11 +6516,11 @@ func (r *ResponseObjectStreamResponseReasoningSummaryTextDelta) UnmarshalJSON(da
 
 // Streaming event for when reasoning summary text is completed.
 type ResponseObjectStreamResponseReasoningSummaryTextDone struct {
-	ItemID         string `json:"item_id,required"`
-	OutputIndex    int64  `json:"output_index,required"`
-	SequenceNumber int64  `json:"sequence_number,required"`
-	SummaryIndex   int64  `json:"summary_index,required"`
-	Text           string `json:"text,required"`
+	ItemID         string `json:"item_id" api:"required"`
+	OutputIndex    int64  `json:"output_index" api:"required"`
+	SequenceNumber int64  `json:"sequence_number" api:"required"`
+	SummaryIndex   int64  `json:"summary_index" api:"required"`
+	Text           string `json:"text" api:"required"`
 	// Any of "response.reasoning_summary_text.done".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6544,11 +6544,11 @@ func (r *ResponseObjectStreamResponseReasoningSummaryTextDone) UnmarshalJSON(dat
 
 // Streaming event for incremental refusal text updates.
 type ResponseObjectStreamResponseRefusalDelta struct {
-	ContentIndex   int64  `json:"content_index,required"`
-	Delta          string `json:"delta,required"`
-	ItemID         string `json:"item_id,required"`
-	OutputIndex    int64  `json:"output_index,required"`
-	SequenceNumber int64  `json:"sequence_number,required"`
+	ContentIndex   int64  `json:"content_index" api:"required"`
+	Delta          string `json:"delta" api:"required"`
+	ItemID         string `json:"item_id" api:"required"`
+	OutputIndex    int64  `json:"output_index" api:"required"`
+	SequenceNumber int64  `json:"sequence_number" api:"required"`
 	// Any of "response.refusal.delta".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6572,11 +6572,11 @@ func (r *ResponseObjectStreamResponseRefusalDelta) UnmarshalJSON(data []byte) er
 
 // Streaming event for when refusal text is completed.
 type ResponseObjectStreamResponseRefusalDone struct {
-	ContentIndex   int64  `json:"content_index,required"`
-	ItemID         string `json:"item_id,required"`
-	OutputIndex    int64  `json:"output_index,required"`
-	Refusal        string `json:"refusal,required"`
-	SequenceNumber int64  `json:"sequence_number,required"`
+	ContentIndex   int64  `json:"content_index" api:"required"`
+	ItemID         string `json:"item_id" api:"required"`
+	OutputIndex    int64  `json:"output_index" api:"required"`
+	Refusal        string `json:"refusal" api:"required"`
+	SequenceNumber int64  `json:"sequence_number" api:"required"`
 	// Any of "response.refusal.done".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6601,12 +6601,12 @@ func (r *ResponseObjectStreamResponseRefusalDone) UnmarshalJSON(data []byte) err
 // Streaming event for when an annotation is added to output text.
 type ResponseObjectStreamResponseOutputTextAnnotationAdded struct {
 	// File citation annotation for referencing specific files in response content.
-	Annotation      ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationUnion `json:"annotation,required"`
-	AnnotationIndex int64                                                                `json:"annotation_index,required"`
-	ContentIndex    int64                                                                `json:"content_index,required"`
-	ItemID          string                                                               `json:"item_id,required"`
-	OutputIndex     int64                                                                `json:"output_index,required"`
-	SequenceNumber  int64                                                                `json:"sequence_number,required"`
+	Annotation      ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationUnion `json:"annotation" api:"required"`
+	AnnotationIndex int64                                                                `json:"annotation_index" api:"required"`
+	ContentIndex    int64                                                                `json:"content_index" api:"required"`
+	ItemID          string                                                               `json:"item_id" api:"required"`
+	OutputIndex     int64                                                                `json:"output_index" api:"required"`
+	SequenceNumber  int64                                                                `json:"sequence_number" api:"required"`
 	// Any of "response.output_text.annotation.added".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6745,9 +6745,9 @@ func (r *ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationUnion) U
 
 // File citation annotation for referencing specific files in response content.
 type ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationFileCitation struct {
-	FileID   string `json:"file_id,required"`
-	Filename string `json:"filename,required"`
-	Index    int64  `json:"index,required"`
+	FileID   string `json:"file_id" api:"required"`
+	Filename string `json:"filename" api:"required"`
+	Index    int64  `json:"index" api:"required"`
 	// Any of "file_citation".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6771,10 +6771,10 @@ func (r *ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationFileCita
 
 // URL citation annotation for referencing external web resources.
 type ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationURLCitation struct {
-	EndIndex   int64  `json:"end_index,required"`
-	StartIndex int64  `json:"start_index,required"`
-	Title      string `json:"title,required"`
-	URL        string `json:"url,required"`
+	EndIndex   int64  `json:"end_index" api:"required"`
+	StartIndex int64  `json:"start_index" api:"required"`
+	Title      string `json:"title" api:"required"`
+	URL        string `json:"url" api:"required"`
 	// Any of "url_citation".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6798,11 +6798,11 @@ func (r *ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationURLCitat
 }
 
 type ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationContainerFileCitation struct {
-	ContainerID string `json:"container_id,required"`
-	EndIndex    int64  `json:"end_index,required"`
-	FileID      string `json:"file_id,required"`
-	Filename    string `json:"filename,required"`
-	StartIndex  int64  `json:"start_index,required"`
+	ContainerID string `json:"container_id" api:"required"`
+	EndIndex    int64  `json:"end_index" api:"required"`
+	FileID      string `json:"file_id" api:"required"`
+	Filename    string `json:"filename" api:"required"`
+	StartIndex  int64  `json:"start_index" api:"required"`
 	// Any of "container_file_citation".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6827,8 +6827,8 @@ func (r *ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationContaine
 }
 
 type ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationFilePath struct {
-	FileID string `json:"file_id,required"`
-	Index  int64  `json:"index,required"`
+	FileID string `json:"file_id" api:"required"`
+	Index  int64  `json:"index" api:"required"`
 	// Any of "file_path".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6851,9 +6851,9 @@ func (r *ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationFilePath
 
 // Streaming event for file search calls in progress.
 type ResponseObjectStreamResponseFileSearchCallInProgress struct {
-	ItemID         string `json:"item_id,required"`
-	OutputIndex    int64  `json:"output_index,required"`
-	SequenceNumber int64  `json:"sequence_number,required"`
+	ItemID         string `json:"item_id" api:"required"`
+	OutputIndex    int64  `json:"output_index" api:"required"`
+	SequenceNumber int64  `json:"sequence_number" api:"required"`
 	// Any of "response.file_search_call.in_progress".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6875,9 +6875,9 @@ func (r *ResponseObjectStreamResponseFileSearchCallInProgress) UnmarshalJSON(dat
 
 // Streaming event for file search currently searching.
 type ResponseObjectStreamResponseFileSearchCallSearching struct {
-	ItemID         string `json:"item_id,required"`
-	OutputIndex    int64  `json:"output_index,required"`
-	SequenceNumber int64  `json:"sequence_number,required"`
+	ItemID         string `json:"item_id" api:"required"`
+	OutputIndex    int64  `json:"output_index" api:"required"`
+	SequenceNumber int64  `json:"sequence_number" api:"required"`
 	// Any of "response.file_search_call.searching".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6899,9 +6899,9 @@ func (r *ResponseObjectStreamResponseFileSearchCallSearching) UnmarshalJSON(data
 
 // Streaming event for completed file search calls.
 type ResponseObjectStreamResponseFileSearchCallCompleted struct {
-	ItemID         string `json:"item_id,required"`
-	OutputIndex    int64  `json:"output_index,required"`
-	SequenceNumber int64  `json:"sequence_number,required"`
+	ItemID         string `json:"item_id" api:"required"`
+	OutputIndex    int64  `json:"output_index" api:"required"`
+	SequenceNumber int64  `json:"sequence_number" api:"required"`
 	// Any of "response.file_search_call.completed".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6924,8 +6924,8 @@ func (r *ResponseObjectStreamResponseFileSearchCallCompleted) UnmarshalJSON(data
 // Streaming event emitted when a response ends in an incomplete state.
 type ResponseObjectStreamResponseIncomplete struct {
 	// Complete OpenAI response object containing generation results and metadata.
-	Response       ResponseObject `json:"response,required"`
-	SequenceNumber int64          `json:"sequence_number,required"`
+	Response       ResponseObject `json:"response" api:"required"`
+	SequenceNumber int64          `json:"sequence_number" api:"required"`
 	// Any of "response.incomplete".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6947,8 +6947,8 @@ func (r *ResponseObjectStreamResponseIncomplete) UnmarshalJSON(data []byte) erro
 // Streaming event emitted when a response fails.
 type ResponseObjectStreamResponseFailed struct {
 	// Complete OpenAI response object containing generation results and metadata.
-	Response       ResponseObject `json:"response,required"`
-	SequenceNumber int64          `json:"sequence_number,required"`
+	Response       ResponseObject `json:"response" api:"required"`
+	SequenceNumber int64          `json:"sequence_number" api:"required"`
 	// Any of "response.failed".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6970,7 +6970,7 @@ func (r *ResponseObjectStreamResponseFailed) UnmarshalJSON(data []byte) error {
 // Streaming event indicating a response has been completed.
 type ResponseObjectStreamResponseCompleted struct {
 	// Complete OpenAI response object containing generation results and metadata.
-	Response ResponseObject `json:"response,required"`
+	Response ResponseObject `json:"response" api:"required"`
 	// Any of "response.completed".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -6990,46 +6990,46 @@ func (r *ResponseObjectStreamResponseCompleted) UnmarshalJSON(data []byte) error
 
 // OpenAI response object extended with input context information.
 type ResponseListResponse struct {
-	ID          string                            `json:"id,required"`
-	CreatedAt   int64                             `json:"created_at,required"`
-	Input       []ResponseListResponseInputUnion  `json:"input,required"`
-	Model       string                            `json:"model,required"`
-	Output      []ResponseListResponseOutputUnion `json:"output,required"`
-	Status      string                            `json:"status,required"`
-	Store       bool                              `json:"store,required"`
+	ID          string                            `json:"id" api:"required"`
+	CreatedAt   int64                             `json:"created_at" api:"required"`
+	Input       []ResponseListResponseInputUnion  `json:"input" api:"required"`
+	Model       string                            `json:"model" api:"required"`
+	Output      []ResponseListResponseOutputUnion `json:"output" api:"required"`
+	Status      string                            `json:"status" api:"required"`
+	Store       bool                              `json:"store" api:"required"`
 	Background  bool                              `json:"background"`
-	CompletedAt int64                             `json:"completed_at,nullable"`
+	CompletedAt int64                             `json:"completed_at" api:"nullable"`
 	// Error details for failed OpenAI response requests.
-	Error ResponseListResponseError `json:"error,nullable"`
+	Error ResponseListResponseError `json:"error" api:"nullable"`
 	// Details explaining why a response was incomplete.
-	IncompleteDetails ResponseListResponseIncompleteDetails `json:"incomplete_details,nullable"`
-	Instructions      string                                `json:"instructions,nullable"`
-	MaxOutputTokens   int64                                 `json:"max_output_tokens,nullable"`
-	MaxToolCalls      int64                                 `json:"max_tool_calls,nullable"`
-	Metadata          map[string]string                     `json:"metadata,nullable"`
+	IncompleteDetails ResponseListResponseIncompleteDetails `json:"incomplete_details" api:"nullable"`
+	Instructions      string                                `json:"instructions" api:"nullable"`
+	MaxOutputTokens   int64                                 `json:"max_output_tokens" api:"nullable"`
+	MaxToolCalls      int64                                 `json:"max_tool_calls" api:"nullable"`
+	Metadata          map[string]string                     `json:"metadata" api:"nullable"`
 	// Any of "response".
 	Object             ResponseListResponseObject `json:"object"`
-	ParallelToolCalls  bool                       `json:"parallel_tool_calls,nullable"`
-	PreviousResponseID string                     `json:"previous_response_id,nullable"`
+	ParallelToolCalls  bool                       `json:"parallel_tool_calls" api:"nullable"`
+	PreviousResponseID string                     `json:"previous_response_id" api:"nullable"`
 	// OpenAI compatible Prompt object that is used in OpenAI responses.
-	Prompt         ResponseListResponsePrompt `json:"prompt,nullable"`
-	PromptCacheKey string                     `json:"prompt_cache_key,nullable"`
+	Prompt         ResponseListResponsePrompt `json:"prompt" api:"nullable"`
+	PromptCacheKey string                     `json:"prompt_cache_key" api:"nullable"`
 	// Configuration for reasoning effort in OpenAI responses.
 	//
 	// Controls how much reasoning the model performs before generating a response.
-	Reasoning        ResponseListResponseReasoning `json:"reasoning,nullable"`
-	SafetyIdentifier string                        `json:"safety_identifier,nullable"`
-	ServiceTier      string                        `json:"service_tier,nullable"`
-	Temperature      float64                       `json:"temperature,nullable"`
+	Reasoning        ResponseListResponseReasoning `json:"reasoning" api:"nullable"`
+	SafetyIdentifier string                        `json:"safety_identifier" api:"nullable"`
+	ServiceTier      string                        `json:"service_tier" api:"nullable"`
+	Temperature      float64                       `json:"temperature" api:"nullable"`
 	// Text response configuration for OpenAI responses.
 	Text ResponseListResponseText `json:"text"`
 	// Constrains the tools available to the model to a pre-defined set.
-	ToolChoice ResponseListResponseToolChoiceUnion `json:"tool_choice,nullable"`
-	Tools      []ResponseListResponseToolUnion     `json:"tools,nullable"`
-	TopP       float64                             `json:"top_p,nullable"`
-	Truncation string                              `json:"truncation,nullable"`
+	ToolChoice ResponseListResponseToolChoiceUnion `json:"tool_choice" api:"nullable"`
+	Tools      []ResponseListResponseToolUnion     `json:"tools" api:"nullable"`
+	TopP       float64                             `json:"top_p" api:"nullable"`
+	Truncation string                              `json:"truncation" api:"nullable"`
 	// Usage information for OpenAI response.
-	Usage ResponseListResponseUsage `json:"usage,nullable"`
+	Usage ResponseListResponseUsage `json:"usage" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID                 respjson.Field
@@ -7205,11 +7205,11 @@ func (r *ResponseListResponseInputUnion) UnmarshalJSON(data []byte) error {
 // under one type because the Responses API gives them all the same "type" value,
 // and there is no way to tell them apart in certain scenarios.
 type ResponseListResponseInputOpenAIResponseMessageOutput struct {
-	Content ResponseListResponseInputOpenAIResponseMessageOutputContentUnion `json:"content,required"`
+	Content ResponseListResponseInputOpenAIResponseMessageOutputContentUnion `json:"content" api:"required"`
 	// Any of "system", "developer", "user", "assistant".
-	Role   string `json:"role,required"`
-	ID     string `json:"id,nullable"`
-	Status string `json:"status,nullable"`
+	Role   string `json:"role" api:"required"`
+	ID     string `json:"id" api:"nullable"`
+	Status string `json:"status" api:"nullable"`
 	// Any of "message".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -7393,7 +7393,7 @@ func (r *ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIRe
 
 // Text content for input messages in OpenAI response format.
 type ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText struct {
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Any of "input_text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -7417,8 +7417,8 @@ func (r *ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIRe
 type ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage struct {
 	// Any of "low", "high", "auto".
 	Detail   string `json:"detail"`
-	FileID   string `json:"file_id,nullable"`
-	ImageURL string `json:"image_url,nullable"`
+	FileID   string `json:"file_id" api:"nullable"`
+	ImageURL string `json:"image_url" api:"nullable"`
 	// Any of "input_image".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -7442,10 +7442,10 @@ func (r *ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIRe
 
 // File content for input messages in OpenAI response format.
 type ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
-	FileData string `json:"file_data,nullable"`
-	FileID   string `json:"file_id,nullable"`
-	FileURL  string `json:"file_url,nullable"`
-	Filename string `json:"filename,nullable"`
+	FileData string `json:"file_data" api:"nullable"`
+	FileID   string `json:"file_id" api:"nullable"`
+	FileURL  string `json:"file_url" api:"nullable"`
+	Filename string `json:"filename" api:"nullable"`
 	// Any of "input_file".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -7555,9 +7555,9 @@ func (r *ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIRe
 }
 
 type ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputText struct {
-	Text        string                                                                                                                                                                           `json:"text,required"`
+	Text        string                                                                                                                                                                           `json:"text" api:"required"`
 	Annotations []ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion `json:"annotations"`
-	Logprobs    []ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprob         `json:"logprobs,nullable"`
+	Logprobs    []ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprob         `json:"logprobs" api:"nullable"`
 	// Any of "output_text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -7695,9 +7695,9 @@ func (r *ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIRe
 
 // File citation annotation for referencing specific files in response content.
 type ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation struct {
-	FileID   string `json:"file_id,required"`
-	Filename string `json:"filename,required"`
-	Index    int64  `json:"index,required"`
+	FileID   string `json:"file_id" api:"required"`
+	Filename string `json:"filename" api:"required"`
+	Index    int64  `json:"index" api:"required"`
 	// Any of "file_citation".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -7721,10 +7721,10 @@ func (r *ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIRe
 
 // URL citation annotation for referencing external web resources.
 type ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation struct {
-	EndIndex   int64  `json:"end_index,required"`
-	StartIndex int64  `json:"start_index,required"`
-	Title      string `json:"title,required"`
-	URL        string `json:"url,required"`
+	EndIndex   int64  `json:"end_index" api:"required"`
+	StartIndex int64  `json:"start_index" api:"required"`
+	Title      string `json:"title" api:"required"`
+	URL        string `json:"url" api:"required"`
 	// Any of "url_citation".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -7748,11 +7748,11 @@ func (r *ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIRe
 }
 
 type ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation struct {
-	ContainerID string `json:"container_id,required"`
-	EndIndex    int64  `json:"end_index,required"`
-	FileID      string `json:"file_id,required"`
-	Filename    string `json:"filename,required"`
-	StartIndex  int64  `json:"start_index,required"`
+	ContainerID string `json:"container_id" api:"required"`
+	EndIndex    int64  `json:"end_index" api:"required"`
+	FileID      string `json:"file_id" api:"required"`
+	Filename    string `json:"filename" api:"required"`
+	StartIndex  int64  `json:"start_index" api:"required"`
 	// Any of "container_file_citation".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -7777,8 +7777,8 @@ func (r *ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIRe
 }
 
 type ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath struct {
-	FileID string `json:"file_id,required"`
-	Index  int64  `json:"index,required"`
+	FileID string `json:"file_id" api:"required"`
+	Index  int64  `json:"index" api:"required"`
 	// Any of "file_path".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -7803,13 +7803,13 @@ func (r *ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIRe
 // response.
 type ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprob struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
-	Bytes []int64 `json:"bytes,nullable"`
+	Bytes []int64 `json:"bytes" api:"nullable"`
 	// The top log probabilities for the token.
-	TopLogprobs []ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob `json:"top_logprobs,nullable"`
+	TopLogprobs []ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob `json:"top_logprobs" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -7833,11 +7833,11 @@ func (r *ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIRe
 // response.
 type ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
-	Bytes []int64 `json:"bytes,nullable"`
+	Bytes []int64 `json:"bytes" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -7858,7 +7858,7 @@ func (r *ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIRe
 
 // Refusal content within a streamed response part.
 type ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemRefusal struct {
-	Refusal string `json:"refusal,required"`
+	Refusal string `json:"refusal" api:"required"`
 	// Any of "refusal".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -7880,8 +7880,8 @@ func (r *ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIRe
 
 // Web search tool call output message for OpenAI responses.
 type ResponseListResponseInputOpenAIResponseOutputMessageWebSearchToolCall struct {
-	ID     string `json:"id,required"`
-	Status string `json:"status,required"`
+	ID     string `json:"id" api:"required"`
+	Status string `json:"status" api:"required"`
 	// Any of "web_search_call".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -7904,10 +7904,10 @@ func (r *ResponseListResponseInputOpenAIResponseOutputMessageWebSearchToolCall) 
 
 // File search tool call output message for OpenAI responses.
 type ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCall struct {
-	ID      string                                                                         `json:"id,required"`
-	Queries []string                                                                       `json:"queries,required"`
-	Status  string                                                                         `json:"status,required"`
-	Results []ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResult `json:"results,nullable"`
+	ID      string                                                                         `json:"id" api:"required"`
+	Queries []string                                                                       `json:"queries" api:"required"`
+	Status  string                                                                         `json:"status" api:"required"`
+	Results []ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResult `json:"results" api:"nullable"`
 	// Any of "file_search_call".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -7932,11 +7932,11 @@ func (r *ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCall)
 
 // Search results returned by the file search operation.
 type ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallResult struct {
-	Attributes map[string]any `json:"attributes,required"`
-	FileID     string         `json:"file_id,required"`
-	Filename   string         `json:"filename,required"`
-	Score      float64        `json:"score,required"`
-	Text       string         `json:"text,required"`
+	Attributes map[string]any `json:"attributes" api:"required"`
+	FileID     string         `json:"file_id" api:"required"`
+	Filename   string         `json:"filename" api:"required"`
+	Score      float64        `json:"score" api:"required"`
+	Text       string         `json:"text" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Attributes  respjson.Field
@@ -7959,11 +7959,11 @@ func (r *ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCallR
 
 // Function tool call output message for OpenAI responses.
 type ResponseListResponseInputOpenAIResponseOutputMessageFunctionToolCall struct {
-	Arguments string `json:"arguments,required"`
-	CallID    string `json:"call_id,required"`
-	Name      string `json:"name,required"`
-	ID        string `json:"id,nullable"`
-	Status    string `json:"status,nullable"`
+	Arguments string `json:"arguments" api:"required"`
+	CallID    string `json:"call_id" api:"required"`
+	Name      string `json:"name" api:"required"`
+	ID        string `json:"id" api:"nullable"`
+	Status    string `json:"status" api:"nullable"`
 	// Any of "function_call".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -7989,12 +7989,12 @@ func (r *ResponseListResponseInputOpenAIResponseOutputMessageFunctionToolCall) U
 
 // Model Context Protocol (MCP) call output message for OpenAI responses.
 type ResponseListResponseInputOpenAIResponseOutputMessageMcpCall struct {
-	ID          string `json:"id,required"`
-	Arguments   string `json:"arguments,required"`
-	Name        string `json:"name,required"`
-	ServerLabel string `json:"server_label,required"`
-	Error       string `json:"error,nullable"`
-	Output      string `json:"output,nullable"`
+	ID          string `json:"id" api:"required"`
+	Arguments   string `json:"arguments" api:"required"`
+	Name        string `json:"name" api:"required"`
+	ServerLabel string `json:"server_label" api:"required"`
+	Error       string `json:"error" api:"nullable"`
+	Output      string `json:"output" api:"nullable"`
 	// Any of "mcp_call".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -8021,9 +8021,9 @@ func (r *ResponseListResponseInputOpenAIResponseOutputMessageMcpCall) UnmarshalJ
 
 // MCP list tools output message containing available tools from an MCP server.
 type ResponseListResponseInputOpenAIResponseOutputMessageMcpListTools struct {
-	ID          string                                                                 `json:"id,required"`
-	ServerLabel string                                                                 `json:"server_label,required"`
-	Tools       []ResponseListResponseInputOpenAIResponseOutputMessageMcpListToolsTool `json:"tools,required"`
+	ID          string                                                                 `json:"id" api:"required"`
+	ServerLabel string                                                                 `json:"server_label" api:"required"`
+	Tools       []ResponseListResponseInputOpenAIResponseOutputMessageMcpListToolsTool `json:"tools" api:"required"`
 	// Any of "mcp_list_tools".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -8047,9 +8047,9 @@ func (r *ResponseListResponseInputOpenAIResponseOutputMessageMcpListTools) Unmar
 
 // Tool definition returned by MCP list tools operation.
 type ResponseListResponseInputOpenAIResponseOutputMessageMcpListToolsTool struct {
-	InputSchema map[string]any `json:"input_schema,required"`
-	Name        string         `json:"name,required"`
-	Description string         `json:"description,nullable"`
+	InputSchema map[string]any `json:"input_schema" api:"required"`
+	Name        string         `json:"name" api:"required"`
+	Description string         `json:"description" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		InputSchema respjson.Field
@@ -8070,10 +8070,10 @@ func (r *ResponseListResponseInputOpenAIResponseOutputMessageMcpListToolsTool) U
 
 // A request for human approval of a tool invocation.
 type ResponseListResponseInputOpenAIResponseMcpApprovalRequest struct {
-	ID          string `json:"id,required"`
-	Arguments   string `json:"arguments,required"`
-	Name        string `json:"name,required"`
-	ServerLabel string `json:"server_label,required"`
+	ID          string `json:"id" api:"required"`
+	Arguments   string `json:"arguments" api:"required"`
+	Name        string `json:"name" api:"required"`
+	ServerLabel string `json:"server_label" api:"required"`
 	// Any of "mcp_approval_request".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -8099,10 +8099,10 @@ func (r *ResponseListResponseInputOpenAIResponseMcpApprovalRequest) UnmarshalJSO
 // This represents the output of a function call that gets passed back to the
 // model.
 type ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutput struct {
-	CallID string `json:"call_id,required"`
-	Output string `json:"output,required"`
-	ID     string `json:"id,nullable"`
-	Status string `json:"status,nullable"`
+	CallID string `json:"call_id" api:"required"`
+	Output string `json:"output" api:"required"`
+	ID     string `json:"id" api:"nullable"`
+	Status string `json:"status" api:"nullable"`
 	// Any of "function_call_output".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -8127,10 +8127,10 @@ func (r *ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutput) Unm
 
 // A response to an MCP approval request.
 type ResponseListResponseInputOpenAIResponseMcpApprovalResponse struct {
-	ApprovalRequestID string `json:"approval_request_id,required"`
-	Approve           bool   `json:"approve,required"`
-	ID                string `json:"id,nullable"`
-	Reason            string `json:"reason,nullable"`
+	ApprovalRequestID string `json:"approval_request_id" api:"required"`
+	Approve           bool   `json:"approve" api:"required"`
+	ID                string `json:"id" api:"nullable"`
+	Reason            string `json:"reason" api:"nullable"`
 	// Any of "mcp_approval_response".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -8301,11 +8301,11 @@ func (r *ResponseListResponseOutputUnion) UnmarshalJSON(data []byte) error {
 // under one type because the Responses API gives them all the same "type" value,
 // and there is no way to tell them apart in certain scenarios.
 type ResponseListResponseOutputMessage struct {
-	Content ResponseListResponseOutputMessageContentUnion `json:"content,required"`
+	Content ResponseListResponseOutputMessageContentUnion `json:"content" api:"required"`
 	// Any of "system", "developer", "user", "assistant".
-	Role   string `json:"role,required"`
-	ID     string `json:"id,nullable"`
-	Status string `json:"status,nullable"`
+	Role   string `json:"role" api:"required"`
+	ID     string `json:"id" api:"nullable"`
+	Status string `json:"status" api:"nullable"`
 	// Any of "message".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -8487,7 +8487,7 @@ func (r *ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageC
 
 // Text content for input messages in OpenAI response format.
 type ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText struct {
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Any of "input_text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -8511,8 +8511,8 @@ func (r *ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageC
 type ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage struct {
 	// Any of "low", "high", "auto".
 	Detail   string `json:"detail"`
-	FileID   string `json:"file_id,nullable"`
-	ImageURL string `json:"image_url,nullable"`
+	FileID   string `json:"file_id" api:"nullable"`
+	ImageURL string `json:"image_url" api:"nullable"`
 	// Any of "input_image".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -8536,10 +8536,10 @@ func (r *ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageC
 
 // File content for input messages in OpenAI response format.
 type ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
-	FileData string `json:"file_data,nullable"`
-	FileID   string `json:"file_id,nullable"`
-	FileURL  string `json:"file_url,nullable"`
-	Filename string `json:"filename,nullable"`
+	FileData string `json:"file_data" api:"nullable"`
+	FileID   string `json:"file_id" api:"nullable"`
+	FileURL  string `json:"file_url" api:"nullable"`
+	Filename string `json:"filename" api:"nullable"`
 	// Any of "input_file".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -8649,9 +8649,9 @@ func (r *ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessage
 }
 
 type ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputText struct {
-	Text        string                                                                                                                                                        `json:"text,required"`
+	Text        string                                                                                                                                                        `json:"text" api:"required"`
 	Annotations []ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion `json:"annotations"`
-	Logprobs    []ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprob         `json:"logprobs,nullable"`
+	Logprobs    []ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprob         `json:"logprobs" api:"nullable"`
 	// Any of "output_text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -8789,9 +8789,9 @@ func (r *ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessage
 
 // File citation annotation for referencing specific files in response content.
 type ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation struct {
-	FileID   string `json:"file_id,required"`
-	Filename string `json:"filename,required"`
-	Index    int64  `json:"index,required"`
+	FileID   string `json:"file_id" api:"required"`
+	Filename string `json:"filename" api:"required"`
+	Index    int64  `json:"index" api:"required"`
 	// Any of "file_citation".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -8815,10 +8815,10 @@ func (r *ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessage
 
 // URL citation annotation for referencing external web resources.
 type ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation struct {
-	EndIndex   int64  `json:"end_index,required"`
-	StartIndex int64  `json:"start_index,required"`
-	Title      string `json:"title,required"`
-	URL        string `json:"url,required"`
+	EndIndex   int64  `json:"end_index" api:"required"`
+	StartIndex int64  `json:"start_index" api:"required"`
+	Title      string `json:"title" api:"required"`
+	URL        string `json:"url" api:"required"`
 	// Any of "url_citation".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -8842,11 +8842,11 @@ func (r *ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessage
 }
 
 type ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation struct {
-	ContainerID string `json:"container_id,required"`
-	EndIndex    int64  `json:"end_index,required"`
-	FileID      string `json:"file_id,required"`
-	Filename    string `json:"filename,required"`
-	StartIndex  int64  `json:"start_index,required"`
+	ContainerID string `json:"container_id" api:"required"`
+	EndIndex    int64  `json:"end_index" api:"required"`
+	FileID      string `json:"file_id" api:"required"`
+	Filename    string `json:"filename" api:"required"`
+	StartIndex  int64  `json:"start_index" api:"required"`
 	// Any of "container_file_citation".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -8871,8 +8871,8 @@ func (r *ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessage
 }
 
 type ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath struct {
-	FileID string `json:"file_id,required"`
-	Index  int64  `json:"index,required"`
+	FileID string `json:"file_id" api:"required"`
+	Index  int64  `json:"index" api:"required"`
 	// Any of "file_path".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -8897,13 +8897,13 @@ func (r *ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessage
 // response.
 type ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprob struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
-	Bytes []int64 `json:"bytes,nullable"`
+	Bytes []int64 `json:"bytes" api:"nullable"`
 	// The top log probabilities for the token.
-	TopLogprobs []ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob `json:"top_logprobs,nullable"`
+	TopLogprobs []ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob `json:"top_logprobs" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -8927,11 +8927,11 @@ func (r *ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessage
 // response.
 type ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
-	Bytes []int64 `json:"bytes,nullable"`
+	Bytes []int64 `json:"bytes" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -8952,7 +8952,7 @@ func (r *ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessage
 
 // Refusal content within a streamed response part.
 type ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemRefusal struct {
-	Refusal string `json:"refusal,required"`
+	Refusal string `json:"refusal" api:"required"`
 	// Any of "refusal".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -8974,8 +8974,8 @@ func (r *ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessage
 
 // Web search tool call output message for OpenAI responses.
 type ResponseListResponseOutputWebSearchCall struct {
-	ID     string `json:"id,required"`
-	Status string `json:"status,required"`
+	ID     string `json:"id" api:"required"`
+	Status string `json:"status" api:"required"`
 	// Any of "web_search_call".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -8996,10 +8996,10 @@ func (r *ResponseListResponseOutputWebSearchCall) UnmarshalJSON(data []byte) err
 
 // File search tool call output message for OpenAI responses.
 type ResponseListResponseOutputFileSearchCall struct {
-	ID      string                                           `json:"id,required"`
-	Queries []string                                         `json:"queries,required"`
-	Status  string                                           `json:"status,required"`
-	Results []ResponseListResponseOutputFileSearchCallResult `json:"results,nullable"`
+	ID      string                                           `json:"id" api:"required"`
+	Queries []string                                         `json:"queries" api:"required"`
+	Status  string                                           `json:"status" api:"required"`
+	Results []ResponseListResponseOutputFileSearchCallResult `json:"results" api:"nullable"`
 	// Any of "file_search_call".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -9022,11 +9022,11 @@ func (r *ResponseListResponseOutputFileSearchCall) UnmarshalJSON(data []byte) er
 
 // Search results returned by the file search operation.
 type ResponseListResponseOutputFileSearchCallResult struct {
-	Attributes map[string]any `json:"attributes,required"`
-	FileID     string         `json:"file_id,required"`
-	Filename   string         `json:"filename,required"`
-	Score      float64        `json:"score,required"`
-	Text       string         `json:"text,required"`
+	Attributes map[string]any `json:"attributes" api:"required"`
+	FileID     string         `json:"file_id" api:"required"`
+	Filename   string         `json:"filename" api:"required"`
+	Score      float64        `json:"score" api:"required"`
+	Text       string         `json:"text" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Attributes  respjson.Field
@@ -9047,11 +9047,11 @@ func (r *ResponseListResponseOutputFileSearchCallResult) UnmarshalJSON(data []by
 
 // Function tool call output message for OpenAI responses.
 type ResponseListResponseOutputFunctionCall struct {
-	Arguments string `json:"arguments,required"`
-	CallID    string `json:"call_id,required"`
-	Name      string `json:"name,required"`
-	ID        string `json:"id,nullable"`
-	Status    string `json:"status,nullable"`
+	Arguments string `json:"arguments" api:"required"`
+	CallID    string `json:"call_id" api:"required"`
+	Name      string `json:"name" api:"required"`
+	ID        string `json:"id" api:"nullable"`
+	Status    string `json:"status" api:"nullable"`
 	// Any of "function_call".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -9075,12 +9075,12 @@ func (r *ResponseListResponseOutputFunctionCall) UnmarshalJSON(data []byte) erro
 
 // Model Context Protocol (MCP) call output message for OpenAI responses.
 type ResponseListResponseOutputMcpCall struct {
-	ID          string `json:"id,required"`
-	Arguments   string `json:"arguments,required"`
-	Name        string `json:"name,required"`
-	ServerLabel string `json:"server_label,required"`
-	Error       string `json:"error,nullable"`
-	Output      string `json:"output,nullable"`
+	ID          string `json:"id" api:"required"`
+	Arguments   string `json:"arguments" api:"required"`
+	Name        string `json:"name" api:"required"`
+	ServerLabel string `json:"server_label" api:"required"`
+	Error       string `json:"error" api:"nullable"`
+	Output      string `json:"output" api:"nullable"`
 	// Any of "mcp_call".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -9105,9 +9105,9 @@ func (r *ResponseListResponseOutputMcpCall) UnmarshalJSON(data []byte) error {
 
 // MCP list tools output message containing available tools from an MCP server.
 type ResponseListResponseOutputMcpListTools struct {
-	ID          string                                       `json:"id,required"`
-	ServerLabel string                                       `json:"server_label,required"`
-	Tools       []ResponseListResponseOutputMcpListToolsTool `json:"tools,required"`
+	ID          string                                       `json:"id" api:"required"`
+	ServerLabel string                                       `json:"server_label" api:"required"`
+	Tools       []ResponseListResponseOutputMcpListToolsTool `json:"tools" api:"required"`
 	// Any of "mcp_list_tools".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -9129,9 +9129,9 @@ func (r *ResponseListResponseOutputMcpListTools) UnmarshalJSON(data []byte) erro
 
 // Tool definition returned by MCP list tools operation.
 type ResponseListResponseOutputMcpListToolsTool struct {
-	InputSchema map[string]any `json:"input_schema,required"`
-	Name        string         `json:"name,required"`
-	Description string         `json:"description,nullable"`
+	InputSchema map[string]any `json:"input_schema" api:"required"`
+	Name        string         `json:"name" api:"required"`
+	Description string         `json:"description" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		InputSchema respjson.Field
@@ -9150,10 +9150,10 @@ func (r *ResponseListResponseOutputMcpListToolsTool) UnmarshalJSON(data []byte) 
 
 // A request for human approval of a tool invocation.
 type ResponseListResponseOutputMcpApprovalRequest struct {
-	ID          string `json:"id,required"`
-	Arguments   string `json:"arguments,required"`
-	Name        string `json:"name,required"`
-	ServerLabel string `json:"server_label,required"`
+	ID          string `json:"id" api:"required"`
+	Arguments   string `json:"arguments" api:"required"`
+	Name        string `json:"name" api:"required"`
+	ServerLabel string `json:"server_label" api:"required"`
 	// Any of "mcp_approval_request".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -9176,8 +9176,8 @@ func (r *ResponseListResponseOutputMcpApprovalRequest) UnmarshalJSON(data []byte
 
 // Error details for failed OpenAI response requests.
 type ResponseListResponseError struct {
-	Code    string `json:"code,required"`
-	Message string `json:"message,required"`
+	Code    string `json:"code" api:"required"`
+	Message string `json:"message" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Code        respjson.Field
@@ -9195,7 +9195,7 @@ func (r *ResponseListResponseError) UnmarshalJSON(data []byte) error {
 
 // Details explaining why a response was incomplete.
 type ResponseListResponseIncompleteDetails struct {
-	Reason string `json:"reason,required"`
+	Reason string `json:"reason" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Reason      respjson.Field
@@ -9218,9 +9218,9 @@ const (
 
 // OpenAI compatible Prompt object that is used in OpenAI responses.
 type ResponseListResponsePrompt struct {
-	ID        string                                             `json:"id,required"`
-	Variables map[string]ResponseListResponsePromptVariableUnion `json:"variables,nullable"`
-	Version   string                                             `json:"version,nullable"`
+	ID        string                                             `json:"id" api:"required"`
+	Variables map[string]ResponseListResponsePromptVariableUnion `json:"variables" api:"nullable"`
+	Version   string                                             `json:"version" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -9331,7 +9331,7 @@ func (r *ResponseListResponsePromptVariableUnion) UnmarshalJSON(data []byte) err
 
 // Text content for input messages in OpenAI response format.
 type ResponseListResponsePromptVariableInputText struct {
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Any of "input_text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -9353,8 +9353,8 @@ func (r *ResponseListResponsePromptVariableInputText) UnmarshalJSON(data []byte)
 type ResponseListResponsePromptVariableInputImage struct {
 	// Any of "low", "high", "auto".
 	Detail   string `json:"detail"`
-	FileID   string `json:"file_id,nullable"`
-	ImageURL string `json:"image_url,nullable"`
+	FileID   string `json:"file_id" api:"nullable"`
+	ImageURL string `json:"image_url" api:"nullable"`
 	// Any of "input_image".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -9376,10 +9376,10 @@ func (r *ResponseListResponsePromptVariableInputImage) UnmarshalJSON(data []byte
 
 // File content for input messages in OpenAI response format.
 type ResponseListResponsePromptVariableInputFile struct {
-	FileData string `json:"file_data,nullable"`
-	FileID   string `json:"file_id,nullable"`
-	FileURL  string `json:"file_url,nullable"`
-	Filename string `json:"filename,nullable"`
+	FileData string `json:"file_data" api:"nullable"`
+	FileID   string `json:"file_id" api:"nullable"`
+	FileURL  string `json:"file_url" api:"nullable"`
+	Filename string `json:"filename" api:"nullable"`
 	// Any of "input_file".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -9405,7 +9405,7 @@ func (r *ResponseListResponsePromptVariableInputFile) UnmarshalJSON(data []byte)
 // Controls how much reasoning the model performs before generating a response.
 type ResponseListResponseReasoning struct {
 	// Any of "none", "minimal", "low", "medium", "high", "xhigh".
-	Effort string `json:"effort,nullable"`
+	Effort string `json:"effort" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Effort      respjson.Field
@@ -9423,7 +9423,7 @@ func (r *ResponseListResponseReasoning) UnmarshalJSON(data []byte) error {
 // Text response configuration for OpenAI responses.
 type ResponseListResponseText struct {
 	// Configuration for Responses API text format.
-	Format ResponseListResponseTextFormat `json:"format,nullable"`
+	Format ResponseListResponseTextFormat `json:"format" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Format      respjson.Field
@@ -9440,10 +9440,10 @@ func (r *ResponseListResponseText) UnmarshalJSON(data []byte) error {
 
 // Configuration for Responses API text format.
 type ResponseListResponseTextFormat struct {
-	Description string         `json:"description,nullable"`
-	Name        string         `json:"name,nullable"`
-	Schema      map[string]any `json:"schema,nullable"`
-	Strict      bool           `json:"strict,nullable"`
+	Description string         `json:"description" api:"nullable"`
+	Name        string         `json:"name" api:"nullable"`
+	Schema      map[string]any `json:"schema" api:"nullable"`
+	Strict      bool           `json:"strict" api:"nullable"`
 	// Any of "text", "json_schema", "json_object".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -9554,7 +9554,7 @@ const (
 
 // Constrains the tools available to the model to a pre-defined set.
 type ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceAllowedTools struct {
-	Tools []map[string]string `json:"tools,required"`
+	Tools []map[string]string `json:"tools" api:"required"`
 	// Any of "auto", "required".
 	Mode string `json:"mode"`
 	// Any of "allowed_tools".
@@ -9620,7 +9620,7 @@ func (r *ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceWebSearch) U
 
 // Forces the model to call a specific function.
 type ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceFunctionTool struct {
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// Any of "function".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -9642,8 +9642,8 @@ func (r *ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceFunctionTool
 
 // Forces the model to call a specific tool on a remote MCP server
 type ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceMcpTool struct {
-	ServerLabel string `json:"server_label,required"`
-	Name        string `json:"name,nullable"`
+	ServerLabel string `json:"server_label" api:"required"`
+	Name        string `json:"name" api:"nullable"`
 	// Any of "mcp".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -9666,7 +9666,7 @@ func (r *ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceMcpTool) Unm
 
 // Forces the model to call a custom tool.
 type ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceCustomTool struct {
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// Any of "custom".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -9766,7 +9766,7 @@ func (r *ResponseListResponseToolUnion) UnmarshalJSON(data []byte) error {
 
 // Web search tool configuration for OpenAI response inputs.
 type ResponseListResponseToolOpenAIResponseInputToolWebSearch struct {
-	SearchContextSize string `json:"search_context_size,nullable"`
+	SearchContextSize string `json:"search_context_size" api:"nullable"`
 	// Any of "web_search", "web_search_preview", "web_search_preview_2025_03_11",
 	// "web_search_2025_08_26".
 	Type string `json:"type"`
@@ -9787,9 +9787,9 @@ func (r *ResponseListResponseToolOpenAIResponseInputToolWebSearch) UnmarshalJSON
 
 // File search tool configuration for OpenAI response inputs.
 type ResponseListResponseToolFileSearch struct {
-	VectorStoreIDs []string       `json:"vector_store_ids,required"`
-	Filters        map[string]any `json:"filters,nullable"`
-	MaxNumResults  int64          `json:"max_num_results,nullable"`
+	VectorStoreIDs []string       `json:"vector_store_ids" api:"required"`
+	Filters        map[string]any `json:"filters" api:"nullable"`
+	MaxNumResults  int64          `json:"max_num_results" api:"nullable"`
 	// Options for ranking and filtering search results.
 	//
 	// This class configures how search results are ranked and filtered. You can use
@@ -9807,7 +9807,7 @@ type ResponseListResponseToolFileSearch struct {
 	//
 	//	# Score threshold filtering
 	//	SearchRankingOptions(ranker="weighted", score_threshold=0.5)
-	RankingOptions ResponseListResponseToolFileSearchRankingOptions `json:"ranking_options,nullable"`
+	RankingOptions ResponseListResponseToolFileSearchRankingOptions `json:"ranking_options" api:"nullable"`
 	// Any of "file_search".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -9847,16 +9847,16 @@ func (r *ResponseListResponseToolFileSearch) UnmarshalJSON(data []byte) error {
 //	SearchRankingOptions(ranker="weighted", score_threshold=0.5)
 type ResponseListResponseToolFileSearchRankingOptions struct {
 	// Weight factor for weighted ranker
-	Alpha float64 `json:"alpha,nullable"`
+	Alpha float64 `json:"alpha" api:"nullable"`
 	// Impact factor for RRF algorithm
-	ImpactFactor float64 `json:"impact_factor,nullable"`
+	ImpactFactor float64 `json:"impact_factor" api:"nullable"`
 	// Model identifier for neural reranker
-	Model          string  `json:"model,nullable"`
-	Ranker         string  `json:"ranker,nullable"`
-	ScoreThreshold float64 `json:"score_threshold,nullable"`
+	Model          string  `json:"model" api:"nullable"`
+	Ranker         string  `json:"ranker" api:"nullable"`
+	ScoreThreshold float64 `json:"score_threshold" api:"nullable"`
 	// Weights for combining vector, keyword, and neural scores. Keys: 'vector',
 	// 'keyword', 'neural'
-	Weights map[string]float64 `json:"weights,nullable"`
+	Weights map[string]float64 `json:"weights" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Alpha          respjson.Field
@@ -9878,10 +9878,10 @@ func (r *ResponseListResponseToolFileSearchRankingOptions) UnmarshalJSON(data []
 
 // Function tool configuration for OpenAI response inputs.
 type ResponseListResponseToolFunction struct {
-	Name        string         `json:"name,required"`
-	Parameters  map[string]any `json:"parameters,required"`
-	Description string         `json:"description,nullable"`
-	Strict      bool           `json:"strict,nullable"`
+	Name        string         `json:"name" api:"required"`
+	Parameters  map[string]any `json:"parameters" api:"required"`
+	Description string         `json:"description" api:"nullable"`
+	Strict      bool           `json:"strict" api:"nullable"`
 	// Any of "function".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -9904,9 +9904,9 @@ func (r *ResponseListResponseToolFunction) UnmarshalJSON(data []byte) error {
 
 // Model Context Protocol (MCP) tool configuration for OpenAI response object.
 type ResponseListResponseToolMcp struct {
-	ServerLabel string `json:"server_label,required"`
+	ServerLabel string `json:"server_label" api:"required"`
 	// Filter configuration for restricting which MCP tools can be used.
-	AllowedTools ResponseListResponseToolMcpAllowedToolsUnion `json:"allowed_tools,nullable"`
+	AllowedTools ResponseListResponseToolMcpAllowedToolsUnion `json:"allowed_tools" api:"nullable"`
 	// Any of "mcp".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -9965,7 +9965,7 @@ func (r *ResponseListResponseToolMcpAllowedToolsUnion) UnmarshalJSON(data []byte
 
 // Filter configuration for restricting which MCP tools can be used.
 type ResponseListResponseToolMcpAllowedToolsAllowedToolsFilter struct {
-	ToolNames []string `json:"tool_names,nullable"`
+	ToolNames []string `json:"tool_names" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ToolNames   respjson.Field
@@ -9984,13 +9984,13 @@ func (r *ResponseListResponseToolMcpAllowedToolsAllowedToolsFilter) UnmarshalJSO
 
 // Usage information for OpenAI response.
 type ResponseListResponseUsage struct {
-	InputTokens int64 `json:"input_tokens,required"`
+	InputTokens int64 `json:"input_tokens" api:"required"`
 	// Token details for input tokens in OpenAI response usage.
-	InputTokensDetails ResponseListResponseUsageInputTokensDetails `json:"input_tokens_details,required"`
-	OutputTokens       int64                                       `json:"output_tokens,required"`
+	InputTokensDetails ResponseListResponseUsageInputTokensDetails `json:"input_tokens_details" api:"required"`
+	OutputTokens       int64                                       `json:"output_tokens" api:"required"`
 	// Token details for output tokens in OpenAI response usage.
-	OutputTokensDetails ResponseListResponseUsageOutputTokensDetails `json:"output_tokens_details,required"`
-	TotalTokens         int64                                        `json:"total_tokens,required"`
+	OutputTokensDetails ResponseListResponseUsageOutputTokensDetails `json:"output_tokens_details" api:"required"`
+	TotalTokens         int64                                        `json:"total_tokens" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		InputTokens         respjson.Field
@@ -10011,7 +10011,7 @@ func (r *ResponseListResponseUsage) UnmarshalJSON(data []byte) error {
 
 // Token details for input tokens in OpenAI response usage.
 type ResponseListResponseUsageInputTokensDetails struct {
-	CachedTokens int64 `json:"cached_tokens,required"`
+	CachedTokens int64 `json:"cached_tokens" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		CachedTokens respjson.Field
@@ -10028,7 +10028,7 @@ func (r *ResponseListResponseUsageInputTokensDetails) UnmarshalJSON(data []byte)
 
 // Token details for output tokens in OpenAI response usage.
 type ResponseListResponseUsageOutputTokensDetails struct {
-	ReasoningTokens int64 `json:"reasoning_tokens,required"`
+	ReasoningTokens int64 `json:"reasoning_tokens" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ReasoningTokens respjson.Field
@@ -10045,7 +10045,7 @@ func (r *ResponseListResponseUsageOutputTokensDetails) UnmarshalJSON(data []byte
 
 // Response object confirming deletion of an OpenAI response.
 type ResponseDeleteResponse struct {
-	ID      string `json:"id,required"`
+	ID      string `json:"id" api:"required"`
 	Deleted bool   `json:"deleted"`
 	// Any of "response".
 	Object ResponseDeleteResponseObject `json:"object"`
@@ -10073,9 +10073,9 @@ const (
 
 type ResponseNewParams struct {
 	// Input message(s) to create the response.
-	Input ResponseNewParamsInputUnion `json:"input,omitzero,required"`
+	Input ResponseNewParamsInputUnion `json:"input,omitzero" api:"required"`
 	// The underlying LLM used for completions.
-	Model string `json:"model,required"`
+	Model string `json:"model" api:"required"`
 	// Optional ID of a conversation to add the response to.
 	Conversation param.Opt[string] `json:"conversation,omitzero"`
 	// Instructions to guide the model's behavior.
@@ -10424,9 +10424,9 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 //
 // The properties Content, Role are required.
 type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInput struct {
-	Content ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentUnion `json:"content,omitzero,required"`
+	Content ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentUnion `json:"content,omitzero" api:"required"`
 	// Any of "system", "developer", "user", "assistant".
-	Role   string            `json:"role,omitzero,required"`
+	Role   string            `json:"role,omitzero" api:"required"`
 	ID     param.Opt[string] `json:"id,omitzero"`
 	Status param.Opt[string] `json:"status,omitzero"`
 	// Any of "message".
@@ -10590,7 +10590,7 @@ func init() {
 //
 // The property Text is required.
 type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText struct {
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Any of "input_text".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -10740,7 +10740,7 @@ func init() {
 
 // The property Text is required.
 type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputText struct {
-	Text        string                                                                                                                                                                                                                                                                                  `json:"text,required"`
+	Text        string                                                                                                                                                                                                                                                                                  `json:"text" api:"required"`
 	Logprobs    []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprob         `json:"logprobs,omitzero"`
 	Annotations []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion `json:"annotations,omitzero"`
 	// Any of "output_text".
@@ -10897,9 +10897,9 @@ func init() {
 //
 // The properties FileID, Filename, Index are required.
 type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation struct {
-	FileID   string `json:"file_id,required"`
-	Filename string `json:"filename,required"`
-	Index    int64  `json:"index,required"`
+	FileID   string `json:"file_id" api:"required"`
+	Filename string `json:"filename" api:"required"`
+	Index    int64  `json:"index" api:"required"`
 	// Any of "file_citation".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -10923,10 +10923,10 @@ func init() {
 //
 // The properties EndIndex, StartIndex, Title, URL are required.
 type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation struct {
-	EndIndex   int64  `json:"end_index,required"`
-	StartIndex int64  `json:"start_index,required"`
-	Title      string `json:"title,required"`
-	URL        string `json:"url,required"`
+	EndIndex   int64  `json:"end_index" api:"required"`
+	StartIndex int64  `json:"start_index" api:"required"`
+	Title      string `json:"title" api:"required"`
+	URL        string `json:"url" api:"required"`
 	// Any of "url_citation".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -10948,11 +10948,11 @@ func init() {
 
 // The properties ContainerID, EndIndex, FileID, Filename, StartIndex are required.
 type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation struct {
-	ContainerID string `json:"container_id,required"`
-	EndIndex    int64  `json:"end_index,required"`
-	FileID      string `json:"file_id,required"`
-	Filename    string `json:"filename,required"`
-	StartIndex  int64  `json:"start_index,required"`
+	ContainerID string `json:"container_id" api:"required"`
+	EndIndex    int64  `json:"end_index" api:"required"`
+	FileID      string `json:"file_id" api:"required"`
+	Filename    string `json:"filename" api:"required"`
+	StartIndex  int64  `json:"start_index" api:"required"`
 	// Any of "container_file_citation".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -10974,8 +10974,8 @@ func init() {
 
 // The properties FileID, Index are required.
 type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath struct {
-	FileID string `json:"file_id,required"`
-	Index  int64  `json:"index,required"`
+	FileID string `json:"file_id" api:"required"`
+	Index  int64  `json:"index" api:"required"`
 	// Any of "file_path".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -11001,9 +11001,9 @@ func init() {
 // The properties Token, Logprob are required.
 type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprob struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
 	Bytes []int64 `json:"bytes,omitzero"`
 	// The top log probabilities for the token.
@@ -11025,9 +11025,9 @@ func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInput
 // The properties Token, Logprob are required.
 type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextLogprobTopLogprob struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
 	Bytes []int64 `json:"bytes,omitzero"`
 	paramObj
@@ -11045,7 +11045,7 @@ func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInput
 //
 // The property Refusal is required.
 type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemRefusal struct {
-	Refusal string `json:"refusal,required"`
+	Refusal string `json:"refusal" api:"required"`
 	// Any of "refusal".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -11069,8 +11069,8 @@ func init() {
 //
 // The properties ID, Status are required.
 type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageWebSearchToolCall struct {
-	ID     string `json:"id,required"`
-	Status string `json:"status,required"`
+	ID     string `json:"id" api:"required"`
+	Status string `json:"status" api:"required"`
 	// Any of "web_search_call".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -11094,9 +11094,9 @@ func init() {
 //
 // The properties ID, Queries, Status are required.
 type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageFileSearchToolCall struct {
-	ID      string                                                                                                                                                                                  `json:"id,required"`
-	Queries []string                                                                                                                                                                                `json:"queries,omitzero,required"`
-	Status  string                                                                                                                                                                                  `json:"status,required"`
+	ID      string                                                                                                                                                                                  `json:"id" api:"required"`
+	Queries []string                                                                                                                                                                                `json:"queries,omitzero" api:"required"`
+	Status  string                                                                                                                                                                                  `json:"status" api:"required"`
 	Results []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageFileSearchToolCallResult `json:"results,omitzero"`
 	// Any of "file_search_call".
 	Type string `json:"type,omitzero"`
@@ -11121,11 +11121,11 @@ func init() {
 //
 // The properties Attributes, FileID, Filename, Score, Text are required.
 type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageFileSearchToolCallResult struct {
-	Attributes map[string]any `json:"attributes,omitzero,required"`
-	FileID     string         `json:"file_id,required"`
-	Filename   string         `json:"filename,required"`
-	Score      float64        `json:"score,required"`
-	Text       string         `json:"text,required"`
+	Attributes map[string]any `json:"attributes,omitzero" api:"required"`
+	FileID     string         `json:"file_id" api:"required"`
+	Filename   string         `json:"filename" api:"required"`
+	Score      float64        `json:"score" api:"required"`
+	Text       string         `json:"text" api:"required"`
 	paramObj
 }
 
@@ -11141,9 +11141,9 @@ func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInput
 //
 // The properties Arguments, CallID, Name are required.
 type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageFunctionToolCall struct {
-	Arguments string            `json:"arguments,required"`
-	CallID    string            `json:"call_id,required"`
-	Name      string            `json:"name,required"`
+	Arguments string            `json:"arguments" api:"required"`
+	CallID    string            `json:"call_id" api:"required"`
+	Name      string            `json:"name" api:"required"`
 	ID        param.Opt[string] `json:"id,omitzero"`
 	Status    param.Opt[string] `json:"status,omitzero"`
 	// Any of "function_call".
@@ -11169,10 +11169,10 @@ func init() {
 //
 // The properties ID, Arguments, Name, ServerLabel are required.
 type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageMcpCall struct {
-	ID          string            `json:"id,required"`
-	Arguments   string            `json:"arguments,required"`
-	Name        string            `json:"name,required"`
-	ServerLabel string            `json:"server_label,required"`
+	ID          string            `json:"id" api:"required"`
+	Arguments   string            `json:"arguments" api:"required"`
+	Name        string            `json:"name" api:"required"`
+	ServerLabel string            `json:"server_label" api:"required"`
 	Error       param.Opt[string] `json:"error,omitzero"`
 	Output      param.Opt[string] `json:"output,omitzero"`
 	// Any of "mcp_call".
@@ -11198,9 +11198,9 @@ func init() {
 //
 // The properties ID, ServerLabel, Tools are required.
 type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageMcpListTools struct {
-	ID          string                                                                                                                                                                          `json:"id,required"`
-	ServerLabel string                                                                                                                                                                          `json:"server_label,required"`
-	Tools       []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageMcpListToolsTool `json:"tools,omitzero,required"`
+	ID          string                                                                                                                                                                          `json:"id" api:"required"`
+	ServerLabel string                                                                                                                                                                          `json:"server_label" api:"required"`
+	Tools       []ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageMcpListToolsTool `json:"tools,omitzero" api:"required"`
 	// Any of "mcp_list_tools".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -11224,8 +11224,8 @@ func init() {
 //
 // The properties InputSchema, Name are required.
 type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseOutputMessageMcpListToolsTool struct {
-	InputSchema map[string]any    `json:"input_schema,omitzero,required"`
-	Name        string            `json:"name,required"`
+	InputSchema map[string]any    `json:"input_schema,omitzero" api:"required"`
+	Name        string            `json:"name" api:"required"`
 	Description param.Opt[string] `json:"description,omitzero"`
 	paramObj
 }
@@ -11242,10 +11242,10 @@ func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInput
 //
 // The properties ID, Arguments, Name, ServerLabel are required.
 type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMcpApprovalRequest struct {
-	ID          string `json:"id,required"`
-	Arguments   string `json:"arguments,required"`
-	Name        string `json:"name,required"`
-	ServerLabel string `json:"server_label,required"`
+	ID          string `json:"id" api:"required"`
+	Arguments   string `json:"arguments" api:"required"`
+	Name        string `json:"name" api:"required"`
+	ServerLabel string `json:"server_label" api:"required"`
 	// Any of "mcp_approval_request".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -11270,8 +11270,8 @@ func init() {
 //
 // The properties CallID, Output are required.
 type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseInputFunctionToolCallOutput struct {
-	CallID string            `json:"call_id,required"`
-	Output string            `json:"output,required"`
+	CallID string            `json:"call_id" api:"required"`
+	Output string            `json:"output" api:"required"`
 	ID     param.Opt[string] `json:"id,omitzero"`
 	Status param.Opt[string] `json:"status,omitzero"`
 	// Any of "function_call_output".
@@ -11297,8 +11297,8 @@ func init() {
 //
 // The properties ApprovalRequestID, Approve are required.
 type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMcpApprovalResponse struct {
-	ApprovalRequestID string            `json:"approval_request_id,required"`
-	Approve           bool              `json:"approve,required"`
+	ApprovalRequestID string            `json:"approval_request_id" api:"required"`
+	Approve           bool              `json:"approve" api:"required"`
 	ID                param.Opt[string] `json:"id,omitzero"`
 	Reason            param.Opt[string] `json:"reason,omitzero"`
 	// Any of "mcp_approval_response".
@@ -11349,7 +11349,7 @@ func (u *ResponseNewParamsGuardrailUnion) asAny() any {
 //
 // The property Type is required.
 type ResponseNewParamsGuardrailResponseGuardrailSpec struct {
-	Type string `json:"type,required"`
+	Type string `json:"type" api:"required"`
 	paramObj
 }
 
@@ -11365,7 +11365,7 @@ func (r *ResponseNewParamsGuardrailResponseGuardrailSpec) UnmarshalJSON(data []b
 //
 // The property ID is required.
 type ResponseNewParamsPrompt struct {
-	ID        string                                          `json:"id,required"`
+	ID        string                                          `json:"id" api:"required"`
 	Version   param.Opt[string]                               `json:"version,omitzero"`
 	Variables map[string]ResponseNewParamsPromptVariableUnion `json:"variables,omitzero"`
 	paramObj
@@ -11490,7 +11490,7 @@ func init() {
 //
 // The property Text is required.
 type ResponseNewParamsPromptVariableInputText struct {
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Any of "input_text".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -11750,7 +11750,7 @@ const (
 //
 // The property Tools is required.
 type ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceAllowedTools struct {
-	Tools []map[string]string `json:"tools,omitzero,required"`
+	Tools []map[string]string `json:"tools,omitzero" api:"required"`
 	// Any of "auto", "required".
 	Mode string `json:"mode,omitzero"`
 	// Any of "allowed_tools".
@@ -11822,7 +11822,7 @@ func init() {
 //
 // The property Name is required.
 type ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceFunctionTool struct {
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// Any of "function".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -11846,7 +11846,7 @@ func init() {
 //
 // The property ServerLabel is required.
 type ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceMcpTool struct {
-	ServerLabel string            `json:"server_label,required"`
+	ServerLabel string            `json:"server_label" api:"required"`
 	Name        param.Opt[string] `json:"name,omitzero"`
 	// Any of "mcp".
 	Type string `json:"type,omitzero"`
@@ -11871,7 +11871,7 @@ func init() {
 //
 // The property Name is required.
 type ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceCustomTool struct {
-	Name string `json:"name,required"`
+	Name string `json:"name" api:"required"`
 	// Any of "custom".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -12104,7 +12104,7 @@ func init() {
 //
 // The property VectorStoreIDs is required.
 type ResponseNewParamsToolFileSearch struct {
-	VectorStoreIDs []string         `json:"vector_store_ids,omitzero,required"`
+	VectorStoreIDs []string         `json:"vector_store_ids,omitzero" api:"required"`
 	MaxNumResults  param.Opt[int64] `json:"max_num_results,omitzero"`
 	Filters        map[string]any   `json:"filters,omitzero"`
 	// Options for ranking and filtering search results.
@@ -12188,8 +12188,8 @@ func (r *ResponseNewParamsToolFileSearchRankingOptions) UnmarshalJSON(data []byt
 //
 // The properties Name, Parameters are required.
 type ResponseNewParamsToolFunction struct {
-	Parameters  map[string]any    `json:"parameters,omitzero,required"`
-	Name        string            `json:"name,required"`
+	Parameters  map[string]any    `json:"parameters,omitzero" api:"required"`
+	Name        string            `json:"name" api:"required"`
 	Description param.Opt[string] `json:"description,omitzero"`
 	Strict      param.Opt[bool]   `json:"strict,omitzero"`
 	// Any of "function".
@@ -12215,7 +12215,7 @@ func init() {
 //
 // The property ServerLabel is required.
 type ResponseNewParamsToolMcp struct {
-	ServerLabel   string            `json:"server_label,required"`
+	ServerLabel   string            `json:"server_label" api:"required"`
 	Authorization param.Opt[string] `json:"authorization,omitzero"`
 	ConnectorID   param.Opt[string] `json:"connector_id,omitzero"`
 	ServerURL     param.Opt[string] `json:"server_url,omitzero"`

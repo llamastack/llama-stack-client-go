@@ -95,17 +95,17 @@ func (r *AlphaBenchmarkService) Unregister(ctx context.Context, benchmarkID stri
 // A benchmark resource for evaluating model performance.
 type Benchmark struct {
 	// Identifier of the dataset to use for the benchmark evaluation.
-	DatasetID string `json:"dataset_id,required"`
+	DatasetID string `json:"dataset_id" api:"required"`
 	// Unique identifier for this resource in llama stack
-	Identifier string `json:"identifier,required"`
+	Identifier string `json:"identifier" api:"required"`
 	// ID of the provider that owns this resource
-	ProviderID string `json:"provider_id,required"`
+	ProviderID string `json:"provider_id" api:"required"`
 	// List of scoring function identifiers to apply during evaluation.
-	ScoringFunctions []string `json:"scoring_functions,required"`
+	ScoringFunctions []string `json:"scoring_functions" api:"required"`
 	// Metadata for this evaluation task.
 	Metadata map[string]any `json:"metadata"`
 	// Unique identifier for this resource in the provider
-	ProviderResourceID string `json:"provider_resource_id,nullable"`
+	ProviderResourceID string `json:"provider_resource_id" api:"nullable"`
 	// The resource type, always benchmark.
 	//
 	// Any of "benchmark".
@@ -140,7 +140,7 @@ const (
 // Response containing a list of benchmark objects.
 type ListBenchmarksResponse struct {
 	// List of benchmark objects.
-	Data []Benchmark `json:"data,required"`
+	Data []Benchmark `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -157,11 +157,11 @@ func (r *ListBenchmarksResponse) UnmarshalJSON(data []byte) error {
 
 type AlphaBenchmarkRegisterParams struct {
 	// The ID of the benchmark to register.
-	BenchmarkID string `json:"benchmark_id,required"`
+	BenchmarkID string `json:"benchmark_id" api:"required"`
 	// The ID of the dataset to use for the benchmark.
-	DatasetID string `json:"dataset_id,required"`
+	DatasetID string `json:"dataset_id" api:"required"`
 	// The scoring functions to use for the benchmark.
-	ScoringFunctions []string `json:"scoring_functions,omitzero,required"`
+	ScoringFunctions []string `json:"scoring_functions,omitzero" api:"required"`
 	// The ID of the provider benchmark to use for the benchmark.
 	ProviderBenchmarkID param.Opt[string] `json:"provider_benchmark_id,omitzero"`
 	// The ID of the provider to use for the benchmark.

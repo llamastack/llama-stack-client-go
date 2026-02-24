@@ -59,8 +59,8 @@ func (r *VectorIoService) Query(ctx context.Context, body VectorIoQueryParams, o
 
 // Response from querying chunks in a vector database.
 type QueryChunksResponse struct {
-	Chunks []QueryChunksResponseChunk `json:"chunks,required"`
-	Scores []float64                  `json:"scores,required"`
+	Chunks []QueryChunksResponseChunk `json:"chunks" api:"required"`
+	Scores []float64                  `json:"scores" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Chunks      respjson.Field
@@ -79,19 +79,19 @@ func (r *QueryChunksResponse) UnmarshalJSON(data []byte) error {
 // A chunk of content with its embedding vector for vector database operations.
 // Inherits all fields from Chunk and adds embedding-related fields.
 type QueryChunksResponseChunk struct {
-	ChunkID string `json:"chunk_id,required"`
+	ChunkID string `json:"chunk_id" api:"required"`
 	// `ChunkMetadata` is backend metadata for a `Chunk` that is used to store
 	// additional information about the chunk that will not be used in the context
 	// during inference, but is required for backend functionality. The `ChunkMetadata`
 	// is set during chunk creation in `MemoryToolRuntimeImpl().insert()`and is not
 	// expected to change after. Use `Chunk.metadata` for metadata that will be used in
 	// the context during inference.
-	ChunkMetadata QueryChunksResponseChunkChunkMetadata `json:"chunk_metadata,required"`
+	ChunkMetadata QueryChunksResponseChunkChunkMetadata `json:"chunk_metadata" api:"required"`
 	// A image content item
-	Content            QueryChunksResponseChunkContentUnion `json:"content,required"`
-	Embedding          []float64                            `json:"embedding,required"`
-	EmbeddingDimension int64                                `json:"embedding_dimension,required"`
-	EmbeddingModel     string                               `json:"embedding_model,required"`
+	Content            QueryChunksResponseChunkContentUnion `json:"content" api:"required"`
+	Embedding          []float64                            `json:"embedding" api:"required"`
+	EmbeddingDimension int64                                `json:"embedding_dimension" api:"required"`
+	EmbeddingModel     string                               `json:"embedding_model" api:"required"`
 	Metadata           map[string]any                       `json:"metadata"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -120,15 +120,15 @@ func (r *QueryChunksResponseChunk) UnmarshalJSON(data []byte) error {
 // expected to change after. Use `Chunk.metadata` for metadata that will be used in
 // the context during inference.
 type QueryChunksResponseChunkChunkMetadata struct {
-	ChunkID            string `json:"chunk_id,nullable"`
-	ChunkTokenizer     string `json:"chunk_tokenizer,nullable"`
-	ChunkWindow        string `json:"chunk_window,nullable"`
-	ContentTokenCount  int64  `json:"content_token_count,nullable"`
-	CreatedTimestamp   int64  `json:"created_timestamp,nullable"`
-	DocumentID         string `json:"document_id,nullable"`
-	MetadataTokenCount int64  `json:"metadata_token_count,nullable"`
-	Source             string `json:"source,nullable"`
-	UpdatedTimestamp   int64  `json:"updated_timestamp,nullable"`
+	ChunkID            string `json:"chunk_id" api:"nullable"`
+	ChunkTokenizer     string `json:"chunk_tokenizer" api:"nullable"`
+	ChunkWindow        string `json:"chunk_window" api:"nullable"`
+	ContentTokenCount  int64  `json:"content_token_count" api:"nullable"`
+	CreatedTimestamp   int64  `json:"created_timestamp" api:"nullable"`
+	DocumentID         string `json:"document_id" api:"nullable"`
+	MetadataTokenCount int64  `json:"metadata_token_count" api:"nullable"`
+	Source             string `json:"source" api:"nullable"`
+	UpdatedTimestamp   int64  `json:"updated_timestamp" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ChunkID            respjson.Field
@@ -213,7 +213,7 @@ func (r *QueryChunksResponseChunkContentUnion) UnmarshalJSON(data []byte) error 
 // A image content item
 type QueryChunksResponseChunkContentImageContentItemOutput struct {
 	// A URL or a base64 encoded string
-	Image QueryChunksResponseChunkContentImageContentItemOutputImage `json:"image,required"`
+	Image QueryChunksResponseChunkContentImageContentItemOutputImage `json:"image" api:"required"`
 	// Any of "image".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -233,9 +233,9 @@ func (r *QueryChunksResponseChunkContentImageContentItemOutput) UnmarshalJSON(da
 
 // A URL or a base64 encoded string
 type QueryChunksResponseChunkContentImageContentItemOutputImage struct {
-	Data string `json:"data,nullable"`
+	Data string `json:"data" api:"nullable"`
 	// A URL reference to external content.
-	URL QueryChunksResponseChunkContentImageContentItemOutputImageURL `json:"url,nullable"`
+	URL QueryChunksResponseChunkContentImageContentItemOutputImageURL `json:"url" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -255,7 +255,7 @@ func (r *QueryChunksResponseChunkContentImageContentItemOutputImage) UnmarshalJS
 
 // A URL reference to external content.
 type QueryChunksResponseChunkContentImageContentItemOutputImageURL struct {
-	Uri string `json:"uri,required"`
+	Uri string `json:"uri" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Uri         respjson.Field
@@ -274,7 +274,7 @@ func (r *QueryChunksResponseChunkContentImageContentItemOutputImageURL) Unmarsha
 
 // A text content item
 type QueryChunksResponseChunkContentTextContentItem struct {
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -373,7 +373,7 @@ func (r *QueryChunksResponseChunkContentListImageContentItemOutputTextContentIte
 // A image content item
 type QueryChunksResponseChunkContentListImageContentItemOutputTextContentItemItemImage struct {
 	// A URL or a base64 encoded string
-	Image QueryChunksResponseChunkContentListImageContentItemOutputTextContentItemItemImageImage `json:"image,required"`
+	Image QueryChunksResponseChunkContentListImageContentItemOutputTextContentItemItemImageImage `json:"image" api:"required"`
 	// Any of "image".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -395,9 +395,9 @@ func (r *QueryChunksResponseChunkContentListImageContentItemOutputTextContentIte
 
 // A URL or a base64 encoded string
 type QueryChunksResponseChunkContentListImageContentItemOutputTextContentItemItemImageImage struct {
-	Data string `json:"data,nullable"`
+	Data string `json:"data" api:"nullable"`
 	// A URL reference to external content.
-	URL QueryChunksResponseChunkContentListImageContentItemOutputTextContentItemItemImageImageURL `json:"url,nullable"`
+	URL QueryChunksResponseChunkContentListImageContentItemOutputTextContentItemItemImageImageURL `json:"url" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -417,7 +417,7 @@ func (r *QueryChunksResponseChunkContentListImageContentItemOutputTextContentIte
 
 // A URL reference to external content.
 type QueryChunksResponseChunkContentListImageContentItemOutputTextContentItemItemImageImageURL struct {
-	Uri string `json:"uri,required"`
+	Uri string `json:"uri" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Uri         respjson.Field
@@ -436,7 +436,7 @@ func (r *QueryChunksResponseChunkContentListImageContentItemOutputTextContentIte
 
 // A text content item
 type QueryChunksResponseChunkContentListImageContentItemOutputTextContentItemItemText struct {
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Any of "text".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -458,9 +458,9 @@ func (r *QueryChunksResponseChunkContentListImageContentItemOutputTextContentIte
 
 type VectorIoInsertParams struct {
 	// The list of embedded chunks to insert.
-	Chunks []VectorIoInsertParamsChunk `json:"chunks,omitzero,required"`
+	Chunks []VectorIoInsertParamsChunk `json:"chunks,omitzero" api:"required"`
 	// The ID of the vector store to insert chunks into.
-	VectorStoreID string `json:"vector_store_id,required"`
+	VectorStoreID string `json:"vector_store_id" api:"required"`
 	// Time-to-live in seconds for the inserted chunks.
 	TtlSeconds param.Opt[int64] `json:"ttl_seconds,omitzero"`
 	paramObj
@@ -480,19 +480,19 @@ func (r *VectorIoInsertParams) UnmarshalJSON(data []byte) error {
 // The properties ChunkID, ChunkMetadata, Content, Embedding, EmbeddingDimension,
 // EmbeddingModel are required.
 type VectorIoInsertParamsChunk struct {
-	ChunkID string `json:"chunk_id,required"`
+	ChunkID string `json:"chunk_id" api:"required"`
 	// `ChunkMetadata` is backend metadata for a `Chunk` that is used to store
 	// additional information about the chunk that will not be used in the context
 	// during inference, but is required for backend functionality. The `ChunkMetadata`
 	// is set during chunk creation in `MemoryToolRuntimeImpl().insert()`and is not
 	// expected to change after. Use `Chunk.metadata` for metadata that will be used in
 	// the context during inference.
-	ChunkMetadata VectorIoInsertParamsChunkChunkMetadata `json:"chunk_metadata,omitzero,required"`
+	ChunkMetadata VectorIoInsertParamsChunkChunkMetadata `json:"chunk_metadata,omitzero" api:"required"`
 	// A image content item
-	Content            VectorIoInsertParamsChunkContentUnion `json:"content,omitzero,required"`
-	Embedding          []float64                             `json:"embedding,omitzero,required"`
-	EmbeddingDimension int64                                 `json:"embedding_dimension,required"`
-	EmbeddingModel     string                                `json:"embedding_model,required"`
+	Content            VectorIoInsertParamsChunkContentUnion `json:"content,omitzero" api:"required"`
+	Embedding          []float64                             `json:"embedding,omitzero" api:"required"`
+	EmbeddingDimension int64                                 `json:"embedding_dimension" api:"required"`
+	EmbeddingModel     string                                `json:"embedding_model" api:"required"`
 	Metadata           map[string]any                        `json:"metadata,omitzero"`
 	paramObj
 }
@@ -594,7 +594,7 @@ func (u VectorIoInsertParamsChunkContentUnion) GetType() *string {
 // The property Image is required.
 type VectorIoInsertParamsChunkContentImageContentItemInput struct {
 	// A URL or a base64 encoded string
-	Image VectorIoInsertParamsChunkContentImageContentItemInputImage `json:"image,omitzero,required"`
+	Image VectorIoInsertParamsChunkContentImageContentItemInputImage `json:"image,omitzero" api:"required"`
 	// Any of "image".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -634,7 +634,7 @@ func (r *VectorIoInsertParamsChunkContentImageContentItemInputImage) UnmarshalJS
 //
 // The property Uri is required.
 type VectorIoInsertParamsChunkContentImageContentItemInputImageURL struct {
-	Uri string `json:"uri,required"`
+	Uri string `json:"uri" api:"required"`
 	paramObj
 }
 
@@ -650,7 +650,7 @@ func (r *VectorIoInsertParamsChunkContentImageContentItemInputImageURL) Unmarsha
 //
 // The property Text is required.
 type VectorIoInsertParamsChunkContentTextContentItem struct {
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Any of "text".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -734,7 +734,7 @@ func init() {
 // The property Image is required.
 type VectorIoInsertParamsChunkContentListImageContentItemInputTextContentItemItemImage struct {
 	// A URL or a base64 encoded string
-	Image VectorIoInsertParamsChunkContentListImageContentItemInputTextContentItemItemImageImage `json:"image,omitzero,required"`
+	Image VectorIoInsertParamsChunkContentListImageContentItemInputTextContentItemItemImageImage `json:"image,omitzero" api:"required"`
 	// Any of "image".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -774,7 +774,7 @@ func (r *VectorIoInsertParamsChunkContentListImageContentItemInputTextContentIte
 //
 // The property Uri is required.
 type VectorIoInsertParamsChunkContentListImageContentItemInputTextContentItemItemImageImageURL struct {
-	Uri string `json:"uri,required"`
+	Uri string `json:"uri" api:"required"`
 	paramObj
 }
 
@@ -790,7 +790,7 @@ func (r *VectorIoInsertParamsChunkContentListImageContentItemInputTextContentIte
 //
 // The property Text is required.
 type VectorIoInsertParamsChunkContentListImageContentItemInputTextContentItemItemText struct {
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Any of "text".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -812,9 +812,9 @@ func init() {
 
 type VectorIoQueryParams struct {
 	// The query content to search for.
-	Query VectorIoQueryParamsQueryUnion `json:"query,omitzero,required"`
+	Query VectorIoQueryParamsQueryUnion `json:"query,omitzero" api:"required"`
 	// The ID of the vector store to query.
-	VectorStoreID string `json:"vector_store_id,required"`
+	VectorStoreID string `json:"vector_store_id" api:"required"`
 	// Additional query parameters.
 	Params map[string]any `json:"params,omitzero"`
 	paramObj
@@ -890,7 +890,7 @@ func (u VectorIoQueryParamsQueryUnion) GetType() *string {
 // The property Image is required.
 type VectorIoQueryParamsQueryImageContentItemInput struct {
 	// A URL or a base64 encoded string
-	Image VectorIoQueryParamsQueryImageContentItemInputImage `json:"image,omitzero,required"`
+	Image VectorIoQueryParamsQueryImageContentItemInputImage `json:"image,omitzero" api:"required"`
 	// Any of "image".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -930,7 +930,7 @@ func (r *VectorIoQueryParamsQueryImageContentItemInputImage) UnmarshalJSON(data 
 //
 // The property Uri is required.
 type VectorIoQueryParamsQueryImageContentItemInputImageURL struct {
-	Uri string `json:"uri,required"`
+	Uri string `json:"uri" api:"required"`
 	paramObj
 }
 
@@ -946,7 +946,7 @@ func (r *VectorIoQueryParamsQueryImageContentItemInputImageURL) UnmarshalJSON(da
 //
 // The property Text is required.
 type VectorIoQueryParamsQueryTextContentItem struct {
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Any of "text".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -1030,7 +1030,7 @@ func init() {
 // The property Image is required.
 type VectorIoQueryParamsQueryListImageContentItemInputTextContentItemItemImage struct {
 	// A URL or a base64 encoded string
-	Image VectorIoQueryParamsQueryListImageContentItemInputTextContentItemItemImageImage `json:"image,omitzero,required"`
+	Image VectorIoQueryParamsQueryListImageContentItemInputTextContentItemItemImageImage `json:"image,omitzero" api:"required"`
 	// Any of "image".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -1070,7 +1070,7 @@ func (r *VectorIoQueryParamsQueryListImageContentItemInputTextContentItemItemIma
 //
 // The property Uri is required.
 type VectorIoQueryParamsQueryListImageContentItemInputTextContentItemItemImageImageURL struct {
-	Uri string `json:"uri,required"`
+	Uri string `json:"uri" api:"required"`
 	paramObj
 }
 
@@ -1086,7 +1086,7 @@ func (r *VectorIoQueryParamsQueryListImageContentItemInputTextContentItemItemIma
 //
 // The property Text is required.
 type VectorIoQueryParamsQueryListImageContentItemInputTextContentItemItemText struct {
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Any of "text".
 	Type string `json:"type,omitzero"`
 	paramObj

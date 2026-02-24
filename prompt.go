@@ -117,7 +117,7 @@ func (r *PromptService) SetDefaultVersion(ctx context.Context, promptID string, 
 
 // Response model to list prompts.
 type ListPromptsResponse struct {
-	Data []Prompt `json:"data,required"`
+	Data []Prompt `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -136,13 +136,13 @@ func (r *ListPromptsResponse) UnmarshalJSON(data []byte) error {
 // Llama Stack.
 type Prompt struct {
 	// Unique identifier in format 'pmpt\_<48-digit-hash>'
-	PromptID string `json:"prompt_id,required"`
+	PromptID string `json:"prompt_id" api:"required"`
 	// Version (integer starting at 1, incremented on save)
-	Version int64 `json:"version,required"`
+	Version int64 `json:"version" api:"required"`
 	// Boolean indicating whether this version is the default version
 	IsDefault bool `json:"is_default"`
 	// The system prompt with variable placeholders
-	Prompt string `json:"prompt,nullable"`
+	Prompt string `json:"prompt" api:"nullable"`
 	// List of variable names that can be used in the prompt template
 	Variables []string `json:"variables"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -165,7 +165,7 @@ func (r *Prompt) UnmarshalJSON(data []byte) error {
 
 type PromptNewParams struct {
 	// The prompt text content with variable placeholders.
-	Prompt string `json:"prompt,required"`
+	Prompt string `json:"prompt" api:"required"`
 	// List of variable names that can be used in the prompt template.
 	Variables []string `json:"variables,omitzero"`
 	paramObj
@@ -195,9 +195,9 @@ func (r PromptGetParams) URLQuery() (v url.Values, err error) {
 
 type PromptUpdateParams struct {
 	// The updated prompt text content.
-	Prompt string `json:"prompt,required"`
+	Prompt string `json:"prompt" api:"required"`
 	// The current version of the prompt being updated.
-	Version int64 `json:"version,required"`
+	Version int64 `json:"version" api:"required"`
 	// Set the new version as the default (default=True).
 	SetAsDefault param.Opt[bool] `json:"set_as_default,omitzero"`
 	// Updated list of variable names that can be used in the prompt template.
@@ -215,7 +215,7 @@ func (r *PromptUpdateParams) UnmarshalJSON(data []byte) error {
 
 type PromptSetDefaultVersionParams struct {
 	// The version to set as default.
-	Version int64 `json:"version,required"`
+	Version int64 `json:"version" api:"required"`
 	paramObj
 }
 

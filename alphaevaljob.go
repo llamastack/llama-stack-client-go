@@ -88,16 +88,16 @@ func (r *AlphaEvalJobService) Status(ctx context.Context, jobID string, query Al
 }
 
 type AlphaEvalJobGetParams struct {
-	BenchmarkID string `path:"benchmark_id,required" json:"-"`
+	BenchmarkID string `path:"benchmark_id" api:"required" json:"-"`
 	paramObj
 }
 
 type AlphaEvalJobCancelParams struct {
-	BenchmarkID string `path:"benchmark_id,required" json:"-"`
+	BenchmarkID string `path:"benchmark_id" api:"required" json:"-"`
 	paramObj
 }
 
 type AlphaEvalJobStatusParams struct {
-	BenchmarkID string `path:"benchmark_id,required" json:"-"`
+	BenchmarkID string `path:"benchmark_id" api:"required" json:"-"`
 	paramObj
 }

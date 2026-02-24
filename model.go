@@ -96,7 +96,7 @@ func (r *ModelService) Unregister(ctx context.Context, modelID string, opts ...o
 // Response containing a list of OpenAI model objects.
 type ListModelsResponse struct {
 	// List of OpenAI model objects.
-	Data []Model `json:"data,required"`
+	Data []Model `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -118,10 +118,10 @@ func (r *ListModelsResponse) UnmarshalJSON(data []byte) error {
 // The owner of the model :custom_metadata: Llama Stack-specific metadata including
 // model_type, provider info, and additional metadata
 type Model struct {
-	ID             string         `json:"id,required"`
-	Created        int64          `json:"created,required"`
-	OwnedBy        string         `json:"owned_by,required"`
-	CustomMetadata map[string]any `json:"custom_metadata,nullable"`
+	ID             string         `json:"id" api:"required"`
+	Created        int64          `json:"created" api:"required"`
+	OwnedBy        string         `json:"owned_by" api:"required"`
+	CustomMetadata map[string]any `json:"custom_metadata" api:"nullable"`
 	// Any of "model".
 	Object ModelObject `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -151,9 +151,9 @@ const (
 // A model resource representing an AI model registered in Llama Stack.
 type ModelGetResponse struct {
 	// Unique identifier for this resource in llama stack
-	Identifier string `json:"identifier,required"`
+	Identifier string `json:"identifier" api:"required"`
 	// ID of the provider that owns this resource
-	ProviderID string `json:"provider_id,required"`
+	ProviderID string `json:"provider_id" api:"required"`
 	// Any additional metadata for this model
 	Metadata map[string]any `json:"metadata"`
 	// Enumeration of supported model types in Llama Stack.
@@ -161,7 +161,7 @@ type ModelGetResponse struct {
 	// Any of "llm", "embedding", "rerank".
 	ModelType ModelGetResponseModelType `json:"model_type"`
 	// Unique identifier for this resource in the provider
-	ProviderResourceID string `json:"provider_resource_id,nullable"`
+	ProviderResourceID string `json:"provider_resource_id" api:"nullable"`
 	// Any of "model".
 	Type ModelGetResponseType `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -201,9 +201,9 @@ const (
 // A model resource representing an AI model registered in Llama Stack.
 type ModelRegisterResponse struct {
 	// Unique identifier for this resource in llama stack
-	Identifier string `json:"identifier,required"`
+	Identifier string `json:"identifier" api:"required"`
 	// ID of the provider that owns this resource
-	ProviderID string `json:"provider_id,required"`
+	ProviderID string `json:"provider_id" api:"required"`
 	// Any additional metadata for this model
 	Metadata map[string]any `json:"metadata"`
 	// Enumeration of supported model types in Llama Stack.
@@ -211,7 +211,7 @@ type ModelRegisterResponse struct {
 	// Any of "llm", "embedding", "rerank".
 	ModelType ModelRegisterResponseModelType `json:"model_type"`
 	// Unique identifier for this resource in the provider
-	ProviderResourceID string `json:"provider_resource_id,nullable"`
+	ProviderResourceID string `json:"provider_resource_id" api:"nullable"`
 	// Any of "model".
 	Type ModelRegisterResponseType `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -250,7 +250,7 @@ const (
 
 type ModelRegisterParams struct {
 	// The identifier of the model to register.
-	ModelID string `json:"model_id,required"`
+	ModelID string `json:"model_id" api:"required"`
 	// The identifier of the provider.
 	ProviderID param.Opt[string] `json:"provider_id,omitzero"`
 	// The identifier of the model in the provider.

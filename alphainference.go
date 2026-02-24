@@ -55,10 +55,10 @@ func (r *AlphaInferenceService) Rerank(ctx context.Context, body AlphaInferenceR
 // A single rerank result from a reranking response.
 type AlphaInferenceRerankResponse struct {
 	// The original index of the document in the input list.
-	Index int64 `json:"index,required"`
+	Index int64 `json:"index" api:"required"`
 	// The relevance score from the model output. Higher scores indicate greater
 	// relevance.
-	RelevanceScore float64 `json:"relevance_score,required"`
+	RelevanceScore float64 `json:"relevance_score" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Index          respjson.Field
@@ -77,12 +77,12 @@ func (r *AlphaInferenceRerankResponse) UnmarshalJSON(data []byte) error {
 type AlphaInferenceRerankParams struct {
 	// List of items to rerank. Each item can be a string, text content part, or image
 	// content part.
-	Items []AlphaInferenceRerankParamsItemUnion `json:"items,omitzero,required"`
+	Items []AlphaInferenceRerankParamsItemUnion `json:"items,omitzero" api:"required"`
 	// The identifier of the reranking model to use.
-	Model string `json:"model,required"`
+	Model string `json:"model" api:"required"`
 	// The search query to rank items against. Can be a string, text content part, or
 	// image content part.
-	Query AlphaInferenceRerankParamsQueryUnion `json:"query,omitzero,required"`
+	Query AlphaInferenceRerankParamsQueryUnion `json:"query,omitzero" api:"required"`
 	// Maximum number of results to return. Default: returns all.
 	MaxNumResults param.Opt[int64] `json:"max_num_results,omitzero"`
 	paramObj
@@ -155,7 +155,7 @@ func (u AlphaInferenceRerankParamsItemUnion) GetType() *string {
 // The property Text is required.
 type AlphaInferenceRerankParamsItemOpenAIChatCompletionContentPartTextParam struct {
 	// The text content of the message.
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Must be 'text' to identify this as text content.
 	//
 	// Any of "text".
@@ -182,7 +182,7 @@ func init() {
 // The property ImageURL is required.
 type AlphaInferenceRerankParamsItemOpenAIChatCompletionContentPartImageParam struct {
 	// Image URL specification and processing details.
-	ImageURL AlphaInferenceRerankParamsItemOpenAIChatCompletionContentPartImageParamImageURL `json:"image_url,omitzero,required"`
+	ImageURL AlphaInferenceRerankParamsItemOpenAIChatCompletionContentPartImageParamImageURL `json:"image_url,omitzero" api:"required"`
 	// Must be 'image_url' to identify this as image content.
 	//
 	// Any of "image_url".
@@ -209,7 +209,7 @@ func init() {
 // The property URL is required.
 type AlphaInferenceRerankParamsItemOpenAIChatCompletionContentPartImageParamImageURL struct {
 	// URL of the image to include in the message.
-	URL string `json:"url,required"`
+	URL string `json:"url" api:"required"`
 	// Level of detail for image processing. Can be 'low', 'high', or 'auto'.
 	//
 	// Any of "low", "high", "auto".
@@ -290,7 +290,7 @@ func (u AlphaInferenceRerankParamsQueryUnion) GetType() *string {
 // The property Text is required.
 type AlphaInferenceRerankParamsQueryOpenAIChatCompletionContentPartTextParam struct {
 	// The text content of the message.
-	Text string `json:"text,required"`
+	Text string `json:"text" api:"required"`
 	// Must be 'text' to identify this as text content.
 	//
 	// Any of "text".
@@ -317,7 +317,7 @@ func init() {
 // The property ImageURL is required.
 type AlphaInferenceRerankParamsQueryOpenAIChatCompletionContentPartImageParam struct {
 	// Image URL specification and processing details.
-	ImageURL AlphaInferenceRerankParamsQueryOpenAIChatCompletionContentPartImageParamImageURL `json:"image_url,omitzero,required"`
+	ImageURL AlphaInferenceRerankParamsQueryOpenAIChatCompletionContentPartImageParamImageURL `json:"image_url,omitzero" api:"required"`
 	// Must be 'image_url' to identify this as image content.
 	//
 	// Any of "image_url".
@@ -344,7 +344,7 @@ func init() {
 // The property URL is required.
 type AlphaInferenceRerankParamsQueryOpenAIChatCompletionContentPartImageParamImageURL struct {
 	// URL of the image to include in the message.
-	URL string `json:"url,required"`
+	URL string `json:"url" api:"required"`
 	// Level of detail for image processing. Can be 'low', 'high', or 'auto'.
 	//
 	// Any of "low", "high", "auto".
@@ -369,7 +369,7 @@ func init() {
 // Response from a reranking request.
 type AlphaInferenceRerankResponseEnvelope struct {
 	// List of rerank result objects, sorted by relevance score (descending).
-	Data []AlphaInferenceRerankResponse `json:"data,required"`
+	Data []AlphaInferenceRerankResponse `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field

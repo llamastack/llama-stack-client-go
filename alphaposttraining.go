@@ -58,7 +58,7 @@ func (r *AlphaPostTrainingService) SupervisedFineTune(ctx context.Context, body 
 }
 
 type ListPostTrainingJobsResponse struct {
-	Data []PostTrainingJob `json:"data,required"`
+	Data []PostTrainingJob `json:"data" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -74,7 +74,7 @@ func (r *ListPostTrainingJobsResponse) UnmarshalJSON(data []byte) error {
 }
 
 type PostTrainingJob struct {
-	JobUuid string `json:"job_uuid,required"`
+	JobUuid string `json:"job_uuid" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		JobUuid     respjson.Field
@@ -91,17 +91,17 @@ func (r *PostTrainingJob) UnmarshalJSON(data []byte) error {
 
 type AlphaPostTrainingPreferenceOptimizeParams struct {
 	// The algorithm configuration.
-	AlgorithmConfig AlphaPostTrainingPreferenceOptimizeParamsAlgorithmConfig `json:"algorithm_config,omitzero,required"`
+	AlgorithmConfig AlphaPostTrainingPreferenceOptimizeParamsAlgorithmConfig `json:"algorithm_config,omitzero" api:"required"`
 	// The model to fine-tune.
-	FinetunedModel string `json:"finetuned_model,required"`
+	FinetunedModel string `json:"finetuned_model" api:"required"`
 	// The hyperparam search configuration.
-	HyperparamSearchConfig map[string]any `json:"hyperparam_search_config,omitzero,required"`
+	HyperparamSearchConfig map[string]any `json:"hyperparam_search_config,omitzero" api:"required"`
 	// The UUID of the job to create.
-	JobUuid string `json:"job_uuid,required"`
+	JobUuid string `json:"job_uuid" api:"required"`
 	// The logger configuration.
-	LoggerConfig map[string]any `json:"logger_config,omitzero,required"`
+	LoggerConfig map[string]any `json:"logger_config,omitzero" api:"required"`
 	// The training configuration.
-	TrainingConfig AlphaPostTrainingPreferenceOptimizeParamsTrainingConfig `json:"training_config,omitzero,required"`
+	TrainingConfig AlphaPostTrainingPreferenceOptimizeParamsTrainingConfig `json:"training_config,omitzero" api:"required"`
 	paramObj
 }
 
@@ -117,7 +117,7 @@ func (r *AlphaPostTrainingPreferenceOptimizeParams) UnmarshalJSON(data []byte) e
 //
 // The property Beta is required.
 type AlphaPostTrainingPreferenceOptimizeParamsAlgorithmConfig struct {
-	Beta float64 `json:"beta,required"`
+	Beta float64 `json:"beta" api:"required"`
 	// Any of "sigmoid", "hinge", "ipo", "kto_pair".
 	LossType string `json:"loss_type,omitzero"`
 	paramObj
@@ -141,7 +141,7 @@ func init() {
 //
 // The property NEpochs is required.
 type AlphaPostTrainingPreferenceOptimizeParamsTrainingConfig struct {
-	NEpochs                   int64             `json:"n_epochs,required"`
+	NEpochs                   int64             `json:"n_epochs" api:"required"`
 	Dtype                     param.Opt[string] `json:"dtype,omitzero"`
 	MaxValidationSteps        param.Opt[int64]  `json:"max_validation_steps,omitzero"`
 	GradientAccumulationSteps param.Opt[int64]  `json:"gradient_accumulation_steps,omitzero"`
@@ -167,13 +167,13 @@ func (r *AlphaPostTrainingPreferenceOptimizeParamsTrainingConfig) UnmarshalJSON(
 //
 // The properties BatchSize, DataFormat, DatasetID, Shuffle are required.
 type AlphaPostTrainingPreferenceOptimizeParamsTrainingConfigDataConfig struct {
-	BatchSize int64 `json:"batch_size,required"`
+	BatchSize int64 `json:"batch_size" api:"required"`
 	// Format of the training dataset.
 	//
 	// Any of "instruct", "dialog".
-	DataFormat          string            `json:"data_format,omitzero,required"`
-	DatasetID           string            `json:"dataset_id,required"`
-	Shuffle             bool              `json:"shuffle,required"`
+	DataFormat          string            `json:"data_format,omitzero" api:"required"`
+	DatasetID           string            `json:"dataset_id" api:"required"`
+	Shuffle             bool              `json:"shuffle" api:"required"`
 	Packed              param.Opt[bool]   `json:"packed,omitzero"`
 	TrainOnInput        param.Opt[bool]   `json:"train_on_input,omitzero"`
 	ValidationDatasetID param.Opt[string] `json:"validation_dataset_id,omitzero"`
@@ -215,13 +215,13 @@ func (r *AlphaPostTrainingPreferenceOptimizeParamsTrainingConfigEfficiencyConfig
 //
 // The properties Lr, NumWarmupSteps, OptimizerType, WeightDecay are required.
 type AlphaPostTrainingPreferenceOptimizeParamsTrainingConfigOptimizerConfig struct {
-	Lr             float64 `json:"lr,required"`
-	NumWarmupSteps int64   `json:"num_warmup_steps,required"`
+	Lr             float64 `json:"lr" api:"required"`
+	NumWarmupSteps int64   `json:"num_warmup_steps" api:"required"`
 	// Available optimizer algorithms for training.
 	//
 	// Any of "adam", "adamw", "sgd".
-	OptimizerType string  `json:"optimizer_type,omitzero,required"`
-	WeightDecay   float64 `json:"weight_decay,required"`
+	OptimizerType string  `json:"optimizer_type,omitzero" api:"required"`
+	WeightDecay   float64 `json:"weight_decay" api:"required"`
 	paramObj
 }
 
@@ -241,13 +241,13 @@ func init() {
 
 type AlphaPostTrainingSupervisedFineTuneParams struct {
 	// The hyperparam search configuration.
-	HyperparamSearchConfig map[string]any `json:"hyperparam_search_config,omitzero,required"`
+	HyperparamSearchConfig map[string]any `json:"hyperparam_search_config,omitzero" api:"required"`
 	// The UUID of the job to create.
-	JobUuid string `json:"job_uuid,required"`
+	JobUuid string `json:"job_uuid" api:"required"`
 	// The logger configuration.
-	LoggerConfig map[string]any `json:"logger_config,omitzero,required"`
+	LoggerConfig map[string]any `json:"logger_config,omitzero" api:"required"`
 	// The training configuration.
-	TrainingConfig AlphaPostTrainingSupervisedFineTuneParamsTrainingConfig `json:"training_config,omitzero,required"`
+	TrainingConfig AlphaPostTrainingSupervisedFineTuneParamsTrainingConfig `json:"training_config,omitzero" api:"required"`
 	// The directory to save checkpoint(s) to.
 	CheckpointDir param.Opt[string] `json:"checkpoint_dir,omitzero"`
 	// Model descriptor for training if not in provider config
@@ -269,7 +269,7 @@ func (r *AlphaPostTrainingSupervisedFineTuneParams) UnmarshalJSON(data []byte) e
 //
 // The property NEpochs is required.
 type AlphaPostTrainingSupervisedFineTuneParamsTrainingConfig struct {
-	NEpochs                   int64             `json:"n_epochs,required"`
+	NEpochs                   int64             `json:"n_epochs" api:"required"`
 	Dtype                     param.Opt[string] `json:"dtype,omitzero"`
 	MaxValidationSteps        param.Opt[int64]  `json:"max_validation_steps,omitzero"`
 	GradientAccumulationSteps param.Opt[int64]  `json:"gradient_accumulation_steps,omitzero"`
@@ -295,13 +295,13 @@ func (r *AlphaPostTrainingSupervisedFineTuneParamsTrainingConfig) UnmarshalJSON(
 //
 // The properties BatchSize, DataFormat, DatasetID, Shuffle are required.
 type AlphaPostTrainingSupervisedFineTuneParamsTrainingConfigDataConfig struct {
-	BatchSize int64 `json:"batch_size,required"`
+	BatchSize int64 `json:"batch_size" api:"required"`
 	// Format of the training dataset.
 	//
 	// Any of "instruct", "dialog".
-	DataFormat          string            `json:"data_format,omitzero,required"`
-	DatasetID           string            `json:"dataset_id,required"`
-	Shuffle             bool              `json:"shuffle,required"`
+	DataFormat          string            `json:"data_format,omitzero" api:"required"`
+	DatasetID           string            `json:"dataset_id" api:"required"`
+	Shuffle             bool              `json:"shuffle" api:"required"`
 	Packed              param.Opt[bool]   `json:"packed,omitzero"`
 	TrainOnInput        param.Opt[bool]   `json:"train_on_input,omitzero"`
 	ValidationDatasetID param.Opt[string] `json:"validation_dataset_id,omitzero"`
@@ -343,13 +343,13 @@ func (r *AlphaPostTrainingSupervisedFineTuneParamsTrainingConfigEfficiencyConfig
 //
 // The properties Lr, NumWarmupSteps, OptimizerType, WeightDecay are required.
 type AlphaPostTrainingSupervisedFineTuneParamsTrainingConfigOptimizerConfig struct {
-	Lr             float64 `json:"lr,required"`
-	NumWarmupSteps int64   `json:"num_warmup_steps,required"`
+	Lr             float64 `json:"lr" api:"required"`
+	NumWarmupSteps int64   `json:"num_warmup_steps" api:"required"`
 	// Available optimizer algorithms for training.
 	//
 	// Any of "adam", "adamw", "sgd".
-	OptimizerType string  `json:"optimizer_type,omitzero,required"`
-	WeightDecay   float64 `json:"weight_decay,required"`
+	OptimizerType string  `json:"optimizer_type,omitzero" api:"required"`
+	WeightDecay   float64 `json:"weight_decay" api:"required"`
 	paramObj
 }
 
@@ -487,11 +487,11 @@ func init() {
 // The properties Alpha, ApplyLoraToMlp, ApplyLoraToOutput, LoraAttnModules, Rank
 // are required.
 type AlphaPostTrainingSupervisedFineTuneParamsAlgorithmConfigLoRa struct {
-	Alpha             int64           `json:"alpha,required"`
-	ApplyLoraToMlp    bool            `json:"apply_lora_to_mlp,required"`
-	ApplyLoraToOutput bool            `json:"apply_lora_to_output,required"`
-	LoraAttnModules   []string        `json:"lora_attn_modules,omitzero,required"`
-	Rank              int64           `json:"rank,required"`
+	Alpha             int64           `json:"alpha" api:"required"`
+	ApplyLoraToMlp    bool            `json:"apply_lora_to_mlp" api:"required"`
+	ApplyLoraToOutput bool            `json:"apply_lora_to_output" api:"required"`
+	LoraAttnModules   []string        `json:"lora_attn_modules,omitzero" api:"required"`
+	Rank              int64           `json:"rank" api:"required"`
 	QuantizeBase      param.Opt[bool] `json:"quantize_base,omitzero"`
 	UseDora           param.Opt[bool] `json:"use_dora,omitzero"`
 	// Any of "LoRA".
@@ -517,8 +517,8 @@ func init() {
 //
 // The properties GroupSize, QuantizerName are required.
 type AlphaPostTrainingSupervisedFineTuneParamsAlgorithmConfigQat struct {
-	GroupSize     int64  `json:"group_size,required"`
-	QuantizerName string `json:"quantizer_name,required"`
+	GroupSize     int64  `json:"group_size" api:"required"`
+	QuantizerName string `json:"quantizer_name" api:"required"`
 	// Any of "QAT".
 	Type string `json:"type,omitzero"`
 	paramObj

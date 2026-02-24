@@ -38,21 +38,21 @@ func NewChatService(opts ...option.RequestOption) (r ChatService) {
 // Chunk from a streaming response to an OpenAI-compatible chat completion request.
 type ChatCompletionChunk struct {
 	// The ID of the chat completion.
-	ID string `json:"id,required"`
+	ID string `json:"id" api:"required"`
 	// List of choices.
-	Choices []ChatCompletionChunkChoice `json:"choices,required"`
+	Choices []ChatCompletionChunkChoice `json:"choices" api:"required"`
 	// The Unix timestamp in seconds when the chat completion was created.
-	Created int64 `json:"created,required"`
+	Created int64 `json:"created" api:"required"`
 	// The model that was used to generate the chat completion.
-	Model string `json:"model,required"`
+	Model string `json:"model" api:"required"`
 	// The object type.
 	//
 	// Any of "chat.completion.chunk".
 	Object ChatCompletionChunkObject `json:"object"`
 	// The service tier that was used for this response.
-	ServiceTier string `json:"service_tier,nullable"`
+	ServiceTier string `json:"service_tier" api:"nullable"`
 	// Token usage information (typically included in final chunk with stream_options).
-	Usage ChatCompletionChunkUsage `json:"usage,nullable"`
+	Usage ChatCompletionChunkUsage `json:"usage" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -76,16 +76,16 @@ func (r *ChatCompletionChunk) UnmarshalJSON(data []byte) error {
 // A chunk choice from an OpenAI-compatible chat completion streaming response.
 type ChatCompletionChunkChoice struct {
 	// The delta from the chunk.
-	Delta ChatCompletionChunkChoiceDelta `json:"delta,required"`
+	Delta ChatCompletionChunkChoiceDelta `json:"delta" api:"required"`
 	// The index of the choice.
-	Index int64 `json:"index,required"`
+	Index int64 `json:"index" api:"required"`
 	// The reason the model stopped generating.
 	//
 	// Any of "stop", "length", "tool_calls", "content_filter", "function_call".
-	FinishReason string `json:"finish_reason,nullable"`
+	FinishReason string `json:"finish_reason" api:"nullable"`
 	// The log probabilities for the tokens in the message from an OpenAI-compatible
 	// chat completion response.
-	Logprobs ChatCompletionChunkChoiceLogprobs `json:"logprobs,nullable"`
+	Logprobs ChatCompletionChunkChoiceLogprobs `json:"logprobs" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Delta        respjson.Field
@@ -106,15 +106,15 @@ func (r *ChatCompletionChunkChoice) UnmarshalJSON(data []byte) error {
 // The delta from the chunk.
 type ChatCompletionChunkChoiceDelta struct {
 	// The content of the delta.
-	Content string `json:"content,nullable"`
+	Content string `json:"content" api:"nullable"`
 	// The reasoning content from the model (for o1/o3 models).
-	ReasoningContent string `json:"reasoning_content,nullable"`
+	ReasoningContent string `json:"reasoning_content" api:"nullable"`
 	// The refusal of the delta.
-	Refusal string `json:"refusal,nullable"`
+	Refusal string `json:"refusal" api:"nullable"`
 	// The role of the delta.
-	Role string `json:"role,nullable"`
+	Role string `json:"role" api:"nullable"`
 	// The tool calls of the delta.
-	ToolCalls []ChatCompletionChunkChoiceDeltaToolCall `json:"tool_calls,nullable"`
+	ToolCalls []ChatCompletionChunkChoiceDeltaToolCall `json:"tool_calls" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Content          respjson.Field
@@ -136,11 +136,11 @@ func (r *ChatCompletionChunkChoiceDelta) UnmarshalJSON(data []byte) error {
 // Tool call specification for OpenAI-compatible chat completion responses.
 type ChatCompletionChunkChoiceDeltaToolCall struct {
 	// Unique identifier for the tool call.
-	ID string `json:"id,nullable"`
+	ID string `json:"id" api:"nullable"`
 	// Function call details for OpenAI-compatible tool calls.
-	Function ChatCompletionChunkChoiceDeltaToolCallFunction `json:"function,nullable"`
+	Function ChatCompletionChunkChoiceDeltaToolCallFunction `json:"function" api:"nullable"`
 	// Index of the tool call in the list.
-	Index int64 `json:"index,nullable"`
+	Index int64 `json:"index" api:"nullable"`
 	// Must be 'function' to identify this as a function call.
 	//
 	// Any of "function".
@@ -165,9 +165,9 @@ func (r *ChatCompletionChunkChoiceDeltaToolCall) UnmarshalJSON(data []byte) erro
 // Function call details for OpenAI-compatible tool calls.
 type ChatCompletionChunkChoiceDeltaToolCallFunction struct {
 	// Arguments to pass to the function as a JSON string.
-	Arguments string `json:"arguments,nullable"`
+	Arguments string `json:"arguments" api:"nullable"`
 	// Name of the function to call.
-	Name string `json:"name,nullable"`
+	Name string `json:"name" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments   respjson.Field
@@ -187,9 +187,9 @@ func (r *ChatCompletionChunkChoiceDeltaToolCallFunction) UnmarshalJSON(data []by
 // chat completion response.
 type ChatCompletionChunkChoiceLogprobs struct {
 	// The log probabilities for the tokens in the message.
-	Content []ChatCompletionChunkChoiceLogprobsContent `json:"content,nullable"`
+	Content []ChatCompletionChunkChoiceLogprobsContent `json:"content" api:"nullable"`
 	// The log probabilities for the refusal tokens.
-	Refusal []ChatCompletionChunkChoiceLogprobsRefusal `json:"refusal,nullable"`
+	Refusal []ChatCompletionChunkChoiceLogprobsRefusal `json:"refusal" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Content     respjson.Field
@@ -209,13 +209,13 @@ func (r *ChatCompletionChunkChoiceLogprobs) UnmarshalJSON(data []byte) error {
 // response.
 type ChatCompletionChunkChoiceLogprobsContent struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
-	Bytes []int64 `json:"bytes,nullable"`
+	Bytes []int64 `json:"bytes" api:"nullable"`
 	// The top log probabilities for the token.
-	TopLogprobs []ChatCompletionChunkChoiceLogprobsContentTopLogprob `json:"top_logprobs,nullable"`
+	TopLogprobs []ChatCompletionChunkChoiceLogprobsContentTopLogprob `json:"top_logprobs" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -237,11 +237,11 @@ func (r *ChatCompletionChunkChoiceLogprobsContent) UnmarshalJSON(data []byte) er
 // response.
 type ChatCompletionChunkChoiceLogprobsContentTopLogprob struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
-	Bytes []int64 `json:"bytes,nullable"`
+	Bytes []int64 `json:"bytes" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -262,13 +262,13 @@ func (r *ChatCompletionChunkChoiceLogprobsContentTopLogprob) UnmarshalJSON(data 
 // response.
 type ChatCompletionChunkChoiceLogprobsRefusal struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
-	Bytes []int64 `json:"bytes,nullable"`
+	Bytes []int64 `json:"bytes" api:"nullable"`
 	// The top log probabilities for the token.
-	TopLogprobs []ChatCompletionChunkChoiceLogprobsRefusalTopLogprob `json:"top_logprobs,nullable"`
+	TopLogprobs []ChatCompletionChunkChoiceLogprobsRefusalTopLogprob `json:"top_logprobs" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
@@ -290,11 +290,11 @@ func (r *ChatCompletionChunkChoiceLogprobsRefusal) UnmarshalJSON(data []byte) er
 // response.
 type ChatCompletionChunkChoiceLogprobsRefusalTopLogprob struct {
 	// The token.
-	Token string `json:"token,required"`
+	Token string `json:"token" api:"required"`
 	// The log probability of the token.
-	Logprob float64 `json:"logprob,required"`
+	Logprob float64 `json:"logprob" api:"required"`
 	// The bytes for the token.
-	Bytes []int64 `json:"bytes,nullable"`
+	Bytes []int64 `json:"bytes" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Token       respjson.Field
