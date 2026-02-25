@@ -151,10 +151,11 @@ type ResponseObject struct {
 	// Text response configuration for OpenAI responses.
 	Text ResponseObjectText `json:"text"`
 	// Constrains the tools available to the model to a pre-defined set.
-	ToolChoice ResponseObjectToolChoiceUnion `json:"tool_choice" api:"nullable"`
-	Tools      []ResponseObjectToolUnion     `json:"tools" api:"nullable"`
-	TopP       float64                       `json:"top_p" api:"nullable"`
-	Truncation string                        `json:"truncation" api:"nullable"`
+	ToolChoice  ResponseObjectToolChoiceUnion `json:"tool_choice" api:"nullable"`
+	Tools       []ResponseObjectToolUnion     `json:"tools" api:"nullable"`
+	TopLogprobs int64                         `json:"top_logprobs" api:"nullable"`
+	TopP        float64                       `json:"top_p" api:"nullable"`
+	Truncation  string                        `json:"truncation" api:"nullable"`
 	// Usage information for OpenAI response.
 	Usage ResponseObjectUsage `json:"usage" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -185,6 +186,7 @@ type ResponseObject struct {
 		Text               respjson.Field
 		ToolChoice         respjson.Field
 		Tools              respjson.Field
+		TopLogprobs        respjson.Field
 		TopP               respjson.Field
 		Truncation         respjson.Field
 		Usage              respjson.Field
@@ -7024,10 +7026,11 @@ type ResponseListResponse struct {
 	// Text response configuration for OpenAI responses.
 	Text ResponseListResponseText `json:"text"`
 	// Constrains the tools available to the model to a pre-defined set.
-	ToolChoice ResponseListResponseToolChoiceUnion `json:"tool_choice" api:"nullable"`
-	Tools      []ResponseListResponseToolUnion     `json:"tools" api:"nullable"`
-	TopP       float64                             `json:"top_p" api:"nullable"`
-	Truncation string                              `json:"truncation" api:"nullable"`
+	ToolChoice  ResponseListResponseToolChoiceUnion `json:"tool_choice" api:"nullable"`
+	Tools       []ResponseListResponseToolUnion     `json:"tools" api:"nullable"`
+	TopLogprobs int64                               `json:"top_logprobs" api:"nullable"`
+	TopP        float64                             `json:"top_p" api:"nullable"`
+	Truncation  string                              `json:"truncation" api:"nullable"`
 	// Usage information for OpenAI response.
 	Usage ResponseListResponseUsage `json:"usage" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -7059,6 +7062,7 @@ type ResponseListResponse struct {
 		Text               respjson.Field
 		ToolChoice         respjson.Field
 		Tools              respjson.Field
+		TopLogprobs        respjson.Field
 		TopP               respjson.Field
 		Truncation         respjson.Field
 		Usage              respjson.Field
@@ -10098,6 +10102,9 @@ type ResponseNewParams struct {
 	Store param.Opt[bool] `json:"store,omitzero"`
 	// Sampling temperature.
 	Temperature param.Opt[float64] `json:"temperature,omitzero"`
+	// The number of most likely tokens to return at each position, along with their
+	// log probabilities.
+	TopLogprobs param.Opt[int64] `json:"top_logprobs,omitzero"`
 	// Nucleus sampling parameter that controls response diversity (lower values
 	// increase focus).
 	TopP param.Opt[float64] `json:"top_p,omitzero"`

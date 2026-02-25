@@ -3007,7 +3007,7 @@ type ChatCompletionNewParams struct {
 	Seed param.Opt[int64] `json:"seed,omitzero"`
 	// The temperature to use.
 	Temperature param.Opt[float64] `json:"temperature,omitzero"`
-	// The top log probabilities to use.
+	// The number of most likely tokens to return at each position.
 	TopLogprobs param.Opt[int64] `json:"top_logprobs,omitzero"`
 	// The top p to use.
 	TopP param.Opt[float64] `json:"top_p,omitzero"`
