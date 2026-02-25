@@ -127,7 +127,8 @@ type ResponseObject struct {
 	Background  bool                        `json:"background"`
 	CompletedAt int64                       `json:"completed_at" api:"nullable"`
 	// Error details for failed OpenAI response requests.
-	Error ResponseObjectError `json:"error" api:"nullable"`
+	Error            ResponseObjectError `json:"error" api:"nullable"`
+	FrequencyPenalty float64             `json:"frequency_penalty" api:"nullable"`
 	// Details explaining why a response was incomplete.
 	IncompleteDetails ResponseObjectIncompleteDetails `json:"incomplete_details" api:"nullable"`
 	Instructions      string                          `json:"instructions" api:"nullable"`
@@ -169,6 +170,7 @@ type ResponseObject struct {
 		Background         respjson.Field
 		CompletedAt        respjson.Field
 		Error              respjson.Field
+		FrequencyPenalty   respjson.Field
 		IncompleteDetails  respjson.Field
 		Instructions       respjson.Field
 		MaxOutputTokens    respjson.Field
@@ -7002,7 +7004,8 @@ type ResponseListResponse struct {
 	Background  bool                              `json:"background"`
 	CompletedAt int64                             `json:"completed_at" api:"nullable"`
 	// Error details for failed OpenAI response requests.
-	Error ResponseListResponseError `json:"error" api:"nullable"`
+	Error            ResponseListResponseError `json:"error" api:"nullable"`
+	FrequencyPenalty float64                   `json:"frequency_penalty" api:"nullable"`
 	// Details explaining why a response was incomplete.
 	IncompleteDetails ResponseListResponseIncompleteDetails `json:"incomplete_details" api:"nullable"`
 	Instructions      string                                `json:"instructions" api:"nullable"`
@@ -7045,6 +7048,7 @@ type ResponseListResponse struct {
 		Background         respjson.Field
 		CompletedAt        respjson.Field
 		Error              respjson.Field
+		FrequencyPenalty   respjson.Field
 		IncompleteDetails  respjson.Field
 		Instructions       respjson.Field
 		MaxOutputTokens    respjson.Field
@@ -10082,6 +10086,8 @@ type ResponseNewParams struct {
 	Model string `json:"model" api:"required"`
 	// Optional ID of a conversation to add the response to.
 	Conversation param.Opt[string] `json:"conversation,omitzero"`
+	// Penalizes new tokens based on their frequency in the text so far.
+	FrequencyPenalty param.Opt[float64] `json:"frequency_penalty,omitzero"`
 	// Instructions to guide the model's behavior.
 	Instructions param.Opt[string] `json:"instructions,omitzero"`
 	// Maximum number of inference iterations.

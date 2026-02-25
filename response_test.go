@@ -34,9 +34,10 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 		Input: llamastackclient.ResponseNewParamsInputUnion{
 			OfString: llamastackclient.String("string"),
 		},
-		Model:        "model",
-		Background:   llamastackclient.Bool(true),
-		Conversation: llamastackclient.String("conversation"),
+		Model:            "model",
+		Background:       llamastackclient.Bool(true),
+		Conversation:     llamastackclient.String("conversation"),
+		FrequencyPenalty: llamastackclient.Float(-2),
 		Guardrails: []llamastackclient.ResponseNewParamsGuardrailUnion{{
 			OfString: llamastackclient.String("string"),
 		}},
