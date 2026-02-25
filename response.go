@@ -2130,7 +2130,8 @@ func (r *ResponseObjectUsageOutputTokensDetails) UnmarshalJSON(data []byte) erro
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type ResponseObjectStreamUnion struct {
 	// This field is from variant [ResponseObjectStreamResponseCreated].
-	Response ResponseObject `json:"response"`
+	Response       ResponseObject `json:"response"`
+	SequenceNumber int64          `json:"sequence_number"`
 	// Any of "response.created", "response.in_progress", "response.output_item.added",
 	// "response.output_item.done", "response.output_text.delta",
 	// "response.output_text.done", "response.function_call_arguments.delta",
@@ -2149,8 +2150,7 @@ type ResponseObjectStreamUnion struct {
 	// "response.file_search_call.in_progress", "response.file_search_call.searching",
 	// "response.file_search_call.completed", "response.incomplete", "response.failed",
 	// "response.completed".
-	Type           string `json:"type"`
-	SequenceNumber int64  `json:"sequence_number"`
+	Type string `json:"type"`
 	// This field is a union of [ResponseObjectStreamResponseOutputItemAddedItemUnion],
 	// [ResponseObjectStreamResponseOutputItemDoneItemUnion]
 	Item         ResponseObjectStreamUnionItem `json:"item"`
@@ -2180,8 +2180,8 @@ type ResponseObjectStreamUnion struct {
 	AnnotationIndex int64 `json:"annotation_index"`
 	JSON            struct {
 		Response        respjson.Field
-		Type            respjson.Field
 		SequenceNumber  respjson.Field
+		Type            respjson.Field
 		Item            respjson.Field
 		OutputIndex     respjson.Field
 		ResponseID      respjson.Field
@@ -2783,15 +2783,17 @@ func (r *ResponseObjectStreamUnionPartLogprobs) UnmarshalJSON(data []byte) error
 // Streaming event indicating a new response has been created.
 type ResponseObjectStreamResponseCreated struct {
 	// Complete OpenAI response object containing generation results and metadata.
-	Response ResponseObject `json:"response" api:"required"`
+	Response       ResponseObject `json:"response" api:"required"`
+	SequenceNumber int64          `json:"sequence_number" api:"required"`
 	// Any of "response.created".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Response    respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		Response       respjson.Field
+		SequenceNumber respjson.Field
+		Type           respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
 	} `json:"-"`
 }
 
@@ -6976,15 +6978,17 @@ func (r *ResponseObjectStreamResponseFailed) UnmarshalJSON(data []byte) error {
 // Streaming event indicating a response has been completed.
 type ResponseObjectStreamResponseCompleted struct {
 	// Complete OpenAI response object containing generation results and metadata.
-	Response ResponseObject `json:"response" api:"required"`
+	Response       ResponseObject `json:"response" api:"required"`
+	SequenceNumber int64          `json:"sequence_number" api:"required"`
 	// Any of "response.completed".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Response    respjson.Field
-		Type        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		Response       respjson.Field
+		SequenceNumber respjson.Field
+		Type           respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
 	} `json:"-"`
 }
 
