@@ -138,6 +138,7 @@ type ResponseObject struct {
 	// Any of "response".
 	Object             ResponseObjectObject `json:"object"`
 	ParallelToolCalls  bool                 `json:"parallel_tool_calls" api:"nullable"`
+	PresencePenalty    float64              `json:"presence_penalty" api:"nullable"`
 	PreviousResponseID string               `json:"previous_response_id" api:"nullable"`
 	// OpenAI compatible Prompt object that is used in OpenAI responses.
 	Prompt         ResponseObjectPrompt `json:"prompt" api:"nullable"`
@@ -178,6 +179,7 @@ type ResponseObject struct {
 		Metadata           respjson.Field
 		Object             respjson.Field
 		ParallelToolCalls  respjson.Field
+		PresencePenalty    respjson.Field
 		PreviousResponseID respjson.Field
 		Prompt             respjson.Field
 		PromptCacheKey     respjson.Field
@@ -7015,6 +7017,7 @@ type ResponseListResponse struct {
 	// Any of "response".
 	Object             ResponseListResponseObject `json:"object"`
 	ParallelToolCalls  bool                       `json:"parallel_tool_calls" api:"nullable"`
+	PresencePenalty    float64                    `json:"presence_penalty" api:"nullable"`
 	PreviousResponseID string                     `json:"previous_response_id" api:"nullable"`
 	// OpenAI compatible Prompt object that is used in OpenAI responses.
 	Prompt         ResponseListResponsePrompt `json:"prompt" api:"nullable"`
@@ -7056,6 +7059,7 @@ type ResponseListResponse struct {
 		Metadata           respjson.Field
 		Object             respjson.Field
 		ParallelToolCalls  respjson.Field
+		PresencePenalty    respjson.Field
 		PreviousResponseID respjson.Field
 		Prompt             respjson.Field
 		PromptCacheKey     respjson.Field
@@ -10098,6 +10102,8 @@ type ResponseNewParams struct {
 	MaxToolCalls param.Opt[int64] `json:"max_tool_calls,omitzero"`
 	// Whether to enable parallel tool calls.
 	ParallelToolCalls param.Opt[bool] `json:"parallel_tool_calls,omitzero"`
+	// Penalizes new tokens based on whether they appear in the text so far.
+	PresencePenalty param.Opt[float64] `json:"presence_penalty,omitzero"`
 	// Optional ID of a previous response to continue from.
 	PreviousResponseID param.Opt[string] `json:"previous_response_id,omitzero"`
 	// A key to use when reading from or writing to the prompt cache.

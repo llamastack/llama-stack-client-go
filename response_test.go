@@ -50,6 +50,7 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 			"foo": "string",
 		},
 		ParallelToolCalls:  llamastackclient.Bool(true),
+		PresencePenalty:    llamastackclient.Float(-2),
 		PreviousResponseID: llamastackclient.String("previous_response_id"),
 		Prompt: llamastackclient.ResponseNewParamsPrompt{
 			ID: "id",
