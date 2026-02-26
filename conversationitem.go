@@ -175,12 +175,14 @@ type ConversationItemNewResponseDataUnion struct {
 	// This field is from variant [ConversationItemNewResponseDataFileSearchCall].
 	Queries []string `json:"queries"`
 	// This field is from variant [ConversationItemNewResponseDataFileSearchCall].
-	Results     []ConversationItemNewResponseDataFileSearchCallResult `json:"results"`
-	Arguments   string                                                `json:"arguments"`
-	CallID      string                                                `json:"call_id"`
-	Name        string                                                `json:"name"`
-	Output      string                                                `json:"output"`
-	ServerLabel string                                                `json:"server_label"`
+	Results   []ConversationItemNewResponseDataFileSearchCallResult `json:"results"`
+	Arguments string                                                `json:"arguments"`
+	CallID    string                                                `json:"call_id"`
+	Name      string                                                `json:"name"`
+	// This field is a union of
+	// [ConversationItemNewResponseDataFunctionCallOutputOutputUnion], [string]
+	Output      ConversationItemNewResponseDataUnionOutput `json:"output"`
+	ServerLabel string                                     `json:"server_label"`
 	// This field is from variant [ConversationItemNewResponseDataMcpApprovalResponse].
 	ApprovalRequestID string `json:"approval_request_id"`
 	// This field is from variant [ConversationItemNewResponseDataMcpApprovalResponse].
@@ -319,6 +321,35 @@ func (u ConversationItemNewResponseDataUnion) AsMcpListTools() (v ConversationIt
 func (u ConversationItemNewResponseDataUnion) RawJSON() string { return u.JSON.raw }
 
 func (r *ConversationItemNewResponseDataUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ConversationItemNewResponseDataUnionOutput is an implicit subunion of
+// [ConversationItemNewResponseDataUnion].
+// ConversationItemNewResponseDataUnionOutput provides convenient access to the
+// sub-properties of the union.
+//
+// For type safety it is recommended to directly use a variant of the
+// [ConversationItemNewResponseDataUnion].
+//
+// If the underlying value is not a json object, one of the following properties
+// will be valid: OfString
+// OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile]
+type ConversationItemNewResponseDataUnionOutput struct {
+	// This field will be present if the value is a [string] instead of an object.
+	OfString string `json:",inline"`
+	// This field will be present if the value is a
+	// [[]ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion]
+	// instead of an object.
+	OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile []ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion `json:",inline"`
+	JSON                                                                                                                   struct {
+		OfString                                                                                                               respjson.Field
+		OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile respjson.Field
+		raw                                                                                                                    string
+	} `json:"-"`
+}
+
+func (r *ConversationItemNewResponseDataUnionOutput) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1101,10 +1132,10 @@ func (r *ConversationItemNewResponseDataFunctionCall) UnmarshalJSON(data []byte)
 // This represents the output of a function call that gets passed back to the
 // model.
 type ConversationItemNewResponseDataFunctionCallOutput struct {
-	CallID string `json:"call_id" api:"required"`
-	Output string `json:"output" api:"required"`
-	ID     string `json:"id" api:"nullable"`
-	Status string `json:"status" api:"nullable"`
+	CallID string                                                       `json:"call_id" api:"required"`
+	Output ConversationItemNewResponseDataFunctionCallOutputOutputUnion `json:"output" api:"required"`
+	ID     string                                                       `json:"id" api:"nullable"`
+	Status string                                                       `json:"status" api:"nullable"`
 	// Any of "function_call_output".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1122,6 +1153,232 @@ type ConversationItemNewResponseDataFunctionCallOutput struct {
 // Returns the unmodified JSON received from the API
 func (r ConversationItemNewResponseDataFunctionCallOutput) RawJSON() string { return r.JSON.raw }
 func (r *ConversationItemNewResponseDataFunctionCallOutput) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ConversationItemNewResponseDataFunctionCallOutputOutputUnion contains all
+// possible properties and values from [string],
+// [[]ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+//
+// If the underlying value is not a json object, one of the following properties
+// will be valid: OfString
+// OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile]
+type ConversationItemNewResponseDataFunctionCallOutputOutputUnion struct {
+	// This field will be present if the value is a [string] instead of an object.
+	OfString string `json:",inline"`
+	// This field will be present if the value is a
+	// [[]ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion]
+	// instead of an object.
+	OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile []ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion `json:",inline"`
+	JSON                                                                                                                   struct {
+		OfString                                                                                                               respjson.Field
+		OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile respjson.Field
+		raw                                                                                                                    string
+	} `json:"-"`
+}
+
+func (u ConversationItemNewResponseDataFunctionCallOutputOutputUnion) AsString() (v string) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ConversationItemNewResponseDataFunctionCallOutputOutputUnion) AsListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile() (v []ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u ConversationItemNewResponseDataFunctionCallOutputOutputUnion) RawJSON() string {
+	return u.JSON.raw
+}
+
+func (r *ConversationItemNewResponseDataFunctionCallOutputOutputUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion
+// contains all possible properties and values from
+// [ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText],
+// [ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage],
+// [ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile].
+//
+// Use the
+// [ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion.AsAny]
+// method to switch on the variant.
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion struct {
+	// This field is from variant
+	// [ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText].
+	Text string `json:"text"`
+	// Any of "input_text", "input_image", "input_file".
+	Type string `json:"type"`
+	// This field is from variant
+	// [ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
+	Detail string `json:"detail"`
+	FileID string `json:"file_id"`
+	// This field is from variant
+	// [ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
+	ImageURL string `json:"image_url"`
+	// This field is from variant
+	// [ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile].
+	FileData string `json:"file_data"`
+	// This field is from variant
+	// [ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile].
+	FileURL string `json:"file_url"`
+	// This field is from variant
+	// [ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile].
+	Filename string `json:"filename"`
+	JSON     struct {
+		Text     respjson.Field
+		Type     respjson.Field
+		Detail   respjson.Field
+		FileID   respjson.Field
+		ImageURL respjson.Field
+		FileData respjson.Field
+		FileURL  respjson.Field
+		Filename respjson.Field
+		raw      string
+	} `json:"-"`
+}
+
+// anyConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItem
+// is implemented by each variant of
+// [ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion]
+// to add type safety for the return type of
+// [ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion.AsAny]
+type anyConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItem interface {
+	implConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion()
+}
+
+func (ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) implConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion() {
+}
+func (ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) implConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion() {
+}
+func (ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) implConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion() {
+}
+
+// Use the following switch statement to find the correct variant
+//
+//	switch variant := ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion.AsAny().(type) {
+//	case llamastackclient.ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText:
+//	case llamastackclient.ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage:
+//	case llamastackclient.ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile:
+//	default:
+//	  fmt.Errorf("no variant present")
+//	}
+func (u ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) AsAny() anyConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItem {
+	switch u.Type {
+	case "input_text":
+		return u.AsInputText()
+	case "input_image":
+		return u.AsInputImage()
+	case "input_file":
+		return u.AsInputFile()
+	}
+	return nil
+}
+
+func (u ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) AsInputText() (v ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) AsInputImage() (v ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) AsInputFile() (v ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) RawJSON() string {
+	return u.JSON.raw
+}
+
+func (r *ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Text content for input messages in OpenAI response format.
+type ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText struct {
+	Text string `json:"text" api:"required"`
+	// Any of "input_text".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Text        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Image content for input messages in OpenAI response format.
+type ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage struct {
+	// Any of "low", "high", "auto".
+	Detail   string `json:"detail"`
+	FileID   string `json:"file_id" api:"nullable"`
+	ImageURL string `json:"image_url" api:"nullable"`
+	// Any of "input_image".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Detail      respjson.Field
+		FileID      respjson.Field
+		ImageURL    respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// File content for input messages in OpenAI response format.
+type ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
+	FileData string `json:"file_data" api:"nullable"`
+	FileID   string `json:"file_id" api:"nullable"`
+	FileURL  string `json:"file_url" api:"nullable"`
+	Filename string `json:"filename" api:"nullable"`
+	// Any of "input_file".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		FileData    respjson.Field
+		FileID      respjson.Field
+		FileURL     respjson.Field
+		Filename    respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1281,12 +1538,14 @@ type ConversationItemListResponseUnion struct {
 	// This field is from variant [ConversationItemListResponseFileSearchCall].
 	Queries []string `json:"queries"`
 	// This field is from variant [ConversationItemListResponseFileSearchCall].
-	Results     []ConversationItemListResponseFileSearchCallResult `json:"results"`
-	Arguments   string                                             `json:"arguments"`
-	CallID      string                                             `json:"call_id"`
-	Name        string                                             `json:"name"`
-	Output      string                                             `json:"output"`
-	ServerLabel string                                             `json:"server_label"`
+	Results   []ConversationItemListResponseFileSearchCallResult `json:"results"`
+	Arguments string                                             `json:"arguments"`
+	CallID    string                                             `json:"call_id"`
+	Name      string                                             `json:"name"`
+	// This field is a union of
+	// [ConversationItemListResponseFunctionCallOutputOutputUnion], [string]
+	Output      ConversationItemListResponseUnionOutput `json:"output"`
+	ServerLabel string                                  `json:"server_label"`
 	// This field is from variant [ConversationItemListResponseMcpApprovalResponse].
 	ApprovalRequestID string `json:"approval_request_id"`
 	// This field is from variant [ConversationItemListResponseMcpApprovalResponse].
@@ -1424,6 +1683,34 @@ func (u ConversationItemListResponseUnion) AsMcpListTools() (v ConversationItemL
 func (u ConversationItemListResponseUnion) RawJSON() string { return u.JSON.raw }
 
 func (r *ConversationItemListResponseUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ConversationItemListResponseUnionOutput is an implicit subunion of
+// [ConversationItemListResponseUnion]. ConversationItemListResponseUnionOutput
+// provides convenient access to the sub-properties of the union.
+//
+// For type safety it is recommended to directly use a variant of the
+// [ConversationItemListResponseUnion].
+//
+// If the underlying value is not a json object, one of the following properties
+// will be valid: OfString
+// OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile]
+type ConversationItemListResponseUnionOutput struct {
+	// This field will be present if the value is a [string] instead of an object.
+	OfString string `json:",inline"`
+	// This field will be present if the value is a
+	// [[]ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion]
+	// instead of an object.
+	OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile []ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion `json:",inline"`
+	JSON                                                                                                                   struct {
+		OfString                                                                                                               respjson.Field
+		OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile respjson.Field
+		raw                                                                                                                    string
+	} `json:"-"`
+}
+
+func (r *ConversationItemListResponseUnionOutput) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -2206,10 +2493,10 @@ func (r *ConversationItemListResponseFunctionCall) UnmarshalJSON(data []byte) er
 // This represents the output of a function call that gets passed back to the
 // model.
 type ConversationItemListResponseFunctionCallOutput struct {
-	CallID string `json:"call_id" api:"required"`
-	Output string `json:"output" api:"required"`
-	ID     string `json:"id" api:"nullable"`
-	Status string `json:"status" api:"nullable"`
+	CallID string                                                    `json:"call_id" api:"required"`
+	Output ConversationItemListResponseFunctionCallOutputOutputUnion `json:"output" api:"required"`
+	ID     string                                                    `json:"id" api:"nullable"`
+	Status string                                                    `json:"status" api:"nullable"`
 	// Any of "function_call_output".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -2227,6 +2514,232 @@ type ConversationItemListResponseFunctionCallOutput struct {
 // Returns the unmodified JSON received from the API
 func (r ConversationItemListResponseFunctionCallOutput) RawJSON() string { return r.JSON.raw }
 func (r *ConversationItemListResponseFunctionCallOutput) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ConversationItemListResponseFunctionCallOutputOutputUnion contains all possible
+// properties and values from [string],
+// [[]ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+//
+// If the underlying value is not a json object, one of the following properties
+// will be valid: OfString
+// OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile]
+type ConversationItemListResponseFunctionCallOutputOutputUnion struct {
+	// This field will be present if the value is a [string] instead of an object.
+	OfString string `json:",inline"`
+	// This field will be present if the value is a
+	// [[]ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion]
+	// instead of an object.
+	OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile []ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion `json:",inline"`
+	JSON                                                                                                                   struct {
+		OfString                                                                                                               respjson.Field
+		OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile respjson.Field
+		raw                                                                                                                    string
+	} `json:"-"`
+}
+
+func (u ConversationItemListResponseFunctionCallOutputOutputUnion) AsString() (v string) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ConversationItemListResponseFunctionCallOutputOutputUnion) AsListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile() (v []ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u ConversationItemListResponseFunctionCallOutputOutputUnion) RawJSON() string {
+	return u.JSON.raw
+}
+
+func (r *ConversationItemListResponseFunctionCallOutputOutputUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion
+// contains all possible properties and values from
+// [ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText],
+// [ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage],
+// [ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile].
+//
+// Use the
+// [ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion.AsAny]
+// method to switch on the variant.
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion struct {
+	// This field is from variant
+	// [ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText].
+	Text string `json:"text"`
+	// Any of "input_text", "input_image", "input_file".
+	Type string `json:"type"`
+	// This field is from variant
+	// [ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
+	Detail string `json:"detail"`
+	FileID string `json:"file_id"`
+	// This field is from variant
+	// [ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
+	ImageURL string `json:"image_url"`
+	// This field is from variant
+	// [ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile].
+	FileData string `json:"file_data"`
+	// This field is from variant
+	// [ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile].
+	FileURL string `json:"file_url"`
+	// This field is from variant
+	// [ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile].
+	Filename string `json:"filename"`
+	JSON     struct {
+		Text     respjson.Field
+		Type     respjson.Field
+		Detail   respjson.Field
+		FileID   respjson.Field
+		ImageURL respjson.Field
+		FileData respjson.Field
+		FileURL  respjson.Field
+		Filename respjson.Field
+		raw      string
+	} `json:"-"`
+}
+
+// anyConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItem
+// is implemented by each variant of
+// [ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion]
+// to add type safety for the return type of
+// [ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion.AsAny]
+type anyConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItem interface {
+	implConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion()
+}
+
+func (ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) implConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion() {
+}
+func (ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) implConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion() {
+}
+func (ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) implConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion() {
+}
+
+// Use the following switch statement to find the correct variant
+//
+//	switch variant := ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion.AsAny().(type) {
+//	case llamastackclient.ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText:
+//	case llamastackclient.ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage:
+//	case llamastackclient.ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile:
+//	default:
+//	  fmt.Errorf("no variant present")
+//	}
+func (u ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) AsAny() anyConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItem {
+	switch u.Type {
+	case "input_text":
+		return u.AsInputText()
+	case "input_image":
+		return u.AsInputImage()
+	case "input_file":
+		return u.AsInputFile()
+	}
+	return nil
+}
+
+func (u ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) AsInputText() (v ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) AsInputImage() (v ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) AsInputFile() (v ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) RawJSON() string {
+	return u.JSON.raw
+}
+
+func (r *ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Text content for input messages in OpenAI response format.
+type ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText struct {
+	Text string `json:"text" api:"required"`
+	// Any of "input_text".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Text        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Image content for input messages in OpenAI response format.
+type ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage struct {
+	// Any of "low", "high", "auto".
+	Detail   string `json:"detail"`
+	FileID   string `json:"file_id" api:"nullable"`
+	ImageURL string `json:"image_url" api:"nullable"`
+	// Any of "input_image".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Detail      respjson.Field
+		FileID      respjson.Field
+		ImageURL    respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// File content for input messages in OpenAI response format.
+type ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
+	FileData string `json:"file_data" api:"nullable"`
+	FileID   string `json:"file_id" api:"nullable"`
+	FileURL  string `json:"file_url" api:"nullable"`
+	Filename string `json:"filename" api:"nullable"`
+	// Any of "input_file".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		FileData    respjson.Field
+		FileID      respjson.Field
+		FileURL     respjson.Field
+		Filename    respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -2409,12 +2922,14 @@ type ConversationItemGetResponseUnion struct {
 	// This field is from variant [ConversationItemGetResponseFileSearchCall].
 	Queries []string `json:"queries"`
 	// This field is from variant [ConversationItemGetResponseFileSearchCall].
-	Results     []ConversationItemGetResponseFileSearchCallResult `json:"results"`
-	Arguments   string                                            `json:"arguments"`
-	CallID      string                                            `json:"call_id"`
-	Name        string                                            `json:"name"`
-	Output      string                                            `json:"output"`
-	ServerLabel string                                            `json:"server_label"`
+	Results   []ConversationItemGetResponseFileSearchCallResult `json:"results"`
+	Arguments string                                            `json:"arguments"`
+	CallID    string                                            `json:"call_id"`
+	Name      string                                            `json:"name"`
+	// This field is a union of
+	// [ConversationItemGetResponseFunctionCallOutputOutputUnion], [string]
+	Output      ConversationItemGetResponseUnionOutput `json:"output"`
+	ServerLabel string                                 `json:"server_label"`
 	// This field is from variant [ConversationItemGetResponseMcpApprovalResponse].
 	ApprovalRequestID string `json:"approval_request_id"`
 	// This field is from variant [ConversationItemGetResponseMcpApprovalResponse].
@@ -2552,6 +3067,34 @@ func (u ConversationItemGetResponseUnion) AsMcpListTools() (v ConversationItemGe
 func (u ConversationItemGetResponseUnion) RawJSON() string { return u.JSON.raw }
 
 func (r *ConversationItemGetResponseUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ConversationItemGetResponseUnionOutput is an implicit subunion of
+// [ConversationItemGetResponseUnion]. ConversationItemGetResponseUnionOutput
+// provides convenient access to the sub-properties of the union.
+//
+// For type safety it is recommended to directly use a variant of the
+// [ConversationItemGetResponseUnion].
+//
+// If the underlying value is not a json object, one of the following properties
+// will be valid: OfString
+// OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile]
+type ConversationItemGetResponseUnionOutput struct {
+	// This field will be present if the value is a [string] instead of an object.
+	OfString string `json:",inline"`
+	// This field will be present if the value is a
+	// [[]ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion]
+	// instead of an object.
+	OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile []ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion `json:",inline"`
+	JSON                                                                                                                   struct {
+		OfString                                                                                                               respjson.Field
+		OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile respjson.Field
+		raw                                                                                                                    string
+	} `json:"-"`
+}
+
+func (r *ConversationItemGetResponseUnionOutput) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -3334,10 +3877,10 @@ func (r *ConversationItemGetResponseFunctionCall) UnmarshalJSON(data []byte) err
 // This represents the output of a function call that gets passed back to the
 // model.
 type ConversationItemGetResponseFunctionCallOutput struct {
-	CallID string `json:"call_id" api:"required"`
-	Output string `json:"output" api:"required"`
-	ID     string `json:"id" api:"nullable"`
-	Status string `json:"status" api:"nullable"`
+	CallID string                                                   `json:"call_id" api:"required"`
+	Output ConversationItemGetResponseFunctionCallOutputOutputUnion `json:"output" api:"required"`
+	ID     string                                                   `json:"id" api:"nullable"`
+	Status string                                                   `json:"status" api:"nullable"`
 	// Any of "function_call_output".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3355,6 +3898,230 @@ type ConversationItemGetResponseFunctionCallOutput struct {
 // Returns the unmodified JSON received from the API
 func (r ConversationItemGetResponseFunctionCallOutput) RawJSON() string { return r.JSON.raw }
 func (r *ConversationItemGetResponseFunctionCallOutput) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ConversationItemGetResponseFunctionCallOutputOutputUnion contains all possible
+// properties and values from [string],
+// [[]ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+//
+// If the underlying value is not a json object, one of the following properties
+// will be valid: OfString
+// OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile]
+type ConversationItemGetResponseFunctionCallOutputOutputUnion struct {
+	// This field will be present if the value is a [string] instead of an object.
+	OfString string `json:",inline"`
+	// This field will be present if the value is a
+	// [[]ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion]
+	// instead of an object.
+	OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile []ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion `json:",inline"`
+	JSON                                                                                                                   struct {
+		OfString                                                                                                               respjson.Field
+		OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile respjson.Field
+		raw                                                                                                                    string
+	} `json:"-"`
+}
+
+func (u ConversationItemGetResponseFunctionCallOutputOutputUnion) AsString() (v string) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ConversationItemGetResponseFunctionCallOutputOutputUnion) AsListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile() (v []ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u ConversationItemGetResponseFunctionCallOutputOutputUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *ConversationItemGetResponseFunctionCallOutputOutputUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion
+// contains all possible properties and values from
+// [ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText],
+// [ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage],
+// [ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile].
+//
+// Use the
+// [ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion.AsAny]
+// method to switch on the variant.
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion struct {
+	// This field is from variant
+	// [ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText].
+	Text string `json:"text"`
+	// Any of "input_text", "input_image", "input_file".
+	Type string `json:"type"`
+	// This field is from variant
+	// [ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
+	Detail string `json:"detail"`
+	FileID string `json:"file_id"`
+	// This field is from variant
+	// [ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
+	ImageURL string `json:"image_url"`
+	// This field is from variant
+	// [ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile].
+	FileData string `json:"file_data"`
+	// This field is from variant
+	// [ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile].
+	FileURL string `json:"file_url"`
+	// This field is from variant
+	// [ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile].
+	Filename string `json:"filename"`
+	JSON     struct {
+		Text     respjson.Field
+		Type     respjson.Field
+		Detail   respjson.Field
+		FileID   respjson.Field
+		ImageURL respjson.Field
+		FileData respjson.Field
+		FileURL  respjson.Field
+		Filename respjson.Field
+		raw      string
+	} `json:"-"`
+}
+
+// anyConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItem
+// is implemented by each variant of
+// [ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion]
+// to add type safety for the return type of
+// [ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion.AsAny]
+type anyConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItem interface {
+	implConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion()
+}
+
+func (ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) implConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion() {
+}
+func (ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) implConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion() {
+}
+func (ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) implConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion() {
+}
+
+// Use the following switch statement to find the correct variant
+//
+//	switch variant := ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion.AsAny().(type) {
+//	case llamastackclient.ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText:
+//	case llamastackclient.ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage:
+//	case llamastackclient.ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile:
+//	default:
+//	  fmt.Errorf("no variant present")
+//	}
+func (u ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) AsAny() anyConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItem {
+	switch u.Type {
+	case "input_text":
+		return u.AsInputText()
+	case "input_image":
+		return u.AsInputImage()
+	case "input_file":
+		return u.AsInputFile()
+	}
+	return nil
+}
+
+func (u ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) AsInputText() (v ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) AsInputImage() (v ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) AsInputFile() (v ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) RawJSON() string {
+	return u.JSON.raw
+}
+
+func (r *ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Text content for input messages in OpenAI response format.
+type ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText struct {
+	Text string `json:"text" api:"required"`
+	// Any of "input_text".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Text        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Image content for input messages in OpenAI response format.
+type ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage struct {
+	// Any of "low", "high", "auto".
+	Detail   string `json:"detail"`
+	FileID   string `json:"file_id" api:"nullable"`
+	ImageURL string `json:"image_url" api:"nullable"`
+	// Any of "input_image".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Detail      respjson.Field
+		FileID      respjson.Field
+		ImageURL    respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// File content for input messages in OpenAI response format.
+type ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
+	FileData string `json:"file_data" api:"nullable"`
+	FileID   string `json:"file_id" api:"nullable"`
+	FileURL  string `json:"file_url" api:"nullable"`
+	Filename string `json:"filename" api:"nullable"`
+	// Any of "input_file".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		FileData    respjson.Field
+		FileID      respjson.Field
+		FileURL     respjson.Field
+		Filename    respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -3725,16 +4492,6 @@ func (u ConversationItemNewParamsItemUnion) GetName() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
-func (u ConversationItemNewParamsItemUnion) GetOutput() *string {
-	if vt := u.OfFunctionCallOutput; vt != nil {
-		return (*string)(&vt.Output)
-	} else if vt := u.OfMcpCall; vt != nil && vt.Output.Valid() {
-		return &vt.Output.Value
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
 func (u ConversationItemNewParamsItemUnion) GetServerLabel() *string {
 	if vt := u.OfMcpApprovalRequest; vt != nil {
 		return (*string)(&vt.ServerLabel)
@@ -3745,6 +4502,32 @@ func (u ConversationItemNewParamsItemUnion) GetServerLabel() *string {
 	}
 	return nil
 }
+
+// Returns a subunion which exports methods to access subproperties
+//
+// Or use AsAny() to get the underlying value
+func (u ConversationItemNewParamsItemUnion) GetOutput() (res conversationItemNewParamsItemUnionOutput) {
+	if vt := u.OfFunctionCallOutput; vt != nil {
+		res.any = vt.Output.asAny()
+	} else if vt := u.OfMcpCall; vt != nil && vt.Output.Valid() {
+		res.any = &vt.Output.Value
+	}
+	return
+}
+
+// Can have the runtime types [*string],
+// [\*[]ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion]
+type conversationItemNewParamsItemUnionOutput struct{ any }
+
+// Use the following switch statement to get the type of the union:
+//
+//	switch u.AsAny().(type) {
+//	case *string:
+//	case *[]llamastackclient.ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion:
+//	default:
+//	    fmt.Errorf("not present")
+//	}
+func (u conversationItemNewParamsItemUnionOutput) AsAny() any { return u.any }
 
 func init() {
 	apijson.RegisterUnion[ConversationItemNewParamsItemUnion](
@@ -4513,10 +5296,10 @@ func init() {
 //
 // The properties CallID, Output are required.
 type ConversationItemNewParamsItemFunctionCallOutput struct {
-	CallID string            `json:"call_id" api:"required"`
-	Output string            `json:"output" api:"required"`
-	ID     param.Opt[string] `json:"id,omitzero"`
-	Status param.Opt[string] `json:"status,omitzero"`
+	CallID string                                                     `json:"call_id" api:"required"`
+	Output ConversationItemNewParamsItemFunctionCallOutputOutputUnion `json:"output,omitzero" api:"required"`
+	ID     param.Opt[string]                                          `json:"id,omitzero"`
+	Status param.Opt[string]                                          `json:"status,omitzero"`
 	// Any of "function_call_output".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -4533,6 +5316,215 @@ func (r *ConversationItemNewParamsItemFunctionCallOutput) UnmarshalJSON(data []b
 func init() {
 	apijson.RegisterFieldValidator[ConversationItemNewParamsItemFunctionCallOutput](
 		"type", "function_call_output",
+	)
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type ConversationItemNewParamsItemFunctionCallOutputOutputUnion struct {
+	OfString                                                                                                               param.Opt[string]                                                                                                                                                                    `json:",omitzero,inline"`
+	OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile []ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u ConversationItemNewParamsItemFunctionCallOutputOutputUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfString, u.OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile)
+}
+func (u *ConversationItemNewParamsItemFunctionCallOutputOutputUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *ConversationItemNewParamsItemFunctionCallOutputOutputUnion) asAny() any {
+	if !param.IsOmitted(u.OfString) {
+		return &u.OfString.Value
+	} else if !param.IsOmitted(u.OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile) {
+		return &u.OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile
+	}
+	return nil
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion struct {
+	OfInputText  *ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText  `json:",omitzero,inline"`
+	OfInputImage *ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage `json:",omitzero,inline"`
+	OfInputFile  *ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile  `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfInputText, u.OfInputImage, u.OfInputFile)
+}
+func (u *ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) asAny() any {
+	if !param.IsOmitted(u.OfInputText) {
+		return u.OfInputText
+	} else if !param.IsOmitted(u.OfInputImage) {
+		return u.OfInputImage
+	} else if !param.IsOmitted(u.OfInputFile) {
+		return u.OfInputFile
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetText() *string {
+	if vt := u.OfInputText; vt != nil {
+		return &vt.Text
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetDetail() *string {
+	if vt := u.OfInputImage; vt != nil {
+		return &vt.Detail
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetImageURL() *string {
+	if vt := u.OfInputImage; vt != nil && vt.ImageURL.Valid() {
+		return &vt.ImageURL.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetFileData() *string {
+	if vt := u.OfInputFile; vt != nil && vt.FileData.Valid() {
+		return &vt.FileData.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetFileURL() *string {
+	if vt := u.OfInputFile; vt != nil && vt.FileURL.Valid() {
+		return &vt.FileURL.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetFilename() *string {
+	if vt := u.OfInputFile; vt != nil && vt.Filename.Valid() {
+		return &vt.Filename.Value
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetType() *string {
+	if vt := u.OfInputText; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfInputImage; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfInputFile; vt != nil {
+		return (*string)(&vt.Type)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetFileID() *string {
+	if vt := u.OfInputImage; vt != nil && vt.FileID.Valid() {
+		return &vt.FileID.Value
+	} else if vt := u.OfInputFile; vt != nil && vt.FileID.Valid() {
+		return &vt.FileID.Value
+	}
+	return nil
+}
+
+func init() {
+	apijson.RegisterUnion[ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion](
+		"type",
+		apijson.Discriminator[ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText]("input_text"),
+		apijson.Discriminator[ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage]("input_image"),
+		apijson.Discriminator[ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile]("input_file"),
+	)
+}
+
+// Text content for input messages in OpenAI response format.
+//
+// The property Text is required.
+type ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText struct {
+	Text string `json:"text" api:"required"`
+	// Any of "input_text".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) MarshalJSON() (data []byte, err error) {
+	type shadow ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText](
+		"type", "input_text",
+	)
+}
+
+// Image content for input messages in OpenAI response format.
+type ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage struct {
+	FileID   param.Opt[string] `json:"file_id,omitzero"`
+	ImageURL param.Opt[string] `json:"image_url,omitzero"`
+	// Any of "low", "high", "auto".
+	Detail string `json:"detail,omitzero"`
+	// Any of "input_image".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) MarshalJSON() (data []byte, err error) {
+	type shadow ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage](
+		"detail", "low", "high", "auto",
+	)
+	apijson.RegisterFieldValidator[ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage](
+		"type", "input_image",
+	)
+}
+
+// File content for input messages in OpenAI response format.
+type ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
+	FileData param.Opt[string] `json:"file_data,omitzero"`
+	FileID   param.Opt[string] `json:"file_id,omitzero"`
+	FileURL  param.Opt[string] `json:"file_url,omitzero"`
+	Filename param.Opt[string] `json:"filename,omitzero"`
+	// Any of "input_file".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) MarshalJSON() (data []byte, err error) {
+	type shadow ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile](
+		"type", "input_file",
 	)
 }
 
