@@ -19,6 +19,9 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 )
 
+// Llama Stack Evaluation API for running evaluations on model and agent
+// candidates.
+//
 // AlphaEvalJobService contains methods and other services that help with
 // interacting with the llama-stack-client API.
 //

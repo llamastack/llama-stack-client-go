@@ -26,6 +26,15 @@ import (
 	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
+// The API is designed to allow use of openai client libraries for seamless
+// integration.
+//
+// This API provides the following extensions:
+//
+// - idempotent batch creation
+//
+// Note: This API is currently under active development and may undergo changes.
+//
 // BatchService contains methods and other services that help with interacting with
 // the llama-stack-client API.
 //

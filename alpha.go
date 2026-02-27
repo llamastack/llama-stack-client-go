@@ -22,9 +22,23 @@ type AlphaService struct {
 	Options      []option.RequestOption
 	PostTraining AlphaPostTrainingService
 	Benchmarks   AlphaBenchmarkService
-	Eval         AlphaEvalService
-	Admin        AlphaAdminService
-	Inference    AlphaInferenceService
+	// Llama Stack Evaluation API for running evaluations on model and agent
+	// candidates.
+	Eval  AlphaEvalService
+	Admin AlphaAdminService
+	// Llama Stack Inference API for generating completions, chat completions, and
+	// embeddings.
+	//
+	// This API provides the raw interface to the underlying models. Three kinds of
+	// models are supported:
+	//
+	//   - LLM models: these models generate "raw" and "chat" (conversational)
+	//     completions.
+	//   - Embedding models: these models generate embeddings to be used for semantic
+	//     search.
+	//   - Rerank models: these models reorder the documents based on their relevance to
+	//     a query.
+	Inference AlphaInferenceService
 }
 
 // NewAlphaService generates a new service that applies the given options to each

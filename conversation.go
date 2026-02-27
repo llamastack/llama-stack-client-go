@@ -22,6 +22,8 @@ import (
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 )
 
+// Protocol for conversation management operations.
+//
 // ConversationService contains methods and other services that help with
 // interacting with the llama-stack-client API.
 //
@@ -30,7 +32,8 @@ import (
 // the [NewConversationService] method instead.
 type ConversationService struct {
 	Options []option.RequestOption
-	Items   ConversationItemService
+	// Protocol for conversation management operations.
+	Items ConversationItemService
 }
 
 // NewConversationService generates a new service that applies the given options to

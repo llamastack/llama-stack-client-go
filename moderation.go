@@ -20,6 +20,8 @@ import (
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 )
 
+// OpenAI-compatible Moderations API.
+//
 // ModerationService contains methods and other services that help with interacting
 // with the llama-stack-client API.
 //

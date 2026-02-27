@@ -25,6 +25,8 @@ import (
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 )
 
+// APIs for creating and interacting with agentic systems.
+//
 // ResponseInputItemService contains methods and other services that help with
 // interacting with the llama-stack-client API.
 //

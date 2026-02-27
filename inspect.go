@@ -17,6 +17,9 @@ import (
 	"github.com/llamastack/llama-stack-client-go/option"
 )
 
+// APIs for inspecting the Llama Stack service, including health status, available
+// API routes with methods and implementing providers.
+//
 // InspectService contains methods and other services that help with interacting
 // with the llama-stack-client API.
 //

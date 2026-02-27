@@ -26,6 +26,8 @@ import (
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 )
 
+// Protocol for conversation management operations.
+//
 // ConversationItemService contains methods and other services that help with
 // interacting with the llama-stack-client API.
 //

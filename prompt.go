@@ -24,6 +24,8 @@ import (
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 )
 
+// Protocol for prompt management operations.
+//
 // PromptService contains methods and other services that help with interacting
 // with the llama-stack-client API.
 //
@@ -31,7 +33,8 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewPromptService] method instead.
 type PromptService struct {
-	Options  []option.RequestOption
+	Options []option.RequestOption
+	// Protocol for prompt management operations.
 	Versions PromptVersionService
 }
 

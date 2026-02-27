@@ -22,6 +22,9 @@ import (
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 )
 
+// Llama Stack Evaluation API for running evaluations on model and agent
+// candidates.
+//
 // AlphaEvalService contains methods and other services that help with interacting
 // with the llama-stack-client API.
 //
@@ -30,7 +33,9 @@ import (
 // the [NewAlphaEvalService] method instead.
 type AlphaEvalService struct {
 	Options []option.RequestOption
-	Jobs    AlphaEvalJobService
+	// Llama Stack Evaluation API for running evaluations on model and agent
+	// candidates.
+	Jobs AlphaEvalJobService
 }
 
 // NewAlphaEvalService generates a new service that applies the given options to

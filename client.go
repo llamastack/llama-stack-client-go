@@ -22,31 +22,76 @@ import (
 // interacting with the llama-stack-client API. You should not instantiate this
 // client directly, and instead use the [NewClient] method instead.
 type Client struct {
-	Options          []option.RequestOption
-	Toolgroups       ToolgroupService
-	Tools            ToolService
-	ToolRuntime      ToolRuntimeService
-	Responses        ResponseService
-	Prompts          PromptService
-	Conversations    ConversationService
-	Inspect          InspectService
-	Embeddings       EmbeddingService
-	Chat             ChatService
-	Completions      CompletionService
-	VectorIo         VectorIoService
-	VectorStores     VectorStoreService
-	Models           ModelService
-	Providers        ProviderService
-	Routes           RouteService
-	Moderations      ModerationService
+	Options     []option.RequestOption
+	Toolgroups  ToolgroupService
+	Tools       ToolService
+	ToolRuntime ToolRuntimeService
+	// APIs for creating and interacting with agentic systems.
+	Responses ResponseService
+	// Protocol for prompt management operations.
+	Prompts PromptService
+	// Protocol for conversation management operations.
+	Conversations ConversationService
+	// APIs for inspecting the Llama Stack service, including health status, available
+	// API routes with methods and implementing providers.
+	Inspect InspectService
+	// Llama Stack Inference API for generating completions, chat completions, and
+	// embeddings.
+	//
+	// This API provides the raw interface to the underlying models. Three kinds of
+	// models are supported:
+	//
+	//   - LLM models: these models generate "raw" and "chat" (conversational)
+	//     completions.
+	//   - Embedding models: these models generate embeddings to be used for semantic
+	//     search.
+	//   - Rerank models: these models reorder the documents based on their relevance to
+	//     a query.
+	Embeddings EmbeddingService
+	Chat       ChatService
+	// Llama Stack Inference API for generating completions, chat completions, and
+	// embeddings.
+	//
+	// This API provides the raw interface to the underlying models. Three kinds of
+	// models are supported:
+	//
+	//   - LLM models: these models generate "raw" and "chat" (conversational)
+	//     completions.
+	//   - Embedding models: these models generate embeddings to be used for semantic
+	//     search.
+	//   - Rerank models: these models reorder the documents based on their relevance to
+	//     a query.
+	Completions  CompletionService
+	VectorIo     VectorIoService
+	VectorStores VectorStoreService
+	Models       ModelService
+	// Providers API for inspecting, listing, and modifying providers and their
+	// configurations.
+	Providers ProviderService
+	// APIs for inspecting the Llama Stack service, including health status, available
+	// API routes with methods and implementing providers.
+	Routes RouteService
+	// OpenAI-compatible Moderations API.
+	Moderations ModerationService
+	// OpenAI-compatible Moderations API.
 	Safety           SafetyService
 	Shields          ShieldService
 	Scoring          ScoringService
 	ScoringFunctions ScoringFunctionService
-	Files            FileService
-	Batches          BatchService
-	Alpha            AlphaService
-	Beta             BetaService
+	// This API is used to upload documents that can be used with other Llama Stack
+	// APIs.
+	Files FileService
+	// The API is designed to allow use of openai client libraries for seamless
+	// integration.
+	//
+	// This API provides the following extensions:
+	//
+	// - idempotent batch creation
+	//
+	// Note: This API is currently under active development and may undergo changes.
+	Batches BatchService
+	Alpha   AlphaService
+	Beta    BetaService
 }
 
 // DefaultClientOptions read from the environment (LLAMA_STACK_CLIENT_API_KEY,

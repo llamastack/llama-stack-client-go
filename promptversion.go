@@ -21,6 +21,8 @@ import (
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 )
 
+// Protocol for prompt management operations.
+//
 // PromptVersionService contains methods and other services that help with
 // interacting with the llama-stack-client API.
 //

@@ -21,6 +21,9 @@ import (
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 )
 
+// Providers API for inspecting, listing, and modifying providers and their
+// configurations.
+//
 // ProviderService contains methods and other services that help with interacting
 // with the llama-stack-client API.
 //

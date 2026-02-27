@@ -30,6 +30,9 @@ import (
 	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
+// This API is used to upload documents that can be used with other Llama Stack
+// APIs.
+//
 // FileService contains methods and other services that help with interacting with
 // the llama-stack-client API.
 //

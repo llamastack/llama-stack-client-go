@@ -21,6 +21,9 @@ import (
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 )
 
+// APIs for inspecting the Llama Stack service, including health status, available
+// API routes with methods and implementing providers.
+//
 // RouteService contains methods and other services that help with interacting with
 // the llama-stack-client API.
 //
