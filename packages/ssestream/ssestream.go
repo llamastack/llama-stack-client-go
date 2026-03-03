@@ -12,9 +12,12 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
+
+	"github.com/tidwall/gjson"
 )
 
 type Decoder interface {
@@ -50,6 +53,17 @@ func RegisterDecoder(contentType string, decoder func(io.ReadCloser) Decoder) {
 type Event struct {
 	Type string
 	Data []byte
+}
+
+// StreamError represents an error event that occurred during streaming,
+// preserving the original event data for structured access.
+type StreamError struct {
+	Message string
+	Event   Event
+}
+
+func (e *StreamError) Error() string {
+	return e.Message
 }
 
 // A base implementation of a Decoder for text/event-stream.
@@ -129,6 +143,7 @@ type Stream[T any] struct {
 	decoder Decoder
 	cur     T
 	err     error
+	done    bool
 }
 
 func NewStream[T any](decoder Decoder, err error) *Stream[T] {
@@ -155,6 +170,24 @@ func (s *Stream[T]) Next() bool {
 	}
 
 	for s.decoder.Next() {
+		if s.done {
+			continue
+		}
+
+		if bytes.HasPrefix(s.decoder.Event().Data, []byte("[DONE]")) {
+			// In this case we don't break because we still want to iterate through the full stream.
+			s.done = true
+			continue
+		}
+
+		ep := gjson.GetBytes(s.decoder.Event().Data, "error")
+		if ep.Exists() {
+			s.err = &StreamError{
+				Message: fmt.Sprintf("received error while streaming: %s", ep.String()),
+				Event:   s.decoder.Event(),
+			}
+			return false
+		}
 		var nxt T
 		s.err = json.Unmarshal(s.decoder.Event().Data, &nxt)
 		if s.err != nil {
