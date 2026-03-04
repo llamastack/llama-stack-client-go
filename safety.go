@@ -564,13 +564,14 @@ type SafetyRunShieldParamsMessageAssistant struct {
 	// Must be 'assistant' to identify this as the model's response.
 	//
 	// Any of "assistant".
-	Role string `json:"role,omitzero"`
+	Role        string         `json:"role,omitzero"`
+	ExtraFields map[string]any `json:"-"`
 	paramObj
 }
 
 func (r SafetyRunShieldParamsMessageAssistant) MarshalJSON() (data []byte, err error) {
 	type shadow SafetyRunShieldParamsMessageAssistant
-	return param.MarshalObject(r, (*shadow)(&r))
+	return param.MarshalWithExtras(r, (*shadow)(&r), r.ExtraFields)
 }
 func (r *SafetyRunShieldParamsMessageAssistant) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
