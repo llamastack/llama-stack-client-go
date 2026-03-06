@@ -78,6 +78,7 @@ func TestModelRegisterWithOptionalParams(t *testing.T) {
 			"foo": "bar",
 		},
 		ModelType:       llamastackclient.ModelRegisterParamsModelTypeLlm,
+		ModelValidation: llamastackclient.Bool(true),
 		ProviderID:      llamastackclient.String("provider_id"),
 		ProviderModelID: llamastackclient.String("provider_model_id"),
 	})

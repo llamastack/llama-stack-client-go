@@ -160,6 +160,10 @@ type ModelGetResponse struct {
 	//
 	// Any of "llm", "embedding", "rerank".
 	ModelType ModelGetResponseModelType `json:"model_type"`
+	// Enable model availability check during registration. When false (default),
+	// validation is deferred to runtime and model is preserved during provider
+	// refresh.
+	ModelValidation bool `json:"model_validation" api:"nullable"`
 	// Unique identifier for this resource in the provider
 	ProviderResourceID string `json:"provider_resource_id" api:"nullable"`
 	// Any of "model".
@@ -170,6 +174,7 @@ type ModelGetResponse struct {
 		ProviderID         respjson.Field
 		Metadata           respjson.Field
 		ModelType          respjson.Field
+		ModelValidation    respjson.Field
 		ProviderResourceID respjson.Field
 		Type               respjson.Field
 		ExtraFields        map[string]respjson.Field
@@ -210,6 +215,10 @@ type ModelRegisterResponse struct {
 	//
 	// Any of "llm", "embedding", "rerank".
 	ModelType ModelRegisterResponseModelType `json:"model_type"`
+	// Enable model availability check during registration. When false (default),
+	// validation is deferred to runtime and model is preserved during provider
+	// refresh.
+	ModelValidation bool `json:"model_validation" api:"nullable"`
 	// Unique identifier for this resource in the provider
 	ProviderResourceID string `json:"provider_resource_id" api:"nullable"`
 	// Any of "model".
@@ -220,6 +229,7 @@ type ModelRegisterResponse struct {
 		ProviderID         respjson.Field
 		Metadata           respjson.Field
 		ModelType          respjson.Field
+		ModelValidation    respjson.Field
 		ProviderResourceID respjson.Field
 		Type               respjson.Field
 		ExtraFields        map[string]respjson.Field
@@ -251,6 +261,10 @@ const (
 type ModelRegisterParams struct {
 	// The identifier of the model to register.
 	ModelID string `json:"model_id" api:"required"`
+	// Enable model availability check during registration. When false (default),
+	// validation is deferred to runtime and model is preserved during provider
+	// refresh.
+	ModelValidation param.Opt[bool] `json:"model_validation,omitzero"`
 	// The identifier of the provider.
 	ProviderID param.Opt[string] `json:"provider_id,omitzero"`
 	// The identifier of the model in the provider.
