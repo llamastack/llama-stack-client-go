@@ -33,7 +33,7 @@ func TestFileNewWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Files.New(context.TODO(), llamastackclient.FileNewParams{
-		File:    io.Reader(bytes.NewBuffer([]byte("some file contents"))),
+		File:    io.Reader(bytes.NewBuffer([]byte("Example data"))),
 		Purpose: llamastackclient.FileNewParamsPurposeAssistants,
 		ExpiresAfter: llamastackclient.FileNewParamsExpiresAfter{
 			Seconds: 3600,
