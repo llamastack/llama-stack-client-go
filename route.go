@@ -50,10 +50,10 @@ func (r *RouteService) List(ctx context.Context, query RouteListParams, opts ...
 	path := "v1/inspect/routes"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &env, opts...)
 	if err != nil {
-		return
+		return nil, err
 	}
 	res = &env.Data
-	return
+	return res, nil
 }
 
 type RouteListParams struct {

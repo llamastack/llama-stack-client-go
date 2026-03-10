@@ -46,15 +46,15 @@ func (r *AlphaEvalJobService) Get(ctx context.Context, jobID string, query Alpha
 	opts = slices.Concat(r.Options, opts)
 	if query.BenchmarkID == "" {
 		err = errors.New("missing required benchmark_id parameter")
-		return
+		return nil, err
 	}
 	if jobID == "" {
 		err = errors.New("missing required job_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1alpha/eval/benchmarks/%s/jobs/%s/result", query.BenchmarkID, jobID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Cancel a job.
@@ -63,15 +63,15 @@ func (r *AlphaEvalJobService) Cancel(ctx context.Context, jobID string, body Alp
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if body.BenchmarkID == "" {
 		err = errors.New("missing required benchmark_id parameter")
-		return
+		return err
 	}
 	if jobID == "" {
 		err = errors.New("missing required job_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("v1alpha/eval/benchmarks/%s/jobs/%s", body.BenchmarkID, jobID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // Get the status of a job.
@@ -79,15 +79,15 @@ func (r *AlphaEvalJobService) Status(ctx context.Context, jobID string, query Al
 	opts = slices.Concat(r.Options, opts)
 	if query.BenchmarkID == "" {
 		err = errors.New("missing required benchmark_id parameter")
-		return
+		return nil, err
 	}
 	if jobID == "" {
 		err = errors.New("missing required job_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1alpha/eval/benchmarks/%s/jobs/%s", query.BenchmarkID, jobID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 type AlphaEvalJobGetParams struct {

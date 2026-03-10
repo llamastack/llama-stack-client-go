@@ -47,7 +47,7 @@ func (r *AlphaAdminService) Health(ctx context.Context, opts ...option.RequestOp
 	opts = slices.Concat(r.Options, opts)
 	path := "v1alpha/admin/health"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Get detailed information about a specific provider.
@@ -55,11 +55,11 @@ func (r *AlphaAdminService) InspectProvider(ctx context.Context, providerID stri
 	opts = slices.Concat(r.Options, opts)
 	if providerID == "" {
 		err = errors.New("missing required provider_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1alpha/admin/providers/%s", providerID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // List all available providers with their configuration and health status.
@@ -69,10 +69,10 @@ func (r *AlphaAdminService) ListProviders(ctx context.Context, opts ...option.Re
 	path := "v1alpha/admin/providers"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
 	if err != nil {
-		return
+		return nil, err
 	}
 	res = &env.Data
-	return
+	return res, nil
 }
 
 // List all available API routes with their methods and implementing providers.
@@ -82,10 +82,10 @@ func (r *AlphaAdminService) ListRoutes(ctx context.Context, query AlphaAdminList
 	path := "v1alpha/admin/inspect/routes"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &env, opts...)
 	if err != nil {
-		return
+		return nil, err
 	}
 	res = &env.Data
-	return
+	return res, nil
 }
 
 // Get the version of the service.
@@ -93,7 +93,7 @@ func (r *AlphaAdminService) Version(ctx context.Context, opts ...option.RequestO
 	opts = slices.Concat(r.Options, opts)
 	path := "v1alpha/admin/version"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Response containing a list of all available providers.

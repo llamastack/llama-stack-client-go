@@ -45,10 +45,10 @@ func (r *ModelOpenAIService) List(ctx context.Context, opts ...option.RequestOpt
 	path := "v1/models"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
 	if err != nil {
-		return
+		return nil, err
 	}
 	res = &env.Data
-	return
+	return res, nil
 }
 
 // Response containing a list of OpenAI model objects.

@@ -48,15 +48,15 @@ func (r *PromptVersionService) List(ctx context.Context, promptID string, opts .
 	opts = slices.Concat(r.Options, opts)
 	if promptID == "" {
 		err = errors.New("missing required prompt_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/prompts/%s/versions", promptID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
 	if err != nil {
-		return
+		return nil, err
 	}
 	res = &env.Data
-	return
+	return res, nil
 }
 
 // Response model to list prompts.

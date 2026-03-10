@@ -46,7 +46,7 @@ func (r *VectorIoService) Insert(ctx context.Context, body VectorIoInsertParams,
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	path := "v1/vector-io/insert"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
-	return
+	return err
 }
 
 // Query chunks from a vector database.
@@ -54,7 +54,7 @@ func (r *VectorIoService) Query(ctx context.Context, body VectorIoQueryParams, o
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/vector-io/query"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Response from querying chunks in a vector database.

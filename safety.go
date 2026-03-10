@@ -46,7 +46,7 @@ func (r *SafetyService) RunShield(ctx context.Context, body SafetyRunShieldParam
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/safety/run-shield"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Response from running a safety shield.

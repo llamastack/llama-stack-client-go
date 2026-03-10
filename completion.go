@@ -59,7 +59,7 @@ func (r *CompletionService) New(ctx context.Context, body CompletionNewParams, o
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/completions"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Generate an OpenAI-compatible completion for the given prompt using the

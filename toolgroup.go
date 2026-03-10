@@ -50,10 +50,10 @@ func (r *ToolgroupService) List(ctx context.Context, opts ...option.RequestOptio
 	path := "v1/toolgroups"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
 	if err != nil {
-		return
+		return nil, err
 	}
 	res = &env.Data
-	return
+	return res, nil
 }
 
 // Get a tool group by its ID.
@@ -63,11 +63,11 @@ func (r *ToolgroupService) Get(ctx context.Context, toolgroupID string, opts ...
 	opts = slices.Concat(r.Options, opts)
 	if toolgroupID == "" {
 		err = errors.New("missing required toolgroup_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/toolgroups/%s", toolgroupID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Register a tool group.
@@ -78,7 +78,7 @@ func (r *ToolgroupService) Register(ctx context.Context, body ToolgroupRegisterP
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	path := "v1/toolgroups"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
-	return
+	return err
 }
 
 // Unregister a tool group.
@@ -89,11 +89,11 @@ func (r *ToolgroupService) Unregister(ctx context.Context, toolgroupID string, o
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if toolgroupID == "" {
 		err = errors.New("missing required toolgroup_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("v1/toolgroups/%s", toolgroupID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // Response containing a list of tool groups.

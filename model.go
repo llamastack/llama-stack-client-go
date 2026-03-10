@@ -48,11 +48,11 @@ func (r *ModelService) Get(ctx context.Context, modelID string, opts ...option.R
 	opts = slices.Concat(r.Options, opts)
 	if modelID == "" {
 		err = errors.New("missing required model_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/models/%s", modelID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // List models using the OpenAI API.
@@ -62,10 +62,10 @@ func (r *ModelService) List(ctx context.Context, opts ...option.RequestOption) (
 	path := "v1/models"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
 	if err != nil {
-		return
+		return nil, err
 	}
 	res = &env.Data
-	return
+	return res, nil
 }
 
 // Register a model.
@@ -75,7 +75,7 @@ func (r *ModelService) Register(ctx context.Context, body ModelRegisterParams, o
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/models"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Unregister a model.
@@ -86,11 +86,11 @@ func (r *ModelService) Unregister(ctx context.Context, modelID string, opts ...o
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if modelID == "" {
 		err = errors.New("missing required model_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("v1/models/%s", modelID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // Response containing a list of OpenAI model objects.

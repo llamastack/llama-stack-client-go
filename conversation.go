@@ -51,7 +51,7 @@ func (r *ConversationService) New(ctx context.Context, body ConversationNewParam
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/conversations"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Get a conversation with the given ID.
@@ -59,11 +59,11 @@ func (r *ConversationService) Get(ctx context.Context, conversationID string, op
 	opts = slices.Concat(r.Options, opts)
 	if conversationID == "" {
 		err = errors.New("missing required conversation_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/conversations/%s", conversationID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Update a conversation's metadata with the given ID.
@@ -71,11 +71,11 @@ func (r *ConversationService) Update(ctx context.Context, conversationID string,
 	opts = slices.Concat(r.Options, opts)
 	if conversationID == "" {
 		err = errors.New("missing required conversation_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/conversations/%s", conversationID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Delete a conversation with the given ID.
@@ -83,11 +83,11 @@ func (r *ConversationService) Delete(ctx context.Context, conversationID string,
 	opts = slices.Concat(r.Options, opts)
 	if conversationID == "" {
 		err = errors.New("missing required conversation_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/conversations/%s", conversationID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // OpenAI-compatible conversation object.

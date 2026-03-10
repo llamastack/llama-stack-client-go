@@ -49,11 +49,11 @@ func (r *BetaDatasetService) Get(ctx context.Context, datasetID string, opts ...
 	opts = slices.Concat(r.Options, opts)
 	if datasetID == "" {
 		err = errors.New("missing required dataset_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1beta/datasets/%s", datasetID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // List all datasets.
@@ -63,10 +63,10 @@ func (r *BetaDatasetService) List(ctx context.Context, opts ...option.RequestOpt
 	path := "v1beta/datasets"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
 	if err != nil {
-		return
+		return nil, err
 	}
 	res = &env.Data
-	return
+	return res, nil
 }
 
 // Append rows to a dataset.
@@ -75,11 +75,11 @@ func (r *BetaDatasetService) Appendrows(ctx context.Context, datasetID string, b
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if datasetID == "" {
 		err = errors.New("missing required dataset_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("v1beta/datasetio/append-rows/%s", datasetID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
-	return
+	return err
 }
 
 // Get a paginated list of rows from a dataset.
@@ -97,11 +97,11 @@ func (r *BetaDatasetService) Iterrows(ctx context.Context, datasetID string, que
 	opts = slices.Concat(r.Options, opts)
 	if datasetID == "" {
 		err = errors.New("missing required dataset_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1beta/datasetio/iterrows/%s", datasetID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Register a new dataset.
@@ -111,7 +111,7 @@ func (r *BetaDatasetService) Register(ctx context.Context, body BetaDatasetRegis
 	opts = slices.Concat(r.Options, opts)
 	path := "v1beta/datasets"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Unregister a dataset by its ID.
@@ -122,11 +122,11 @@ func (r *BetaDatasetService) Unregister(ctx context.Context, datasetID string, o
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if datasetID == "" {
 		err = errors.New("missing required dataset_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("v1beta/datasets/%s", datasetID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // Response from listing datasets.

@@ -48,10 +48,10 @@ func (r *AlphaPostTrainingJobService) List(ctx context.Context, opts ...option.R
 	path := "v1alpha/post-training/jobs"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
 	if err != nil {
-		return
+		return nil, err
 	}
 	res = &env.Data
-	return
+	return res, nil
 }
 
 // Get the artifacts of a training job.
@@ -59,11 +59,11 @@ func (r *AlphaPostTrainingJobService) Artifacts(ctx context.Context, jobUuid str
 	opts = slices.Concat(r.Options, opts)
 	if jobUuid == "" {
 		err = errors.New("missing required job_uuid parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1alpha/post-training/jobs/%s/artifacts", jobUuid)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Cancel a training job.
@@ -72,11 +72,11 @@ func (r *AlphaPostTrainingJobService) Cancel(ctx context.Context, jobUuid string
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if jobUuid == "" {
 		err = errors.New("missing required job_uuid parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("v1alpha/post-training/jobs/%s/cancel", jobUuid)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // Get the status of a training job.
@@ -84,11 +84,11 @@ func (r *AlphaPostTrainingJobService) Status(ctx context.Context, jobUuid string
 	opts = slices.Concat(r.Options, opts)
 	if jobUuid == "" {
 		err = errors.New("missing required job_uuid parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1alpha/post-training/jobs/%s/status", jobUuid)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Artifacts of a finetuning job.

@@ -46,11 +46,11 @@ func (r *AlphaBenchmarkService) Get(ctx context.Context, benchmarkID string, opt
 	opts = slices.Concat(r.Options, opts)
 	if benchmarkID == "" {
 		err = errors.New("missing required benchmark_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1alpha/eval/benchmarks/%s", benchmarkID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // List all benchmarks.
@@ -60,10 +60,10 @@ func (r *AlphaBenchmarkService) List(ctx context.Context, opts ...option.Request
 	path := "v1alpha/eval/benchmarks"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
 	if err != nil {
-		return
+		return nil, err
 	}
 	res = &env.Data
-	return
+	return res, nil
 }
 
 // Register a benchmark.
@@ -74,7 +74,7 @@ func (r *AlphaBenchmarkService) Register(ctx context.Context, body AlphaBenchmar
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	path := "v1alpha/eval/benchmarks"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
-	return
+	return err
 }
 
 // Unregister a benchmark.
@@ -85,11 +85,11 @@ func (r *AlphaBenchmarkService) Unregister(ctx context.Context, benchmarkID stri
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if benchmarkID == "" {
 		err = errors.New("missing required benchmark_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("v1alpha/eval/benchmarks/%s", benchmarkID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // A benchmark resource for evaluating model performance.

@@ -52,11 +52,11 @@ func (r *ConversationItemService) New(ctx context.Context, conversationID string
 	opts = slices.Concat(r.Options, opts)
 	if conversationID == "" {
 		err = errors.New("missing required conversation_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/conversations/%s/items", conversationID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // List items in the conversation.
@@ -66,7 +66,7 @@ func (r *ConversationItemService) List(ctx context.Context, conversationID strin
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	if conversationID == "" {
 		err = errors.New("missing required conversation_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/conversations/%s/items", conversationID)
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -91,15 +91,15 @@ func (r *ConversationItemService) Delete(ctx context.Context, itemID string, bod
 	opts = slices.Concat(r.Options, opts)
 	if body.ConversationID == "" {
 		err = errors.New("missing required conversation_id parameter")
-		return
+		return nil, err
 	}
 	if itemID == "" {
 		err = errors.New("missing required item_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/conversations/%s/items/%s", body.ConversationID, itemID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieve a conversation item.
@@ -107,15 +107,15 @@ func (r *ConversationItemService) Get(ctx context.Context, itemID string, query 
 	opts = slices.Concat(r.Options, opts)
 	if query.ConversationID == "" {
 		err = errors.New("missing required conversation_id parameter")
-		return
+		return nil, err
 	}
 	if itemID == "" {
 		err = errors.New("missing required item_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/conversations/%s/items/%s", query.ConversationID, itemID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // List of conversation items with pagination.

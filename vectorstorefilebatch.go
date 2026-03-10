@@ -49,11 +49,11 @@ func (r *VectorStoreFileBatchService) New(ctx context.Context, vectorStoreID str
 	opts = slices.Concat(r.Options, opts)
 	if vectorStoreID == "" {
 		err = errors.New("missing required vector_store_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/vector_stores/%s/file_batches", vectorStoreID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieve a vector store file batch (OpenAI-compatible).
@@ -61,15 +61,15 @@ func (r *VectorStoreFileBatchService) Get(ctx context.Context, batchID string, q
 	opts = slices.Concat(r.Options, opts)
 	if query.VectorStoreID == "" {
 		err = errors.New("missing required vector_store_id parameter")
-		return
+		return nil, err
 	}
 	if batchID == "" {
 		err = errors.New("missing required batch_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/vector_stores/%s/file_batches/%s", query.VectorStoreID, batchID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Cancel a vector store file batch (OpenAI-compatible).
@@ -77,15 +77,15 @@ func (r *VectorStoreFileBatchService) Cancel(ctx context.Context, batchID string
 	opts = slices.Concat(r.Options, opts)
 	if body.VectorStoreID == "" {
 		err = errors.New("missing required vector_store_id parameter")
-		return
+		return nil, err
 	}
 	if batchID == "" {
 		err = errors.New("missing required batch_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/vector_stores/%s/file_batches/%s/cancel", body.VectorStoreID, batchID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // List files in a vector store file batch (OpenAI-compatible).
@@ -95,11 +95,11 @@ func (r *VectorStoreFileBatchService) ListFiles(ctx context.Context, batchID str
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	if params.VectorStoreID == "" {
 		err = errors.New("missing required vector_store_id parameter")
-		return
+		return nil, err
 	}
 	if batchID == "" {
 		err = errors.New("missing required batch_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/vector_stores/%s/file_batches/%s/files", params.VectorStoreID, batchID)
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, params, &res, opts...)

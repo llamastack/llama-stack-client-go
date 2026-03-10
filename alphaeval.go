@@ -53,11 +53,11 @@ func (r *AlphaEvalService) EvaluateRows(ctx context.Context, benchmarkID string,
 	opts = slices.Concat(r.Options, opts)
 	if benchmarkID == "" {
 		err = errors.New("missing required benchmark_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1alpha/eval/benchmarks/%s/evaluations", benchmarkID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Evaluate a list of rows on a benchmark.
@@ -65,11 +65,11 @@ func (r *AlphaEvalService) EvaluateRowsAlpha(ctx context.Context, benchmarkID st
 	opts = slices.Concat(r.Options, opts)
 	if benchmarkID == "" {
 		err = errors.New("missing required benchmark_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1alpha/eval/benchmarks/%s/evaluations", benchmarkID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Run an evaluation on a benchmark.
@@ -77,11 +77,11 @@ func (r *AlphaEvalService) RunEval(ctx context.Context, benchmarkID string, body
 	opts = slices.Concat(r.Options, opts)
 	if benchmarkID == "" {
 		err = errors.New("missing required benchmark_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1alpha/eval/benchmarks/%s/jobs", benchmarkID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Run an evaluation on a benchmark.
@@ -89,11 +89,11 @@ func (r *AlphaEvalService) RunEvalAlpha(ctx context.Context, benchmarkID string,
 	opts = slices.Concat(r.Options, opts)
 	if benchmarkID == "" {
 		err = errors.New("missing required benchmark_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1alpha/eval/benchmarks/%s/jobs", benchmarkID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // A benchmark configuration for evaluation.

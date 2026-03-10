@@ -48,11 +48,11 @@ func (r *ProviderService) Get(ctx context.Context, providerID string, opts ...op
 	opts = slices.Concat(r.Options, opts)
 	if providerID == "" {
 		err = errors.New("missing required provider_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/providers/%s", providerID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // List all available providers.
@@ -62,10 +62,10 @@ func (r *ProviderService) List(ctx context.Context, opts ...option.RequestOption
 	path := "v1/providers"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
 	if err != nil {
-		return
+		return nil, err
 	}
 	res = &env.Data
-	return
+	return res, nil
 }
 
 // Response containing a list of all available providers.

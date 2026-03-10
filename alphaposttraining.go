@@ -46,7 +46,7 @@ func (r *AlphaPostTrainingService) PreferenceOptimize(ctx context.Context, body 
 	opts = slices.Concat(r.Options, opts)
 	path := "v1alpha/post-training/preference-optimize"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Run supervised fine-tuning of a model.
@@ -54,7 +54,7 @@ func (r *AlphaPostTrainingService) SupervisedFineTune(ctx context.Context, body 
 	opts = slices.Concat(r.Options, opts)
 	path := "v1alpha/post-training/supervised-fine-tune"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 type ListPostTrainingJobsResponse struct {

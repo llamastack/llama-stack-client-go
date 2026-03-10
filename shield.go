@@ -46,11 +46,11 @@ func (r *ShieldService) Get(ctx context.Context, identifier string, opts ...opti
 	opts = slices.Concat(r.Options, opts)
 	if identifier == "" {
 		err = errors.New("missing required identifier parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/shields/%s", identifier)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // List all shields.
@@ -60,10 +60,10 @@ func (r *ShieldService) List(ctx context.Context, opts ...option.RequestOption) 
 	path := "v1/shields"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
 	if err != nil {
-		return
+		return nil, err
 	}
 	res = &env.Data
-	return
+	return res, nil
 }
 
 // Unregister a shield.
@@ -74,11 +74,11 @@ func (r *ShieldService) Delete(ctx context.Context, identifier string, opts ...o
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if identifier == "" {
 		err = errors.New("missing required identifier parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("v1/shields/%s", identifier)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // Register a shield.
@@ -88,7 +88,7 @@ func (r *ShieldService) Register(ctx context.Context, body ShieldRegisterParams,
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/shields"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Response containing a list of all shields.

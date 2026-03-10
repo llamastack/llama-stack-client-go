@@ -55,7 +55,7 @@ func (r *VectorStoreService) New(ctx context.Context, body VectorStoreNewParams,
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/vector_stores"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieve a vector store (OpenAI-compatible).
@@ -63,11 +63,11 @@ func (r *VectorStoreService) Get(ctx context.Context, vectorStoreID string, opts
 	opts = slices.Concat(r.Options, opts)
 	if vectorStoreID == "" {
 		err = errors.New("missing required vector_store_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/vector_stores/%s", vectorStoreID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Update a vector store (OpenAI-compatible).
@@ -75,11 +75,11 @@ func (r *VectorStoreService) Update(ctx context.Context, vectorStoreID string, b
 	opts = slices.Concat(r.Options, opts)
 	if vectorStoreID == "" {
 		err = errors.New("missing required vector_store_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/vector_stores/%s", vectorStoreID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // List vector stores (OpenAI-compatible).
@@ -110,11 +110,11 @@ func (r *VectorStoreService) Delete(ctx context.Context, vectorStoreID string, o
 	opts = slices.Concat(r.Options, opts)
 	if vectorStoreID == "" {
 		err = errors.New("missing required vector_store_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/vector_stores/%s", vectorStoreID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Search a vector store (OpenAI-compatible).
@@ -122,11 +122,11 @@ func (r *VectorStoreService) Search(ctx context.Context, vectorStoreID string, b
 	opts = slices.Concat(r.Options, opts)
 	if vectorStoreID == "" {
 		err = errors.New("missing required vector_store_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/vector_stores/%s/search", vectorStoreID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Response from listing vector stores.

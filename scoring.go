@@ -44,7 +44,7 @@ func (r *ScoringService) Score(ctx context.Context, body ScoringScoreParams, opt
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/scoring/score"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Score a batch of rows.
@@ -52,7 +52,7 @@ func (r *ScoringService) ScoreBatch(ctx context.Context, body ScoringScoreBatchP
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/scoring/score-batch"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // The response from scoring.

@@ -52,10 +52,10 @@ func (r *ToolService) List(ctx context.Context, query ToolListParams, opts ...op
 	path := "v1/tools"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &env, opts...)
 	if err != nil {
-		return
+		return nil, err
 	}
 	res = &env.Data
-	return
+	return res, nil
 }
 
 // Get a tool by its name.
@@ -65,11 +65,11 @@ func (r *ToolService) Get(ctx context.Context, toolName string, opts ...option.R
 	opts = slices.Concat(r.Options, opts)
 	if toolName == "" {
 		err = errors.New("missing required tool_name parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/tools/%s", toolName)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 type ToolListParams struct {

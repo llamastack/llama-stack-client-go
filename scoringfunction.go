@@ -47,11 +47,11 @@ func (r *ScoringFunctionService) Get(ctx context.Context, scoringFnID string, op
 	opts = slices.Concat(r.Options, opts)
 	if scoringFnID == "" {
 		err = errors.New("missing required scoring_fn_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/scoring-functions/%s", scoringFnID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // List all scoring functions.
@@ -61,10 +61,10 @@ func (r *ScoringFunctionService) List(ctx context.Context, opts ...option.Reques
 	path := "v1/scoring-functions"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
 	if err != nil {
-		return
+		return nil, err
 	}
 	res = &env.Data
-	return
+	return res, nil
 }
 
 // Register a scoring function.
@@ -75,7 +75,7 @@ func (r *ScoringFunctionService) Register(ctx context.Context, body ScoringFunct
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	path := "v1/scoring-functions"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, nil, opts...)
-	return
+	return err
 }
 
 // Unregister a scoring function.
@@ -86,11 +86,11 @@ func (r *ScoringFunctionService) Unregister(ctx context.Context, scoringFnID str
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if scoringFnID == "" {
 		err = errors.New("missing required scoring_fn_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("v1/scoring-functions/%s", scoringFnID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // Response containing a list of scoring function objects.

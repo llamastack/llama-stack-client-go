@@ -53,7 +53,7 @@ func (r *PromptService) New(ctx context.Context, body PromptNewParams, opts ...o
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/prompts"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Get a prompt by its identifier and optional version.
@@ -61,11 +61,11 @@ func (r *PromptService) Get(ctx context.Context, promptID string, query PromptGe
 	opts = slices.Concat(r.Options, opts)
 	if promptID == "" {
 		err = errors.New("missing required prompt_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/prompts/%s", promptID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Update an existing prompt (increments version).
@@ -73,11 +73,11 @@ func (r *PromptService) Update(ctx context.Context, promptID string, body Prompt
 	opts = slices.Concat(r.Options, opts)
 	if promptID == "" {
 		err = errors.New("missing required prompt_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/prompts/%s", promptID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // List all prompts.
@@ -87,10 +87,10 @@ func (r *PromptService) List(ctx context.Context, opts ...option.RequestOption) 
 	path := "v1/prompts"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
 	if err != nil {
-		return
+		return nil, err
 	}
 	res = &env.Data
-	return
+	return res, nil
 }
 
 // Delete a prompt.
@@ -99,11 +99,11 @@ func (r *PromptService) Delete(ctx context.Context, promptID string, opts ...opt
 	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
 	if promptID == "" {
 		err = errors.New("missing required prompt_id parameter")
-		return
+		return err
 	}
 	path := fmt.Sprintf("v1/prompts/%s", promptID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return
+	return err
 }
 
 // Set which version of a prompt should be the default in get_prompt (latest).
@@ -111,11 +111,11 @@ func (r *PromptService) SetDefaultVersion(ctx context.Context, promptID string, 
 	opts = slices.Concat(r.Options, opts)
 	if promptID == "" {
 		err = errors.New("missing required prompt_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/prompts/%s/set-default-version", promptID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPut, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Response model to list prompts.

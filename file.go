@@ -57,7 +57,7 @@ func (r *FileService) New(ctx context.Context, body FileNewParams, opts ...optio
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/files"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Get file
@@ -65,11 +65,11 @@ func (r *FileService) Get(ctx context.Context, fileID string, opts ...option.Req
 	opts = slices.Concat(r.Options, opts)
 	if fileID == "" {
 		err = errors.New("missing required file_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/files/%s", fileID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // List files
@@ -100,11 +100,11 @@ func (r *FileService) Delete(ctx context.Context, fileID string, opts ...option.
 	opts = slices.Concat(r.Options, opts)
 	if fileID == "" {
 		err = errors.New("missing required file_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/files/%s", fileID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieve file content
@@ -112,11 +112,11 @@ func (r *FileService) Content(ctx context.Context, fileID string, opts ...option
 	opts = slices.Concat(r.Options, opts)
 	if fileID == "" {
 		err = errors.New("missing required file_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/files/%s/content", fileID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Response for deleting a file in OpenAI Files API.

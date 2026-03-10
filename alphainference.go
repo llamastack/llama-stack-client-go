@@ -59,10 +59,10 @@ func (r *AlphaInferenceService) Rerank(ctx context.Context, body AlphaInferenceR
 	path := "v1alpha/inference/rerank"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &env, opts...)
 	if err != nil {
-		return
+		return nil, err
 	}
 	res = &env.Data
-	return
+	return res, nil
 }
 
 // A single rerank result from a reranking response.

@@ -64,7 +64,7 @@ func (r *ChatCompletionService) New(ctx context.Context, body ChatCompletionNewP
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/chat/completions"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Generate an OpenAI-compatible chat completion for the given messages using the
@@ -86,11 +86,11 @@ func (r *ChatCompletionService) Get(ctx context.Context, completionID string, op
 	opts = slices.Concat(r.Options, opts)
 	if completionID == "" {
 		err = errors.New("missing required completion_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/chat/completions/%s", completionID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // List chat completions.
@@ -98,7 +98,7 @@ func (r *ChatCompletionService) List(ctx context.Context, query ChatCompletionLi
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/chat/completions"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &res, opts...)
-	return
+	return res, err
 }
 
 // Response from an OpenAI-compatible chat completion request.

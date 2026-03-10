@@ -51,11 +51,11 @@ func (r *VectorStoreFileService) New(ctx context.Context, vectorStoreID string, 
 	opts = slices.Concat(r.Options, opts)
 	if vectorStoreID == "" {
 		err = errors.New("missing required vector_store_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/vector_stores/%s/files", vectorStoreID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieve a vector store file (OpenAI-compatible).
@@ -63,15 +63,15 @@ func (r *VectorStoreFileService) Get(ctx context.Context, fileID string, query V
 	opts = slices.Concat(r.Options, opts)
 	if query.VectorStoreID == "" {
 		err = errors.New("missing required vector_store_id parameter")
-		return
+		return nil, err
 	}
 	if fileID == "" {
 		err = errors.New("missing required file_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/vector_stores/%s/files/%s", query.VectorStoreID, fileID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Update a vector store file (OpenAI-compatible).
@@ -79,15 +79,15 @@ func (r *VectorStoreFileService) Update(ctx context.Context, fileID string, para
 	opts = slices.Concat(r.Options, opts)
 	if params.VectorStoreID == "" {
 		err = errors.New("missing required vector_store_id parameter")
-		return
+		return nil, err
 	}
 	if fileID == "" {
 		err = errors.New("missing required file_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/vector_stores/%s/files/%s", params.VectorStoreID, fileID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // List files in a vector store (OpenAI-compatible).
@@ -97,7 +97,7 @@ func (r *VectorStoreFileService) List(ctx context.Context, vectorStoreID string,
 	opts = append([]option.RequestOption{option.WithResponseInto(&raw)}, opts...)
 	if vectorStoreID == "" {
 		err = errors.New("missing required vector_store_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/vector_stores/%s/files", vectorStoreID)
 	cfg, err := requestconfig.NewRequestConfig(ctx, http.MethodGet, path, query, &res, opts...)
@@ -122,15 +122,15 @@ func (r *VectorStoreFileService) Delete(ctx context.Context, fileID string, body
 	opts = slices.Concat(r.Options, opts)
 	if body.VectorStoreID == "" {
 		err = errors.New("missing required vector_store_id parameter")
-		return
+		return nil, err
 	}
 	if fileID == "" {
 		err = errors.New("missing required file_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/vector_stores/%s/files/%s", body.VectorStoreID, fileID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, &res, opts...)
-	return
+	return res, err
 }
 
 // Retrieve vector store file contents (OpenAI-compatible).
@@ -138,15 +138,15 @@ func (r *VectorStoreFileService) Content(ctx context.Context, fileID string, par
 	opts = slices.Concat(r.Options, opts)
 	if params.VectorStoreID == "" {
 		err = errors.New("missing required vector_store_id parameter")
-		return
+		return nil, err
 	}
 	if fileID == "" {
 		err = errors.New("missing required file_id parameter")
-		return
+		return nil, err
 	}
 	path := fmt.Sprintf("v1/vector_stores/%s/files/%s/content", params.VectorStoreID, fileID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
-	return
+	return res, err
 }
 
 // OpenAI Vector Store File object.

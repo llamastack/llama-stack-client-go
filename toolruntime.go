@@ -49,7 +49,7 @@ func (r *ToolRuntimeService) InvokeTool(ctx context.Context, body ToolRuntimeInv
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/tool-runtime/invoke"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return
+	return res, err
 }
 
 // List all tools in the runtime.
@@ -61,10 +61,10 @@ func (r *ToolRuntimeService) ListTools(ctx context.Context, query ToolRuntimeLis
 	path := "v1/tool-runtime/list-tools"
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, query, &env, opts...)
 	if err != nil {
-		return
+		return nil, err
 	}
 	res = &env.Data
-	return
+	return res, nil
 }
 
 // Tool definition used in runtime contexts.
