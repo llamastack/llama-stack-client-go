@@ -44,7 +44,7 @@ func TestUserAgentHeader(t *testing.T) {
 			},
 		}),
 	)
-	client.Chat.Completions.New(context.Background(), llamastackclient.ChatCompletionNewParams{
+	_, _ = client.Chat.Completions.New(context.Background(), llamastackclient.ChatCompletionNewParams{
 		Messages: []llamastackclient.ChatCompletionNewParamsMessageUnion{{
 			OfUser: &llamastackclient.ChatCompletionNewParamsMessageUser{
 				Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
