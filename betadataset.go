@@ -668,8 +668,6 @@ const (
 )
 
 type BetaDatasetAppendrowsParams struct {
-	// The ID of the dataset to append the rows to.
-	DatasetID string `json:"dataset_id" api:"required"`
 	// The rows to append to the dataset.
 	Rows []map[string]any `json:"rows,omitzero" api:"required"`
 	paramObj

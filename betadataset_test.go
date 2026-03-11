@@ -76,7 +76,6 @@ func TestBetaDatasetAppendrows(t *testing.T) {
 		context.TODO(),
 		"dataset_id",
 		llamastackclient.BetaDatasetAppendrowsParams{
-			DatasetID: "dataset_id",
 			Rows: []map[string]any{{
 				"foo": "bar",
 			}},
