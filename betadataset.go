@@ -155,7 +155,7 @@ type ListDatasetsResponseData struct {
 	ProviderID string `json:"provider_id" api:"required"`
 	// Purpose of the dataset indicating its intended use
 	//
-	// Any of "post-training/messages", "eval/question-answer", "eval/messages-answer".
+	// Any of "eval/question-answer", "eval/messages-answer".
 	Purpose string `json:"purpose" api:"required"`
 	// Data source configuration for the dataset
 	Source ListDatasetsResponseDataSourceUnion `json:"source" api:"required"`
@@ -311,7 +311,7 @@ type BetaDatasetGetResponse struct {
 	ProviderID string `json:"provider_id" api:"required"`
 	// Purpose of the dataset indicating its intended use
 	//
-	// Any of "post-training/messages", "eval/question-answer", "eval/messages-answer".
+	// Any of "eval/question-answer", "eval/messages-answer".
 	Purpose BetaDatasetGetResponsePurpose `json:"purpose" api:"required"`
 	// Data source configuration for the dataset
 	Source BetaDatasetGetResponseSourceUnion `json:"source" api:"required"`
@@ -347,9 +347,8 @@ func (r *BetaDatasetGetResponse) UnmarshalJSON(data []byte) error {
 type BetaDatasetGetResponsePurpose string
 
 const (
-	BetaDatasetGetResponsePurposePostTrainingMessages BetaDatasetGetResponsePurpose = "post-training/messages"
-	BetaDatasetGetResponsePurposeEvalQuestionAnswer   BetaDatasetGetResponsePurpose = "eval/question-answer"
-	BetaDatasetGetResponsePurposeEvalMessagesAnswer   BetaDatasetGetResponsePurpose = "eval/messages-answer"
+	BetaDatasetGetResponsePurposeEvalQuestionAnswer BetaDatasetGetResponsePurpose = "eval/question-answer"
+	BetaDatasetGetResponsePurposeEvalMessagesAnswer BetaDatasetGetResponsePurpose = "eval/messages-answer"
 )
 
 // BetaDatasetGetResponseSourceUnion contains all possible properties and values
@@ -504,7 +503,7 @@ type BetaDatasetRegisterResponse struct {
 	ProviderID string `json:"provider_id" api:"required"`
 	// Purpose of the dataset indicating its intended use
 	//
-	// Any of "post-training/messages", "eval/question-answer", "eval/messages-answer".
+	// Any of "eval/question-answer", "eval/messages-answer".
 	Purpose BetaDatasetRegisterResponsePurpose `json:"purpose" api:"required"`
 	// Data source configuration for the dataset
 	Source BetaDatasetRegisterResponseSourceUnion `json:"source" api:"required"`
@@ -540,9 +539,8 @@ func (r *BetaDatasetRegisterResponse) UnmarshalJSON(data []byte) error {
 type BetaDatasetRegisterResponsePurpose string
 
 const (
-	BetaDatasetRegisterResponsePurposePostTrainingMessages BetaDatasetRegisterResponsePurpose = "post-training/messages"
-	BetaDatasetRegisterResponsePurposeEvalQuestionAnswer   BetaDatasetRegisterResponsePurpose = "eval/question-answer"
-	BetaDatasetRegisterResponsePurposeEvalMessagesAnswer   BetaDatasetRegisterResponsePurpose = "eval/messages-answer"
+	BetaDatasetRegisterResponsePurposeEvalQuestionAnswer BetaDatasetRegisterResponsePurpose = "eval/question-answer"
+	BetaDatasetRegisterResponsePurposeEvalMessagesAnswer BetaDatasetRegisterResponsePurpose = "eval/messages-answer"
 )
 
 // BetaDatasetRegisterResponseSourceUnion contains all possible properties and
@@ -705,7 +703,7 @@ func (r BetaDatasetIterrowsParams) URLQuery() (v url.Values, err error) {
 type BetaDatasetRegisterParams struct {
 	// The purpose of the dataset.
 	//
-	// Any of "post-training/messages", "eval/question-answer", "eval/messages-answer".
+	// Any of "eval/question-answer", "eval/messages-answer".
 	Purpose BetaDatasetRegisterParamsPurpose `json:"purpose,omitzero" api:"required"`
 	// The data source of the dataset.
 	Source BetaDatasetRegisterParamsSourceUnion `json:"source,omitzero" api:"required"`
@@ -728,9 +726,8 @@ func (r *BetaDatasetRegisterParams) UnmarshalJSON(data []byte) error {
 type BetaDatasetRegisterParamsPurpose string
 
 const (
-	BetaDatasetRegisterParamsPurposePostTrainingMessages BetaDatasetRegisterParamsPurpose = "post-training/messages"
-	BetaDatasetRegisterParamsPurposeEvalQuestionAnswer   BetaDatasetRegisterParamsPurpose = "eval/question-answer"
-	BetaDatasetRegisterParamsPurposeEvalMessagesAnswer   BetaDatasetRegisterParamsPurpose = "eval/messages-answer"
+	BetaDatasetRegisterParamsPurposeEvalQuestionAnswer BetaDatasetRegisterParamsPurpose = "eval/question-answer"
+	BetaDatasetRegisterParamsPurposeEvalMessagesAnswer BetaDatasetRegisterParamsPurpose = "eval/messages-answer"
 )
 
 // Only one field can be non-zero.

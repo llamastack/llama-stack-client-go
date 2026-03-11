@@ -362,32 +362,6 @@ Methods:
 
 # Alpha
 
-## PostTraining
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ListPostTrainingJobsResponse">ListPostTrainingJobsResponse</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#PostTrainingJob">PostTrainingJob</a>
-
-Methods:
-
-- <code title="post /v1alpha/post-training/preference-optimize">client.Alpha.PostTraining.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaPostTrainingService.PreferenceOptimize">PreferenceOptimize</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaPostTrainingPreferenceOptimizeParams">AlphaPostTrainingPreferenceOptimizeParams</a>) (\*<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#PostTrainingJob">PostTrainingJob</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="post /v1alpha/post-training/supervised-fine-tune">client.Alpha.PostTraining.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaPostTrainingService.SupervisedFineTune">SupervisedFineTune</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaPostTrainingSupervisedFineTuneParams">AlphaPostTrainingSupervisedFineTuneParams</a>) (\*<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#PostTrainingJob">PostTrainingJob</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
-### Job
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaPostTrainingJobArtifactsResponse">AlphaPostTrainingJobArtifactsResponse</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaPostTrainingJobStatusResponse">AlphaPostTrainingJobStatusResponse</a>
-
-Methods:
-
-- <code title="get /v1alpha/post-training/jobs">client.Alpha.PostTraining.Job.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaPostTrainingJobService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (\*[]<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#PostTrainingJob">PostTrainingJob</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="get /v1alpha/post-training/jobs/{job_uuid}/artifacts">client.Alpha.PostTraining.Job.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaPostTrainingJobService.Artifacts">Artifacts</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, jobUuid <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaPostTrainingJobArtifactsResponse">AlphaPostTrainingJobArtifactsResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="post /v1alpha/post-training/jobs/{job_uuid}/cancel">client.Alpha.PostTraining.Job.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaPostTrainingJobService.Cancel">Cancel</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, jobUuid <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
-- <code title="get /v1alpha/post-training/jobs/{job_uuid}/status">client.Alpha.PostTraining.Job.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaPostTrainingJobService.Status">Status</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, jobUuid <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaPostTrainingJobStatusResponse">AlphaPostTrainingJobStatusResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
 ## Benchmarks
 
 Response Types:
