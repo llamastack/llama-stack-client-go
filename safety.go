@@ -665,11 +665,13 @@ func init() {
 }
 
 // Function call details for OpenAI-compatible tool calls.
+//
+// The properties Arguments, Name are required.
 type SafetyRunShieldParamsMessageAssistantToolCallFunction struct {
 	// Arguments to pass to the function as a JSON string.
-	Arguments param.Opt[string] `json:"arguments,omitzero"`
+	Arguments string `json:"arguments" api:"required"`
 	// Name of the function to call.
-	Name param.Opt[string] `json:"name,omitzero"`
+	Name string `json:"name" api:"required"`
 	paramObj
 }
 

@@ -142,9 +142,9 @@ func (r *CompletionNewResponseChoice) UnmarshalJSON(data []byte) error {
 // chat completion response.
 type CompletionNewResponseChoiceLogprobs struct {
 	// The log probabilities for the tokens in the message.
-	Content []CompletionNewResponseChoiceLogprobsContent `json:"content" api:"nullable"`
+	Content []CompletionNewResponseChoiceLogprobsContent `json:"content"`
 	// The log probabilities for the refusal tokens.
-	Refusal []CompletionNewResponseChoiceLogprobsRefusal `json:"refusal" api:"nullable"`
+	Refusal []CompletionNewResponseChoiceLogprobsRefusal `json:"refusal"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Content     respjson.Field

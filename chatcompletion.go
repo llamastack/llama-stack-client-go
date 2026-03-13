@@ -117,19 +117,22 @@ type ChatCompletionNewResponse struct {
 	Object ChatCompletionNewResponseObject `json:"object"`
 	// The service tier that was used for this response.
 	ServiceTier string `json:"service_tier" api:"nullable"`
+	// System fingerprint for this completion.
+	SystemFingerprint string `json:"system_fingerprint" api:"nullable"`
 	// Token usage information for the completion.
 	Usage ChatCompletionNewResponseUsage `json:"usage" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID          respjson.Field
-		Choices     respjson.Field
-		Created     respjson.Field
-		Model       respjson.Field
-		Object      respjson.Field
-		ServiceTier respjson.Field
-		Usage       respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		ID                respjson.Field
+		Choices           respjson.Field
+		Created           respjson.Field
+		Model             respjson.Field
+		Object            respjson.Field
+		ServiceTier       respjson.Field
+		SystemFingerprint respjson.Field
+		Usage             respjson.Field
+		ExtraFields       map[string]respjson.Field
+		raw               string
 	} `json:"-"`
 }
 
@@ -149,9 +152,8 @@ type ChatCompletionNewResponseChoice struct {
 	Index int64 `json:"index" api:"required"`
 	// The message from the model.
 	Message ChatCompletionNewResponseChoiceMessage `json:"message" api:"required"`
-	// The log probabilities for the tokens in the message from an OpenAI-compatible
-	// chat completion response.
-	Logprobs ChatCompletionNewResponseChoiceLogprobs `json:"logprobs" api:"nullable"`
+	// The log probabilities for the tokens in the message.
+	Logprobs ChatCompletionNewResponseChoiceLogprobs `json:"logprobs"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		FinishReason respjson.Field
@@ -210,9 +212,9 @@ func (r *ChatCompletionNewResponseChoiceMessage) UnmarshalJSON(data []byte) erro
 // Deprecated: the name and arguments of a function that should be called.
 type ChatCompletionNewResponseChoiceMessageFunctionCall struct {
 	// Arguments to pass to the function as a JSON string.
-	Arguments string `json:"arguments" api:"nullable"`
+	Arguments string `json:"arguments" api:"required"`
 	// Name of the function to call.
-	Name string `json:"name" api:"nullable"`
+	Name string `json:"name" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments   respjson.Field
@@ -260,9 +262,9 @@ func (r *ChatCompletionNewResponseChoiceMessageToolCall) UnmarshalJSON(data []by
 // Function call details for OpenAI-compatible tool calls.
 type ChatCompletionNewResponseChoiceMessageToolCallFunction struct {
 	// Arguments to pass to the function as a JSON string.
-	Arguments string `json:"arguments" api:"nullable"`
+	Arguments string `json:"arguments" api:"required"`
 	// Name of the function to call.
-	Name string `json:"name" api:"nullable"`
+	Name string `json:"name" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments   respjson.Field
@@ -278,13 +280,12 @@ func (r *ChatCompletionNewResponseChoiceMessageToolCallFunction) UnmarshalJSON(d
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The log probabilities for the tokens in the message from an OpenAI-compatible
-// chat completion response.
+// The log probabilities for the tokens in the message.
 type ChatCompletionNewResponseChoiceLogprobs struct {
 	// The log probabilities for the tokens in the message.
-	Content []ChatCompletionNewResponseChoiceLogprobsContent `json:"content" api:"nullable"`
+	Content []ChatCompletionNewResponseChoiceLogprobsContent `json:"content"`
 	// The log probabilities for the refusal tokens.
-	Refusal []ChatCompletionNewResponseChoiceLogprobsRefusal `json:"refusal" api:"nullable"`
+	Refusal []ChatCompletionNewResponseChoiceLogprobsRefusal `json:"refusal"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Content     respjson.Field
@@ -496,20 +497,23 @@ type ChatCompletionGetResponse struct {
 	Object ChatCompletionGetResponseObject `json:"object"`
 	// The service tier that was used for this response.
 	ServiceTier string `json:"service_tier" api:"nullable"`
+	// System fingerprint for this completion.
+	SystemFingerprint string `json:"system_fingerprint"`
 	// Token usage information for the completion.
 	Usage ChatCompletionGetResponseUsage `json:"usage"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID            respjson.Field
-		Choices       respjson.Field
-		Created       respjson.Field
-		InputMessages respjson.Field
-		Model         respjson.Field
-		Object        respjson.Field
-		ServiceTier   respjson.Field
-		Usage         respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
+		ID                respjson.Field
+		Choices           respjson.Field
+		Created           respjson.Field
+		InputMessages     respjson.Field
+		Model             respjson.Field
+		Object            respjson.Field
+		ServiceTier       respjson.Field
+		SystemFingerprint respjson.Field
+		Usage             respjson.Field
+		ExtraFields       map[string]respjson.Field
+		raw               string
 	} `json:"-"`
 }
 
@@ -529,9 +533,8 @@ type ChatCompletionGetResponseChoice struct {
 	Index int64 `json:"index" api:"required"`
 	// The message from the model.
 	Message ChatCompletionGetResponseChoiceMessage `json:"message" api:"required"`
-	// The log probabilities for the tokens in the message from an OpenAI-compatible
-	// chat completion response.
-	Logprobs ChatCompletionGetResponseChoiceLogprobs `json:"logprobs" api:"nullable"`
+	// The log probabilities for the tokens in the message.
+	Logprobs ChatCompletionGetResponseChoiceLogprobs `json:"logprobs"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		FinishReason respjson.Field
@@ -590,9 +593,9 @@ func (r *ChatCompletionGetResponseChoiceMessage) UnmarshalJSON(data []byte) erro
 // Deprecated: the name and arguments of a function that should be called.
 type ChatCompletionGetResponseChoiceMessageFunctionCall struct {
 	// Arguments to pass to the function as a JSON string.
-	Arguments string `json:"arguments" api:"nullable"`
+	Arguments string `json:"arguments" api:"required"`
 	// Name of the function to call.
-	Name string `json:"name" api:"nullable"`
+	Name string `json:"name" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments   respjson.Field
@@ -640,9 +643,9 @@ func (r *ChatCompletionGetResponseChoiceMessageToolCall) UnmarshalJSON(data []by
 // Function call details for OpenAI-compatible tool calls.
 type ChatCompletionGetResponseChoiceMessageToolCallFunction struct {
 	// Arguments to pass to the function as a JSON string.
-	Arguments string `json:"arguments" api:"nullable"`
+	Arguments string `json:"arguments" api:"required"`
 	// Name of the function to call.
-	Name string `json:"name" api:"nullable"`
+	Name string `json:"name" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments   respjson.Field
@@ -658,13 +661,12 @@ func (r *ChatCompletionGetResponseChoiceMessageToolCallFunction) UnmarshalJSON(d
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The log probabilities for the tokens in the message from an OpenAI-compatible
-// chat completion response.
+// The log probabilities for the tokens in the message.
 type ChatCompletionGetResponseChoiceLogprobs struct {
 	// The log probabilities for the tokens in the message.
-	Content []ChatCompletionGetResponseChoiceLogprobsContent `json:"content" api:"nullable"`
+	Content []ChatCompletionGetResponseChoiceLogprobsContent `json:"content"`
 	// The log probabilities for the refusal tokens.
-	Refusal []ChatCompletionGetResponseChoiceLogprobsRefusal `json:"refusal" api:"nullable"`
+	Refusal []ChatCompletionGetResponseChoiceLogprobsRefusal `json:"refusal"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Content     respjson.Field
@@ -1435,9 +1437,9 @@ func (r *ChatCompletionGetResponseInputMessageAssistantToolCall) UnmarshalJSON(d
 // Function call details for OpenAI-compatible tool calls.
 type ChatCompletionGetResponseInputMessageAssistantToolCallFunction struct {
 	// Arguments to pass to the function as a JSON string.
-	Arguments string `json:"arguments" api:"nullable"`
+	Arguments string `json:"arguments" api:"required"`
 	// Name of the function to call.
-	Name string `json:"name" api:"nullable"`
+	Name string `json:"name" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments   respjson.Field
@@ -1760,20 +1762,23 @@ type ChatCompletionListResponseData struct {
 	Object string `json:"object"`
 	// The service tier that was used for this response.
 	ServiceTier string `json:"service_tier" api:"nullable"`
+	// System fingerprint for this completion.
+	SystemFingerprint string `json:"system_fingerprint"`
 	// Token usage information for the completion.
 	Usage ChatCompletionListResponseDataUsage `json:"usage"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID            respjson.Field
-		Choices       respjson.Field
-		Created       respjson.Field
-		InputMessages respjson.Field
-		Model         respjson.Field
-		Object        respjson.Field
-		ServiceTier   respjson.Field
-		Usage         respjson.Field
-		ExtraFields   map[string]respjson.Field
-		raw           string
+		ID                respjson.Field
+		Choices           respjson.Field
+		Created           respjson.Field
+		InputMessages     respjson.Field
+		Model             respjson.Field
+		Object            respjson.Field
+		ServiceTier       respjson.Field
+		SystemFingerprint respjson.Field
+		Usage             respjson.Field
+		ExtraFields       map[string]respjson.Field
+		raw               string
 	} `json:"-"`
 }
 
@@ -1793,9 +1798,8 @@ type ChatCompletionListResponseDataChoice struct {
 	Index int64 `json:"index" api:"required"`
 	// The message from the model.
 	Message ChatCompletionListResponseDataChoiceMessage `json:"message" api:"required"`
-	// The log probabilities for the tokens in the message from an OpenAI-compatible
-	// chat completion response.
-	Logprobs ChatCompletionListResponseDataChoiceLogprobs `json:"logprobs" api:"nullable"`
+	// The log probabilities for the tokens in the message.
+	Logprobs ChatCompletionListResponseDataChoiceLogprobs `json:"logprobs"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		FinishReason respjson.Field
@@ -1854,9 +1858,9 @@ func (r *ChatCompletionListResponseDataChoiceMessage) UnmarshalJSON(data []byte)
 // Deprecated: the name and arguments of a function that should be called.
 type ChatCompletionListResponseDataChoiceMessageFunctionCall struct {
 	// Arguments to pass to the function as a JSON string.
-	Arguments string `json:"arguments" api:"nullable"`
+	Arguments string `json:"arguments" api:"required"`
 	// Name of the function to call.
-	Name string `json:"name" api:"nullable"`
+	Name string `json:"name" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments   respjson.Field
@@ -1904,9 +1908,9 @@ func (r *ChatCompletionListResponseDataChoiceMessageToolCall) UnmarshalJSON(data
 // Function call details for OpenAI-compatible tool calls.
 type ChatCompletionListResponseDataChoiceMessageToolCallFunction struct {
 	// Arguments to pass to the function as a JSON string.
-	Arguments string `json:"arguments" api:"nullable"`
+	Arguments string `json:"arguments" api:"required"`
 	// Name of the function to call.
-	Name string `json:"name" api:"nullable"`
+	Name string `json:"name" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments   respjson.Field
@@ -1924,13 +1928,12 @@ func (r *ChatCompletionListResponseDataChoiceMessageToolCallFunction) UnmarshalJ
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The log probabilities for the tokens in the message from an OpenAI-compatible
-// chat completion response.
+// The log probabilities for the tokens in the message.
 type ChatCompletionListResponseDataChoiceLogprobs struct {
 	// The log probabilities for the tokens in the message.
-	Content []ChatCompletionListResponseDataChoiceLogprobsContent `json:"content" api:"nullable"`
+	Content []ChatCompletionListResponseDataChoiceLogprobsContent `json:"content"`
 	// The log probabilities for the refusal tokens.
-	Refusal []ChatCompletionListResponseDataChoiceLogprobsRefusal `json:"refusal" api:"nullable"`
+	Refusal []ChatCompletionListResponseDataChoiceLogprobsRefusal `json:"refusal"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Content     respjson.Field
@@ -2715,9 +2718,9 @@ func (r *ChatCompletionListResponseDataInputMessageAssistantToolCall) UnmarshalJ
 // Function call details for OpenAI-compatible tool calls.
 type ChatCompletionListResponseDataInputMessageAssistantToolCallFunction struct {
 	// Arguments to pass to the function as a JSON string.
-	Arguments string `json:"arguments" api:"nullable"`
+	Arguments string `json:"arguments" api:"required"`
 	// Name of the function to call.
-	Name string `json:"name" api:"nullable"`
+	Name string `json:"name" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Arguments   respjson.Field
@@ -3645,11 +3648,13 @@ func init() {
 }
 
 // Function call details for OpenAI-compatible tool calls.
+//
+// The properties Arguments, Name are required.
 type ChatCompletionNewParamsMessageAssistantToolCallFunction struct {
 	// Arguments to pass to the function as a JSON string.
-	Arguments param.Opt[string] `json:"arguments,omitzero"`
+	Arguments string `json:"arguments" api:"required"`
 	// Name of the function to call.
-	Name param.Opt[string] `json:"name,omitzero"`
+	Name string `json:"name" api:"required"`
 	paramObj
 }
 
