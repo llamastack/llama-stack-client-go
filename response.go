@@ -10407,6 +10407,8 @@ type ResponseNewParams struct {
 	//
 	// Any of "auto", "default", "flex", "priority".
 	ServiceTier ResponseNewParamsServiceTier `json:"service_tier,omitzero"`
+	// Options that control streamed response behavior.
+	StreamOptions ResponseNewParamsStreamOptions `json:"stream_options,omitzero"`
 	// Text response configuration for OpenAI responses.
 	Text ResponseNewParamsText `json:"text,omitzero"`
 	// How the model should select which tool to call (if any).
@@ -12104,6 +12106,21 @@ const (
 	ResponseNewParamsServiceTierFlex     ResponseNewParamsServiceTier = "flex"
 	ResponseNewParamsServiceTierPriority ResponseNewParamsServiceTier = "priority"
 )
+
+// Options that control streamed response behavior.
+type ResponseNewParamsStreamOptions struct {
+	// Whether to obfuscate sensitive information in streamed output.
+	IncludeObfuscation param.Opt[bool] `json:"include_obfuscation,omitzero"`
+	paramObj
+}
+
+func (r ResponseNewParamsStreamOptions) MarshalJSON() (data []byte, err error) {
+	type shadow ResponseNewParamsStreamOptions
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ResponseNewParamsStreamOptions) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
 
 // Text response configuration for OpenAI responses.
 type ResponseNewParamsText struct {
