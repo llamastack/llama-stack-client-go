@@ -108,7 +108,7 @@ func (r *FileService) Delete(ctx context.Context, fileID string, opts ...option.
 }
 
 // Retrieve file content
-func (r *FileService) Content(ctx context.Context, fileID string, opts ...option.RequestOption) (res *FileContentResponse, err error) {
+func (r *FileService) Content(ctx context.Context, fileID string, opts ...option.RequestOption) (res *string, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if fileID == "" {
 		err = errors.New("missing required file_id parameter")
@@ -160,14 +160,14 @@ type File struct {
 	Bytes int64 `json:"bytes" api:"required"`
 	// The Unix timestamp (in seconds) for when the file was created.
 	CreatedAt int64 `json:"created_at" api:"required"`
-	// The Unix timestamp (in seconds) for when the file expires.
-	ExpiresAt int64 `json:"expires_at" api:"required"`
 	// The name of the file.
 	Filename string `json:"filename" api:"required"`
 	// The intended purpose of the file.
 	//
 	// Any of "assistants", "batch".
 	Purpose FilePurpose `json:"purpose" api:"required"`
+	// The Unix timestamp (in seconds) for when the file expires.
+	ExpiresAt int64 `json:"expires_at" api:"nullable"`
 	// The object type, which is always 'file'.
 	//
 	// Any of "file".
@@ -177,9 +177,9 @@ type File struct {
 		ID          respjson.Field
 		Bytes       respjson.Field
 		CreatedAt   respjson.Field
-		ExpiresAt   respjson.Field
 		Filename    respjson.Field
 		Purpose     respjson.Field
+		ExpiresAt   respjson.Field
 		Object      respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -245,8 +245,6 @@ type ListFilesResponseObject string
 const (
 	ListFilesResponseObjectList ListFilesResponseObject = "list"
 )
-
-type FileContentResponse = any
 
 type FileNewParams struct {
 	// The file to upload.
