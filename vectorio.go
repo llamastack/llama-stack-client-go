@@ -83,7 +83,7 @@ type QueryChunksResponseChunk struct {
 	// `ChunkMetadata` is backend metadata for a `Chunk` that is used to store
 	// additional information about the chunk that will not be used in the context
 	// during inference, but is required for backend functionality. The `ChunkMetadata`
-	// is set during chunk creation in `MemoryToolRuntimeImpl().insert()`and is not
+	// is set during chunk creation in `FileSearchToolRuntimeImpl().insert()`and is not
 	// expected to change after. Use `Chunk.metadata` for metadata that will be used in
 	// the context during inference.
 	ChunkMetadata QueryChunksResponseChunkChunkMetadata `json:"chunk_metadata" api:"required"`
@@ -116,7 +116,7 @@ func (r *QueryChunksResponseChunk) UnmarshalJSON(data []byte) error {
 // `ChunkMetadata` is backend metadata for a `Chunk` that is used to store
 // additional information about the chunk that will not be used in the context
 // during inference, but is required for backend functionality. The `ChunkMetadata`
-// is set during chunk creation in `MemoryToolRuntimeImpl().insert()`and is not
+// is set during chunk creation in `FileSearchToolRuntimeImpl().insert()`and is not
 // expected to change after. Use `Chunk.metadata` for metadata that will be used in
 // the context during inference.
 type QueryChunksResponseChunkChunkMetadata struct {
@@ -484,7 +484,7 @@ type VectorIoInsertParamsChunk struct {
 	// `ChunkMetadata` is backend metadata for a `Chunk` that is used to store
 	// additional information about the chunk that will not be used in the context
 	// during inference, but is required for backend functionality. The `ChunkMetadata`
-	// is set during chunk creation in `MemoryToolRuntimeImpl().insert()`and is not
+	// is set during chunk creation in `FileSearchToolRuntimeImpl().insert()`and is not
 	// expected to change after. Use `Chunk.metadata` for metadata that will be used in
 	// the context during inference.
 	ChunkMetadata VectorIoInsertParamsChunkChunkMetadata `json:"chunk_metadata,omitzero" api:"required"`
@@ -508,7 +508,7 @@ func (r *VectorIoInsertParamsChunk) UnmarshalJSON(data []byte) error {
 // `ChunkMetadata` is backend metadata for a `Chunk` that is used to store
 // additional information about the chunk that will not be used in the context
 // during inference, but is required for backend functionality. The `ChunkMetadata`
-// is set during chunk creation in `MemoryToolRuntimeImpl().insert()`and is not
+// is set during chunk creation in `FileSearchToolRuntimeImpl().insert()`and is not
 // expected to change after. Use `Chunk.metadata` for metadata that will be used in
 // the context during inference.
 type VectorIoInsertParamsChunkChunkMetadata struct {

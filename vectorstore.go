@@ -295,7 +295,7 @@ type VectorStoreSearchResponseDataContent struct {
 	// `ChunkMetadata` is backend metadata for a `Chunk` that is used to store
 	// additional information about the chunk that will not be used in the context
 	// during inference, but is required for backend functionality. The `ChunkMetadata`
-	// is set during chunk creation in `MemoryToolRuntimeImpl().insert()`and is not
+	// is set during chunk creation in `FileSearchToolRuntimeImpl().insert()`and is not
 	// expected to change after. Use `Chunk.metadata` for metadata that will be used in
 	// the context during inference.
 	ChunkMetadata VectorStoreSearchResponseDataContentChunkMetadata `json:"chunk_metadata" api:"nullable"`
@@ -322,7 +322,7 @@ func (r *VectorStoreSearchResponseDataContent) UnmarshalJSON(data []byte) error 
 // `ChunkMetadata` is backend metadata for a `Chunk` that is used to store
 // additional information about the chunk that will not be used in the context
 // during inference, but is required for backend functionality. The `ChunkMetadata`
-// is set during chunk creation in `MemoryToolRuntimeImpl().insert()`and is not
+// is set during chunk creation in `FileSearchToolRuntimeImpl().insert()`and is not
 // expected to change after. Use `Chunk.metadata` for metadata that will be used in
 // the context during inference.
 type VectorStoreSearchResponseDataContentChunkMetadata struct {
