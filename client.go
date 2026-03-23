@@ -22,10 +22,7 @@ import (
 // interacting with the llama-stack-client API. You should not instantiate this
 // client directly, and instead use the [NewClient] method instead.
 type Client struct {
-	Options     []option.RequestOption
-	Toolgroups  ToolgroupService
-	Tools       ToolService
-	ToolRuntime ToolRuntimeService
+	Options []option.RequestOption
 	// APIs for creating and interacting with agentic systems.
 	Responses ResponseService
 	// Protocol for prompt management operations.
@@ -116,9 +113,6 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 
 	r = Client{Options: opts}
 
-	r.Toolgroups = NewToolgroupService(opts...)
-	r.Tools = NewToolService(opts...)
-	r.ToolRuntime = NewToolRuntimeService(opts...)
 	r.Responses = NewResponseService(opts...)
 	r.Prompts = NewPromptService(opts...)
 	r.Conversations = NewConversationService(opts...)
