@@ -293,7 +293,7 @@ type FileNewParamsExpiresAfter struct {
 	// The anchor point for expiration, must be 'created_at'.
 	//
 	// This field can be elided, and will marshal its zero value as "created_at".
-	Anchor constant.CreatedAt `json:"anchor" api:"required"`
+	Anchor constant.CreatedAt `json:"anchor" default:"created_at"`
 	paramObj
 }
 

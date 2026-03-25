@@ -115,7 +115,7 @@ type BatchNewResponse struct {
 	CreatedAt        int64          `json:"created_at" api:"required"`
 	Endpoint         string         `json:"endpoint" api:"required"`
 	InputFileID      string         `json:"input_file_id" api:"required"`
-	Object           constant.Batch `json:"object" api:"required"`
+	Object           constant.Batch `json:"object" default:"batch"`
 	// Any of "validating", "failed", "in_progress", "finalizing", "completed",
 	// "expired", "cancelling", "cancelled".
 	Status        BatchNewResponseStatus        `json:"status" api:"required"`
@@ -311,7 +311,7 @@ type BatchGetResponse struct {
 	CreatedAt        int64          `json:"created_at" api:"required"`
 	Endpoint         string         `json:"endpoint" api:"required"`
 	InputFileID      string         `json:"input_file_id" api:"required"`
-	Object           constant.Batch `json:"object" api:"required"`
+	Object           constant.Batch `json:"object" default:"batch"`
 	// Any of "validating", "failed", "in_progress", "finalizing", "completed",
 	// "expired", "cancelling", "cancelled".
 	Status        BatchGetResponseStatus        `json:"status" api:"required"`
@@ -507,7 +507,7 @@ type BatchListResponse struct {
 	CreatedAt        int64          `json:"created_at" api:"required"`
 	Endpoint         string         `json:"endpoint" api:"required"`
 	InputFileID      string         `json:"input_file_id" api:"required"`
-	Object           constant.Batch `json:"object" api:"required"`
+	Object           constant.Batch `json:"object" default:"batch"`
 	// Any of "validating", "failed", "in_progress", "finalizing", "completed",
 	// "expired", "cancelling", "cancelled".
 	Status        BatchListResponseStatus        `json:"status" api:"required"`
@@ -703,7 +703,7 @@ type BatchCancelResponse struct {
 	CreatedAt        int64          `json:"created_at" api:"required"`
 	Endpoint         string         `json:"endpoint" api:"required"`
 	InputFileID      string         `json:"input_file_id" api:"required"`
-	Object           constant.Batch `json:"object" api:"required"`
+	Object           constant.Batch `json:"object" default:"batch"`
 	// Any of "validating", "failed", "in_progress", "finalizing", "completed",
 	// "expired", "cancelling", "cancelled".
 	Status        BatchCancelResponseStatus        `json:"status" api:"required"`
@@ -905,7 +905,7 @@ type BatchNewParams struct {
 	// The time window within which the batch should be processed.
 	//
 	// This field can be elided, and will marshal its zero value as "24h".
-	CompletionWindow constant.String24h `json:"completion_window" api:"required"`
+	CompletionWindow constant.String24h `json:"completion_window" default:"24h"`
 	paramObj
 }
 

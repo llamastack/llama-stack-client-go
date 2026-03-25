@@ -507,7 +507,7 @@ func (r *VectorStoreFileContentResponse) UnmarshalJSON(data []byte) error {
 // Content item from a vector store file or search result.
 type VectorStoreFileContentResponseData struct {
 	Text string        `json:"text" api:"required"`
-	Type constant.Text `json:"type" api:"required"`
+	Type constant.Text `json:"type" default:"text"`
 	// `ChunkMetadata` is backend metadata for a `Chunk` that is used to store
 	// additional information about the chunk that will not be used in the context
 	// during inference, but is required for backend functionality. The `ChunkMetadata`
