@@ -27,8 +27,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/packages/ssestream"
 )
 
-// APIs for creating and interacting with agentic systems.
-//
 // ResponseService contains methods and other services that help with interacting
 // with the llama-stack-client API.
 //
@@ -36,8 +34,7 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewResponseService] method instead.
 type ResponseService struct {
-	Options []option.RequestOption
-	// APIs for creating and interacting with agentic systems.
+	Options    []option.RequestOption
 	InputItems ResponseInputItemService
 }
 

@@ -22,8 +22,7 @@ import (
 // interacting with the llama-stack-client API. You should not instantiate this
 // client directly, and instead use the [NewClient] method instead.
 type Client struct {
-	Options []option.RequestOption
-	// APIs for creating and interacting with agentic systems.
+	Options   []option.RequestOption
 	Responses ResponseService
 	// Protocol for prompt management operations.
 	Prompts PromptService
