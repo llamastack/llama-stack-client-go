@@ -218,9 +218,9 @@ type ResponseObjectOutputUnion struct {
 	// This field is from variant [ResponseObjectOutputMessage].
 	Content ResponseObjectOutputMessageContentUnion `json:"content"`
 	// This field is from variant [ResponseObjectOutputMessage].
-	Role   string `json:"role"`
-	ID     string `json:"id"`
-	Status string `json:"status"`
+	Role   ResponseObjectOutputMessageRole `json:"role"`
+	ID     string                          `json:"id"`
+	Status string                          `json:"status"`
 	// Any of "message", "web_search_call", "file_search_call", "function_call",
 	// "mcp_call", "mcp_list_tools", "mcp_approval_request".
 	Type string `json:"type"`
@@ -354,9 +354,9 @@ func (r *ResponseObjectOutputUnion) UnmarshalJSON(data []byte) error {
 type ResponseObjectOutputMessage struct {
 	Content ResponseObjectOutputMessageContentUnion `json:"content" api:"required"`
 	// Any of "system", "developer", "user", "assistant".
-	Role   string `json:"role" api:"required"`
-	ID     string `json:"id" api:"nullable"`
-	Status string `json:"status" api:"nullable"`
+	Role   ResponseObjectOutputMessageRole `json:"role" api:"required"`
+	ID     string                          `json:"id" api:"nullable"`
+	Status string                          `json:"status" api:"nullable"`
 	// Any of "message".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -448,8 +448,8 @@ type ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentText
 	Type string `json:"type"`
 	// This field is from variant
 	// [ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
-	Detail string `json:"detail"`
-	FileID string `json:"file_id"`
+	Detail ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail"`
+	FileID string                                                                                                                                                                     `json:"file_id"`
 	// This field is from variant
 	// [ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
 	ImageURL string `json:"image_url"`
@@ -561,9 +561,9 @@ func (r *ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContent
 // Image content for input messages in OpenAI response format.
 type ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage struct {
 	// Any of "low", "high", "auto".
-	Detail   string `json:"detail"`
-	FileID   string `json:"file_id" api:"nullable"`
-	ImageURL string `json:"image_url" api:"nullable"`
+	Detail   ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail"`
+	FileID   string                                                                                                                                                                     `json:"file_id" api:"nullable"`
+	ImageURL string                                                                                                                                                                     `json:"image_url" api:"nullable"`
 	// Any of "input_image".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -584,6 +584,14 @@ func (r ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentT
 func (r *ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail string
+
+const (
+	ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailLow  ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "low"
+	ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailHigh ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "high"
+	ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailAuto ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "auto"
+)
 
 // File content for input messages in OpenAI response format.
 type ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
@@ -612,6 +620,14 @@ func (r ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentT
 func (r *ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail string
+
+const (
+	ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailLow  ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "low"
+	ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailHigh ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "high"
+	ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailAuto ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "auto"
+)
 
 // ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion
 // contains all possible properties and values from
@@ -1023,6 +1039,15 @@ func (r *ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageConten
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type ResponseObjectOutputMessageRole string
+
+const (
+	ResponseObjectOutputMessageRoleSystem    ResponseObjectOutputMessageRole = "system"
+	ResponseObjectOutputMessageRoleDeveloper ResponseObjectOutputMessageRole = "developer"
+	ResponseObjectOutputMessageRoleUser      ResponseObjectOutputMessageRole = "user"
+	ResponseObjectOutputMessageRoleAssistant ResponseObjectOutputMessageRole = "assistant"
+)
+
 // Web search tool call output message for OpenAI responses.
 type ResponseObjectOutputWebSearchCall struct {
 	ID     string `json:"id" api:"required"`
@@ -1225,6 +1250,15 @@ func (r *ResponseObjectOutputMcpApprovalRequest) UnmarshalJSON(data []byte) erro
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type ResponseObjectOutputRole string
+
+const (
+	ResponseObjectOutputRoleSystem    ResponseObjectOutputRole = "system"
+	ResponseObjectOutputRoleDeveloper ResponseObjectOutputRole = "developer"
+	ResponseObjectOutputRoleUser      ResponseObjectOutputRole = "user"
+	ResponseObjectOutputRoleAssistant ResponseObjectOutputRole = "assistant"
+)
+
 // Error details for failed OpenAI response requests.
 type ResponseObjectError struct {
 	Code    string `json:"code" api:"required"`
@@ -1303,8 +1337,8 @@ type ResponseObjectPromptVariableUnion struct {
 	// Any of "input_text", "input_image", "input_file".
 	Type string `json:"type"`
 	// This field is from variant [ResponseObjectPromptVariableInputImage].
-	Detail string `json:"detail"`
-	FileID string `json:"file_id"`
+	Detail ResponseObjectPromptVariableInputImageDetail `json:"detail"`
+	FileID string                                       `json:"file_id"`
 	// This field is from variant [ResponseObjectPromptVariableInputImage].
 	ImageURL string `json:"image_url"`
 	// This field is from variant [ResponseObjectPromptVariableInputFile].
@@ -1403,9 +1437,9 @@ func (r *ResponseObjectPromptVariableInputText) UnmarshalJSON(data []byte) error
 // Image content for input messages in OpenAI response format.
 type ResponseObjectPromptVariableInputImage struct {
 	// Any of "low", "high", "auto".
-	Detail   string `json:"detail"`
-	FileID   string `json:"file_id" api:"nullable"`
-	ImageURL string `json:"image_url" api:"nullable"`
+	Detail   ResponseObjectPromptVariableInputImageDetail `json:"detail"`
+	FileID   string                                       `json:"file_id" api:"nullable"`
+	ImageURL string                                       `json:"image_url" api:"nullable"`
 	// Any of "input_image".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1424,6 +1458,14 @@ func (r ResponseObjectPromptVariableInputImage) RawJSON() string { return r.JSON
 func (r *ResponseObjectPromptVariableInputImage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ResponseObjectPromptVariableInputImageDetail string
+
+const (
+	ResponseObjectPromptVariableInputImageDetailLow  ResponseObjectPromptVariableInputImageDetail = "low"
+	ResponseObjectPromptVariableInputImageDetailHigh ResponseObjectPromptVariableInputImageDetail = "high"
+	ResponseObjectPromptVariableInputImageDetailAuto ResponseObjectPromptVariableInputImageDetail = "auto"
+)
 
 // File content for input messages in OpenAI response format.
 type ResponseObjectPromptVariableInputFile struct {
@@ -1450,6 +1492,14 @@ func (r ResponseObjectPromptVariableInputFile) RawJSON() string { return r.JSON.
 func (r *ResponseObjectPromptVariableInputFile) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ResponseObjectPromptVariableDetail string
+
+const (
+	ResponseObjectPromptVariableDetailLow  ResponseObjectPromptVariableDetail = "low"
+	ResponseObjectPromptVariableDetailHigh ResponseObjectPromptVariableDetail = "high"
+	ResponseObjectPromptVariableDetailAuto ResponseObjectPromptVariableDetail = "auto"
+)
 
 // Configuration for reasoning effort in OpenAI responses.
 //
@@ -1496,7 +1546,7 @@ type ResponseObjectTextFormat struct {
 	Schema      map[string]any `json:"schema" api:"nullable"`
 	Strict      bool           `json:"strict" api:"nullable"`
 	// Any of "text", "json_schema", "json_object".
-	Type string `json:"type"`
+	Type ResponseObjectTextFormatType `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Description respjson.Field
@@ -1514,6 +1564,14 @@ func (r ResponseObjectTextFormat) RawJSON() string { return r.JSON.raw }
 func (r *ResponseObjectTextFormat) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ResponseObjectTextFormatType string
+
+const (
+	ResponseObjectTextFormatTypeText       ResponseObjectTextFormatType = "text"
+	ResponseObjectTextFormatTypeJsonSchema ResponseObjectTextFormatType = "json_schema"
+	ResponseObjectTextFormatTypeJsonObject ResponseObjectTextFormatType = "json_object"
+)
 
 // ResponseObjectToolChoiceUnion contains all possible properties and values from
 // [string], [ResponseObjectToolChoiceOpenAIResponseInputToolChoiceAllowedTools],
@@ -1651,7 +1709,7 @@ func (r *ResponseObjectToolChoiceOpenAIResponseInputToolChoiceFileSearch) Unmars
 type ResponseObjectToolChoiceOpenAIResponseInputToolChoiceWebSearch struct {
 	// Any of "web_search", "web_search_preview", "web_search_preview_2025_03_11",
 	// "web_search_2025_08_26".
-	Type string `json:"type"`
+	Type ResponseObjectToolChoiceOpenAIResponseInputToolChoiceWebSearchType `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Type        respjson.Field
@@ -1667,6 +1725,15 @@ func (r ResponseObjectToolChoiceOpenAIResponseInputToolChoiceWebSearch) RawJSON(
 func (r *ResponseObjectToolChoiceOpenAIResponseInputToolChoiceWebSearch) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ResponseObjectToolChoiceOpenAIResponseInputToolChoiceWebSearchType string
+
+const (
+	ResponseObjectToolChoiceOpenAIResponseInputToolChoiceWebSearchTypeWebSearch                  ResponseObjectToolChoiceOpenAIResponseInputToolChoiceWebSearchType = "web_search"
+	ResponseObjectToolChoiceOpenAIResponseInputToolChoiceWebSearchTypeWebSearchPreview           ResponseObjectToolChoiceOpenAIResponseInputToolChoiceWebSearchType = "web_search_preview"
+	ResponseObjectToolChoiceOpenAIResponseInputToolChoiceWebSearchTypeWebSearchPreview2025_03_11 ResponseObjectToolChoiceOpenAIResponseInputToolChoiceWebSearchType = "web_search_preview_2025_03_11"
+	ResponseObjectToolChoiceOpenAIResponseInputToolChoiceWebSearchTypeWebSearch2025_08_26        ResponseObjectToolChoiceOpenAIResponseInputToolChoiceWebSearchType = "web_search_2025_08_26"
+)
 
 // Forces the model to call a specific function.
 type ResponseObjectToolChoiceOpenAIResponseInputToolChoiceFunctionTool struct {
@@ -1818,7 +1885,7 @@ type ResponseObjectToolOpenAIResponseInputToolWebSearch struct {
 	SearchContextSize string `json:"search_context_size" api:"nullable"`
 	// Any of "web_search", "web_search_preview", "web_search_preview_2025_03_11",
 	// "web_search_2025_08_26".
-	Type string `json:"type"`
+	Type ResponseObjectToolOpenAIResponseInputToolWebSearchType `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		SearchContextSize respjson.Field
@@ -1833,6 +1900,15 @@ func (r ResponseObjectToolOpenAIResponseInputToolWebSearch) RawJSON() string { r
 func (r *ResponseObjectToolOpenAIResponseInputToolWebSearch) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ResponseObjectToolOpenAIResponseInputToolWebSearchType string
+
+const (
+	ResponseObjectToolOpenAIResponseInputToolWebSearchTypeWebSearch                  ResponseObjectToolOpenAIResponseInputToolWebSearchType = "web_search"
+	ResponseObjectToolOpenAIResponseInputToolWebSearchTypeWebSearchPreview           ResponseObjectToolOpenAIResponseInputToolWebSearchType = "web_search_preview"
+	ResponseObjectToolOpenAIResponseInputToolWebSearchTypeWebSearchPreview2025_03_11 ResponseObjectToolOpenAIResponseInputToolWebSearchType = "web_search_preview_2025_03_11"
+	ResponseObjectToolOpenAIResponseInputToolWebSearchTypeWebSearch2025_08_26        ResponseObjectToolOpenAIResponseInputToolWebSearchType = "web_search_2025_08_26"
+)
 
 // File search tool configuration for OpenAI response inputs.
 type ResponseObjectToolFileSearch struct {
@@ -2027,6 +2103,18 @@ func (r ResponseObjectToolMcpAllowedToolsAllowedToolsFilter) RawJSON() string { 
 func (r *ResponseObjectToolMcpAllowedToolsAllowedToolsFilter) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ResponseObjectToolType string
+
+const (
+	ResponseObjectToolTypeWebSearch                  ResponseObjectToolType = "web_search"
+	ResponseObjectToolTypeWebSearchPreview           ResponseObjectToolType = "web_search_preview"
+	ResponseObjectToolTypeWebSearchPreview2025_03_11 ResponseObjectToolType = "web_search_preview_2025_03_11"
+	ResponseObjectToolTypeWebSearch2025_08_26        ResponseObjectToolType = "web_search_2025_08_26"
+	ResponseObjectToolTypeFileSearch                 ResponseObjectToolType = "file_search"
+	ResponseObjectToolTypeFunction                   ResponseObjectToolType = "function"
+	ResponseObjectToolTypeMcp                        ResponseObjectToolType = "mcp"
+)
 
 // Usage information for OpenAI response.
 type ResponseObjectUsage struct {
@@ -2875,9 +2963,9 @@ type ResponseObjectStreamResponseOutputItemAddedItemUnion struct {
 	Content ResponseObjectStreamResponseOutputItemAddedItemMessageContentUnion `json:"content"`
 	// This field is from variant
 	// [ResponseObjectStreamResponseOutputItemAddedItemMessage].
-	Role   string `json:"role"`
-	ID     string `json:"id"`
-	Status string `json:"status"`
+	Role   ResponseObjectStreamResponseOutputItemAddedItemMessageRole `json:"role"`
+	ID     string                                                     `json:"id"`
+	Status string                                                     `json:"status"`
 	// Any of "message", "web_search_call", "file_search_call", "function_call",
 	// "mcp_call", "mcp_list_tools", "mcp_approval_request".
 	Type string `json:"type"`
@@ -3025,9 +3113,9 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemUnion) UnmarshalJSON(dat
 type ResponseObjectStreamResponseOutputItemAddedItemMessage struct {
 	Content ResponseObjectStreamResponseOutputItemAddedItemMessageContentUnion `json:"content" api:"required"`
 	// Any of "system", "developer", "user", "assistant".
-	Role   string `json:"role" api:"required"`
-	ID     string `json:"id" api:"nullable"`
-	Status string `json:"status" api:"nullable"`
+	Role   ResponseObjectStreamResponseOutputItemAddedItemMessageRole `json:"role" api:"required"`
+	ID     string                                                     `json:"id" api:"nullable"`
+	Status string                                                     `json:"status" api:"nullable"`
 	// Any of "message".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3121,8 +3209,8 @@ type ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResp
 	Type string `json:"type"`
 	// This field is from variant
 	// [ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
-	Detail string `json:"detail"`
-	FileID string `json:"file_id"`
+	Detail ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail"`
+	FileID string                                                                                                                                                                                                `json:"file_id"`
 	// This field is from variant
 	// [ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
 	ImageURL string `json:"image_url"`
@@ -3234,9 +3322,9 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAI
 // Image content for input messages in OpenAI response format.
 type ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage struct {
 	// Any of "low", "high", "auto".
-	Detail   string `json:"detail"`
-	FileID   string `json:"file_id" api:"nullable"`
-	ImageURL string `json:"image_url" api:"nullable"`
+	Detail   ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail"`
+	FileID   string                                                                                                                                                                                                `json:"file_id" api:"nullable"`
+	ImageURL string                                                                                                                                                                                                `json:"image_url" api:"nullable"`
 	// Any of "input_image".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3257,6 +3345,14 @@ func (r ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIR
 func (r *ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail string
+
+const (
+	ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailLow  ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "low"
+	ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailHigh ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "high"
+	ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailAuto ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "auto"
+)
 
 // File content for input messages in OpenAI response format.
 type ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
@@ -3285,6 +3381,14 @@ func (r ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIR
 func (r *ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail string
+
+const (
+	ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailLow  ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "low"
+	ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailHigh ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "high"
+	ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailAuto ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "auto"
+)
 
 // ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion
 // contains all possible properties and values from
@@ -3696,6 +3800,15 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMessageContentListOpenAI
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type ResponseObjectStreamResponseOutputItemAddedItemMessageRole string
+
+const (
+	ResponseObjectStreamResponseOutputItemAddedItemMessageRoleSystem    ResponseObjectStreamResponseOutputItemAddedItemMessageRole = "system"
+	ResponseObjectStreamResponseOutputItemAddedItemMessageRoleDeveloper ResponseObjectStreamResponseOutputItemAddedItemMessageRole = "developer"
+	ResponseObjectStreamResponseOutputItemAddedItemMessageRoleUser      ResponseObjectStreamResponseOutputItemAddedItemMessageRole = "user"
+	ResponseObjectStreamResponseOutputItemAddedItemMessageRoleAssistant ResponseObjectStreamResponseOutputItemAddedItemMessageRole = "assistant"
+)
+
 // Web search tool call output message for OpenAI responses.
 type ResponseObjectStreamResponseOutputItemAddedItemWebSearchCall struct {
 	ID     string `json:"id" api:"required"`
@@ -3912,6 +4025,15 @@ func (r *ResponseObjectStreamResponseOutputItemAddedItemMcpApprovalRequest) Unma
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type ResponseObjectStreamResponseOutputItemAddedItemRole string
+
+const (
+	ResponseObjectStreamResponseOutputItemAddedItemRoleSystem    ResponseObjectStreamResponseOutputItemAddedItemRole = "system"
+	ResponseObjectStreamResponseOutputItemAddedItemRoleDeveloper ResponseObjectStreamResponseOutputItemAddedItemRole = "developer"
+	ResponseObjectStreamResponseOutputItemAddedItemRoleUser      ResponseObjectStreamResponseOutputItemAddedItemRole = "user"
+	ResponseObjectStreamResponseOutputItemAddedItemRoleAssistant ResponseObjectStreamResponseOutputItemAddedItemRole = "assistant"
+)
+
 // Streaming event for when an output item is completed.
 type ResponseObjectStreamResponseOutputItemDone struct {
 	// Corresponds to the various Message types in the Responses API. They are all
@@ -3961,9 +4083,9 @@ type ResponseObjectStreamResponseOutputItemDoneItemUnion struct {
 	Content ResponseObjectStreamResponseOutputItemDoneItemMessageContentUnion `json:"content"`
 	// This field is from variant
 	// [ResponseObjectStreamResponseOutputItemDoneItemMessage].
-	Role   string `json:"role"`
-	ID     string `json:"id"`
-	Status string `json:"status"`
+	Role   ResponseObjectStreamResponseOutputItemDoneItemMessageRole `json:"role"`
+	ID     string                                                    `json:"id"`
+	Status string                                                    `json:"status"`
 	// Any of "message", "web_search_call", "file_search_call", "function_call",
 	// "mcp_call", "mcp_list_tools", "mcp_approval_request".
 	Type string `json:"type"`
@@ -4110,9 +4232,9 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemUnion) UnmarshalJSON(data
 type ResponseObjectStreamResponseOutputItemDoneItemMessage struct {
 	Content ResponseObjectStreamResponseOutputItemDoneItemMessageContentUnion `json:"content" api:"required"`
 	// Any of "system", "developer", "user", "assistant".
-	Role   string `json:"role" api:"required"`
-	ID     string `json:"id" api:"nullable"`
-	Status string `json:"status" api:"nullable"`
+	Role   ResponseObjectStreamResponseOutputItemDoneItemMessageRole `json:"role" api:"required"`
+	ID     string                                                    `json:"id" api:"nullable"`
+	Status string                                                    `json:"status" api:"nullable"`
 	// Any of "message".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4206,8 +4328,8 @@ type ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIRespo
 	Type string `json:"type"`
 	// This field is from variant
 	// [ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
-	Detail string `json:"detail"`
-	FileID string `json:"file_id"`
+	Detail ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail"`
+	FileID string                                                                                                                                                                                               `json:"file_id"`
 	// This field is from variant
 	// [ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
 	ImageURL string `json:"image_url"`
@@ -4319,9 +4441,9 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIR
 // Image content for input messages in OpenAI response format.
 type ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage struct {
 	// Any of "low", "high", "auto".
-	Detail   string `json:"detail"`
-	FileID   string `json:"file_id" api:"nullable"`
-	ImageURL string `json:"image_url" api:"nullable"`
+	Detail   ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail"`
+	FileID   string                                                                                                                                                                                               `json:"file_id" api:"nullable"`
+	ImageURL string                                                                                                                                                                                               `json:"image_url" api:"nullable"`
 	// Any of "input_image".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4342,6 +4464,14 @@ func (r ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIRe
 func (r *ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail string
+
+const (
+	ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailLow  ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "low"
+	ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailHigh ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "high"
+	ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailAuto ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "auto"
+)
 
 // File content for input messages in OpenAI response format.
 type ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
@@ -4370,6 +4500,14 @@ func (r ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIRe
 func (r *ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail string
+
+const (
+	ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailLow  ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "low"
+	ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailHigh ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "high"
+	ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailAuto ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "auto"
+)
 
 // ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion
 // contains all possible properties and values from
@@ -4781,6 +4919,15 @@ func (r *ResponseObjectStreamResponseOutputItemDoneItemMessageContentListOpenAIR
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type ResponseObjectStreamResponseOutputItemDoneItemMessageRole string
+
+const (
+	ResponseObjectStreamResponseOutputItemDoneItemMessageRoleSystem    ResponseObjectStreamResponseOutputItemDoneItemMessageRole = "system"
+	ResponseObjectStreamResponseOutputItemDoneItemMessageRoleDeveloper ResponseObjectStreamResponseOutputItemDoneItemMessageRole = "developer"
+	ResponseObjectStreamResponseOutputItemDoneItemMessageRoleUser      ResponseObjectStreamResponseOutputItemDoneItemMessageRole = "user"
+	ResponseObjectStreamResponseOutputItemDoneItemMessageRoleAssistant ResponseObjectStreamResponseOutputItemDoneItemMessageRole = "assistant"
+)
+
 // Web search tool call output message for OpenAI responses.
 type ResponseObjectStreamResponseOutputItemDoneItemWebSearchCall struct {
 	ID     string `json:"id" api:"required"`
@@ -4996,6 +5143,15 @@ func (r ResponseObjectStreamResponseOutputItemDoneItemMcpApprovalRequest) RawJSO
 func (r *ResponseObjectStreamResponseOutputItemDoneItemMcpApprovalRequest) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ResponseObjectStreamResponseOutputItemDoneItemRole string
+
+const (
+	ResponseObjectStreamResponseOutputItemDoneItemRoleSystem    ResponseObjectStreamResponseOutputItemDoneItemRole = "system"
+	ResponseObjectStreamResponseOutputItemDoneItemRoleDeveloper ResponseObjectStreamResponseOutputItemDoneItemRole = "developer"
+	ResponseObjectStreamResponseOutputItemDoneItemRoleUser      ResponseObjectStreamResponseOutputItemDoneItemRole = "user"
+	ResponseObjectStreamResponseOutputItemDoneItemRoleAssistant ResponseObjectStreamResponseOutputItemDoneItemRole = "assistant"
+)
 
 // Streaming event for incremental text content updates.
 type ResponseObjectStreamResponseOutputTextDelta struct {
@@ -7108,10 +7264,10 @@ type ResponseListResponseInputUnion struct {
 	Content ResponseListResponseInputOpenAIResponseMessageOutputContentUnion `json:"content"`
 	// This field is from variant
 	// [ResponseListResponseInputOpenAIResponseMessageOutput].
-	Role   string `json:"role"`
-	ID     string `json:"id"`
-	Status string `json:"status"`
-	Type   string `json:"type"`
+	Role   ResponseListResponseInputOpenAIResponseMessageOutputRole `json:"role"`
+	ID     string                                                   `json:"id"`
+	Status string                                                   `json:"status"`
+	Type   string                                                   `json:"type"`
 	// This field is from variant
 	// [ResponseListResponseInputOpenAIResponseOutputMessageFileSearchToolCall].
 	Queries []string `json:"queries"`
@@ -7253,9 +7409,9 @@ func (r *ResponseListResponseInputUnionOutput) UnmarshalJSON(data []byte) error 
 type ResponseListResponseInputOpenAIResponseMessageOutput struct {
 	Content ResponseListResponseInputOpenAIResponseMessageOutputContentUnion `json:"content" api:"required"`
 	// Any of "system", "developer", "user", "assistant".
-	Role   string `json:"role" api:"required"`
-	ID     string `json:"id" api:"nullable"`
-	Status string `json:"status" api:"nullable"`
+	Role   ResponseListResponseInputOpenAIResponseMessageOutputRole `json:"role" api:"required"`
+	ID     string                                                   `json:"id" api:"nullable"`
+	Status string                                                   `json:"status" api:"nullable"`
 	// Any of "message".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -7349,8 +7505,8 @@ type ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIRespon
 	Type string `json:"type"`
 	// This field is from variant
 	// [ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
-	Detail string `json:"detail"`
-	FileID string `json:"file_id"`
+	Detail ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail"`
+	FileID string                                                                                                                                                                                              `json:"file_id"`
 	// This field is from variant
 	// [ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
 	ImageURL string `json:"image_url"`
@@ -7462,9 +7618,9 @@ func (r *ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIRe
 // Image content for input messages in OpenAI response format.
 type ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage struct {
 	// Any of "low", "high", "auto".
-	Detail   string `json:"detail"`
-	FileID   string `json:"file_id" api:"nullable"`
-	ImageURL string `json:"image_url" api:"nullable"`
+	Detail   ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail"`
+	FileID   string                                                                                                                                                                                              `json:"file_id" api:"nullable"`
+	ImageURL string                                                                                                                                                                                              `json:"image_url" api:"nullable"`
 	// Any of "input_image".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -7485,6 +7641,14 @@ func (r ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIRes
 func (r *ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail string
+
+const (
+	ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailLow  ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "low"
+	ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailHigh ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "high"
+	ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailAuto ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "auto"
+)
 
 // File content for input messages in OpenAI response format.
 type ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
@@ -7513,6 +7677,14 @@ func (r ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIRes
 func (r *ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail string
+
+const (
+	ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailLow  ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "low"
+	ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailHigh ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "high"
+	ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailAuto ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "auto"
+)
 
 // ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion
 // contains all possible properties and values from
@@ -7924,6 +8096,15 @@ func (r *ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIRe
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type ResponseListResponseInputOpenAIResponseMessageOutputRole string
+
+const (
+	ResponseListResponseInputOpenAIResponseMessageOutputRoleSystem    ResponseListResponseInputOpenAIResponseMessageOutputRole = "system"
+	ResponseListResponseInputOpenAIResponseMessageOutputRoleDeveloper ResponseListResponseInputOpenAIResponseMessageOutputRole = "developer"
+	ResponseListResponseInputOpenAIResponseMessageOutputRoleUser      ResponseListResponseInputOpenAIResponseMessageOutputRole = "user"
+	ResponseListResponseInputOpenAIResponseMessageOutputRoleAssistant ResponseListResponseInputOpenAIResponseMessageOutputRole = "assistant"
+)
+
 // Web search tool call output message for OpenAI responses.
 type ResponseListResponseInputOpenAIResponseOutputMessageWebSearchToolCall struct {
 	ID     string `json:"id" api:"required"`
@@ -8232,8 +8413,8 @@ type ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputLis
 	Type string `json:"type"`
 	// This field is from variant
 	// [ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
-	Detail string `json:"detail"`
-	FileID string `json:"file_id"`
+	Detail ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail"`
+	FileID string                                                                                                                                                                                                           `json:"file_id"`
 	// This field is from variant
 	// [ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
 	ImageURL string `json:"image_url"`
@@ -8345,9 +8526,9 @@ func (r *ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutpu
 // Image content for input messages in OpenAI response format.
 type ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage struct {
 	// Any of "low", "high", "auto".
-	Detail   string `json:"detail"`
-	FileID   string `json:"file_id" api:"nullable"`
-	ImageURL string `json:"image_url" api:"nullable"`
+	Detail   ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail"`
+	FileID   string                                                                                                                                                                                                           `json:"file_id" api:"nullable"`
+	ImageURL string                                                                                                                                                                                                           `json:"image_url" api:"nullable"`
 	// Any of "input_image".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -8368,6 +8549,14 @@ func (r ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutput
 func (r *ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail string
+
+const (
+	ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailLow  ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "low"
+	ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailHigh ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "high"
+	ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailAuto ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "auto"
+)
 
 // File content for input messages in OpenAI response format.
 type ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
@@ -8397,6 +8586,14 @@ func (r *ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutpu
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail string
+
+const (
+	ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailLow  ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "low"
+	ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailHigh ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "high"
+	ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailAuto ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "auto"
+)
+
 // A response to an MCP approval request.
 type ResponseListResponseInputOpenAIResponseMcpApprovalResponse struct {
 	ApprovalRequestID string `json:"approval_request_id" api:"required"`
@@ -8425,6 +8622,15 @@ func (r *ResponseListResponseInputOpenAIResponseMcpApprovalResponse) UnmarshalJS
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type ResponseListResponseInputRole string
+
+const (
+	ResponseListResponseInputRoleSystem    ResponseListResponseInputRole = "system"
+	ResponseListResponseInputRoleDeveloper ResponseListResponseInputRole = "developer"
+	ResponseListResponseInputRoleUser      ResponseListResponseInputRole = "user"
+	ResponseListResponseInputRoleAssistant ResponseListResponseInputRole = "assistant"
+)
+
 // ResponseListResponseOutputUnion contains all possible properties and values from
 // [ResponseListResponseOutputMessage], [ResponseListResponseOutputWebSearchCall],
 // [ResponseListResponseOutputFileSearchCall],
@@ -8439,9 +8645,9 @@ type ResponseListResponseOutputUnion struct {
 	// This field is from variant [ResponseListResponseOutputMessage].
 	Content ResponseListResponseOutputMessageContentUnion `json:"content"`
 	// This field is from variant [ResponseListResponseOutputMessage].
-	Role   string `json:"role"`
-	ID     string `json:"id"`
-	Status string `json:"status"`
+	Role   ResponseListResponseOutputMessageRole `json:"role"`
+	ID     string                                `json:"id"`
+	Status string                                `json:"status"`
 	// Any of "message", "web_search_call", "file_search_call", "function_call",
 	// "mcp_call", "mcp_list_tools", "mcp_approval_request".
 	Type string `json:"type"`
@@ -8575,9 +8781,9 @@ func (r *ResponseListResponseOutputUnion) UnmarshalJSON(data []byte) error {
 type ResponseListResponseOutputMessage struct {
 	Content ResponseListResponseOutputMessageContentUnion `json:"content" api:"required"`
 	// Any of "system", "developer", "user", "assistant".
-	Role   string `json:"role" api:"required"`
-	ID     string `json:"id" api:"nullable"`
-	Status string `json:"status" api:"nullable"`
+	Role   ResponseListResponseOutputMessageRole `json:"role" api:"required"`
+	ID     string                                `json:"id" api:"nullable"`
+	Status string                                `json:"status" api:"nullable"`
 	// Any of "message".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -8669,8 +8875,8 @@ type ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageConte
 	Type string `json:"type"`
 	// This field is from variant
 	// [ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
-	Detail string `json:"detail"`
-	FileID string `json:"file_id"`
+	Detail ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail"`
+	FileID string                                                                                                                                                                           `json:"file_id"`
 	// This field is from variant
 	// [ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
 	ImageURL string `json:"image_url"`
@@ -8782,9 +8988,9 @@ func (r *ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageC
 // Image content for input messages in OpenAI response format.
 type ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage struct {
 	// Any of "low", "high", "auto".
-	Detail   string `json:"detail"`
-	FileID   string `json:"file_id" api:"nullable"`
-	ImageURL string `json:"image_url" api:"nullable"`
+	Detail   ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail"`
+	FileID   string                                                                                                                                                                           `json:"file_id" api:"nullable"`
+	ImageURL string                                                                                                                                                                           `json:"image_url" api:"nullable"`
 	// Any of "input_image".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -8805,6 +9011,14 @@ func (r ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageCo
 func (r *ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail string
+
+const (
+	ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailLow  ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "low"
+	ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailHigh ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "high"
+	ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailAuto ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "auto"
+)
 
 // File content for input messages in OpenAI response format.
 type ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
@@ -8833,6 +9047,14 @@ func (r ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageCo
 func (r *ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail string
+
+const (
+	ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailLow  ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "low"
+	ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailHigh ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "high"
+	ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailAuto ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "auto"
+)
 
 // ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion
 // contains all possible properties and values from
@@ -9244,6 +9466,15 @@ func (r *ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessage
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type ResponseListResponseOutputMessageRole string
+
+const (
+	ResponseListResponseOutputMessageRoleSystem    ResponseListResponseOutputMessageRole = "system"
+	ResponseListResponseOutputMessageRoleDeveloper ResponseListResponseOutputMessageRole = "developer"
+	ResponseListResponseOutputMessageRoleUser      ResponseListResponseOutputMessageRole = "user"
+	ResponseListResponseOutputMessageRoleAssistant ResponseListResponseOutputMessageRole = "assistant"
+)
+
 // Web search tool call output message for OpenAI responses.
 type ResponseListResponseOutputWebSearchCall struct {
 	ID     string `json:"id" api:"required"`
@@ -9446,6 +9677,15 @@ func (r *ResponseListResponseOutputMcpApprovalRequest) UnmarshalJSON(data []byte
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type ResponseListResponseOutputRole string
+
+const (
+	ResponseListResponseOutputRoleSystem    ResponseListResponseOutputRole = "system"
+	ResponseListResponseOutputRoleDeveloper ResponseListResponseOutputRole = "developer"
+	ResponseListResponseOutputRoleUser      ResponseListResponseOutputRole = "user"
+	ResponseListResponseOutputRoleAssistant ResponseListResponseOutputRole = "assistant"
+)
+
 // Error details for failed OpenAI response requests.
 type ResponseListResponseError struct {
 	Code    string `json:"code" api:"required"`
@@ -9524,8 +9764,8 @@ type ResponseListResponsePromptVariableUnion struct {
 	// Any of "input_text", "input_image", "input_file".
 	Type string `json:"type"`
 	// This field is from variant [ResponseListResponsePromptVariableInputImage].
-	Detail string `json:"detail"`
-	FileID string `json:"file_id"`
+	Detail ResponseListResponsePromptVariableInputImageDetail `json:"detail"`
+	FileID string                                             `json:"file_id"`
 	// This field is from variant [ResponseListResponsePromptVariableInputImage].
 	ImageURL string `json:"image_url"`
 	// This field is from variant [ResponseListResponsePromptVariableInputFile].
@@ -9624,9 +9864,9 @@ func (r *ResponseListResponsePromptVariableInputText) UnmarshalJSON(data []byte)
 // Image content for input messages in OpenAI response format.
 type ResponseListResponsePromptVariableInputImage struct {
 	// Any of "low", "high", "auto".
-	Detail   string `json:"detail"`
-	FileID   string `json:"file_id" api:"nullable"`
-	ImageURL string `json:"image_url" api:"nullable"`
+	Detail   ResponseListResponsePromptVariableInputImageDetail `json:"detail"`
+	FileID   string                                             `json:"file_id" api:"nullable"`
+	ImageURL string                                             `json:"image_url" api:"nullable"`
 	// Any of "input_image".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -9645,6 +9885,14 @@ func (r ResponseListResponsePromptVariableInputImage) RawJSON() string { return 
 func (r *ResponseListResponsePromptVariableInputImage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ResponseListResponsePromptVariableInputImageDetail string
+
+const (
+	ResponseListResponsePromptVariableInputImageDetailLow  ResponseListResponsePromptVariableInputImageDetail = "low"
+	ResponseListResponsePromptVariableInputImageDetailHigh ResponseListResponsePromptVariableInputImageDetail = "high"
+	ResponseListResponsePromptVariableInputImageDetailAuto ResponseListResponsePromptVariableInputImageDetail = "auto"
+)
 
 // File content for input messages in OpenAI response format.
 type ResponseListResponsePromptVariableInputFile struct {
@@ -9671,6 +9919,14 @@ func (r ResponseListResponsePromptVariableInputFile) RawJSON() string { return r
 func (r *ResponseListResponsePromptVariableInputFile) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ResponseListResponsePromptVariableDetail string
+
+const (
+	ResponseListResponsePromptVariableDetailLow  ResponseListResponsePromptVariableDetail = "low"
+	ResponseListResponsePromptVariableDetailHigh ResponseListResponsePromptVariableDetail = "high"
+	ResponseListResponsePromptVariableDetailAuto ResponseListResponsePromptVariableDetail = "auto"
+)
 
 // Configuration for reasoning effort in OpenAI responses.
 //
@@ -9717,7 +9973,7 @@ type ResponseListResponseTextFormat struct {
 	Schema      map[string]any `json:"schema" api:"nullable"`
 	Strict      bool           `json:"strict" api:"nullable"`
 	// Any of "text", "json_schema", "json_object".
-	Type string `json:"type"`
+	Type ResponseListResponseTextFormatType `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Description respjson.Field
@@ -9735,6 +9991,14 @@ func (r ResponseListResponseTextFormat) RawJSON() string { return r.JSON.raw }
 func (r *ResponseListResponseTextFormat) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ResponseListResponseTextFormatType string
+
+const (
+	ResponseListResponseTextFormatTypeText       ResponseListResponseTextFormatType = "text"
+	ResponseListResponseTextFormatTypeJsonSchema ResponseListResponseTextFormatType = "json_schema"
+	ResponseListResponseTextFormatTypeJsonObject ResponseListResponseTextFormatType = "json_object"
+)
 
 // ResponseListResponseToolChoiceUnion contains all possible properties and values
 // from [string],
@@ -9873,7 +10137,7 @@ func (r *ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceFileSearch) 
 type ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceWebSearch struct {
 	// Any of "web_search", "web_search_preview", "web_search_preview_2025_03_11",
 	// "web_search_2025_08_26".
-	Type string `json:"type"`
+	Type ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceWebSearchType `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Type        respjson.Field
@@ -9889,6 +10153,15 @@ func (r ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceWebSearch) Ra
 func (r *ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceWebSearch) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceWebSearchType string
+
+const (
+	ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceWebSearchTypeWebSearch                  ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceWebSearchType = "web_search"
+	ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceWebSearchTypeWebSearchPreview           ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceWebSearchType = "web_search_preview"
+	ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceWebSearchTypeWebSearchPreview2025_03_11 ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceWebSearchType = "web_search_preview_2025_03_11"
+	ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceWebSearchTypeWebSearch2025_08_26        ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceWebSearchType = "web_search_2025_08_26"
+)
 
 // Forces the model to call a specific function.
 type ResponseListResponseToolChoiceOpenAIResponseInputToolChoiceFunctionTool struct {
@@ -10041,7 +10314,7 @@ type ResponseListResponseToolOpenAIResponseInputToolWebSearch struct {
 	SearchContextSize string `json:"search_context_size" api:"nullable"`
 	// Any of "web_search", "web_search_preview", "web_search_preview_2025_03_11",
 	// "web_search_2025_08_26".
-	Type string `json:"type"`
+	Type ResponseListResponseToolOpenAIResponseInputToolWebSearchType `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		SearchContextSize respjson.Field
@@ -10056,6 +10329,15 @@ func (r ResponseListResponseToolOpenAIResponseInputToolWebSearch) RawJSON() stri
 func (r *ResponseListResponseToolOpenAIResponseInputToolWebSearch) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ResponseListResponseToolOpenAIResponseInputToolWebSearchType string
+
+const (
+	ResponseListResponseToolOpenAIResponseInputToolWebSearchTypeWebSearch                  ResponseListResponseToolOpenAIResponseInputToolWebSearchType = "web_search"
+	ResponseListResponseToolOpenAIResponseInputToolWebSearchTypeWebSearchPreview           ResponseListResponseToolOpenAIResponseInputToolWebSearchType = "web_search_preview"
+	ResponseListResponseToolOpenAIResponseInputToolWebSearchTypeWebSearchPreview2025_03_11 ResponseListResponseToolOpenAIResponseInputToolWebSearchType = "web_search_preview_2025_03_11"
+	ResponseListResponseToolOpenAIResponseInputToolWebSearchTypeWebSearch2025_08_26        ResponseListResponseToolOpenAIResponseInputToolWebSearchType = "web_search_2025_08_26"
+)
 
 // File search tool configuration for OpenAI response inputs.
 type ResponseListResponseToolFileSearch struct {
@@ -10253,6 +10535,18 @@ func (r ResponseListResponseToolMcpAllowedToolsAllowedToolsFilter) RawJSON() str
 func (r *ResponseListResponseToolMcpAllowedToolsAllowedToolsFilter) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ResponseListResponseToolType string
+
+const (
+	ResponseListResponseToolTypeWebSearch                  ResponseListResponseToolType = "web_search"
+	ResponseListResponseToolTypeWebSearchPreview           ResponseListResponseToolType = "web_search_preview"
+	ResponseListResponseToolTypeWebSearchPreview2025_03_11 ResponseListResponseToolType = "web_search_preview_2025_03_11"
+	ResponseListResponseToolTypeWebSearch2025_08_26        ResponseListResponseToolType = "web_search_2025_08_26"
+	ResponseListResponseToolTypeFileSearch                 ResponseListResponseToolType = "file_search"
+	ResponseListResponseToolTypeFunction                   ResponseListResponseToolType = "function"
+	ResponseListResponseToolTypeMcp                        ResponseListResponseToolType = "mcp"
+)
 
 // Usage information for OpenAI response.
 type ResponseListResponseUsage struct {
@@ -10518,7 +10812,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 // Returns a pointer to the underlying variant's property, if present.
 func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemUnion) GetRole() *string {
 	if vt := u.OfOpenAIResponseMessageInput; vt != nil {
-		return &vt.Role
+		return (*string)(&vt.Role)
 	}
 	return nil
 }
@@ -10725,9 +11019,9 @@ func (u responseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInput struct {
 	Content ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentUnion `json:"content,omitzero" api:"required"`
 	// Any of "system", "developer", "user", "assistant".
-	Role   string            `json:"role,omitzero" api:"required"`
-	ID     param.Opt[string] `json:"id,omitzero"`
-	Status param.Opt[string] `json:"status,omitzero"`
+	Role   ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputRole `json:"role,omitzero" api:"required"`
+	ID     param.Opt[string]                                                                                                                                                `json:"id,omitzero"`
+	Status param.Opt[string]                                                                                                                                                `json:"status,omitzero"`
 	// Any of "message".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -10742,9 +11036,6 @@ func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInput
 }
 
 func init() {
-	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInput](
-		"role", "system", "developer", "user", "assistant",
-	)
 	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInput](
 		"type", "message",
 	)
@@ -10817,7 +11108,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 // Returns a pointer to the underlying variant's property, if present.
 func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetDetail() *string {
 	if vt := u.OfInputImage; vt != nil {
-		return &vt.Detail
+		return (*string)(&vt.Detail)
 	}
 	return nil
 }
@@ -10914,7 +11205,7 @@ type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunc
 	FileID   param.Opt[string] `json:"file_id,omitzero"`
 	ImageURL param.Opt[string] `json:"image_url,omitzero"`
 	// Any of "low", "high", "auto".
-	Detail string `json:"detail,omitzero"`
+	Detail ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail,omitzero"`
 	// Any of "input_image".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -10930,12 +11221,17 @@ func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInput
 
 func init() {
 	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage](
-		"detail", "low", "high", "auto",
-	)
-	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage](
 		"type", "input_image",
 	)
 }
+
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail string
+
+const (
+	ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailLow  ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "low"
+	ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailHigh ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "high"
+	ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailAuto ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "auto"
+)
 
 // File content for input messages in OpenAI response format.
 type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
@@ -11364,6 +11660,15 @@ func init() {
 	)
 }
 
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputRole string
+
+const (
+	ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputRoleSystem    ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputRole = "system"
+	ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputRoleDeveloper ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputRole = "developer"
+	ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputRoleUser      ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputRole = "user"
+	ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputRoleAssistant ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseMessageInputRole = "assistant"
+)
+
 // Web search tool call output message for OpenAI responses.
 //
 // The properties ID, Status are required.
@@ -11656,7 +11961,7 @@ func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputF
 // Returns a pointer to the underlying variant's property, if present.
 func (u ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetDetail() *string {
 	if vt := u.OfInputImage; vt != nil {
-		return &vt.Detail
+		return (*string)(&vt.Detail)
 	}
 	return nil
 }
@@ -11753,7 +12058,7 @@ type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunc
 	FileID   param.Opt[string] `json:"file_id,omitzero"`
 	ImageURL param.Opt[string] `json:"image_url,omitzero"`
 	// Any of "low", "high", "auto".
-	Detail string `json:"detail,omitzero"`
+	Detail ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail,omitzero"`
 	// Any of "input_image".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -11769,12 +12074,17 @@ func (r *ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInput
 
 func init() {
 	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage](
-		"detail", "low", "high", "auto",
-	)
-	apijson.RegisterFieldValidator[ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage](
 		"type", "input_image",
 	)
 }
+
+type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail string
+
+const (
+	ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailLow  ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "low"
+	ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailHigh ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "high"
+	ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailAuto ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "auto"
+)
 
 // File content for input messages in OpenAI response format.
 type ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputOpenAIResponseMcpApprovalResponseItemOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
@@ -11926,7 +12236,7 @@ func (u ResponseNewParamsPromptVariableUnion) GetText() *string {
 // Returns a pointer to the underlying variant's property, if present.
 func (u ResponseNewParamsPromptVariableUnion) GetDetail() *string {
 	if vt := u.OfInputImage; vt != nil {
-		return &vt.Detail
+		return (*string)(&vt.Detail)
 	}
 	return nil
 }
@@ -12023,7 +12333,7 @@ type ResponseNewParamsPromptVariableInputImage struct {
 	FileID   param.Opt[string] `json:"file_id,omitzero"`
 	ImageURL param.Opt[string] `json:"image_url,omitzero"`
 	// Any of "low", "high", "auto".
-	Detail string `json:"detail,omitzero"`
+	Detail ResponseNewParamsPromptVariableInputImageDetail `json:"detail,omitzero"`
 	// Any of "input_image".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -12039,12 +12349,17 @@ func (r *ResponseNewParamsPromptVariableInputImage) UnmarshalJSON(data []byte) e
 
 func init() {
 	apijson.RegisterFieldValidator[ResponseNewParamsPromptVariableInputImage](
-		"detail", "low", "high", "auto",
-	)
-	apijson.RegisterFieldValidator[ResponseNewParamsPromptVariableInputImage](
 		"type", "input_image",
 	)
 }
+
+type ResponseNewParamsPromptVariableInputImageDetail string
+
+const (
+	ResponseNewParamsPromptVariableInputImageDetailLow  ResponseNewParamsPromptVariableInputImageDetail = "low"
+	ResponseNewParamsPromptVariableInputImageDetailHigh ResponseNewParamsPromptVariableInputImageDetail = "high"
+	ResponseNewParamsPromptVariableInputImageDetailAuto ResponseNewParamsPromptVariableInputImageDetail = "auto"
+)
 
 // File content for input messages in OpenAI response format.
 type ResponseNewParamsPromptVariableInputFile struct {
@@ -12141,7 +12456,7 @@ type ResponseNewParamsTextFormat struct {
 	Strict      param.Opt[bool]   `json:"strict,omitzero"`
 	Schema      map[string]any    `json:"schema,omitzero"`
 	// Any of "text", "json_schema", "json_object".
-	Type string `json:"type,omitzero"`
+	Type ResponseNewParamsTextFormatType `json:"type,omitzero"`
 	paramObj
 }
 
@@ -12153,11 +12468,13 @@ func (r *ResponseNewParamsTextFormat) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func init() {
-	apijson.RegisterFieldValidator[ResponseNewParamsTextFormat](
-		"type", "text", "json_schema", "json_object",
-	)
-}
+type ResponseNewParamsTextFormatType string
+
+const (
+	ResponseNewParamsTextFormatTypeText       ResponseNewParamsTextFormatType = "text"
+	ResponseNewParamsTextFormatTypeJsonSchema ResponseNewParamsTextFormatType = "json_schema"
+	ResponseNewParamsTextFormatTypeJsonObject ResponseNewParamsTextFormatType = "json_object"
+)
 
 // Only one field can be non-zero.
 //
@@ -12323,7 +12640,7 @@ func init() {
 type ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceWebSearch struct {
 	// Any of "web_search", "web_search_preview", "web_search_preview_2025_03_11",
 	// "web_search_2025_08_26".
-	Type string `json:"type,omitzero"`
+	Type ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceWebSearchType `json:"type,omitzero"`
 	paramObj
 }
 
@@ -12335,11 +12652,14 @@ func (r *ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceWebSearch) Unma
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func init() {
-	apijson.RegisterFieldValidator[ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceWebSearch](
-		"type", "web_search", "web_search_preview", "web_search_preview_2025_03_11", "web_search_2025_08_26",
-	)
-}
+type ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceWebSearchType string
+
+const (
+	ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceWebSearchTypeWebSearch                  ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceWebSearchType = "web_search"
+	ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceWebSearchTypeWebSearchPreview           ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceWebSearchType = "web_search_preview"
+	ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceWebSearchTypeWebSearchPreview2025_03_11 ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceWebSearchType = "web_search_preview_2025_03_11"
+	ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceWebSearchTypeWebSearch2025_08_26        ResponseNewParamsToolChoiceOpenAIResponseInputToolChoiceWebSearchType = "web_search_2025_08_26"
+)
 
 // Forces the model to call a specific function.
 //
@@ -12605,7 +12925,7 @@ type ResponseNewParamsToolOpenAIResponseInputToolWebSearch struct {
 	SearchContextSize param.Opt[string] `json:"search_context_size,omitzero"`
 	// Any of "web_search", "web_search_preview", "web_search_preview_2025_03_11",
 	// "web_search_2025_08_26".
-	Type string `json:"type,omitzero"`
+	Type ResponseNewParamsToolOpenAIResponseInputToolWebSearchType `json:"type,omitzero"`
 	paramObj
 }
 
@@ -12617,11 +12937,14 @@ func (r *ResponseNewParamsToolOpenAIResponseInputToolWebSearch) UnmarshalJSON(da
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func init() {
-	apijson.RegisterFieldValidator[ResponseNewParamsToolOpenAIResponseInputToolWebSearch](
-		"type", "web_search", "web_search_preview", "web_search_preview_2025_03_11", "web_search_2025_08_26",
-	)
-}
+type ResponseNewParamsToolOpenAIResponseInputToolWebSearchType string
+
+const (
+	ResponseNewParamsToolOpenAIResponseInputToolWebSearchTypeWebSearch                  ResponseNewParamsToolOpenAIResponseInputToolWebSearchType = "web_search"
+	ResponseNewParamsToolOpenAIResponseInputToolWebSearchTypeWebSearchPreview           ResponseNewParamsToolOpenAIResponseInputToolWebSearchType = "web_search_preview"
+	ResponseNewParamsToolOpenAIResponseInputToolWebSearchTypeWebSearchPreview2025_03_11 ResponseNewParamsToolOpenAIResponseInputToolWebSearchType = "web_search_preview_2025_03_11"
+	ResponseNewParamsToolOpenAIResponseInputToolWebSearchTypeWebSearch2025_08_26        ResponseNewParamsToolOpenAIResponseInputToolWebSearchType = "web_search_2025_08_26"
+)
 
 // File search tool configuration for OpenAI response inputs.
 //

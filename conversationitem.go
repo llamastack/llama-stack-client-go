@@ -167,9 +167,9 @@ type ConversationItemNewResponseDataUnion struct {
 	// This field is from variant [ConversationItemNewResponseDataMessage].
 	Content ConversationItemNewResponseDataMessageContentUnion `json:"content"`
 	// This field is from variant [ConversationItemNewResponseDataMessage].
-	Role   string `json:"role"`
-	ID     string `json:"id"`
-	Status string `json:"status"`
+	Role   ConversationItemNewResponseDataMessageRole `json:"role"`
+	ID     string                                     `json:"id"`
+	Status string                                     `json:"status"`
 	// Any of "message", "web_search_call", "file_search_call", "function_call",
 	// "function_call_output", "mcp_approval_request", "mcp_approval_response",
 	// "mcp_call", "mcp_list_tools".
@@ -361,9 +361,9 @@ func (r *ConversationItemNewResponseDataUnionOutput) UnmarshalJSON(data []byte) 
 type ConversationItemNewResponseDataMessage struct {
 	Content ConversationItemNewResponseDataMessageContentUnion `json:"content" api:"required"`
 	// Any of "system", "developer", "user", "assistant".
-	Role   string `json:"role" api:"required"`
-	ID     string `json:"id" api:"nullable"`
-	Status string `json:"status" api:"nullable"`
+	Role   ConversationItemNewResponseDataMessageRole `json:"role" api:"required"`
+	ID     string                                     `json:"id" api:"nullable"`
+	Status string                                     `json:"status" api:"nullable"`
 	// Any of "message".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -455,8 +455,8 @@ type ConversationItemNewResponseDataMessageContentListOpenAIResponseInputMessage
 	Type string `json:"type"`
 	// This field is from variant
 	// [ConversationItemNewResponseDataMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
-	Detail string `json:"detail"`
-	FileID string `json:"file_id"`
+	Detail ConversationItemNewResponseDataMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail"`
+	FileID string                                                                                                                                                                                `json:"file_id"`
 	// This field is from variant
 	// [ConversationItemNewResponseDataMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
 	ImageURL string `json:"image_url"`
@@ -568,9 +568,9 @@ func (r *ConversationItemNewResponseDataMessageContentListOpenAIResponseInputMes
 // Image content for input messages in OpenAI response format.
 type ConversationItemNewResponseDataMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage struct {
 	// Any of "low", "high", "auto".
-	Detail   string `json:"detail"`
-	FileID   string `json:"file_id" api:"nullable"`
-	ImageURL string `json:"image_url" api:"nullable"`
+	Detail   ConversationItemNewResponseDataMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail"`
+	FileID   string                                                                                                                                                                                `json:"file_id" api:"nullable"`
+	ImageURL string                                                                                                                                                                                `json:"image_url" api:"nullable"`
 	// Any of "input_image".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -591,6 +591,14 @@ func (r ConversationItemNewResponseDataMessageContentListOpenAIResponseInputMess
 func (r *ConversationItemNewResponseDataMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ConversationItemNewResponseDataMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail string
+
+const (
+	ConversationItemNewResponseDataMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailLow  ConversationItemNewResponseDataMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "low"
+	ConversationItemNewResponseDataMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailHigh ConversationItemNewResponseDataMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "high"
+	ConversationItemNewResponseDataMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailAuto ConversationItemNewResponseDataMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "auto"
+)
 
 // File content for input messages in OpenAI response format.
 type ConversationItemNewResponseDataMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
@@ -619,6 +627,14 @@ func (r ConversationItemNewResponseDataMessageContentListOpenAIResponseInputMess
 func (r *ConversationItemNewResponseDataMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ConversationItemNewResponseDataMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail string
+
+const (
+	ConversationItemNewResponseDataMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailLow  ConversationItemNewResponseDataMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "low"
+	ConversationItemNewResponseDataMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailHigh ConversationItemNewResponseDataMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "high"
+	ConversationItemNewResponseDataMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailAuto ConversationItemNewResponseDataMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "auto"
+)
 
 // ConversationItemNewResponseDataMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion
 // contains all possible properties and values from
@@ -1030,6 +1046,15 @@ func (r *ConversationItemNewResponseDataMessageContentListOpenAIResponseOutputMe
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type ConversationItemNewResponseDataMessageRole string
+
+const (
+	ConversationItemNewResponseDataMessageRoleSystem    ConversationItemNewResponseDataMessageRole = "system"
+	ConversationItemNewResponseDataMessageRoleDeveloper ConversationItemNewResponseDataMessageRole = "developer"
+	ConversationItemNewResponseDataMessageRoleUser      ConversationItemNewResponseDataMessageRole = "user"
+	ConversationItemNewResponseDataMessageRoleAssistant ConversationItemNewResponseDataMessageRole = "assistant"
+)
+
 // Web search tool call output message for OpenAI responses.
 type ConversationItemNewResponseDataWebSearchCall struct {
 	ID     string `json:"id" api:"required"`
@@ -1219,8 +1244,8 @@ type ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseIn
 	Type string `json:"type"`
 	// This field is from variant
 	// [ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
-	Detail string `json:"detail"`
-	FileID string `json:"file_id"`
+	Detail ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail"`
+	FileID string                                                                                                                                                                                          `json:"file_id"`
 	// This field is from variant
 	// [ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
 	ImageURL string `json:"image_url"`
@@ -1332,9 +1357,9 @@ func (r *ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIRespon
 // Image content for input messages in OpenAI response format.
 type ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage struct {
 	// Any of "low", "high", "auto".
-	Detail   string `json:"detail"`
-	FileID   string `json:"file_id" api:"nullable"`
-	ImageURL string `json:"image_url" api:"nullable"`
+	Detail   ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail"`
+	FileID   string                                                                                                                                                                                          `json:"file_id" api:"nullable"`
+	ImageURL string                                                                                                                                                                                          `json:"image_url" api:"nullable"`
 	// Any of "input_image".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1355,6 +1380,14 @@ func (r ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIRespons
 func (r *ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail string
+
+const (
+	ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailLow  ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "low"
+	ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailHigh ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "high"
+	ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailAuto ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "auto"
+)
 
 // File content for input messages in OpenAI response format.
 type ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
@@ -1383,6 +1416,14 @@ func (r ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIRespons
 func (r *ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail string
+
+const (
+	ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailLow  ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "low"
+	ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailHigh ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "high"
+	ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailAuto ConversationItemNewResponseDataFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "auto"
+)
 
 // A request for human approval of a tool invocation.
 type ConversationItemNewResponseDataMcpApprovalRequest struct {
@@ -1511,6 +1552,15 @@ func (r *ConversationItemNewResponseDataMcpListToolsTool) UnmarshalJSON(data []b
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type ConversationItemNewResponseDataRole string
+
+const (
+	ConversationItemNewResponseDataRoleSystem    ConversationItemNewResponseDataRole = "system"
+	ConversationItemNewResponseDataRoleDeveloper ConversationItemNewResponseDataRole = "developer"
+	ConversationItemNewResponseDataRoleUser      ConversationItemNewResponseDataRole = "user"
+	ConversationItemNewResponseDataRoleAssistant ConversationItemNewResponseDataRole = "assistant"
+)
+
 // ConversationItemListResponseUnion contains all possible properties and values
 // from [ConversationItemListResponseMessage],
 // [ConversationItemListResponseWebSearchCall],
@@ -1530,9 +1580,9 @@ type ConversationItemListResponseUnion struct {
 	// This field is from variant [ConversationItemListResponseMessage].
 	Content ConversationItemListResponseMessageContentUnion `json:"content"`
 	// This field is from variant [ConversationItemListResponseMessage].
-	Role   string `json:"role"`
-	ID     string `json:"id"`
-	Status string `json:"status"`
+	Role   ConversationItemListResponseMessageRole `json:"role"`
+	ID     string                                  `json:"id"`
+	Status string                                  `json:"status"`
 	// Any of "message", "web_search_call", "file_search_call", "function_call",
 	// "function_call_output", "mcp_approval_request", "mcp_approval_response",
 	// "mcp_call", "mcp_list_tools".
@@ -1722,9 +1772,9 @@ func (r *ConversationItemListResponseUnionOutput) UnmarshalJSON(data []byte) err
 type ConversationItemListResponseMessage struct {
 	Content ConversationItemListResponseMessageContentUnion `json:"content" api:"required"`
 	// Any of "system", "developer", "user", "assistant".
-	Role   string `json:"role" api:"required"`
-	ID     string `json:"id" api:"nullable"`
-	Status string `json:"status" api:"nullable"`
+	Role   ConversationItemListResponseMessageRole `json:"role" api:"required"`
+	ID     string                                  `json:"id" api:"nullable"`
+	Status string                                  `json:"status" api:"nullable"`
 	// Any of "message".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1816,8 +1866,8 @@ type ConversationItemListResponseMessageContentListOpenAIResponseInputMessageCon
 	Type string `json:"type"`
 	// This field is from variant
 	// [ConversationItemListResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
-	Detail string `json:"detail"`
-	FileID string `json:"file_id"`
+	Detail ConversationItemListResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail"`
+	FileID string                                                                                                                                                                             `json:"file_id"`
 	// This field is from variant
 	// [ConversationItemListResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
 	ImageURL string `json:"image_url"`
@@ -1929,9 +1979,9 @@ func (r *ConversationItemListResponseMessageContentListOpenAIResponseInputMessag
 // Image content for input messages in OpenAI response format.
 type ConversationItemListResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage struct {
 	// Any of "low", "high", "auto".
-	Detail   string `json:"detail"`
-	FileID   string `json:"file_id" api:"nullable"`
-	ImageURL string `json:"image_url" api:"nullable"`
+	Detail   ConversationItemListResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail"`
+	FileID   string                                                                                                                                                                             `json:"file_id" api:"nullable"`
+	ImageURL string                                                                                                                                                                             `json:"image_url" api:"nullable"`
 	// Any of "input_image".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -1952,6 +2002,14 @@ func (r ConversationItemListResponseMessageContentListOpenAIResponseInputMessage
 func (r *ConversationItemListResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ConversationItemListResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail string
+
+const (
+	ConversationItemListResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailLow  ConversationItemListResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "low"
+	ConversationItemListResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailHigh ConversationItemListResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "high"
+	ConversationItemListResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailAuto ConversationItemListResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "auto"
+)
 
 // File content for input messages in OpenAI response format.
 type ConversationItemListResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
@@ -1980,6 +2038,14 @@ func (r ConversationItemListResponseMessageContentListOpenAIResponseInputMessage
 func (r *ConversationItemListResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ConversationItemListResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail string
+
+const (
+	ConversationItemListResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailLow  ConversationItemListResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "low"
+	ConversationItemListResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailHigh ConversationItemListResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "high"
+	ConversationItemListResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailAuto ConversationItemListResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "auto"
+)
 
 // ConversationItemListResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion
 // contains all possible properties and values from
@@ -2391,6 +2457,15 @@ func (r *ConversationItemListResponseMessageContentListOpenAIResponseOutputMessa
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type ConversationItemListResponseMessageRole string
+
+const (
+	ConversationItemListResponseMessageRoleSystem    ConversationItemListResponseMessageRole = "system"
+	ConversationItemListResponseMessageRoleDeveloper ConversationItemListResponseMessageRole = "developer"
+	ConversationItemListResponseMessageRoleUser      ConversationItemListResponseMessageRole = "user"
+	ConversationItemListResponseMessageRoleAssistant ConversationItemListResponseMessageRole = "assistant"
+)
+
 // Web search tool call output message for OpenAI responses.
 type ConversationItemListResponseWebSearchCall struct {
 	ID     string `json:"id" api:"required"`
@@ -2580,8 +2655,8 @@ type ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInput
 	Type string `json:"type"`
 	// This field is from variant
 	// [ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
-	Detail string `json:"detail"`
-	FileID string `json:"file_id"`
+	Detail ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail"`
+	FileID string                                                                                                                                                                                       `json:"file_id"`
 	// This field is from variant
 	// [ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
 	ImageURL string `json:"image_url"`
@@ -2693,9 +2768,9 @@ func (r *ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseI
 // Image content for input messages in OpenAI response format.
 type ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage struct {
 	// Any of "low", "high", "auto".
-	Detail   string `json:"detail"`
-	FileID   string `json:"file_id" api:"nullable"`
-	ImageURL string `json:"image_url" api:"nullable"`
+	Detail   ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail"`
+	FileID   string                                                                                                                                                                                       `json:"file_id" api:"nullable"`
+	ImageURL string                                                                                                                                                                                       `json:"image_url" api:"nullable"`
 	// Any of "input_image".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -2716,6 +2791,14 @@ func (r ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseIn
 func (r *ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail string
+
+const (
+	ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailLow  ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "low"
+	ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailHigh ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "high"
+	ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailAuto ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "auto"
+)
 
 // File content for input messages in OpenAI response format.
 type ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
@@ -2744,6 +2827,14 @@ func (r ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseIn
 func (r *ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail string
+
+const (
+	ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailLow  ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "low"
+	ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailHigh ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "high"
+	ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailAuto ConversationItemListResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "auto"
+)
 
 // A request for human approval of a tool invocation.
 type ConversationItemListResponseMcpApprovalRequest struct {
@@ -2872,6 +2963,15 @@ func (r *ConversationItemListResponseMcpListToolsTool) UnmarshalJSON(data []byte
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type ConversationItemListResponseRole string
+
+const (
+	ConversationItemListResponseRoleSystem    ConversationItemListResponseRole = "system"
+	ConversationItemListResponseRoleDeveloper ConversationItemListResponseRole = "developer"
+	ConversationItemListResponseRoleUser      ConversationItemListResponseRole = "user"
+	ConversationItemListResponseRoleAssistant ConversationItemListResponseRole = "assistant"
+)
+
 // Response for deleted conversation item.
 type ConversationItemDeleteResponse struct {
 	// The deleted item identifier
@@ -2914,9 +3014,9 @@ type ConversationItemGetResponseUnion struct {
 	// This field is from variant [ConversationItemGetResponseMessage].
 	Content ConversationItemGetResponseMessageContentUnion `json:"content"`
 	// This field is from variant [ConversationItemGetResponseMessage].
-	Role   string `json:"role"`
-	ID     string `json:"id"`
-	Status string `json:"status"`
+	Role   ConversationItemGetResponseMessageRole `json:"role"`
+	ID     string                                 `json:"id"`
+	Status string                                 `json:"status"`
 	// Any of "message", "web_search_call", "file_search_call", "function_call",
 	// "function_call_output", "mcp_approval_request", "mcp_approval_response",
 	// "mcp_call", "mcp_list_tools".
@@ -3106,9 +3206,9 @@ func (r *ConversationItemGetResponseUnionOutput) UnmarshalJSON(data []byte) erro
 type ConversationItemGetResponseMessage struct {
 	Content ConversationItemGetResponseMessageContentUnion `json:"content" api:"required"`
 	// Any of "system", "developer", "user", "assistant".
-	Role   string `json:"role" api:"required"`
-	ID     string `json:"id" api:"nullable"`
-	Status string `json:"status" api:"nullable"`
+	Role   ConversationItemGetResponseMessageRole `json:"role" api:"required"`
+	ID     string                                 `json:"id" api:"nullable"`
+	Status string                                 `json:"status" api:"nullable"`
 	// Any of "message".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3200,8 +3300,8 @@ type ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageCont
 	Type string `json:"type"`
 	// This field is from variant
 	// [ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
-	Detail string `json:"detail"`
-	FileID string `json:"file_id"`
+	Detail ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail"`
+	FileID string                                                                                                                                                                            `json:"file_id"`
 	// This field is from variant
 	// [ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
 	ImageURL string `json:"image_url"`
@@ -3313,9 +3413,9 @@ func (r *ConversationItemGetResponseMessageContentListOpenAIResponseInputMessage
 // Image content for input messages in OpenAI response format.
 type ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage struct {
 	// Any of "low", "high", "auto".
-	Detail   string `json:"detail"`
-	FileID   string `json:"file_id" api:"nullable"`
-	ImageURL string `json:"image_url" api:"nullable"`
+	Detail   ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail"`
+	FileID   string                                                                                                                                                                            `json:"file_id" api:"nullable"`
+	ImageURL string                                                                                                                                                                            `json:"image_url" api:"nullable"`
 	// Any of "input_image".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -3336,6 +3436,14 @@ func (r ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageC
 func (r *ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail string
+
+const (
+	ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailLow  ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "low"
+	ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailHigh ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "high"
+	ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailAuto ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "auto"
+)
 
 // File content for input messages in OpenAI response format.
 type ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
@@ -3364,6 +3472,14 @@ func (r ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageC
 func (r *ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail string
+
+const (
+	ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailLow  ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "low"
+	ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailHigh ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "high"
+	ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailAuto ConversationItemGetResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "auto"
+)
 
 // ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion
 // contains all possible properties and values from
@@ -3775,6 +3891,15 @@ func (r *ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessag
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type ConversationItemGetResponseMessageRole string
+
+const (
+	ConversationItemGetResponseMessageRoleSystem    ConversationItemGetResponseMessageRole = "system"
+	ConversationItemGetResponseMessageRoleDeveloper ConversationItemGetResponseMessageRole = "developer"
+	ConversationItemGetResponseMessageRoleUser      ConversationItemGetResponseMessageRole = "user"
+	ConversationItemGetResponseMessageRoleAssistant ConversationItemGetResponseMessageRole = "assistant"
+)
+
 // Web search tool call output message for OpenAI responses.
 type ConversationItemGetResponseWebSearchCall struct {
 	ID     string `json:"id" api:"required"`
@@ -3962,8 +4087,8 @@ type ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputM
 	Type string `json:"type"`
 	// This field is from variant
 	// [ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
-	Detail string `json:"detail"`
-	FileID string `json:"file_id"`
+	Detail ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail"`
+	FileID string                                                                                                                                                                                      `json:"file_id"`
 	// This field is from variant
 	// [ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage].
 	ImageURL string `json:"image_url"`
@@ -4075,9 +4200,9 @@ func (r *ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseIn
 // Image content for input messages in OpenAI response format.
 type ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage struct {
 	// Any of "low", "high", "auto".
-	Detail   string `json:"detail"`
-	FileID   string `json:"file_id" api:"nullable"`
-	ImageURL string `json:"image_url" api:"nullable"`
+	Detail   ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail"`
+	FileID   string                                                                                                                                                                                      `json:"file_id" api:"nullable"`
+	ImageURL string                                                                                                                                                                                      `json:"image_url" api:"nullable"`
 	// Any of "input_image".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4098,6 +4223,14 @@ func (r ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInp
 func (r *ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail string
+
+const (
+	ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailLow  ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "low"
+	ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailHigh ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "high"
+	ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailAuto ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "auto"
+)
 
 // File content for input messages in OpenAI response format.
 type ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
@@ -4126,6 +4259,14 @@ func (r ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInp
 func (r *ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail string
+
+const (
+	ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailLow  ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "low"
+	ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailHigh ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "high"
+	ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetailAuto ConversationItemGetResponseFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemDetail = "auto"
+)
 
 // A request for human approval of a tool invocation.
 type ConversationItemGetResponseMcpApprovalRequest struct {
@@ -4254,6 +4395,15 @@ func (r *ConversationItemGetResponseMcpListToolsTool) UnmarshalJSON(data []byte)
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type ConversationItemGetResponseRole string
+
+const (
+	ConversationItemGetResponseRoleSystem    ConversationItemGetResponseRole = "system"
+	ConversationItemGetResponseRoleDeveloper ConversationItemGetResponseRole = "developer"
+	ConversationItemGetResponseRoleUser      ConversationItemGetResponseRole = "user"
+	ConversationItemGetResponseRoleAssistant ConversationItemGetResponseRole = "assistant"
+)
+
 type ConversationItemNewParams struct {
 	// Items to include in the conversation context. You may add up to 20 items at a
 	// time.
@@ -4334,7 +4484,7 @@ func (u ConversationItemNewParamsItemUnion) GetContent() *ConversationItemNewPar
 // Returns a pointer to the underlying variant's property, if present.
 func (u ConversationItemNewParamsItemUnion) GetRole() *string {
 	if vt := u.OfMessage; vt != nil {
-		return &vt.Role
+		return (*string)(&vt.Role)
 	}
 	return nil
 }
@@ -4554,9 +4704,9 @@ func init() {
 type ConversationItemNewParamsItemMessage struct {
 	Content ConversationItemNewParamsItemMessageContentUnion `json:"content,omitzero" api:"required"`
 	// Any of "system", "developer", "user", "assistant".
-	Role   string            `json:"role,omitzero" api:"required"`
-	ID     param.Opt[string] `json:"id,omitzero"`
-	Status param.Opt[string] `json:"status,omitzero"`
+	Role   ConversationItemNewParamsItemMessageRole `json:"role,omitzero" api:"required"`
+	ID     param.Opt[string]                        `json:"id,omitzero"`
+	Status param.Opt[string]                        `json:"status,omitzero"`
 	// Any of "message".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -4571,9 +4721,6 @@ func (r *ConversationItemNewParamsItemMessage) UnmarshalJSON(data []byte) error 
 }
 
 func init() {
-	apijson.RegisterFieldValidator[ConversationItemNewParamsItemMessage](
-		"role", "system", "developer", "user", "assistant",
-	)
 	apijson.RegisterFieldValidator[ConversationItemNewParamsItemMessage](
 		"type", "message",
 	)
@@ -4646,7 +4793,7 @@ func (u ConversationItemNewParamsItemMessageContentListOpenAIResponseInputMessag
 // Returns a pointer to the underlying variant's property, if present.
 func (u ConversationItemNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetDetail() *string {
 	if vt := u.OfInputImage; vt != nil {
-		return &vt.Detail
+		return (*string)(&vt.Detail)
 	}
 	return nil
 }
@@ -4743,7 +4890,7 @@ type ConversationItemNewParamsItemMessageContentListOpenAIResponseInputMessageCo
 	FileID   param.Opt[string] `json:"file_id,omitzero"`
 	ImageURL param.Opt[string] `json:"image_url,omitzero"`
 	// Any of "low", "high", "auto".
-	Detail string `json:"detail,omitzero"`
+	Detail ConversationItemNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail,omitzero"`
 	// Any of "input_image".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -4759,12 +4906,17 @@ func (r *ConversationItemNewParamsItemMessageContentListOpenAIResponseInputMessa
 
 func init() {
 	apijson.RegisterFieldValidator[ConversationItemNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage](
-		"detail", "low", "high", "auto",
-	)
-	apijson.RegisterFieldValidator[ConversationItemNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage](
 		"type", "input_image",
 	)
 }
+
+type ConversationItemNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail string
+
+const (
+	ConversationItemNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailLow  ConversationItemNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "low"
+	ConversationItemNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailHigh ConversationItemNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "high"
+	ConversationItemNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailAuto ConversationItemNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "auto"
+)
 
 // File content for input messages in OpenAI response format.
 type ConversationItemNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {
@@ -5193,6 +5345,15 @@ func init() {
 	)
 }
 
+type ConversationItemNewParamsItemMessageRole string
+
+const (
+	ConversationItemNewParamsItemMessageRoleSystem    ConversationItemNewParamsItemMessageRole = "system"
+	ConversationItemNewParamsItemMessageRoleDeveloper ConversationItemNewParamsItemMessageRole = "developer"
+	ConversationItemNewParamsItemMessageRoleUser      ConversationItemNewParamsItemMessageRole = "user"
+	ConversationItemNewParamsItemMessageRoleAssistant ConversationItemNewParamsItemMessageRole = "assistant"
+)
+
 // Web search tool call output message for OpenAI responses.
 //
 // The properties ID, Status are required.
@@ -5385,7 +5546,7 @@ func (u ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseI
 // Returns a pointer to the underlying variant's property, if present.
 func (u ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion) GetDetail() *string {
 	if vt := u.OfInputImage; vt != nil {
-		return &vt.Detail
+		return (*string)(&vt.Detail)
 	}
 	return nil
 }
@@ -5482,7 +5643,7 @@ type ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInpu
 	FileID   param.Opt[string] `json:"file_id,omitzero"`
 	ImageURL param.Opt[string] `json:"image_url,omitzero"`
 	// Any of "low", "high", "auto".
-	Detail string `json:"detail,omitzero"`
+	Detail ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail `json:"detail,omitzero"`
 	// Any of "input_image".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -5498,12 +5659,17 @@ func (r *ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponse
 
 func init() {
 	apijson.RegisterFieldValidator[ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage](
-		"detail", "low", "high", "auto",
-	)
-	apijson.RegisterFieldValidator[ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage](
 		"type", "input_image",
 	)
 }
+
+type ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail string
+
+const (
+	ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailLow  ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "low"
+	ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailHigh ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "high"
+	ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetailAuto ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImageDetail = "auto"
+)
 
 // File content for input messages in OpenAI response format.
 type ConversationItemNewParamsItemFunctionCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile struct {

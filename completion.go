@@ -118,8 +118,7 @@ type CompletionNewResponseChoice struct {
 	Index int64 `json:"index" api:"required"`
 	// The text of the choice.
 	Text string `json:"text" api:"required"`
-	// The log probabilities for the tokens in the message from an OpenAI-compatible
-	// chat completion response.
+	// The log probabilities for the tokens in the choice.
 	Logprobs CompletionNewResponseChoiceLogprobs `json:"logprobs" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -138,13 +137,12 @@ func (r *CompletionNewResponseChoice) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// The log probabilities for the tokens in the message from an OpenAI-compatible
-// chat completion response.
+// The log probabilities for the tokens in the choice.
 type CompletionNewResponseChoiceLogprobs struct {
 	// The log probabilities for the tokens in the message.
-	Content []CompletionNewResponseChoiceLogprobsContent `json:"content"`
+	Content []CompletionNewResponseChoiceLogprobsContent `json:"content" api:"nullable"`
 	// The log probabilities for the refusal tokens.
-	Refusal []CompletionNewResponseChoiceLogprobsRefusal `json:"refusal"`
+	Refusal []CompletionNewResponseChoiceLogprobsRefusal `json:"refusal" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Content     respjson.Field

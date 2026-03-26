@@ -24,7 +24,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/packages/pagination"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
-	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
 // VectorStoreService contains methods and other services that help with
@@ -290,8 +289,9 @@ func (r *VectorStoreSearchResponseData) UnmarshalJSON(data []byte) error {
 
 // Content item from a vector store file or search result.
 type VectorStoreSearchResponseDataContent struct {
-	Text string        `json:"text" api:"required"`
-	Type constant.Text `json:"type" default:"text"`
+	Text string `json:"text" api:"required"`
+	// Any of "text".
+	Type string `json:"type" api:"required"`
 	// `ChunkMetadata` is backend metadata for a `Chunk` that is used to store
 	// additional information about the chunk that will not be used in the context
 	// during inference, but is required for backend functionality. The `ChunkMetadata`

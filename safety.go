@@ -636,17 +636,17 @@ func init() {
 }
 
 // Tool call specification for OpenAI-compatible chat completion responses.
+//
+// The properties ID, Function, Type are required.
 type SafetyRunShieldParamsMessageAssistantToolCall struct {
 	// Unique identifier for the tool call.
-	ID param.Opt[string] `json:"id,omitzero"`
-	// Index of the tool call in the list.
-	Index param.Opt[int64] `json:"index,omitzero"`
-	// Function call details for OpenAI-compatible tool calls.
-	Function SafetyRunShieldParamsMessageAssistantToolCallFunction `json:"function,omitzero"`
+	ID string `json:"id" api:"required"`
+	// Function call details.
+	Function SafetyRunShieldParamsMessageAssistantToolCallFunction `json:"function,omitzero" api:"required"`
 	// Must be 'function' to identify this as a function call.
 	//
 	// Any of "function".
-	Type string `json:"type,omitzero"`
+	Type string `json:"type,omitzero" api:"required"`
 	paramObj
 }
 
@@ -664,7 +664,7 @@ func init() {
 	)
 }
 
-// Function call details for OpenAI-compatible tool calls.
+// Function call details.
 //
 // The properties Arguments, Name are required.
 type SafetyRunShieldParamsMessageAssistantToolCallFunction struct {

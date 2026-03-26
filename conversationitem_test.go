@@ -39,7 +39,7 @@ func TestConversationItemNew(t *testing.T) {
 					Content: llamastackclient.ConversationItemNewParamsItemMessageContentUnion{
 						OfString: llamastackclient.String("string"),
 					},
-					Role:   "system",
+					Role:   llamastackclient.ConversationItemNewParamsItemMessageRoleSystem,
 					ID:     llamastackclient.String("id"),
 					Status: llamastackclient.String("status"),
 					Type:   "message",

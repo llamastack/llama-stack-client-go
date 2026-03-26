@@ -36,6 +36,7 @@ func TestFileNewWithOptionalParams(t *testing.T) {
 		File:    io.Reader(bytes.NewBuffer([]byte("Example data"))),
 		Purpose: llamastackclient.FileNewParamsPurposeAssistants,
 		ExpiresAfter: llamastackclient.FileNewParamsExpiresAfter{
+			Anchor:  "created_at",
 			Seconds: 3600,
 		},
 	})

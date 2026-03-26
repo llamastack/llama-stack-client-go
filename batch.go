@@ -23,7 +23,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/packages/pagination"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
-	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
 // The API is designed to allow use of openai client libraries for seamless
@@ -110,12 +109,13 @@ func (r *BatchService) Cancel(ctx context.Context, batchID string, opts ...optio
 }
 
 type BatchNewResponse struct {
-	ID               string         `json:"id" api:"required"`
-	CompletionWindow string         `json:"completion_window" api:"required"`
-	CreatedAt        int64          `json:"created_at" api:"required"`
-	Endpoint         string         `json:"endpoint" api:"required"`
-	InputFileID      string         `json:"input_file_id" api:"required"`
-	Object           constant.Batch `json:"object" default:"batch"`
+	ID               string `json:"id" api:"required"`
+	CompletionWindow string `json:"completion_window" api:"required"`
+	CreatedAt        int64  `json:"created_at" api:"required"`
+	Endpoint         string `json:"endpoint" api:"required"`
+	InputFileID      string `json:"input_file_id" api:"required"`
+	// Any of "batch".
+	Object BatchNewResponseObject `json:"object" api:"required"`
 	// Any of "validating", "failed", "in_progress", "finalizing", "completed",
 	// "expired", "cancelling", "cancelled".
 	Status        BatchNewResponseStatus        `json:"status" api:"required"`
@@ -169,6 +169,12 @@ func (r BatchNewResponse) RawJSON() string { return r.JSON.raw }
 func (r *BatchNewResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type BatchNewResponseObject string
+
+const (
+	BatchNewResponseObjectBatch BatchNewResponseObject = "batch"
+)
 
 type BatchNewResponseStatus string
 
@@ -306,12 +312,13 @@ func (r *BatchNewResponseUsageOutputTokensDetails) UnmarshalJSON(data []byte) er
 }
 
 type BatchGetResponse struct {
-	ID               string         `json:"id" api:"required"`
-	CompletionWindow string         `json:"completion_window" api:"required"`
-	CreatedAt        int64          `json:"created_at" api:"required"`
-	Endpoint         string         `json:"endpoint" api:"required"`
-	InputFileID      string         `json:"input_file_id" api:"required"`
-	Object           constant.Batch `json:"object" default:"batch"`
+	ID               string `json:"id" api:"required"`
+	CompletionWindow string `json:"completion_window" api:"required"`
+	CreatedAt        int64  `json:"created_at" api:"required"`
+	Endpoint         string `json:"endpoint" api:"required"`
+	InputFileID      string `json:"input_file_id" api:"required"`
+	// Any of "batch".
+	Object BatchGetResponseObject `json:"object" api:"required"`
 	// Any of "validating", "failed", "in_progress", "finalizing", "completed",
 	// "expired", "cancelling", "cancelled".
 	Status        BatchGetResponseStatus        `json:"status" api:"required"`
@@ -365,6 +372,12 @@ func (r BatchGetResponse) RawJSON() string { return r.JSON.raw }
 func (r *BatchGetResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type BatchGetResponseObject string
+
+const (
+	BatchGetResponseObjectBatch BatchGetResponseObject = "batch"
+)
 
 type BatchGetResponseStatus string
 
@@ -502,12 +515,13 @@ func (r *BatchGetResponseUsageOutputTokensDetails) UnmarshalJSON(data []byte) er
 }
 
 type BatchListResponse struct {
-	ID               string         `json:"id" api:"required"`
-	CompletionWindow string         `json:"completion_window" api:"required"`
-	CreatedAt        int64          `json:"created_at" api:"required"`
-	Endpoint         string         `json:"endpoint" api:"required"`
-	InputFileID      string         `json:"input_file_id" api:"required"`
-	Object           constant.Batch `json:"object" default:"batch"`
+	ID               string `json:"id" api:"required"`
+	CompletionWindow string `json:"completion_window" api:"required"`
+	CreatedAt        int64  `json:"created_at" api:"required"`
+	Endpoint         string `json:"endpoint" api:"required"`
+	InputFileID      string `json:"input_file_id" api:"required"`
+	// Any of "batch".
+	Object BatchListResponseObject `json:"object" api:"required"`
 	// Any of "validating", "failed", "in_progress", "finalizing", "completed",
 	// "expired", "cancelling", "cancelled".
 	Status        BatchListResponseStatus        `json:"status" api:"required"`
@@ -561,6 +575,12 @@ func (r BatchListResponse) RawJSON() string { return r.JSON.raw }
 func (r *BatchListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type BatchListResponseObject string
+
+const (
+	BatchListResponseObjectBatch BatchListResponseObject = "batch"
+)
 
 type BatchListResponseStatus string
 
@@ -698,12 +718,13 @@ func (r *BatchListResponseUsageOutputTokensDetails) UnmarshalJSON(data []byte) e
 }
 
 type BatchCancelResponse struct {
-	ID               string         `json:"id" api:"required"`
-	CompletionWindow string         `json:"completion_window" api:"required"`
-	CreatedAt        int64          `json:"created_at" api:"required"`
-	Endpoint         string         `json:"endpoint" api:"required"`
-	InputFileID      string         `json:"input_file_id" api:"required"`
-	Object           constant.Batch `json:"object" default:"batch"`
+	ID               string `json:"id" api:"required"`
+	CompletionWindow string `json:"completion_window" api:"required"`
+	CreatedAt        int64  `json:"created_at" api:"required"`
+	Endpoint         string `json:"endpoint" api:"required"`
+	InputFileID      string `json:"input_file_id" api:"required"`
+	// Any of "batch".
+	Object BatchCancelResponseObject `json:"object" api:"required"`
 	// Any of "validating", "failed", "in_progress", "finalizing", "completed",
 	// "expired", "cancelling", "cancelled".
 	Status        BatchCancelResponseStatus        `json:"status" api:"required"`
@@ -757,6 +778,12 @@ func (r BatchCancelResponse) RawJSON() string { return r.JSON.raw }
 func (r *BatchCancelResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type BatchCancelResponseObject string
+
+const (
+	BatchCancelResponseObjectBatch BatchCancelResponseObject = "batch"
+)
 
 type BatchCancelResponseStatus string
 
@@ -894,6 +921,10 @@ func (r *BatchCancelResponseUsageOutputTokensDetails) UnmarshalJSON(data []byte)
 }
 
 type BatchNewParams struct {
+	// The time window within which the batch should be processed.
+	//
+	// Any of "24h".
+	CompletionWindow BatchNewParamsCompletionWindow `json:"completion_window,omitzero" api:"required"`
 	// The endpoint to be used for all requests in the batch.
 	Endpoint string `json:"endpoint" api:"required"`
 	// The ID of an uploaded file containing requests for the batch.
@@ -902,10 +933,6 @@ type BatchNewParams struct {
 	IdempotencyKey param.Opt[string] `json:"idempotency_key,omitzero"`
 	// Optional metadata for the batch.
 	Metadata map[string]string `json:"metadata,omitzero"`
-	// The time window within which the batch should be processed.
-	//
-	// This field can be elided, and will marshal its zero value as "24h".
-	CompletionWindow constant.String24h `json:"completion_window" default:"24h"`
 	paramObj
 }
 
@@ -916,6 +943,13 @@ func (r BatchNewParams) MarshalJSON() (data []byte, err error) {
 func (r *BatchNewParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+// The time window within which the batch should be processed.
+type BatchNewParamsCompletionWindow string
+
+const (
+	BatchNewParamsCompletionWindow24h BatchNewParamsCompletionWindow = "24h"
+)
 
 type BatchListParams struct {
 	// Optional cursor for pagination. Returns batches after this ID.

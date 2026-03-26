@@ -31,7 +31,7 @@ func TestBatchNewWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Batches.New(context.TODO(), llamastackclient.BatchNewParams{
-		CompletionWindow: "24h",
+		CompletionWindow: llamastackclient.BatchNewParamsCompletionWindow24h,
 		Endpoint:         "endpoint",
 		InputFileID:      "input_file_id",
 		IdempotencyKey:   llamastackclient.String("idempotency_key"),

@@ -83,7 +83,7 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 					"foo": "bar",
 				},
 				Strict: llamastackclient.Bool(true),
-				Type:   "text",
+				Type:   llamastackclient.ResponseNewParamsTextFormatTypeText,
 			},
 		},
 		ToolChoice: llamastackclient.ResponseNewParamsToolChoiceUnion{
@@ -92,7 +92,7 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 		Tools: []llamastackclient.ResponseNewParamsToolUnion{{
 			OfOpenAIResponseInputToolWebSearch: &llamastackclient.ResponseNewParamsToolOpenAIResponseInputToolWebSearch{
 				SearchContextSize: llamastackclient.String("S?oC\"high"),
-				Type:              "web_search",
+				Type:              llamastackclient.ResponseNewParamsToolOpenAIResponseInputToolWebSearchTypeWebSearch,
 			},
 		}},
 		TopLogprobs: llamastackclient.Int(0),

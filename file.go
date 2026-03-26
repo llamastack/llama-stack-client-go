@@ -27,7 +27,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/packages/pagination"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
-	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
 // This API is used to upload documents that can be used with other Llama Stack
@@ -288,12 +287,12 @@ const (
 //
 // The properties Anchor, Seconds are required.
 type FileNewParamsExpiresAfter struct {
-	// Seconds until expiration, between 3600 (1 hour) and 2592000 (30 days).
-	Seconds int64 `json:"seconds" api:"required"`
 	// The anchor point for expiration, must be 'created_at'.
 	//
-	// This field can be elided, and will marshal its zero value as "created_at".
-	Anchor constant.CreatedAt `json:"anchor" default:"created_at"`
+	// Any of "created_at".
+	Anchor string `json:"anchor,omitzero" api:"required"`
+	// Seconds until expiration, between 3600 (1 hour) and 2592000 (30 days).
+	Seconds int64 `json:"seconds" api:"required"`
 	paramObj
 }
 
@@ -303,6 +302,12 @@ func (r FileNewParamsExpiresAfter) MarshalJSON() (data []byte, err error) {
 }
 func (r *FileNewParamsExpiresAfter) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[FileNewParamsExpiresAfter](
+		"anchor", "created_at",
+	)
 }
 
 type FileListParams struct {

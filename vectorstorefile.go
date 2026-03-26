@@ -24,7 +24,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/packages/pagination"
 	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
-	"github.com/llamastack/llama-stack-client-go/shared/constant"
 )
 
 // VectorStoreFileService contains methods and other services that help with
@@ -442,8 +441,8 @@ func (r *VectorStoreFileAttributeUnion) UnmarshalJSON(data []byte) error {
 // Error information for failed vector store file processing.
 type VectorStoreFileLastError struct {
 	// Any of "server_error", "rate_limit_exceeded".
-	Code    string `json:"code" api:"required"`
-	Message string `json:"message" api:"required"`
+	Code    VectorStoreFileLastErrorCode `json:"code" api:"required"`
+	Message string                       `json:"message" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Code        respjson.Field
@@ -458,6 +457,13 @@ func (r VectorStoreFileLastError) RawJSON() string { return r.JSON.raw }
 func (r *VectorStoreFileLastError) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type VectorStoreFileLastErrorCode string
+
+const (
+	VectorStoreFileLastErrorCodeServerError       VectorStoreFileLastErrorCode = "server_error"
+	VectorStoreFileLastErrorCodeRateLimitExceeded VectorStoreFileLastErrorCode = "rate_limit_exceeded"
+)
 
 // Response from deleting a vector store file.
 type VectorStoreFileDeleteResponse struct {
@@ -506,8 +512,9 @@ func (r *VectorStoreFileContentResponse) UnmarshalJSON(data []byte) error {
 
 // Content item from a vector store file or search result.
 type VectorStoreFileContentResponseData struct {
-	Text string        `json:"text" api:"required"`
-	Type constant.Text `json:"type" default:"text"`
+	Text string `json:"text" api:"required"`
+	// Any of "text".
+	Type string `json:"type" api:"required"`
 	// `ChunkMetadata` is backend metadata for a `Chunk` that is used to store
 	// additional information about the chunk that will not be used in the context
 	// during inference, but is required for backend functionality. The `ChunkMetadata`
