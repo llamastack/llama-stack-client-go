@@ -426,6 +426,8 @@ func init() {
 	)
 }
 
+// File content part for OpenAI-compatible chat completion messages.
+//
 // The property File is required.
 type SafetyRunShieldParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile struct {
 	// File specification.

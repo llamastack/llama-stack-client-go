@@ -600,6 +600,7 @@ func (r *ChatCompletionNewResponseUsagePromptTokensDetails) UnmarshalJSON(data [
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Chat completion response extended with the original input messages.
 type ChatCompletionGetResponse struct {
 	// The ID of the chat completion.
 	ID string `json:"id" api:"required"`
@@ -1406,6 +1407,7 @@ func (r *ChatCompletionGetResponseInputMessageUserContentListOpenAIChatCompletio
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// File content part for OpenAI-compatible chat completion messages.
 type ChatCompletionGetResponseInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile struct {
 	// File specification.
 	File ChatCompletionGetResponseInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile `json:"file" api:"required"`
@@ -1981,6 +1983,7 @@ func (r *ChatCompletionListResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Chat completion response extended with the original input messages.
 type ChatCompletionListResponseData struct {
 	// The ID of the chat completion.
 	ID string `json:"id" api:"required"`
@@ -2802,6 +2805,7 @@ func (r *ChatCompletionListResponseDataInputMessageUserContentListOpenAIChatComp
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// File content part for OpenAI-compatible chat completion messages.
 type ChatCompletionListResponseDataInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile struct {
 	// File specification.
 	File ChatCompletionListResponseDataInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFileFile `json:"file" api:"required"`
@@ -3764,6 +3768,8 @@ func init() {
 	)
 }
 
+// File content part for OpenAI-compatible chat completion messages.
+//
 // The property File is required.
 type ChatCompletionNewParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile struct {
 	// File specification.

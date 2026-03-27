@@ -722,6 +722,7 @@ func (r *ConversationItemNewResponseDataMessageContentListOpenAIResponseOutputMe
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content within an output message of an OpenAI response.
 type ConversationItemNewResponseDataMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputText struct {
 	Text        string                                                                                                                                                             `json:"text" api:"required"`
 	Annotations []ConversationItemNewResponseDataMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion `json:"annotations"`
@@ -915,6 +916,7 @@ func (r *ConversationItemNewResponseDataMessageContentListOpenAIResponseOutputMe
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Container file citation annotation referencing a file within a container.
 type ConversationItemNewResponseDataMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation struct {
 	ContainerID string `json:"container_id" api:"required"`
 	EndIndex    int64  `json:"end_index" api:"required"`
@@ -944,6 +946,7 @@ func (r *ConversationItemNewResponseDataMessageContentListOpenAIResponseOutputMe
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// File path annotation referencing a generated file in response content.
 type ConversationItemNewResponseDataMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath struct {
 	FileID string `json:"file_id" api:"required"`
 	Index  int64  `json:"index" api:"required"`
@@ -2133,6 +2136,7 @@ func (r *ConversationItemListResponseMessageContentListOpenAIResponseOutputMessa
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content within an output message of an OpenAI response.
 type ConversationItemListResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputText struct {
 	Text        string                                                                                                                                                          `json:"text" api:"required"`
 	Annotations []ConversationItemListResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion `json:"annotations"`
@@ -2326,6 +2330,7 @@ func (r *ConversationItemListResponseMessageContentListOpenAIResponseOutputMessa
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Container file citation annotation referencing a file within a container.
 type ConversationItemListResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation struct {
 	ContainerID string `json:"container_id" api:"required"`
 	EndIndex    int64  `json:"end_index" api:"required"`
@@ -2355,6 +2360,7 @@ func (r *ConversationItemListResponseMessageContentListOpenAIResponseOutputMessa
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// File path annotation referencing a generated file in response content.
 type ConversationItemListResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath struct {
 	FileID string `json:"file_id" api:"required"`
 	Index  int64  `json:"index" api:"required"`
@@ -3567,6 +3573,7 @@ func (r *ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessag
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Text content within an output message of an OpenAI response.
 type ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputText struct {
 	Text        string                                                                                                                                                         `json:"text" api:"required"`
 	Annotations []ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion `json:"annotations"`
@@ -3760,6 +3767,7 @@ func (r *ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessag
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Container file citation annotation referencing a file within a container.
 type ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation struct {
 	ContainerID string `json:"container_id" api:"required"`
 	EndIndex    int64  `json:"end_index" api:"required"`
@@ -3789,6 +3797,7 @@ func (r *ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessag
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// File path annotation referencing a generated file in response content.
 type ConversationItemGetResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath struct {
 	FileID string `json:"file_id" api:"required"`
 	Index  int64  `json:"index" api:"required"`
@@ -5018,6 +5027,8 @@ func init() {
 	)
 }
 
+// Text content within an output message of an OpenAI response.
+//
 // The property Text is required.
 type ConversationItemNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputText struct {
 	Text        string                                                                                                                                                          `json:"text" api:"required"`
@@ -5226,6 +5237,8 @@ func init() {
 	)
 }
 
+// Container file citation annotation referencing a file within a container.
+//
 // The properties ContainerID, EndIndex, FileID, Filename, StartIndex are required.
 type ConversationItemNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation struct {
 	ContainerID string `json:"container_id" api:"required"`
@@ -5252,6 +5265,8 @@ func init() {
 	)
 }
 
+// File path annotation referencing a generated file in response content.
+//
 // The properties FileID, Index are required.
 type ConversationItemNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath struct {
 	FileID string `json:"file_id" api:"required"`

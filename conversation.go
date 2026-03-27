@@ -772,6 +772,8 @@ func init() {
 	)
 }
 
+// Text content within an output message of an OpenAI response.
+//
 // The property Text is required.
 type ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputText struct {
 	Text        string                                                                                                                                                      `json:"text" api:"required"`
@@ -980,6 +982,8 @@ func init() {
 	)
 }
 
+// Container file citation annotation referencing a file within a container.
+//
 // The properties ContainerID, EndIndex, FileID, Filename, StartIndex are required.
 type ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation struct {
 	ContainerID string `json:"container_id" api:"required"`
@@ -1006,6 +1010,8 @@ func init() {
 	)
 }
 
+// File path annotation referencing a generated file in response content.
+//
 // The properties FileID, Index are required.
 type ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath struct {
 	FileID string `json:"file_id" api:"required"`
