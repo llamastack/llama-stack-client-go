@@ -18,7 +18,6 @@ import (
 	"github.com/llamastack/llama-stack-client-go/internal/apijson"
 	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
 	"github.com/llamastack/llama-stack-client-go/option"
-	"github.com/llamastack/llama-stack-client-go/packages/param"
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 )
 
@@ -66,31 +65,6 @@ func (r *ModelService) List(ctx context.Context, opts ...option.RequestOption) (
 	}
 	res = &env.Data
 	return res, nil
-}
-
-// Register a model.
-//
-// Deprecated: deprecated
-func (r *ModelService) Register(ctx context.Context, body ModelRegisterParams, opts ...option.RequestOption) (res *ModelRegisterResponse, err error) {
-	opts = slices.Concat(r.Options, opts)
-	path := "v1/models"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &res, opts...)
-	return res, err
-}
-
-// Unregister a model.
-//
-// Deprecated: deprecated
-func (r *ModelService) Unregister(ctx context.Context, modelID string, opts ...option.RequestOption) (err error) {
-	opts = slices.Concat(r.Options, opts)
-	opts = append([]option.RequestOption{option.WithHeader("Accept", "*/*")}, opts...)
-	if modelID == "" {
-		err = errors.New("missing required model_id parameter")
-		return err
-	}
-	path := fmt.Sprintf("v1/models/%s", modelID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodDelete, path, nil, nil, opts...)
-	return err
 }
 
 // Response containing a list of OpenAI model objects.
@@ -201,96 +175,4 @@ type ModelGetResponseType string
 
 const (
 	ModelGetResponseTypeModel ModelGetResponseType = "model"
-)
-
-// A model resource representing an AI model registered in Llama Stack.
-type ModelRegisterResponse struct {
-	// Unique identifier for this resource in llama stack
-	Identifier string `json:"identifier" api:"required"`
-	// ID of the provider that owns this resource
-	ProviderID string `json:"provider_id" api:"required"`
-	// Any additional metadata for this model
-	Metadata map[string]any `json:"metadata"`
-	// Enumeration of supported model types in Llama Stack.
-	//
-	// Any of "llm", "embedding", "rerank".
-	ModelType ModelRegisterResponseModelType `json:"model_type"`
-	// Enable model availability check during registration. When false (default),
-	// validation is deferred to runtime and model is preserved during provider
-	// refresh.
-	ModelValidation bool `json:"model_validation" api:"nullable"`
-	// Unique identifier for this resource in the provider
-	ProviderResourceID string `json:"provider_resource_id" api:"nullable"`
-	// Any of "model".
-	Type ModelRegisterResponseType `json:"type"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Identifier         respjson.Field
-		ProviderID         respjson.Field
-		Metadata           respjson.Field
-		ModelType          respjson.Field
-		ModelValidation    respjson.Field
-		ProviderResourceID respjson.Field
-		Type               respjson.Field
-		ExtraFields        map[string]respjson.Field
-		raw                string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ModelRegisterResponse) RawJSON() string { return r.JSON.raw }
-func (r *ModelRegisterResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Enumeration of supported model types in Llama Stack.
-type ModelRegisterResponseModelType string
-
-const (
-	ModelRegisterResponseModelTypeLlm       ModelRegisterResponseModelType = "llm"
-	ModelRegisterResponseModelTypeEmbedding ModelRegisterResponseModelType = "embedding"
-	ModelRegisterResponseModelTypeRerank    ModelRegisterResponseModelType = "rerank"
-)
-
-type ModelRegisterResponseType string
-
-const (
-	ModelRegisterResponseTypeModel ModelRegisterResponseType = "model"
-)
-
-type ModelRegisterParams struct {
-	// The identifier of the model to register.
-	ModelID string `json:"model_id" api:"required"`
-	// Enable model availability check during registration. When false (default),
-	// validation is deferred to runtime and model is preserved during provider
-	// refresh.
-	ModelValidation param.Opt[bool] `json:"model_validation,omitzero"`
-	// The identifier of the provider.
-	ProviderID param.Opt[string] `json:"provider_id,omitzero"`
-	// The identifier of the model in the provider.
-	ProviderModelID param.Opt[string] `json:"provider_model_id,omitzero"`
-	// Any additional metadata for this model.
-	Metadata map[string]any `json:"metadata,omitzero"`
-	// Enumeration of supported model types in Llama Stack.
-	//
-	// Any of "llm", "embedding", "rerank".
-	ModelType ModelRegisterParamsModelType `json:"model_type,omitzero"`
-	paramObj
-}
-
-func (r ModelRegisterParams) MarshalJSON() (data []byte, err error) {
-	type shadow ModelRegisterParams
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ModelRegisterParams) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Enumeration of supported model types in Llama Stack.
-type ModelRegisterParamsModelType string
-
-const (
-	ModelRegisterParamsModelTypeLlm       ModelRegisterParamsModelType = "llm"
-	ModelRegisterParamsModelTypeEmbedding ModelRegisterParamsModelType = "embedding"
-	ModelRegisterParamsModelTypeRerank    ModelRegisterParamsModelType = "rerank"
 )
