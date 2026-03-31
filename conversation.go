@@ -186,6 +186,7 @@ type ConversationNewParamsItemUnion struct {
 	OfMcpApprovalResponse *ConversationNewParamsItemMcpApprovalResponse `json:",omitzero,inline"`
 	OfMcpCall             *ConversationNewParamsItemMcpCall             `json:",omitzero,inline"`
 	OfMcpListTools        *ConversationNewParamsItemMcpListTools        `json:",omitzero,inline"`
+	OfReasoning           *ConversationNewParamsItemReasoning           `json:",omitzero,inline"`
 	paramUnion
 }
 
@@ -198,7 +199,8 @@ func (u ConversationNewParamsItemUnion) MarshalJSON() ([]byte, error) {
 		u.OfMcpApprovalRequest,
 		u.OfMcpApprovalResponse,
 		u.OfMcpCall,
-		u.OfMcpListTools)
+		u.OfMcpListTools,
+		u.OfReasoning)
 }
 func (u *ConversationNewParamsItemUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -223,14 +225,8 @@ func (u *ConversationNewParamsItemUnion) asAny() any {
 		return u.OfMcpCall
 	} else if !param.IsOmitted(u.OfMcpListTools) {
 		return u.OfMcpListTools
-	}
-	return nil
-}
-
-// Returns a pointer to the underlying variant's property, if present.
-func (u ConversationNewParamsItemUnion) GetContent() *ConversationNewParamsItemMessageContentUnion {
-	if vt := u.OfMessage; vt != nil {
-		return &vt.Content
+	} else if !param.IsOmitted(u.OfReasoning) {
+		return u.OfReasoning
 	}
 	return nil
 }
@@ -300,6 +296,14 @@ func (u ConversationNewParamsItemUnion) GetTools() []ConversationNewParamsItemMc
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u ConversationNewParamsItemUnion) GetSummary() []ConversationNewParamsItemReasoningSummary {
+	if vt := u.OfReasoning; vt != nil {
+		return vt.Summary
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u ConversationNewParamsItemUnion) GetID() *string {
 	if vt := u.OfMessage; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
@@ -319,6 +323,8 @@ func (u ConversationNewParamsItemUnion) GetID() *string {
 		return (*string)(&vt.ID)
 	} else if vt := u.OfMcpListTools; vt != nil {
 		return (*string)(&vt.ID)
+	} else if vt := u.OfReasoning; vt != nil {
+		return (*string)(&vt.ID)
 	}
 	return nil
 }
@@ -335,6 +341,8 @@ func (u ConversationNewParamsItemUnion) GetStatus() *string {
 		return &vt.Status.Value
 	} else if vt := u.OfFunctionCallOutput; vt != nil && vt.Status.Valid() {
 		return &vt.Status.Value
+	} else if vt := u.OfReasoning; vt != nil {
+		return (*string)(&vt.Status)
 	}
 	return nil
 }
@@ -358,6 +366,8 @@ func (u ConversationNewParamsItemUnion) GetType() *string {
 	} else if vt := u.OfMcpCall; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfMcpListTools; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfReasoning; vt != nil {
 		return (*string)(&vt.Type)
 	}
 	return nil
@@ -412,6 +422,36 @@ func (u ConversationNewParamsItemUnion) GetServerLabel() *string {
 // Returns a subunion which exports methods to access subproperties
 //
 // Or use AsAny() to get the underlying value
+func (u ConversationNewParamsItemUnion) GetContent() (res conversationNewParamsItemUnionContent) {
+	if vt := u.OfMessage; vt != nil {
+		res.any = vt.Content.asAny()
+	} else if vt := u.OfReasoning; vt != nil {
+		res.any = &vt.Content
+	}
+	return
+}
+
+// Can have the runtime types [*string],
+// [_[]ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion],
+// [_[]ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion],
+// [\*[]ConversationNewParamsItemReasoningContent]
+type conversationNewParamsItemUnionContent struct{ any }
+
+// Use the following switch statement to get the type of the union:
+//
+//	switch u.AsAny().(type) {
+//	case *string:
+//	case *[]llamastackclient.ConversationNewParamsItemMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion:
+//	case *[]llamastackclient.ConversationNewParamsItemMessageContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion:
+//	case *[]llamastackclient.ConversationNewParamsItemReasoningContent:
+//	default:
+//	    fmt.Errorf("not present")
+//	}
+func (u conversationNewParamsItemUnionContent) AsAny() any { return u.any }
+
+// Returns a subunion which exports methods to access subproperties
+//
+// Or use AsAny() to get the underlying value
 func (u ConversationNewParamsItemUnion) GetOutput() (res conversationNewParamsItemUnionOutput) {
 	if vt := u.OfFunctionCallOutput; vt != nil {
 		res.any = vt.Output.asAny()
@@ -447,6 +487,7 @@ func init() {
 		apijson.Discriminator[ConversationNewParamsItemMcpApprovalResponse]("mcp_approval_response"),
 		apijson.Discriminator[ConversationNewParamsItemMcpCall]("mcp_call"),
 		apijson.Discriminator[ConversationNewParamsItemMcpListTools]("mcp_list_tools"),
+		apijson.Discriminator[ConversationNewParamsItemReasoning]("reasoning"),
 	)
 }
 
@@ -1581,6 +1622,98 @@ func (r ConversationNewParamsItemMcpListToolsTool) MarshalJSON() (data []byte, e
 }
 func (r *ConversationNewParamsItemMcpListToolsTool) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+// Reasoning output from the model, representing the model's thinking process.
+//
+// The properties ID, Summary are required.
+type ConversationNewParamsItemReasoning struct {
+	// Unique identifier for the reasoning output item.
+	ID string `json:"id" api:"required"`
+	// Summary of the reasoning output.
+	Summary []ConversationNewParamsItemReasoningSummary `json:"summary,omitzero" api:"required"`
+	// The reasoning content from the model.
+	Content []ConversationNewParamsItemReasoningContent `json:"content,omitzero"`
+	// The status of the reasoning output.
+	//
+	// Any of "in_progress", "completed", "incomplete".
+	Status string `json:"status,omitzero"`
+	// The type identifier, always 'reasoning'.
+	//
+	// Any of "reasoning".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ConversationNewParamsItemReasoning) MarshalJSON() (data []byte, err error) {
+	type shadow ConversationNewParamsItemReasoning
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ConversationNewParamsItemReasoning) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ConversationNewParamsItemReasoning](
+		"status", "in_progress", "completed", "incomplete",
+	)
+	apijson.RegisterFieldValidator[ConversationNewParamsItemReasoning](
+		"type", "reasoning",
+	)
+}
+
+// A summary of reasoning output from the model.
+//
+// The property Text is required.
+type ConversationNewParamsItemReasoningSummary struct {
+	// The summary text of the reasoning output.
+	Text string `json:"text" api:"required"`
+	// The type identifier, always 'summary_text'.
+	//
+	// Any of "summary_text".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ConversationNewParamsItemReasoningSummary) MarshalJSON() (data []byte, err error) {
+	type shadow ConversationNewParamsItemReasoningSummary
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ConversationNewParamsItemReasoningSummary) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ConversationNewParamsItemReasoningSummary](
+		"type", "summary_text",
+	)
+}
+
+// Reasoning text from the model.
+//
+// The property Text is required.
+type ConversationNewParamsItemReasoningContent struct {
+	// The reasoning text content from the model.
+	Text string `json:"text" api:"required"`
+	// The type identifier, always 'reasoning_text'.
+	//
+	// Any of "reasoning_text".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ConversationNewParamsItemReasoningContent) MarshalJSON() (data []byte, err error) {
+	type shadow ConversationNewParamsItemReasoningContent
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ConversationNewParamsItemReasoningContent) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ConversationNewParamsItemReasoningContent](
+		"type", "reasoning_text",
+	)
 }
 
 type ConversationUpdateParams struct {
