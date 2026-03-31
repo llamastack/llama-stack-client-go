@@ -84,15 +84,17 @@ func (r *ResponseInputItemListResponse) UnmarshalJSON(data []byte) error {
 // [ResponseInputItemListResponseDataOpenAIResponseOutputMessageMcpCall],
 // [ResponseInputItemListResponseDataOpenAIResponseOutputMessageMcpListTools],
 // [ResponseInputItemListResponseDataOpenAIResponseMcpApprovalRequest],
+// [ResponseInputItemListResponseDataOpenAIResponseOutputMessageReasoningItem],
 // [ResponseInputItemListResponseDataOpenAIResponseInputFunctionToolCallOutput],
 // [ResponseInputItemListResponseDataOpenAIResponseMcpApprovalResponse],
 // [ResponseInputItemListResponseDataOpenAIResponseMessageOutput].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type ResponseInputItemListResponseDataUnion struct {
-	// This field is from variant
-	// [ResponseInputItemListResponseDataOpenAIResponseMessageOutput].
-	Content ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentUnion `json:"content"`
+	// This field is a union of
+	// [ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentUnion],
+	// [[]ResponseInputItemListResponseDataOpenAIResponseOutputMessageReasoningItemContent]
+	Content ResponseInputItemListResponseDataUnionContent `json:"content"`
 	// This field is from variant
 	// [ResponseInputItemListResponseDataOpenAIResponseMessageOutput].
 	Role   ResponseInputItemListResponseDataOpenAIResponseMessageOutputRole `json:"role"`
@@ -119,6 +121,9 @@ type ResponseInputItemListResponseDataUnion struct {
 	// [ResponseInputItemListResponseDataOpenAIResponseOutputMessageMcpListTools].
 	Tools []ResponseInputItemListResponseDataOpenAIResponseOutputMessageMcpListToolsTool `json:"tools"`
 	// This field is from variant
+	// [ResponseInputItemListResponseDataOpenAIResponseOutputMessageReasoningItem].
+	Summary []ResponseInputItemListResponseDataOpenAIResponseOutputMessageReasoningItemSummary `json:"summary"`
+	// This field is from variant
 	// [ResponseInputItemListResponseDataOpenAIResponseMcpApprovalResponse].
 	ApprovalRequestID string `json:"approval_request_id"`
 	// This field is from variant
@@ -142,6 +147,7 @@ type ResponseInputItemListResponseDataUnion struct {
 		Error             respjson.Field
 		Output            respjson.Field
 		Tools             respjson.Field
+		Summary           respjson.Field
 		ApprovalRequestID respjson.Field
 		Approve           respjson.Field
 		Reason            respjson.Field
@@ -184,6 +190,11 @@ func (u ResponseInputItemListResponseDataUnion) AsOpenAIResponseMcpApprovalReque
 	return
 }
 
+func (u ResponseInputItemListResponseDataUnion) AsOpenAIResponseOutputMessageReasoningItem() (v ResponseInputItemListResponseDataOpenAIResponseOutputMessageReasoningItem) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
 func (u ResponseInputItemListResponseDataUnion) AsOpenAIResponseInputFunctionToolCallOutput() (v ResponseInputItemListResponseDataOpenAIResponseInputFunctionToolCallOutput) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
@@ -203,6 +214,47 @@ func (u ResponseInputItemListResponseDataUnion) AsResponseInputItemListResponseD
 func (u ResponseInputItemListResponseDataUnion) RawJSON() string { return u.JSON.raw }
 
 func (r *ResponseInputItemListResponseDataUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ResponseInputItemListResponseDataUnionContent is an implicit subunion of
+// [ResponseInputItemListResponseDataUnion].
+// ResponseInputItemListResponseDataUnionContent provides convenient access to the
+// sub-properties of the union.
+//
+// For type safety it is recommended to directly use a variant of the
+// [ResponseInputItemListResponseDataUnion].
+//
+// If the underlying value is not a json object, one of the following properties
+// will be valid: OfString
+// OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile
+// OfListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusal
+// OfResponseInputItemListResponseDataOpenAIResponseOutputMessageReasoningItemContentArray]
+type ResponseInputItemListResponseDataUnionContent struct {
+	// This field will be present if the value is a [string] instead of an object.
+	OfString string `json:",inline"`
+	// This field will be present if the value is a
+	// [[]ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion]
+	// instead of an object.
+	OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile []ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion `json:",inline"`
+	// This field will be present if the value is a
+	// [[]ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion]
+	// instead of an object.
+	OfListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusal []ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion `json:",inline"`
+	// This field will be present if the value is a
+	// [[]ResponseInputItemListResponseDataOpenAIResponseOutputMessageReasoningItemContent]
+	// instead of an object.
+	OfResponseInputItemListResponseDataOpenAIResponseOutputMessageReasoningItemContentArray []ResponseInputItemListResponseDataOpenAIResponseOutputMessageReasoningItemContent `json:",inline"`
+	JSON                                                                                    struct {
+		OfString                                                                                                               respjson.Field
+		OfListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFile respjson.Field
+		OfListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusal                               respjson.Field
+		OfResponseInputItemListResponseDataOpenAIResponseOutputMessageReasoningItemContentArray                                respjson.Field
+		raw                                                                                                                    string
+	} `json:"-"`
+}
+
+func (r *ResponseInputItemListResponseDataUnionContent) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1157,6 +1209,92 @@ func (r ResponseInputItemListResponseDataOpenAIResponseMcpApprovalRequest) RawJS
 	return r.JSON.raw
 }
 func (r *ResponseInputItemListResponseDataOpenAIResponseMcpApprovalRequest) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Reasoning output from the model, representing the model's thinking process.
+type ResponseInputItemListResponseDataOpenAIResponseOutputMessageReasoningItem struct {
+	// Unique identifier for the reasoning output item.
+	ID string `json:"id" api:"required"`
+	// Summary of the reasoning output.
+	Summary []ResponseInputItemListResponseDataOpenAIResponseOutputMessageReasoningItemSummary `json:"summary" api:"required"`
+	// The reasoning content from the model.
+	Content []ResponseInputItemListResponseDataOpenAIResponseOutputMessageReasoningItemContent `json:"content" api:"nullable"`
+	// The status of the reasoning output.
+	//
+	// Any of "in_progress", "completed", "incomplete".
+	Status string `json:"status" api:"nullable"`
+	// The type identifier, always 'reasoning'.
+	//
+	// Any of "reasoning".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Summary     respjson.Field
+		Content     respjson.Field
+		Status      respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseInputItemListResponseDataOpenAIResponseOutputMessageReasoningItem) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseInputItemListResponseDataOpenAIResponseOutputMessageReasoningItem) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A summary of reasoning output from the model.
+type ResponseInputItemListResponseDataOpenAIResponseOutputMessageReasoningItemSummary struct {
+	// The summary text of the reasoning output.
+	Text string `json:"text" api:"required"`
+	// The type identifier, always 'summary_text'.
+	//
+	// Any of "summary_text".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Text        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseInputItemListResponseDataOpenAIResponseOutputMessageReasoningItemSummary) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseInputItemListResponseDataOpenAIResponseOutputMessageReasoningItemSummary) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Reasoning text from the model.
+type ResponseInputItemListResponseDataOpenAIResponseOutputMessageReasoningItemContent struct {
+	// The reasoning text content from the model.
+	Text string `json:"text" api:"required"`
+	// The type identifier, always 'reasoning_text'.
+	//
+	// Any of "reasoning_text".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Text        respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseInputItemListResponseDataOpenAIResponseOutputMessageReasoningItemContent) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseInputItemListResponseDataOpenAIResponseOutputMessageReasoningItemContent) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
