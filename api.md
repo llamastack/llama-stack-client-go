@@ -1,8 +1,3 @@
-# Shared Params Types
-
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#SamplingParams">SamplingParams</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#SystemMessageParam">SystemMessageParam</a>
-
 # Shared Response Types
 
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#HealthInfo">HealthInfo</a>
@@ -11,7 +6,6 @@
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ProviderInfo">ProviderInfo</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#RouteInfo">RouteInfo</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#SafetyViolation">SafetyViolation</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ScoringResult">ScoringResult</a>
 - <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#VersionInfo">VersionInfo</a>
 
 # Responses
@@ -265,32 +259,6 @@ Methods:
 - <code title="delete /v1/shields/{identifier}">client.Shields.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ShieldService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, identifier <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
 - <code title="post /v1/shields">client.Shields.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ShieldService.Register">Register</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ShieldRegisterParams">ShieldRegisterParams</a>) (\*<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Shield">Shield</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
-# Scoring
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ScoringScoreResponse">ScoringScoreResponse</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ScoringScoreBatchResponse">ScoringScoreBatchResponse</a>
-
-Methods:
-
-- <code title="post /v1/scoring/score">client.Scoring.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ScoringService.Score">Score</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ScoringScoreParams">ScoringScoreParams</a>) (\*<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ScoringScoreResponse">ScoringScoreResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="post /v1/scoring/score-batch">client.Scoring.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ScoringService.ScoreBatch">ScoreBatch</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ScoringScoreBatchParams">ScoringScoreBatchParams</a>) (\*<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ScoringScoreBatchResponse">ScoringScoreBatchResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
-# ScoringFunctions
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ListScoringFunctionsResponse">ListScoringFunctionsResponse</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ScoringFn">ScoringFn</a>
-
-Methods:
-
-- <code title="get /v1/scoring-functions/{scoring_fn_id}">client.ScoringFunctions.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ScoringFunctionService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, scoringFnID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ScoringFn">ScoringFn</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="get /v1/scoring-functions">client.ScoringFunctions.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ScoringFunctionService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (\*[]<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ScoringFn">ScoringFn</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="post /v1/scoring-functions">client.ScoringFunctions.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ScoringFunctionService.Register">Register</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ScoringFunctionRegisterParams">ScoringFunctionRegisterParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
-- <code title="delete /v1/scoring-functions/{scoring_fn_id}">client.ScoringFunctions.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ScoringFunctionService.Unregister">Unregister</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, scoringFnID <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
-
 # Files
 
 Response Types:
@@ -325,46 +293,6 @@ Methods:
 
 # Alpha
 
-## Benchmarks
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Benchmark">Benchmark</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ListBenchmarksResponse">ListBenchmarksResponse</a>
-
-Methods:
-
-- <code title="get /v1alpha/eval/benchmarks/{benchmark_id}">client.Alpha.Benchmarks.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaBenchmarkService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, benchmarkID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Benchmark">Benchmark</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="get /v1alpha/eval/benchmarks">client.Alpha.Benchmarks.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaBenchmarkService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (\*[]<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Benchmark">Benchmark</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="post /v1alpha/eval/benchmarks">client.Alpha.Benchmarks.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaBenchmarkService.Register">Register</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaBenchmarkRegisterParams">AlphaBenchmarkRegisterParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
-- <code title="delete /v1alpha/eval/benchmarks/{benchmark_id}">client.Alpha.Benchmarks.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaBenchmarkService.Unregister">Unregister</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, benchmarkID <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
-
-## Eval
-
-Params Types:
-
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#BenchmarkConfigParam">BenchmarkConfigParam</a>
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#EvaluateResponse">EvaluateResponse</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Job">Job</a>
-
-Methods:
-
-- <code title="post /v1alpha/eval/benchmarks/{benchmark_id}/evaluations">client.Alpha.Eval.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaEvalService.EvaluateRows">EvaluateRows</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, benchmarkID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaEvalEvaluateRowsParams">AlphaEvalEvaluateRowsParams</a>) (\*<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#EvaluateResponse">EvaluateResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="post /v1alpha/eval/benchmarks/{benchmark_id}/evaluations">client.Alpha.Eval.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaEvalService.EvaluateRowsAlpha">EvaluateRowsAlpha</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, benchmarkID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaEvalEvaluateRowsAlphaParams">AlphaEvalEvaluateRowsAlphaParams</a>) (\*<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#EvaluateResponse">EvaluateResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="post /v1alpha/eval/benchmarks/{benchmark_id}/jobs">client.Alpha.Eval.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaEvalService.RunEval">RunEval</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, benchmarkID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaEvalRunEvalParams">AlphaEvalRunEvalParams</a>) (\*<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Job">Job</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="post /v1alpha/eval/benchmarks/{benchmark_id}/jobs">client.Alpha.Eval.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaEvalService.RunEvalAlpha">RunEvalAlpha</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, benchmarkID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaEvalRunEvalAlphaParams">AlphaEvalRunEvalAlphaParams</a>) (\*<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Job">Job</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
-### Jobs
-
-Methods:
-
-- <code title="get /v1alpha/eval/benchmarks/{benchmark_id}/jobs/{job_id}/result">client.Alpha.Eval.Jobs.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaEvalJobService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, jobID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaEvalJobGetParams">AlphaEvalJobGetParams</a>) (\*<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#EvaluateResponse">EvaluateResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="delete /v1alpha/eval/benchmarks/{benchmark_id}/jobs/{job_id}">client.Alpha.Eval.Jobs.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaEvalJobService.Cancel">Cancel</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, jobID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaEvalJobCancelParams">AlphaEvalJobCancelParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
-- <code title="get /v1alpha/eval/benchmarks/{benchmark_id}/jobs/{job_id}">client.Alpha.Eval.Jobs.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaEvalJobService.Status">Status</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, jobID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaEvalJobStatusParams">AlphaEvalJobStatusParams</a>) (\*<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Job">Job</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
 ## Admin
 
 Methods:
@@ -384,23 +312,3 @@ Response Types:
 Methods:
 
 - <code title="post /v1alpha/inference/rerank">client.Alpha.Inference.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaInferenceService.Rerank">Rerank</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaInferenceRerankParams">AlphaInferenceRerankParams</a>) (\*[]<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#AlphaInferenceRerankResponse">AlphaInferenceRerankResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
-# Beta
-
-## Datasets
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ListDatasetsResponse">ListDatasetsResponse</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#BetaDatasetGetResponse">BetaDatasetGetResponse</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#BetaDatasetIterrowsResponse">BetaDatasetIterrowsResponse</a>
-- <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#BetaDatasetRegisterResponse">BetaDatasetRegisterResponse</a>
-
-Methods:
-
-- <code title="get /v1beta/datasets/{dataset_id}">client.Beta.Datasets.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#BetaDatasetService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, datasetID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#BetaDatasetGetResponse">BetaDatasetGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="get /v1beta/datasets">client.Beta.Datasets.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#BetaDatasetService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (\*[]<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ListDatasetsResponseData">ListDatasetsResponseData</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="post /v1beta/datasetio/append-rows/{dataset_id}">client.Beta.Datasets.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#BetaDatasetService.Appendrows">Appendrows</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, datasetID <a href="https://pkg.go.dev/builtin#string">string</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#BetaDatasetAppendrowsParams">BetaDatasetAppendrowsParams</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
-- <code title="get /v1beta/datasetio/iterrows/{dataset_id}">client.Beta.Datasets.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#BetaDatasetService.Iterrows">Iterrows</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, datasetID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#BetaDatasetIterrowsParams">BetaDatasetIterrowsParams</a>) (\*<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#BetaDatasetIterrowsResponse">BetaDatasetIterrowsResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="post /v1beta/datasets">client.Beta.Datasets.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#BetaDatasetService.Register">Register</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#BetaDatasetRegisterParams">BetaDatasetRegisterParams</a>) (\*<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#BetaDatasetRegisterResponse">BetaDatasetRegisterResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="delete /v1beta/datasets/{dataset_id}">client.Beta.Datasets.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#BetaDatasetService.Unregister">Unregister</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, datasetID <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>

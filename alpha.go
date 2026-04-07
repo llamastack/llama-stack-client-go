@@ -19,12 +19,8 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewAlphaService] method instead.
 type AlphaService struct {
-	Options    []option.RequestOption
-	Benchmarks AlphaBenchmarkService
-	// Llama Stack Evaluation API for running evaluations on model and agent
-	// candidates.
-	Eval  AlphaEvalService
-	Admin AlphaAdminService
+	Options []option.RequestOption
+	Admin   AlphaAdminService
 	// Llama Stack Inference API for generating completions, chat completions, and
 	// embeddings.
 	//
@@ -46,8 +42,6 @@ type AlphaService struct {
 func NewAlphaService(opts ...option.RequestOption) (r AlphaService) {
 	r = AlphaService{}
 	r.Options = opts
-	r.Benchmarks = NewAlphaBenchmarkService(opts...)
-	r.Eval = NewAlphaEvalService(opts...)
 	r.Admin = NewAlphaAdminService(opts...)
 	r.Inference = NewAlphaInferenceService(opts...)
 	return

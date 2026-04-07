@@ -70,10 +70,8 @@ type Client struct {
 	// OpenAI-compatible Moderations API.
 	Moderations ModerationService
 	// OpenAI-compatible Moderations API.
-	Safety           SafetyService
-	Shields          ShieldService
-	Scoring          ScoringService
-	ScoringFunctions ScoringFunctionService
+	Safety  SafetyService
+	Shields ShieldService
 	// This API is used to upload documents that can be used with other Llama Stack
 	// APIs.
 	Files FileService
@@ -87,7 +85,6 @@ type Client struct {
 	// Note: This API is currently under active development and may undergo changes.
 	Batches BatchService
 	Alpha   AlphaService
-	Beta    BetaService
 }
 
 // DefaultClientOptions read from the environment (LLAMA_STACK_CLIENT_API_KEY,
@@ -127,12 +124,9 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Moderations = NewModerationService(opts...)
 	r.Safety = NewSafetyService(opts...)
 	r.Shields = NewShieldService(opts...)
-	r.Scoring = NewScoringService(opts...)
-	r.ScoringFunctions = NewScoringFunctionService(opts...)
 	r.Files = NewFileService(opts...)
 	r.Batches = NewBatchService(opts...)
 	r.Alpha = NewAlphaService(opts...)
-	r.Beta = NewBetaService(opts...)
 
 	return
 }
