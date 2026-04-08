@@ -154,7 +154,7 @@ type VectorStoreFile struct {
 	// Automatic chunking strategy for vector store files.
 	ChunkingStrategy VectorStoreFileChunkingStrategyUnion `json:"chunking_strategy" api:"required"`
 	CreatedAt        int64                                `json:"created_at" api:"required"`
-	// Any of "completed", "in_progress", "cancelled", "failed".
+	// Any of "in_progress", "completed", "cancelled", "failed".
 	Status        VectorStoreFileStatus `json:"status" api:"required"`
 	VectorStoreID string                `json:"vector_store_id" api:"required"`
 	// Set of 16 key-value pairs that can be attached to an object. This can be useful
@@ -162,11 +162,12 @@ type VectorStoreFile struct {
 	// querying for objects via API or the dashboard. Keys are strings with a maximum
 	// length of 64 characters. Values are strings with a maximum length of 512
 	// characters, booleans, or numbers.
-	Attributes map[string]VectorStoreFileAttributeUnion `json:"attributes"`
+	Attributes map[string]VectorStoreFileAttributeUnion `json:"attributes" api:"nullable"`
 	// Error information for failed vector store file processing.
-	LastError  VectorStoreFileLastError `json:"last_error" api:"nullable"`
-	Object     string                   `json:"object"`
-	UsageBytes int64                    `json:"usage_bytes"`
+	LastError VectorStoreFileLastError `json:"last_error" api:"nullable"`
+	// Any of "vector_store.file".
+	Object     VectorStoreFileObject `json:"object"`
+	UsageBytes int64                 `json:"usage_bytes"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID               respjson.Field
@@ -388,8 +389,8 @@ func (r *VectorStoreFileChunkingStrategyContextualContextual) UnmarshalJSON(data
 type VectorStoreFileStatus string
 
 const (
-	VectorStoreFileStatusCompleted  VectorStoreFileStatus = "completed"
 	VectorStoreFileStatusInProgress VectorStoreFileStatus = "in_progress"
+	VectorStoreFileStatusCompleted  VectorStoreFileStatus = "completed"
 	VectorStoreFileStatusCancelled  VectorStoreFileStatus = "cancelled"
 	VectorStoreFileStatusFailed     VectorStoreFileStatus = "failed"
 )
@@ -440,9 +441,9 @@ func (r *VectorStoreFileAttributeUnion) UnmarshalJSON(data []byte) error {
 
 // Error information for failed vector store file processing.
 type VectorStoreFileLastError struct {
-	// Any of "server_error", "rate_limit_exceeded".
-	Code    VectorStoreFileLastErrorCode `json:"code" api:"required"`
-	Message string                       `json:"message" api:"required"`
+	// Any of "server_error", "unsupported_file", "invalid_file".
+	Code    string `json:"code" api:"required"`
+	Message string `json:"message" api:"required"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Code        respjson.Field
@@ -458,18 +459,18 @@ func (r *VectorStoreFileLastError) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-type VectorStoreFileLastErrorCode string
+type VectorStoreFileObject string
 
 const (
-	VectorStoreFileLastErrorCodeServerError       VectorStoreFileLastErrorCode = "server_error"
-	VectorStoreFileLastErrorCodeRateLimitExceeded VectorStoreFileLastErrorCode = "rate_limit_exceeded"
+	VectorStoreFileObjectVectorStoreFile VectorStoreFileObject = "vector_store.file"
 )
 
 // Response from deleting a vector store file.
 type VectorStoreFileDeleteResponse struct {
 	ID      string `json:"id" api:"required"`
-	Deleted bool   `json:"deleted"`
-	Object  string `json:"object"`
+	Deleted bool   `json:"deleted" api:"required"`
+	// Any of "vector_store.file.deleted".
+	Object VectorStoreFileDeleteResponseObject `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -486,10 +487,16 @@ func (r *VectorStoreFileDeleteResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type VectorStoreFileDeleteResponseObject string
+
+const (
+	VectorStoreFileDeleteResponseObjectVectorStoreFileDeleted VectorStoreFileDeleteResponseObject = "vector_store.file.deleted"
+)
+
 // Represents the parsed content of a vector store file.
 type VectorStoreFileContentResponse struct {
 	Data     []VectorStoreFileContentResponseData `json:"data" api:"required"`
-	HasMore  bool                                 `json:"has_more"`
+	HasMore  bool                                 `json:"has_more" api:"required"`
 	NextPage string                               `json:"next_page" api:"nullable"`
 	// Any of "vector_store.file_content.page".
 	Object VectorStoreFileContentResponseObject `json:"object"`
@@ -589,8 +596,12 @@ const (
 type VectorStoreFileNewParams struct {
 	// The ID of the file to attach.
 	FileID string `json:"file_id" api:"required"`
-	// Attributes to associate with the file.
-	Attributes map[string]any `json:"attributes,omitzero"`
+	// Set of 16 key-value pairs that can be attached to an object. This can be useful
+	// for storing additional information about the object in a structured format, and
+	// querying for objects via API or the dashboard. Keys are strings with a maximum
+	// length of 64 characters. Values are strings with a maximum length of 512
+	// characters, booleans, or numbers.
+	Attributes map[string]VectorStoreFileNewParamsAttributeUnion `json:"attributes,omitzero"`
 	// Strategy for chunking the file content.
 	ChunkingStrategy VectorStoreFileNewParamsChunkingStrategyUnion `json:"chunking_strategy,omitzero"`
 	paramObj
@@ -602,6 +613,34 @@ func (r VectorStoreFileNewParams) MarshalJSON() (data []byte, err error) {
 }
 func (r *VectorStoreFileNewParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type VectorStoreFileNewParamsAttributeUnion struct {
+	OfString param.Opt[string]  `json:",omitzero,inline"`
+	OfFloat  param.Opt[float64] `json:",omitzero,inline"`
+	OfBool   param.Opt[bool]    `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u VectorStoreFileNewParamsAttributeUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfString, u.OfFloat, u.OfBool)
+}
+func (u *VectorStoreFileNewParamsAttributeUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *VectorStoreFileNewParamsAttributeUnion) asAny() any {
+	if !param.IsOmitted(u.OfString) {
+		return &u.OfString.Value
+	} else if !param.IsOmitted(u.OfFloat) {
+		return &u.OfFloat.Value
+	} else if !param.IsOmitted(u.OfBool) {
+		return &u.OfBool.Value
+	}
+	return nil
 }
 
 // Only one field can be non-zero.
@@ -819,7 +858,7 @@ type VectorStoreFileListParams struct {
 	Order param.Opt[string] `query:"order,omitzero" json:"-"`
 	// Filter by file status.
 	//
-	// Any of "completed", "in_progress", "cancelled", "failed".
+	// Any of "in_progress", "completed", "cancelled", "failed".
 	Filter VectorStoreFileListParamsFilter `query:"filter,omitzero" json:"-"`
 	paramObj
 }
@@ -837,8 +876,8 @@ func (r VectorStoreFileListParams) URLQuery() (v url.Values, err error) {
 type VectorStoreFileListParamsFilter string
 
 const (
-	VectorStoreFileListParamsFilterCompleted  VectorStoreFileListParamsFilter = "completed"
 	VectorStoreFileListParamsFilterInProgress VectorStoreFileListParamsFilter = "in_progress"
+	VectorStoreFileListParamsFilterCompleted  VectorStoreFileListParamsFilter = "completed"
 	VectorStoreFileListParamsFilterCancelled  VectorStoreFileListParamsFilter = "cancelled"
 	VectorStoreFileListParamsFilterFailed     VectorStoreFileListParamsFilter = "failed"
 )

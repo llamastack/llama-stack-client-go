@@ -35,8 +35,10 @@ func TestVectorStoreFileNewWithOptionalParams(t *testing.T) {
 		"vector_store_id",
 		llamastackclient.VectorStoreFileNewParams{
 			FileID: "file_id",
-			Attributes: map[string]any{
-				"foo": "bar",
+			Attributes: map[string]llamastackclient.VectorStoreFileNewParamsAttributeUnion{
+				"foo": {
+					OfString: llamastackclient.String("string"),
+				},
 			},
 			ChunkingStrategy: llamastackclient.VectorStoreFileNewParamsChunkingStrategyUnion{
 				OfAuto: &llamastackclient.VectorStoreFileNewParamsChunkingStrategyAuto{
@@ -128,7 +130,7 @@ func TestVectorStoreFileListWithOptionalParams(t *testing.T) {
 		llamastackclient.VectorStoreFileListParams{
 			After:  llamastackclient.String("after"),
 			Before: llamastackclient.String("before"),
-			Filter: llamastackclient.VectorStoreFileListParamsFilterCompleted,
+			Filter: llamastackclient.VectorStoreFileListParamsFilterInProgress,
 			Limit:  llamastackclient.Int(1),
 			Order:  llamastackclient.String("order"),
 		},

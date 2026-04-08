@@ -36,8 +36,10 @@ func TestVectorStoreNewWithOptionalParams(t *testing.T) {
 				Type: "auto",
 			},
 		},
-		ExpiresAfter: map[string]any{
-			"foo": "bar",
+		Description: llamastackclient.String("description"),
+		ExpiresAfter: llamastackclient.VectorStoreNewParamsExpiresAfter{
+			Anchor: "last_active_at",
+			Days:   1,
 		},
 		FileIDs: []string{"string"},
 		Metadata: map[string]any{
@@ -90,8 +92,9 @@ func TestVectorStoreUpdateWithOptionalParams(t *testing.T) {
 		context.TODO(),
 		"vector_store_id",
 		llamastackclient.VectorStoreUpdateParams{
-			ExpiresAfter: map[string]any{
-				"foo": "bar",
+			ExpiresAfter: llamastackclient.VectorStoreUpdateParamsExpiresAfter{
+				Anchor: "last_active_at",
+				Days:   1,
 			},
 			Metadata: map[string]any{
 				"foo": "bar",
@@ -176,7 +179,7 @@ func TestVectorStoreSearchWithOptionalParams(t *testing.T) {
 			Filters: map[string]any{
 				"foo": "bar",
 			},
-			MaxNumResults: llamastackclient.Int(0),
+			MaxNumResults: llamastackclient.Int(1),
 			RankingOptions: llamastackclient.VectorStoreSearchParamsRankingOptions{
 				Alpha:          llamastackclient.Float(0),
 				ImpactFactor:   llamastackclient.Float(0),

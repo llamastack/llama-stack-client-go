@@ -131,10 +131,11 @@ func (r *VectorStoreService) Search(ctx context.Context, vectorStoreID string, b
 // Response from listing vector stores.
 type ListVectorStoresResponse struct {
 	Data    []VectorStore `json:"data" api:"required"`
-	FirstID string        `json:"first_id" api:"nullable"`
-	HasMore bool          `json:"has_more"`
-	LastID  string        `json:"last_id" api:"nullable"`
-	Object  string        `json:"object"`
+	FirstID string        `json:"first_id" api:"required"`
+	HasMore bool          `json:"has_more" api:"required"`
+	LastID  string        `json:"last_id" api:"required"`
+	// Any of "list".
+	Object ListVectorStoresResponseObject `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -153,32 +154,41 @@ func (r *ListVectorStoresResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type ListVectorStoresResponseObject string
+
+const (
+	ListVectorStoresResponseObjectList ListVectorStoresResponseObject = "list"
+)
+
 // OpenAI Vector Store object.
 type VectorStore struct {
 	ID        string `json:"id" api:"required"`
 	CreatedAt int64  `json:"created_at" api:"required"`
 	// File processing status counts for a vector store.
-	FileCounts   VectorStoreFileCounts `json:"file_counts" api:"required"`
-	ExpiresAfter map[string]any        `json:"expires_after" api:"nullable"`
-	ExpiresAt    int64                 `json:"expires_at" api:"nullable"`
-	LastActiveAt int64                 `json:"last_active_at" api:"nullable"`
-	Metadata     map[string]any        `json:"metadata"`
-	Name         string                `json:"name" api:"nullable"`
-	Object       string                `json:"object"`
-	Status       string                `json:"status"`
-	UsageBytes   int64                 `json:"usage_bytes"`
+	FileCounts VectorStoreFileCounts `json:"file_counts" api:"required"`
+	// Any of "expired", "in_progress", "completed".
+	Status VectorStoreStatus `json:"status" api:"required"`
+	// Expiration policy for a vector store.
+	ExpiresAfter VectorStoreExpiresAfter `json:"expires_after" api:"nullable"`
+	ExpiresAt    int64                   `json:"expires_at" api:"nullable"`
+	LastActiveAt int64                   `json:"last_active_at" api:"nullable"`
+	Metadata     map[string]any          `json:"metadata" api:"nullable"`
+	Name         string                  `json:"name"`
+	// Any of "vector_store".
+	Object     VectorStoreObject `json:"object"`
+	UsageBytes int64             `json:"usage_bytes"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID           respjson.Field
 		CreatedAt    respjson.Field
 		FileCounts   respjson.Field
+		Status       respjson.Field
 		ExpiresAfter respjson.Field
 		ExpiresAt    respjson.Field
 		LastActiveAt respjson.Field
 		Metadata     respjson.Field
 		Name         respjson.Field
 		Object       respjson.Field
-		Status       respjson.Field
 		UsageBytes   respjson.Field
 		ExtraFields  map[string]respjson.Field
 		raw          string
@@ -216,11 +226,49 @@ func (r *VectorStoreFileCounts) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type VectorStoreStatus string
+
+const (
+	VectorStoreStatusExpired    VectorStoreStatus = "expired"
+	VectorStoreStatusInProgress VectorStoreStatus = "in_progress"
+	VectorStoreStatusCompleted  VectorStoreStatus = "completed"
+)
+
+// Expiration policy for a vector store.
+type VectorStoreExpiresAfter struct {
+	// Anchor timestamp after which the expiration policy applies.
+	//
+	// Any of "last_active_at".
+	Anchor string `json:"anchor" api:"required"`
+	// The number of days after the anchor time that the vector store will expire.
+	Days int64 `json:"days" api:"required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Anchor      respjson.Field
+		Days        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r VectorStoreExpiresAfter) RawJSON() string { return r.JSON.raw }
+func (r *VectorStoreExpiresAfter) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+type VectorStoreObject string
+
+const (
+	VectorStoreObjectVectorStore VectorStoreObject = "vector_store"
+)
+
 // Response from deleting a vector store.
 type VectorStoreDeleteResponse struct {
 	ID      string `json:"id" api:"required"`
-	Deleted bool   `json:"deleted"`
-	Object  string `json:"object"`
+	Deleted bool   `json:"deleted" api:"required"`
+	// Any of "vector_store.deleted".
+	Object VectorStoreDeleteResponseObject `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -237,18 +285,25 @@ func (r *VectorStoreDeleteResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type VectorStoreDeleteResponseObject string
+
+const (
+	VectorStoreDeleteResponseObjectVectorStoreDeleted VectorStoreDeleteResponseObject = "vector_store.deleted"
+)
+
 // Paginated response from searching a vector store.
 type VectorStoreSearchResponse struct {
 	Data        []VectorStoreSearchResponseData `json:"data" api:"required"`
+	HasMore     bool                            `json:"has_more" api:"required"`
 	SearchQuery []string                        `json:"search_query" api:"required"`
-	HasMore     bool                            `json:"has_more"`
 	NextPage    string                          `json:"next_page" api:"nullable"`
-	Object      string                          `json:"object"`
+	// Any of "vector_store.search_results.page".
+	Object VectorStoreSearchResponseObject `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
-		SearchQuery respjson.Field
 		HasMore     respjson.Field
+		SearchQuery respjson.Field
 		NextPage    respjson.Field
 		Object      respjson.Field
 		ExtraFields map[string]respjson.Field
@@ -401,13 +456,21 @@ func (r *VectorStoreSearchResponseDataAttributeUnion) UnmarshalJSON(data []byte)
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type VectorStoreSearchResponseObject string
+
+const (
+	VectorStoreSearchResponseObjectVectorStoreSearchResultsPage VectorStoreSearchResponseObject = "vector_store.search_results.page"
+)
+
 type VectorStoreNewParams struct {
-	Name param.Opt[string] `json:"name,omitzero"`
+	Description param.Opt[string] `json:"description,omitzero"`
+	Name        param.Opt[string] `json:"name,omitzero"`
 	// Automatic chunking strategy for vector store files.
 	ChunkingStrategy VectorStoreNewParamsChunkingStrategyUnion `json:"chunking_strategy,omitzero"`
-	ExpiresAfter     map[string]any                            `json:"expires_after,omitzero"`
-	FileIDs          []string                                  `json:"file_ids,omitzero"`
-	Metadata         map[string]any                            `json:"metadata,omitzero"`
+	// Expiration policy for a vector store.
+	ExpiresAfter VectorStoreNewParamsExpiresAfter `json:"expires_after,omitzero"`
+	FileIDs      []string                         `json:"file_ids,omitzero"`
+	Metadata     map[string]any                   `json:"metadata,omitzero"`
 	paramObj
 }
 
@@ -601,11 +664,38 @@ func (r *VectorStoreNewParamsChunkingStrategyContextualContextual) UnmarshalJSON
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Expiration policy for a vector store.
+//
+// The properties Anchor, Days are required.
+type VectorStoreNewParamsExpiresAfter struct {
+	// Anchor timestamp after which the expiration policy applies.
+	//
+	// Any of "last_active_at".
+	Anchor string `json:"anchor,omitzero" api:"required"`
+	// The number of days after the anchor time that the vector store will expire.
+	Days int64 `json:"days" api:"required"`
+	paramObj
+}
+
+func (r VectorStoreNewParamsExpiresAfter) MarshalJSON() (data []byte, err error) {
+	type shadow VectorStoreNewParamsExpiresAfter
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *VectorStoreNewParamsExpiresAfter) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[VectorStoreNewParamsExpiresAfter](
+		"anchor", "last_active_at",
+	)
+}
+
 type VectorStoreUpdateParams struct {
 	// The new name for the vector store.
 	Name param.Opt[string] `json:"name,omitzero"`
-	// Expiration policy for the vector store.
-	ExpiresAfter map[string]any `json:"expires_after,omitzero"`
+	// Expiration policy for a vector store.
+	ExpiresAfter VectorStoreUpdateParamsExpiresAfter `json:"expires_after,omitzero"`
 	// Metadata to associate with the vector store.
 	Metadata map[string]any `json:"metadata,omitzero"`
 	paramObj
@@ -617,6 +707,33 @@ func (r VectorStoreUpdateParams) MarshalJSON() (data []byte, err error) {
 }
 func (r *VectorStoreUpdateParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+// Expiration policy for a vector store.
+//
+// The properties Anchor, Days are required.
+type VectorStoreUpdateParamsExpiresAfter struct {
+	// Anchor timestamp after which the expiration policy applies.
+	//
+	// Any of "last_active_at".
+	Anchor string `json:"anchor,omitzero" api:"required"`
+	// The number of days after the anchor time that the vector store will expire.
+	Days int64 `json:"days" api:"required"`
+	paramObj
+}
+
+func (r VectorStoreUpdateParamsExpiresAfter) MarshalJSON() (data []byte, err error) {
+	type shadow VectorStoreUpdateParamsExpiresAfter
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *VectorStoreUpdateParamsExpiresAfter) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[VectorStoreUpdateParamsExpiresAfter](
+		"anchor", "last_active_at",
+	)
 }
 
 type VectorStoreListParams struct {
@@ -642,12 +759,12 @@ func (r VectorStoreListParams) URLQuery() (v url.Values, err error) {
 type VectorStoreSearchParams struct {
 	// The search query string or list of query strings.
 	Query VectorStoreSearchParamsQueryUnion `json:"query,omitzero" api:"required"`
+	// The search mode to use (e.g., 'vector', 'keyword').
+	SearchMode param.Opt[string] `json:"search_mode,omitzero"`
 	// Maximum number of results to return.
 	MaxNumResults param.Opt[int64] `json:"max_num_results,omitzero"`
 	// Whether to rewrite the query for better results.
 	RewriteQuery param.Opt[bool] `json:"rewrite_query,omitzero"`
-	// The search mode to use (e.g., 'vector', 'keyword').
-	SearchMode param.Opt[string] `json:"search_mode,omitzero"`
 	// Filters to apply to the search.
 	Filters map[string]any `json:"filters,omitzero"`
 	// Options for ranking and filtering search results.

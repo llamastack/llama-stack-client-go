@@ -122,10 +122,11 @@ func (r *VectorStoreFileBatchService) ListFilesAutoPaging(ctx context.Context, b
 // Response from listing files in a vector store file batch.
 type ListVectorStoreFilesInBatchResponse struct {
 	Data    []VectorStoreFile `json:"data" api:"required"`
-	FirstID string            `json:"first_id" api:"nullable"`
-	HasMore bool              `json:"has_more"`
-	LastID  string            `json:"last_id" api:"nullable"`
-	Object  string            `json:"object"`
+	FirstID string            `json:"first_id" api:"required"`
+	HasMore bool              `json:"has_more" api:"required"`
+	LastID  string            `json:"last_id" api:"required"`
+	// Any of "list".
+	Object ListVectorStoreFilesInBatchResponseObject `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -144,16 +145,23 @@ func (r *ListVectorStoreFilesInBatchResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+type ListVectorStoreFilesInBatchResponseObject string
+
+const (
+	ListVectorStoreFilesInBatchResponseObjectList ListVectorStoreFilesInBatchResponseObject = "list"
+)
+
 // OpenAI Vector Store File Batch object.
 type VectorStoreFileBatches struct {
 	ID        string `json:"id" api:"required"`
 	CreatedAt int64  `json:"created_at" api:"required"`
 	// File processing status counts for a vector store.
 	FileCounts VectorStoreFileBatchesFileCounts `json:"file_counts" api:"required"`
-	// Any of "completed", "in_progress", "cancelled", "failed".
+	// Any of "in_progress", "completed", "cancelled", "failed".
 	Status        VectorStoreFileBatchesStatus `json:"status" api:"required"`
 	VectorStoreID string                       `json:"vector_store_id" api:"required"`
-	Object        string                       `json:"object"`
+	// Any of "vector_store.file_batch".
+	Object VectorStoreFileBatchesObject `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID            respjson.Field
@@ -201,17 +209,29 @@ func (r *VectorStoreFileBatchesFileCounts) UnmarshalJSON(data []byte) error {
 type VectorStoreFileBatchesStatus string
 
 const (
-	VectorStoreFileBatchesStatusCompleted  VectorStoreFileBatchesStatus = "completed"
 	VectorStoreFileBatchesStatusInProgress VectorStoreFileBatchesStatus = "in_progress"
+	VectorStoreFileBatchesStatusCompleted  VectorStoreFileBatchesStatus = "completed"
 	VectorStoreFileBatchesStatusCancelled  VectorStoreFileBatchesStatus = "cancelled"
 	VectorStoreFileBatchesStatusFailed     VectorStoreFileBatchesStatus = "failed"
 )
 
+type VectorStoreFileBatchesObject string
+
+const (
+	VectorStoreFileBatchesObjectVectorStoreFileBatch VectorStoreFileBatchesObject = "vector_store.file_batch"
+)
+
 type VectorStoreFileBatchNewParams struct {
-	FileIDs    []string       `json:"file_ids,omitzero" api:"required"`
-	Attributes map[string]any `json:"attributes,omitzero"`
+	// Set of 16 key-value pairs that can be attached to an object. This can be useful
+	// for storing additional information about the object in a structured format, and
+	// querying for objects via API or the dashboard. Keys are strings with a maximum
+	// length of 64 characters. Values are strings with a maximum length of 512
+	// characters, booleans, or numbers.
+	Attributes map[string]VectorStoreFileBatchNewParamsAttributeUnion `json:"attributes,omitzero"`
 	// Automatic chunking strategy for vector store files.
 	ChunkingStrategy VectorStoreFileBatchNewParamsChunkingStrategyUnion `json:"chunking_strategy,omitzero"`
+	Files            []VectorStoreFileBatchNewParamsFile                `json:"files,omitzero"`
+	FileIDs          []string                                           `json:"file_ids,omitzero"`
 	paramObj
 }
 
@@ -221,6 +241,34 @@ func (r VectorStoreFileBatchNewParams) MarshalJSON() (data []byte, err error) {
 }
 func (r *VectorStoreFileBatchNewParams) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type VectorStoreFileBatchNewParamsAttributeUnion struct {
+	OfString param.Opt[string]  `json:",omitzero,inline"`
+	OfFloat  param.Opt[float64] `json:",omitzero,inline"`
+	OfBool   param.Opt[bool]    `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u VectorStoreFileBatchNewParamsAttributeUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfString, u.OfFloat, u.OfBool)
+}
+func (u *VectorStoreFileBatchNewParamsAttributeUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *VectorStoreFileBatchNewParamsAttributeUnion) asAny() any {
+	if !param.IsOmitted(u.OfString) {
+		return &u.OfString.Value
+	} else if !param.IsOmitted(u.OfFloat) {
+		return &u.OfFloat.Value
+	} else if !param.IsOmitted(u.OfBool) {
+		return &u.OfBool.Value
+	}
+	return nil
 }
 
 // Only one field can be non-zero.
@@ -402,6 +450,240 @@ func (r VectorStoreFileBatchNewParamsChunkingStrategyContextualContextual) Marsh
 	return param.MarshalObject(r, (*shadow)(&r))
 }
 func (r *VectorStoreFileBatchNewParamsChunkingStrategyContextualContextual) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A file entry for creating a vector store file batch with per-file options.
+//
+// The property FileID is required.
+type VectorStoreFileBatchNewParamsFile struct {
+	FileID string `json:"file_id" api:"required"`
+	// Set of 16 key-value pairs that can be attached to an object. This can be useful
+	// for storing additional information about the object in a structured format, and
+	// querying for objects via API or the dashboard. Keys are strings with a maximum
+	// length of 64 characters. Values are strings with a maximum length of 512
+	// characters, booleans, or numbers.
+	Attributes map[string]VectorStoreFileBatchNewParamsFileAttributeUnion `json:"attributes,omitzero"`
+	// Automatic chunking strategy for vector store files.
+	ChunkingStrategy VectorStoreFileBatchNewParamsFileChunkingStrategyUnion `json:"chunking_strategy,omitzero"`
+	paramObj
+}
+
+func (r VectorStoreFileBatchNewParamsFile) MarshalJSON() (data []byte, err error) {
+	type shadow VectorStoreFileBatchNewParamsFile
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *VectorStoreFileBatchNewParamsFile) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type VectorStoreFileBatchNewParamsFileAttributeUnion struct {
+	OfString param.Opt[string]  `json:",omitzero,inline"`
+	OfFloat  param.Opt[float64] `json:",omitzero,inline"`
+	OfBool   param.Opt[bool]    `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u VectorStoreFileBatchNewParamsFileAttributeUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfString, u.OfFloat, u.OfBool)
+}
+func (u *VectorStoreFileBatchNewParamsFileAttributeUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *VectorStoreFileBatchNewParamsFileAttributeUnion) asAny() any {
+	if !param.IsOmitted(u.OfString) {
+		return &u.OfString.Value
+	} else if !param.IsOmitted(u.OfFloat) {
+		return &u.OfFloat.Value
+	} else if !param.IsOmitted(u.OfBool) {
+		return &u.OfBool.Value
+	}
+	return nil
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type VectorStoreFileBatchNewParamsFileChunkingStrategyUnion struct {
+	OfAuto       *VectorStoreFileBatchNewParamsFileChunkingStrategyAuto       `json:",omitzero,inline"`
+	OfStatic     *VectorStoreFileBatchNewParamsFileChunkingStrategyStatic     `json:",omitzero,inline"`
+	OfContextual *VectorStoreFileBatchNewParamsFileChunkingStrategyContextual `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u VectorStoreFileBatchNewParamsFileChunkingStrategyUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfAuto, u.OfStatic, u.OfContextual)
+}
+func (u *VectorStoreFileBatchNewParamsFileChunkingStrategyUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *VectorStoreFileBatchNewParamsFileChunkingStrategyUnion) asAny() any {
+	if !param.IsOmitted(u.OfAuto) {
+		return u.OfAuto
+	} else if !param.IsOmitted(u.OfStatic) {
+		return u.OfStatic
+	} else if !param.IsOmitted(u.OfContextual) {
+		return u.OfContextual
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u VectorStoreFileBatchNewParamsFileChunkingStrategyUnion) GetStatic() *VectorStoreFileBatchNewParamsFileChunkingStrategyStaticStatic {
+	if vt := u.OfStatic; vt != nil {
+		return &vt.Static
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u VectorStoreFileBatchNewParamsFileChunkingStrategyUnion) GetContextual() *VectorStoreFileBatchNewParamsFileChunkingStrategyContextualContextual {
+	if vt := u.OfContextual; vt != nil {
+		return &vt.Contextual
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u VectorStoreFileBatchNewParamsFileChunkingStrategyUnion) GetType() *string {
+	if vt := u.OfAuto; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfStatic; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfContextual; vt != nil {
+		return (*string)(&vt.Type)
+	}
+	return nil
+}
+
+func init() {
+	apijson.RegisterUnion[VectorStoreFileBatchNewParamsFileChunkingStrategyUnion](
+		"type",
+		apijson.Discriminator[VectorStoreFileBatchNewParamsFileChunkingStrategyAuto]("auto"),
+		apijson.Discriminator[VectorStoreFileBatchNewParamsFileChunkingStrategyStatic]("static"),
+		apijson.Discriminator[VectorStoreFileBatchNewParamsFileChunkingStrategyContextual]("contextual"),
+	)
+}
+
+// Automatic chunking strategy for vector store files.
+type VectorStoreFileBatchNewParamsFileChunkingStrategyAuto struct {
+	// Any of "auto".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r VectorStoreFileBatchNewParamsFileChunkingStrategyAuto) MarshalJSON() (data []byte, err error) {
+	type shadow VectorStoreFileBatchNewParamsFileChunkingStrategyAuto
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *VectorStoreFileBatchNewParamsFileChunkingStrategyAuto) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[VectorStoreFileBatchNewParamsFileChunkingStrategyAuto](
+		"type", "auto",
+	)
+}
+
+// Static chunking strategy with configurable parameters.
+//
+// The property Static is required.
+type VectorStoreFileBatchNewParamsFileChunkingStrategyStatic struct {
+	// Configuration for static chunking strategy.
+	Static VectorStoreFileBatchNewParamsFileChunkingStrategyStaticStatic `json:"static,omitzero" api:"required"`
+	// Any of "static".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r VectorStoreFileBatchNewParamsFileChunkingStrategyStatic) MarshalJSON() (data []byte, err error) {
+	type shadow VectorStoreFileBatchNewParamsFileChunkingStrategyStatic
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *VectorStoreFileBatchNewParamsFileChunkingStrategyStatic) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[VectorStoreFileBatchNewParamsFileChunkingStrategyStatic](
+		"type", "static",
+	)
+}
+
+// Configuration for static chunking strategy.
+type VectorStoreFileBatchNewParamsFileChunkingStrategyStaticStatic struct {
+	ChunkOverlapTokens param.Opt[int64] `json:"chunk_overlap_tokens,omitzero"`
+	MaxChunkSizeTokens param.Opt[int64] `json:"max_chunk_size_tokens,omitzero"`
+	paramObj
+}
+
+func (r VectorStoreFileBatchNewParamsFileChunkingStrategyStaticStatic) MarshalJSON() (data []byte, err error) {
+	type shadow VectorStoreFileBatchNewParamsFileChunkingStrategyStaticStatic
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *VectorStoreFileBatchNewParamsFileChunkingStrategyStaticStatic) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Contextual chunking strategy that uses an LLM to situate chunks within the
+// document.
+//
+// The property Contextual is required.
+type VectorStoreFileBatchNewParamsFileChunkingStrategyContextual struct {
+	// Configuration for contextual chunking.
+	Contextual VectorStoreFileBatchNewParamsFileChunkingStrategyContextualContextual `json:"contextual,omitzero" api:"required"`
+	// Strategy type identifier.
+	//
+	// Any of "contextual".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r VectorStoreFileBatchNewParamsFileChunkingStrategyContextual) MarshalJSON() (data []byte, err error) {
+	type shadow VectorStoreFileBatchNewParamsFileChunkingStrategyContextual
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *VectorStoreFileBatchNewParamsFileChunkingStrategyContextual) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[VectorStoreFileBatchNewParamsFileChunkingStrategyContextual](
+		"type", "contextual",
+	)
+}
+
+// Configuration for contextual chunking.
+type VectorStoreFileBatchNewParamsFileChunkingStrategyContextualContextual struct {
+	// Maximum concurrent LLM calls. Falls back to config default if not provided.
+	MaxConcurrency param.Opt[int64] `json:"max_concurrency,omitzero"`
+	// LLM model for generating context. Falls back to
+	// VectorStoresConfig.contextual_retrieval_params.model if not provided.
+	ModelID param.Opt[string] `json:"model_id,omitzero"`
+	// Timeout per LLM call in seconds. Falls back to config default if not provided.
+	TimeoutSeconds param.Opt[int64] `json:"timeout_seconds,omitzero"`
+	// Tokens to overlap between adjacent chunks. Must be less than
+	// max_chunk_size_tokens.
+	ChunkOverlapTokens param.Opt[int64] `json:"chunk_overlap_tokens,omitzero"`
+	// Prompt template for contextual retrieval. Uses WHOLE_DOCUMENT and CHUNK_CONTENT
+	// placeholders wrapped in double curly braces.
+	ContextPrompt param.Opt[string] `json:"context_prompt,omitzero"`
+	// Maximum tokens per chunk. Suggested ~700 to allow room for prepended context.
+	MaxChunkSizeTokens param.Opt[int64] `json:"max_chunk_size_tokens,omitzero"`
+	paramObj
+}
+
+func (r VectorStoreFileBatchNewParamsFileChunkingStrategyContextualContextual) MarshalJSON() (data []byte, err error) {
+	type shadow VectorStoreFileBatchNewParamsFileChunkingStrategyContextualContextual
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *VectorStoreFileBatchNewParamsFileChunkingStrategyContextualContextual) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
