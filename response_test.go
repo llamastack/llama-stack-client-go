@@ -34,8 +34,12 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 		Input: llamastackclient.ResponseNewParamsInputUnion{
 			OfString: llamastackclient.String("string"),
 		},
-		Model:            "model",
-		Background:       llamastackclient.Bool(true),
+		Model:      "model",
+		Background: llamastackclient.Bool(true),
+		ContextManagement: []llamastackclient.ResponseNewParamsContextManagement{{
+			Type:             "compaction",
+			CompactThreshold: llamastackclient.Int(0),
+		}},
 		Conversation:     llamastackclient.String("conversation"),
 		FrequencyPenalty: llamastackclient.Float(-2),
 		Guardrails: []llamastackclient.ResponseNewParamsGuardrailUnion{{
@@ -86,6 +90,7 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 				Strict: llamastackclient.Bool(true),
 				Type:   llamastackclient.ResponseNewParamsTextFormatTypeText,
 			},
+			Verbosity: "low",
 		},
 		ToolChoice: llamastackclient.ResponseNewParamsToolChoiceUnion{
 			OfOpenAIResponseInputToolChoiceMode: llamastackclient.String("auto"),
@@ -168,6 +173,58 @@ func TestResponseDelete(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Responses.Delete(context.TODO(), "response_id")
+	if err != nil {
+		var apierr *llamastackclient.Error
+		if errors.As(err, &apierr) {
+			t.Log(string(apierr.DumpRequest(true)))
+		}
+		t.Fatalf("err should be nil: %s", err.Error())
+	}
+}
+
+func TestResponseCompactWithOptionalParams(t *testing.T) {
+	baseURL := "http://localhost:4010"
+	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
+		baseURL = envURL
+	}
+	if !testutil.CheckTestServer(t, baseURL) {
+		return
+	}
+	client := llamastackclient.NewClient(
+		option.WithBaseURL(baseURL),
+	)
+	_, err := client.Responses.Compact(context.TODO(), llamastackclient.ResponseCompactParams{
+		Model: "model",
+		Input: llamastackclient.ResponseCompactParamsInputUnion{
+			OfString: llamastackclient.String("string"),
+		},
+		Instructions:       llamastackclient.String("instructions"),
+		ParallelToolCalls:  llamastackclient.Bool(true),
+		PreviousResponseID: llamastackclient.String("previous_response_id"),
+		PromptCacheKey:     llamastackclient.String("prompt_cache_key"),
+		Reasoning: llamastackclient.ResponseCompactParamsReasoning{
+			Effort:  "none",
+			Summary: "auto",
+		},
+		Text: llamastackclient.ResponseCompactParamsText{
+			Format: llamastackclient.ResponseCompactParamsTextFormat{
+				Description: llamastackclient.String("description"),
+				Name:        llamastackclient.String("name"),
+				Schema: map[string]any{
+					"foo": "bar",
+				},
+				Strict: llamastackclient.Bool(true),
+				Type:   llamastackclient.ResponseCompactParamsTextFormatTypeText,
+			},
+			Verbosity: "low",
+		},
+		Tools: []llamastackclient.ResponseCompactParamsToolUnion{{
+			OfOpenAIResponseInputToolWebSearch: &llamastackclient.ResponseCompactParamsToolOpenAIResponseInputToolWebSearch{
+				SearchContextSize: llamastackclient.String("S?oC\"high"),
+				Type:              llamastackclient.ResponseCompactParamsToolOpenAIResponseInputToolWebSearchTypeWebSearch,
+			},
+		}},
+	})
 	if err != nil {
 		var apierr *llamastackclient.Error
 		if errors.As(err, &apierr) {

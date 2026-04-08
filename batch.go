@@ -118,23 +118,27 @@ type BatchNewResponse struct {
 	Object BatchNewResponseObject `json:"object" api:"required"`
 	// Any of "validating", "failed", "in_progress", "finalizing", "completed",
 	// "expired", "cancelling", "cancelled".
-	Status        BatchNewResponseStatus        `json:"status" api:"required"`
-	CancelledAt   int64                         `json:"cancelled_at" api:"nullable"`
-	CancellingAt  int64                         `json:"cancelling_at" api:"nullable"`
-	CompletedAt   int64                         `json:"completed_at" api:"nullable"`
-	ErrorFileID   string                        `json:"error_file_id" api:"nullable"`
-	Errors        BatchNewResponseErrors        `json:"errors" api:"nullable"`
-	ExpiredAt     int64                         `json:"expired_at" api:"nullable"`
-	ExpiresAt     int64                         `json:"expires_at" api:"nullable"`
-	FailedAt      int64                         `json:"failed_at" api:"nullable"`
-	FinalizingAt  int64                         `json:"finalizing_at" api:"nullable"`
-	InProgressAt  int64                         `json:"in_progress_at" api:"nullable"`
-	Metadata      map[string]string             `json:"metadata" api:"nullable"`
-	Model         string                        `json:"model" api:"nullable"`
-	OutputFileID  string                        `json:"output_file_id" api:"nullable"`
+	Status       BatchNewResponseStatus `json:"status" api:"required"`
+	CancelledAt  int64                  `json:"cancelled_at" api:"nullable"`
+	CancellingAt int64                  `json:"cancelling_at" api:"nullable"`
+	CompletedAt  int64                  `json:"completed_at" api:"nullable"`
+	ErrorFileID  string                 `json:"error_file_id" api:"nullable"`
+	Errors       BatchNewResponseErrors `json:"errors" api:"nullable"`
+	ExpiredAt    int64                  `json:"expired_at" api:"nullable"`
+	ExpiresAt    int64                  `json:"expires_at" api:"nullable"`
+	FailedAt     int64                  `json:"failed_at" api:"nullable"`
+	FinalizingAt int64                  `json:"finalizing_at" api:"nullable"`
+	InProgressAt int64                  `json:"in_progress_at" api:"nullable"`
+	Metadata     map[string]string      `json:"metadata" api:"nullable"`
+	Model        string                 `json:"model" api:"nullable"`
+	OutputFileID string                 `json:"output_file_id" api:"nullable"`
+	// The request counts for different statuses within the batch.
 	RequestCounts BatchNewResponseRequestCounts `json:"request_counts" api:"nullable"`
-	Usage         BatchNewResponseUsage         `json:"usage" api:"nullable"`
-	ExtraFields   map[string]any                `json:"" api:"extrafields"`
+	// Represents token usage details including input tokens, output tokens, a
+	// breakdown of output tokens, and the total tokens used. Only populated on batches
+	// created after September 7, 2025.
+	Usage       BatchNewResponseUsage `json:"usage" api:"nullable"`
+	ExtraFields map[string]any        `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID               respjson.Field
@@ -231,6 +235,7 @@ func (r *BatchNewResponseErrorsData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// The request counts for different statuses within the batch.
 type BatchNewResponseRequestCounts struct {
 	Completed   int64          `json:"completed" api:"required"`
 	Failed      int64          `json:"failed" api:"required"`
@@ -252,10 +257,15 @@ func (r *BatchNewResponseRequestCounts) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Represents token usage details including input tokens, output tokens, a
+// breakdown of output tokens, and the total tokens used. Only populated on batches
+// created after September 7, 2025.
 type BatchNewResponseUsage struct {
-	InputTokens         int64                                    `json:"input_tokens" api:"required"`
-	InputTokensDetails  BatchNewResponseUsageInputTokensDetails  `json:"input_tokens_details" api:"required"`
-	OutputTokens        int64                                    `json:"output_tokens" api:"required"`
+	InputTokens int64 `json:"input_tokens" api:"required"`
+	// A detailed breakdown of the input tokens.
+	InputTokensDetails BatchNewResponseUsageInputTokensDetails `json:"input_tokens_details" api:"required"`
+	OutputTokens       int64                                   `json:"output_tokens" api:"required"`
+	// A detailed breakdown of the output tokens.
 	OutputTokensDetails BatchNewResponseUsageOutputTokensDetails `json:"output_tokens_details" api:"required"`
 	TotalTokens         int64                                    `json:"total_tokens" api:"required"`
 	ExtraFields         map[string]any                           `json:"" api:"extrafields"`
@@ -277,6 +287,7 @@ func (r *BatchNewResponseUsage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A detailed breakdown of the input tokens.
 type BatchNewResponseUsageInputTokensDetails struct {
 	CachedTokens int64          `json:"cached_tokens" api:"required"`
 	ExtraFields  map[string]any `json:"" api:"extrafields"`
@@ -294,6 +305,7 @@ func (r *BatchNewResponseUsageInputTokensDetails) UnmarshalJSON(data []byte) err
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A detailed breakdown of the output tokens.
 type BatchNewResponseUsageOutputTokensDetails struct {
 	ReasoningTokens int64          `json:"reasoning_tokens" api:"required"`
 	ExtraFields     map[string]any `json:"" api:"extrafields"`
@@ -321,23 +333,27 @@ type BatchGetResponse struct {
 	Object BatchGetResponseObject `json:"object" api:"required"`
 	// Any of "validating", "failed", "in_progress", "finalizing", "completed",
 	// "expired", "cancelling", "cancelled".
-	Status        BatchGetResponseStatus        `json:"status" api:"required"`
-	CancelledAt   int64                         `json:"cancelled_at" api:"nullable"`
-	CancellingAt  int64                         `json:"cancelling_at" api:"nullable"`
-	CompletedAt   int64                         `json:"completed_at" api:"nullable"`
-	ErrorFileID   string                        `json:"error_file_id" api:"nullable"`
-	Errors        BatchGetResponseErrors        `json:"errors" api:"nullable"`
-	ExpiredAt     int64                         `json:"expired_at" api:"nullable"`
-	ExpiresAt     int64                         `json:"expires_at" api:"nullable"`
-	FailedAt      int64                         `json:"failed_at" api:"nullable"`
-	FinalizingAt  int64                         `json:"finalizing_at" api:"nullable"`
-	InProgressAt  int64                         `json:"in_progress_at" api:"nullable"`
-	Metadata      map[string]string             `json:"metadata" api:"nullable"`
-	Model         string                        `json:"model" api:"nullable"`
-	OutputFileID  string                        `json:"output_file_id" api:"nullable"`
+	Status       BatchGetResponseStatus `json:"status" api:"required"`
+	CancelledAt  int64                  `json:"cancelled_at" api:"nullable"`
+	CancellingAt int64                  `json:"cancelling_at" api:"nullable"`
+	CompletedAt  int64                  `json:"completed_at" api:"nullable"`
+	ErrorFileID  string                 `json:"error_file_id" api:"nullable"`
+	Errors       BatchGetResponseErrors `json:"errors" api:"nullable"`
+	ExpiredAt    int64                  `json:"expired_at" api:"nullable"`
+	ExpiresAt    int64                  `json:"expires_at" api:"nullable"`
+	FailedAt     int64                  `json:"failed_at" api:"nullable"`
+	FinalizingAt int64                  `json:"finalizing_at" api:"nullable"`
+	InProgressAt int64                  `json:"in_progress_at" api:"nullable"`
+	Metadata     map[string]string      `json:"metadata" api:"nullable"`
+	Model        string                 `json:"model" api:"nullable"`
+	OutputFileID string                 `json:"output_file_id" api:"nullable"`
+	// The request counts for different statuses within the batch.
 	RequestCounts BatchGetResponseRequestCounts `json:"request_counts" api:"nullable"`
-	Usage         BatchGetResponseUsage         `json:"usage" api:"nullable"`
-	ExtraFields   map[string]any                `json:"" api:"extrafields"`
+	// Represents token usage details including input tokens, output tokens, a
+	// breakdown of output tokens, and the total tokens used. Only populated on batches
+	// created after September 7, 2025.
+	Usage       BatchGetResponseUsage `json:"usage" api:"nullable"`
+	ExtraFields map[string]any        `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID               respjson.Field
@@ -434,6 +450,7 @@ func (r *BatchGetResponseErrorsData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// The request counts for different statuses within the batch.
 type BatchGetResponseRequestCounts struct {
 	Completed   int64          `json:"completed" api:"required"`
 	Failed      int64          `json:"failed" api:"required"`
@@ -455,10 +472,15 @@ func (r *BatchGetResponseRequestCounts) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Represents token usage details including input tokens, output tokens, a
+// breakdown of output tokens, and the total tokens used. Only populated on batches
+// created after September 7, 2025.
 type BatchGetResponseUsage struct {
-	InputTokens         int64                                    `json:"input_tokens" api:"required"`
-	InputTokensDetails  BatchGetResponseUsageInputTokensDetails  `json:"input_tokens_details" api:"required"`
-	OutputTokens        int64                                    `json:"output_tokens" api:"required"`
+	InputTokens int64 `json:"input_tokens" api:"required"`
+	// A detailed breakdown of the input tokens.
+	InputTokensDetails BatchGetResponseUsageInputTokensDetails `json:"input_tokens_details" api:"required"`
+	OutputTokens       int64                                   `json:"output_tokens" api:"required"`
+	// A detailed breakdown of the output tokens.
 	OutputTokensDetails BatchGetResponseUsageOutputTokensDetails `json:"output_tokens_details" api:"required"`
 	TotalTokens         int64                                    `json:"total_tokens" api:"required"`
 	ExtraFields         map[string]any                           `json:"" api:"extrafields"`
@@ -480,6 +502,7 @@ func (r *BatchGetResponseUsage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A detailed breakdown of the input tokens.
 type BatchGetResponseUsageInputTokensDetails struct {
 	CachedTokens int64          `json:"cached_tokens" api:"required"`
 	ExtraFields  map[string]any `json:"" api:"extrafields"`
@@ -497,6 +520,7 @@ func (r *BatchGetResponseUsageInputTokensDetails) UnmarshalJSON(data []byte) err
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A detailed breakdown of the output tokens.
 type BatchGetResponseUsageOutputTokensDetails struct {
 	ReasoningTokens int64          `json:"reasoning_tokens" api:"required"`
 	ExtraFields     map[string]any `json:"" api:"extrafields"`
@@ -524,23 +548,27 @@ type BatchListResponse struct {
 	Object BatchListResponseObject `json:"object" api:"required"`
 	// Any of "validating", "failed", "in_progress", "finalizing", "completed",
 	// "expired", "cancelling", "cancelled".
-	Status        BatchListResponseStatus        `json:"status" api:"required"`
-	CancelledAt   int64                          `json:"cancelled_at" api:"nullable"`
-	CancellingAt  int64                          `json:"cancelling_at" api:"nullable"`
-	CompletedAt   int64                          `json:"completed_at" api:"nullable"`
-	ErrorFileID   string                         `json:"error_file_id" api:"nullable"`
-	Errors        BatchListResponseErrors        `json:"errors" api:"nullable"`
-	ExpiredAt     int64                          `json:"expired_at" api:"nullable"`
-	ExpiresAt     int64                          `json:"expires_at" api:"nullable"`
-	FailedAt      int64                          `json:"failed_at" api:"nullable"`
-	FinalizingAt  int64                          `json:"finalizing_at" api:"nullable"`
-	InProgressAt  int64                          `json:"in_progress_at" api:"nullable"`
-	Metadata      map[string]string              `json:"metadata" api:"nullable"`
-	Model         string                         `json:"model" api:"nullable"`
-	OutputFileID  string                         `json:"output_file_id" api:"nullable"`
+	Status       BatchListResponseStatus `json:"status" api:"required"`
+	CancelledAt  int64                   `json:"cancelled_at" api:"nullable"`
+	CancellingAt int64                   `json:"cancelling_at" api:"nullable"`
+	CompletedAt  int64                   `json:"completed_at" api:"nullable"`
+	ErrorFileID  string                  `json:"error_file_id" api:"nullable"`
+	Errors       BatchListResponseErrors `json:"errors" api:"nullable"`
+	ExpiredAt    int64                   `json:"expired_at" api:"nullable"`
+	ExpiresAt    int64                   `json:"expires_at" api:"nullable"`
+	FailedAt     int64                   `json:"failed_at" api:"nullable"`
+	FinalizingAt int64                   `json:"finalizing_at" api:"nullable"`
+	InProgressAt int64                   `json:"in_progress_at" api:"nullable"`
+	Metadata     map[string]string       `json:"metadata" api:"nullable"`
+	Model        string                  `json:"model" api:"nullable"`
+	OutputFileID string                  `json:"output_file_id" api:"nullable"`
+	// The request counts for different statuses within the batch.
 	RequestCounts BatchListResponseRequestCounts `json:"request_counts" api:"nullable"`
-	Usage         BatchListResponseUsage         `json:"usage" api:"nullable"`
-	ExtraFields   map[string]any                 `json:"" api:"extrafields"`
+	// Represents token usage details including input tokens, output tokens, a
+	// breakdown of output tokens, and the total tokens used. Only populated on batches
+	// created after September 7, 2025.
+	Usage       BatchListResponseUsage `json:"usage" api:"nullable"`
+	ExtraFields map[string]any         `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID               respjson.Field
@@ -637,6 +665,7 @@ func (r *BatchListResponseErrorsData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// The request counts for different statuses within the batch.
 type BatchListResponseRequestCounts struct {
 	Completed   int64          `json:"completed" api:"required"`
 	Failed      int64          `json:"failed" api:"required"`
@@ -658,10 +687,15 @@ func (r *BatchListResponseRequestCounts) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Represents token usage details including input tokens, output tokens, a
+// breakdown of output tokens, and the total tokens used. Only populated on batches
+// created after September 7, 2025.
 type BatchListResponseUsage struct {
-	InputTokens         int64                                     `json:"input_tokens" api:"required"`
-	InputTokensDetails  BatchListResponseUsageInputTokensDetails  `json:"input_tokens_details" api:"required"`
-	OutputTokens        int64                                     `json:"output_tokens" api:"required"`
+	InputTokens int64 `json:"input_tokens" api:"required"`
+	// A detailed breakdown of the input tokens.
+	InputTokensDetails BatchListResponseUsageInputTokensDetails `json:"input_tokens_details" api:"required"`
+	OutputTokens       int64                                    `json:"output_tokens" api:"required"`
+	// A detailed breakdown of the output tokens.
 	OutputTokensDetails BatchListResponseUsageOutputTokensDetails `json:"output_tokens_details" api:"required"`
 	TotalTokens         int64                                     `json:"total_tokens" api:"required"`
 	ExtraFields         map[string]any                            `json:"" api:"extrafields"`
@@ -683,6 +717,7 @@ func (r *BatchListResponseUsage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A detailed breakdown of the input tokens.
 type BatchListResponseUsageInputTokensDetails struct {
 	CachedTokens int64          `json:"cached_tokens" api:"required"`
 	ExtraFields  map[string]any `json:"" api:"extrafields"`
@@ -700,6 +735,7 @@ func (r *BatchListResponseUsageInputTokensDetails) UnmarshalJSON(data []byte) er
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A detailed breakdown of the output tokens.
 type BatchListResponseUsageOutputTokensDetails struct {
 	ReasoningTokens int64          `json:"reasoning_tokens" api:"required"`
 	ExtraFields     map[string]any `json:"" api:"extrafields"`
@@ -727,23 +763,27 @@ type BatchCancelResponse struct {
 	Object BatchCancelResponseObject `json:"object" api:"required"`
 	// Any of "validating", "failed", "in_progress", "finalizing", "completed",
 	// "expired", "cancelling", "cancelled".
-	Status        BatchCancelResponseStatus        `json:"status" api:"required"`
-	CancelledAt   int64                            `json:"cancelled_at" api:"nullable"`
-	CancellingAt  int64                            `json:"cancelling_at" api:"nullable"`
-	CompletedAt   int64                            `json:"completed_at" api:"nullable"`
-	ErrorFileID   string                           `json:"error_file_id" api:"nullable"`
-	Errors        BatchCancelResponseErrors        `json:"errors" api:"nullable"`
-	ExpiredAt     int64                            `json:"expired_at" api:"nullable"`
-	ExpiresAt     int64                            `json:"expires_at" api:"nullable"`
-	FailedAt      int64                            `json:"failed_at" api:"nullable"`
-	FinalizingAt  int64                            `json:"finalizing_at" api:"nullable"`
-	InProgressAt  int64                            `json:"in_progress_at" api:"nullable"`
-	Metadata      map[string]string                `json:"metadata" api:"nullable"`
-	Model         string                           `json:"model" api:"nullable"`
-	OutputFileID  string                           `json:"output_file_id" api:"nullable"`
+	Status       BatchCancelResponseStatus `json:"status" api:"required"`
+	CancelledAt  int64                     `json:"cancelled_at" api:"nullable"`
+	CancellingAt int64                     `json:"cancelling_at" api:"nullable"`
+	CompletedAt  int64                     `json:"completed_at" api:"nullable"`
+	ErrorFileID  string                    `json:"error_file_id" api:"nullable"`
+	Errors       BatchCancelResponseErrors `json:"errors" api:"nullable"`
+	ExpiredAt    int64                     `json:"expired_at" api:"nullable"`
+	ExpiresAt    int64                     `json:"expires_at" api:"nullable"`
+	FailedAt     int64                     `json:"failed_at" api:"nullable"`
+	FinalizingAt int64                     `json:"finalizing_at" api:"nullable"`
+	InProgressAt int64                     `json:"in_progress_at" api:"nullable"`
+	Metadata     map[string]string         `json:"metadata" api:"nullable"`
+	Model        string                    `json:"model" api:"nullable"`
+	OutputFileID string                    `json:"output_file_id" api:"nullable"`
+	// The request counts for different statuses within the batch.
 	RequestCounts BatchCancelResponseRequestCounts `json:"request_counts" api:"nullable"`
-	Usage         BatchCancelResponseUsage         `json:"usage" api:"nullable"`
-	ExtraFields   map[string]any                   `json:"" api:"extrafields"`
+	// Represents token usage details including input tokens, output tokens, a
+	// breakdown of output tokens, and the total tokens used. Only populated on batches
+	// created after September 7, 2025.
+	Usage       BatchCancelResponseUsage `json:"usage" api:"nullable"`
+	ExtraFields map[string]any           `json:"" api:"extrafields"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID               respjson.Field
@@ -840,6 +880,7 @@ func (r *BatchCancelResponseErrorsData) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// The request counts for different statuses within the batch.
 type BatchCancelResponseRequestCounts struct {
 	Completed   int64          `json:"completed" api:"required"`
 	Failed      int64          `json:"failed" api:"required"`
@@ -861,10 +902,15 @@ func (r *BatchCancelResponseRequestCounts) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// Represents token usage details including input tokens, output tokens, a
+// breakdown of output tokens, and the total tokens used. Only populated on batches
+// created after September 7, 2025.
 type BatchCancelResponseUsage struct {
-	InputTokens         int64                                       `json:"input_tokens" api:"required"`
-	InputTokensDetails  BatchCancelResponseUsageInputTokensDetails  `json:"input_tokens_details" api:"required"`
-	OutputTokens        int64                                       `json:"output_tokens" api:"required"`
+	InputTokens int64 `json:"input_tokens" api:"required"`
+	// A detailed breakdown of the input tokens.
+	InputTokensDetails BatchCancelResponseUsageInputTokensDetails `json:"input_tokens_details" api:"required"`
+	OutputTokens       int64                                      `json:"output_tokens" api:"required"`
+	// A detailed breakdown of the output tokens.
 	OutputTokensDetails BatchCancelResponseUsageOutputTokensDetails `json:"output_tokens_details" api:"required"`
 	TotalTokens         int64                                       `json:"total_tokens" api:"required"`
 	ExtraFields         map[string]any                              `json:"" api:"extrafields"`
@@ -886,6 +932,7 @@ func (r *BatchCancelResponseUsage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A detailed breakdown of the input tokens.
 type BatchCancelResponseUsageInputTokensDetails struct {
 	CachedTokens int64          `json:"cached_tokens" api:"required"`
 	ExtraFields  map[string]any `json:"" api:"extrafields"`
@@ -903,6 +950,7 @@ func (r *BatchCancelResponseUsageInputTokensDetails) UnmarshalJSON(data []byte) 
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A detailed breakdown of the output tokens.
 type BatchCancelResponseUsageOutputTokensDetails struct {
 	ReasoningTokens int64          `json:"reasoning_tokens" api:"required"`
 	ExtraFields     map[string]any `json:"" api:"extrafields"`

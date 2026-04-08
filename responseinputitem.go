@@ -87,7 +87,7 @@ func (r *ResponseInputItemListResponse) UnmarshalJSON(data []byte) error {
 // [ResponseInputItemListResponseDataOpenAIResponseOutputMessageReasoningItem],
 // [ResponseInputItemListResponseDataOpenAIResponseInputFunctionToolCallOutput],
 // [ResponseInputItemListResponseDataOpenAIResponseMcpApprovalResponse],
-// [ResponseInputItemListResponseDataOpenAIResponseMessageOutput].
+// [ResponseInputItemListResponseDataOpenAIResponseCompaction].
 //
 // Use the methods beginning with 'As' to cast the union to one of its variants.
 type ResponseInputItemListResponseDataUnion struct {
@@ -132,7 +132,10 @@ type ResponseInputItemListResponseDataUnion struct {
 	// This field is from variant
 	// [ResponseInputItemListResponseDataOpenAIResponseMcpApprovalResponse].
 	Reason string `json:"reason"`
-	JSON   struct {
+	// This field is from variant
+	// [ResponseInputItemListResponseDataOpenAIResponseCompaction].
+	EncryptedContent string `json:"encrypted_content"`
+	JSON             struct {
 		Content           respjson.Field
 		Role              respjson.Field
 		ID                respjson.Field
@@ -151,6 +154,7 @@ type ResponseInputItemListResponseDataUnion struct {
 		ApprovalRequestID respjson.Field
 		Approve           respjson.Field
 		Reason            respjson.Field
+		EncryptedContent  respjson.Field
 		raw               string
 	} `json:"-"`
 }
@@ -205,7 +209,7 @@ func (u ResponseInputItemListResponseDataUnion) AsOpenAIResponseMcpApprovalRespo
 	return
 }
 
-func (u ResponseInputItemListResponseDataUnion) AsResponseInputItemListResponseDataOpenAIResponseMessageOutput() (v ResponseInputItemListResponseDataOpenAIResponseMessageOutput) {
+func (u ResponseInputItemListResponseDataUnion) AsOpenAIResponseCompaction() (v ResponseInputItemListResponseDataOpenAIResponseCompaction) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -1594,6 +1598,30 @@ func (r ResponseInputItemListResponseDataOpenAIResponseMcpApprovalResponse) RawJ
 	return r.JSON.raw
 }
 func (r *ResponseInputItemListResponseDataOpenAIResponseMcpApprovalResponse) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A compaction item that summarizes prior conversation context.
+type ResponseInputItemListResponseDataOpenAIResponseCompaction struct {
+	EncryptedContent string `json:"encrypted_content" api:"required"`
+	ID               string `json:"id" api:"nullable"`
+	// Any of "compaction".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		EncryptedContent respjson.Field
+		ID               respjson.Field
+		Type             respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseInputItemListResponseDataOpenAIResponseCompaction) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseInputItemListResponseDataOpenAIResponseCompaction) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
