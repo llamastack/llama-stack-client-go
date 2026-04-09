@@ -53,11 +53,11 @@ import (
 
 func main() {
 	client := llamastackclient.NewClient()
-	models, err := client.Models.List(context.TODO())
+	listModelsResponse, err := client.Models.List(context.TODO())
 	if err != nil {
 		panic(err.Error())
 	}
-	fmt.Printf("%+v\n", models)
+	fmt.Printf("%+v\n", listModelsResponse.Data)
 }
 
 ```

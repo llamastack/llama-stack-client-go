@@ -55,25 +55,23 @@ func (r *ModelService) Get(ctx context.Context, modelID string, opts ...option.R
 }
 
 // List models using the OpenAI API.
-func (r *ModelService) List(ctx context.Context, opts ...option.RequestOption) (res *[]Model, err error) {
-	var env ListModelsResponse
+func (r *ModelService) List(ctx context.Context, opts ...option.RequestOption) (res *ListModelsResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/models"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
-	if err != nil {
-		return nil, err
-	}
-	res = &env.Data
-	return res, nil
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
 }
 
 // Response containing a list of OpenAI model objects.
 type ListModelsResponse struct {
 	// List of OpenAI model objects.
 	Data []Model `json:"data" api:"required"`
+	// Any of "list".
+	Object ListModelsResponseObject `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
+		Object      respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
 	} `json:"-"`
@@ -84,6 +82,12 @@ func (r ListModelsResponse) RawJSON() string { return r.JSON.raw }
 func (r *ListModelsResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+type ListModelsResponseObject string
+
+const (
+	ListModelsResponseObjectList ListModelsResponseObject = "list"
+)
 
 // A model from OpenAI.
 //
@@ -124,10 +128,18 @@ const (
 
 // A model resource representing an AI model registered in Llama Stack.
 type ModelGetResponse struct {
+	// The model identifier (OpenAI-compatible alias for identifier).
+	ID string `json:"id" api:"required"`
 	// Unique identifier for this resource in llama stack
 	Identifier string `json:"identifier" api:"required"`
+	// The object type, always 'model'.
+	//
+	// Any of "model".
+	Object ModelGetResponseObject `json:"object" api:"required"`
 	// ID of the provider that owns this resource
 	ProviderID string `json:"provider_id" api:"required"`
+	// The Unix timestamp in seconds when the model was created.
+	Created int64 `json:"created"`
 	// Any additional metadata for this model
 	Metadata map[string]any `json:"metadata"`
 	// Enumeration of supported model types in Llama Stack.
@@ -138,17 +150,23 @@ type ModelGetResponse struct {
 	// validation is deferred to runtime and model is preserved during provider
 	// refresh.
 	ModelValidation bool `json:"model_validation" api:"nullable"`
+	// The owner of the model.
+	OwnedBy string `json:"owned_by"`
 	// Unique identifier for this resource in the provider
 	ProviderResourceID string `json:"provider_resource_id" api:"nullable"`
 	// Any of "model".
 	Type ModelGetResponseType `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
+		ID                 respjson.Field
 		Identifier         respjson.Field
+		Object             respjson.Field
 		ProviderID         respjson.Field
+		Created            respjson.Field
 		Metadata           respjson.Field
 		ModelType          respjson.Field
 		ModelValidation    respjson.Field
+		OwnedBy            respjson.Field
 		ProviderResourceID respjson.Field
 		Type               respjson.Field
 		ExtraFields        map[string]respjson.Field
@@ -161,6 +179,13 @@ func (r ModelGetResponse) RawJSON() string { return r.JSON.raw }
 func (r *ModelGetResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+// The object type, always 'model'.
+type ModelGetResponseObject string
+
+const (
+	ModelGetResponseObjectModel ModelGetResponseObject = "model"
+)
 
 // Enumeration of supported model types in Llama Stack.
 type ModelGetResponseModelType string

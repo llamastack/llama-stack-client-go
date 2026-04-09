@@ -165,6 +165,17 @@ type File struct {
 	//
 	// Any of "assistants", "batch".
 	Purpose FilePurpose `json:"purpose" api:"required"`
+	// Deprecated. The current status of the file.
+	//
+	// Any of "uploaded", "processed", "error".
+	//
+	// Deprecated: deprecated
+	Status FileStatus `json:"status" api:"required"`
+	// Deprecated. For details on why a fine-tuning training file failed validation,
+	// see the error field on fine_tuning.job.
+	//
+	// Deprecated: deprecated
+	StatusDetails string `json:"status_details" api:"required"`
 	// The Unix timestamp (in seconds) for when the file expires.
 	ExpiresAt int64 `json:"expires_at" api:"nullable"`
 	// The object type, which is always 'file'.
@@ -173,15 +184,17 @@ type File struct {
 	Object FileObject `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		ID          respjson.Field
-		Bytes       respjson.Field
-		CreatedAt   respjson.Field
-		Filename    respjson.Field
-		Purpose     respjson.Field
-		ExpiresAt   respjson.Field
-		Object      respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		ID            respjson.Field
+		Bytes         respjson.Field
+		CreatedAt     respjson.Field
+		Filename      respjson.Field
+		Purpose       respjson.Field
+		Status        respjson.Field
+		StatusDetails respjson.Field
+		ExpiresAt     respjson.Field
+		Object        respjson.Field
+		ExtraFields   map[string]respjson.Field
+		raw           string
 	} `json:"-"`
 }
 
@@ -197,6 +210,15 @@ type FilePurpose string
 const (
 	FilePurposeAssistants FilePurpose = "assistants"
 	FilePurposeBatch      FilePurpose = "batch"
+)
+
+// Deprecated. The current status of the file.
+type FileStatus string
+
+const (
+	FileStatusUploaded  FileStatus = "uploaded"
+	FileStatusProcessed FileStatus = "processed"
+	FileStatusError     FileStatus = "error"
 )
 
 // The object type, which is always 'file'.

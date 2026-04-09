@@ -207,13 +207,13 @@ Response Types:
 Methods:
 
 - <code title="get /v1/models/{model_id}">client.Models.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, modelID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelGetResponse">ModelGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="get /v1/models">client.Models.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (\*[]<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Model">Model</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /v1/models">client.Models.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (\*<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ListModelsResponse">ListModelsResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 ## OpenAI
 
 Methods:
 
-- <code title="get /v1/models">client.Models.OpenAI.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelOpenAIService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (\*[]<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#Model">Model</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /v1/models">client.Models.OpenAI.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ModelOpenAIService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (\*<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go">llamastackclient</a>.<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#ListModelsResponse">ListModelsResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Providers
 

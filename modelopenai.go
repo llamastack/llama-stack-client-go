@@ -13,10 +13,8 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/llamastack/llama-stack-client-go/internal/apijson"
 	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
 	"github.com/llamastack/llama-stack-client-go/option"
-	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 )
 
 // ModelOpenAIService contains methods and other services that help with
@@ -39,32 +37,9 @@ func NewModelOpenAIService(opts ...option.RequestOption) (r ModelOpenAIService) 
 }
 
 // List models using the OpenAI API.
-func (r *ModelOpenAIService) List(ctx context.Context, opts ...option.RequestOption) (res *[]Model, err error) {
-	var env ListModelsResponse
+func (r *ModelOpenAIService) List(ctx context.Context, opts ...option.RequestOption) (res *ListModelsResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/models"
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &env, opts...)
-	if err != nil {
-		return nil, err
-	}
-	res = &env.Data
-	return res, nil
-}
-
-// Response containing a list of OpenAI model objects.
-type ListModelsResponse struct {
-	// List of OpenAI model objects.
-	Data []Model `json:"data" api:"required"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		Data        respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ListModelsResponse) RawJSON() string { return r.JSON.raw }
-func (r *ListModelsResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	return res, err
 }
