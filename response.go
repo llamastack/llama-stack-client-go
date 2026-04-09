@@ -2486,7 +2486,7 @@ type ResponseObject struct {
 	CompletedAt int64                       `json:"completed_at" api:"nullable"`
 	// Error details for failed OpenAI response requests.
 	Error            ResponseObjectError `json:"error" api:"nullable"`
-	FrequencyPenalty float64             `json:"frequency_penalty" api:"nullable"`
+	FrequencyPenalty float64             `json:"frequency_penalty"`
 	// Details explaining why a response was incomplete.
 	IncompleteDetails ResponseObjectIncompleteDetails `json:"incomplete_details" api:"nullable"`
 	Instructions      string                          `json:"instructions" api:"nullable"`
@@ -2495,8 +2495,8 @@ type ResponseObject struct {
 	Metadata          map[string]string               `json:"metadata" api:"nullable"`
 	// Any of "response".
 	Object             ResponseObjectObject `json:"object"`
-	ParallelToolCalls  bool                 `json:"parallel_tool_calls" api:"nullable"`
-	PresencePenalty    float64              `json:"presence_penalty" api:"nullable"`
+	ParallelToolCalls  bool                 `json:"parallel_tool_calls"`
+	PresencePenalty    float64              `json:"presence_penalty"`
 	PreviousResponseID string               `json:"previous_response_id" api:"nullable"`
 	// OpenAI compatible Prompt object that is used in OpenAI responses.
 	Prompt         ResponseObjectPrompt `json:"prompt" api:"nullable"`
@@ -2506,15 +2506,15 @@ type ResponseObject struct {
 	// Controls how much reasoning the model performs before generating a response.
 	Reasoning        ResponseObjectReasoning `json:"reasoning" api:"nullable"`
 	SafetyIdentifier string                  `json:"safety_identifier" api:"nullable"`
-	ServiceTier      string                  `json:"service_tier" api:"nullable"`
-	Temperature      float64                 `json:"temperature" api:"nullable"`
+	ServiceTier      string                  `json:"service_tier"`
+	Temperature      float64                 `json:"temperature"`
 	// Text response configuration for OpenAI responses.
 	Text ResponseObjectText `json:"text"`
 	// Enumeration of simple tool choice modes for response generation.
 	ToolChoice  ResponseObjectToolChoiceUnion `json:"tool_choice" api:"nullable"`
-	Tools       []ResponseObjectToolUnion     `json:"tools" api:"nullable"`
-	TopLogprobs int64                         `json:"top_logprobs" api:"nullable"`
-	TopP        float64                       `json:"top_p" api:"nullable"`
+	Tools       []ResponseObjectToolUnion     `json:"tools"`
+	TopLogprobs int64                         `json:"top_logprobs"`
+	TopP        float64                       `json:"top_p"`
 	Truncation  string                        `json:"truncation" api:"nullable"`
 	// Usage information for OpenAI response.
 	Usage ResponseObjectUsage `json:"usage" api:"nullable"`
@@ -8595,7 +8595,7 @@ type ResponseListResponse struct {
 	CompletedAt int64                             `json:"completed_at" api:"nullable"`
 	// Error details for failed OpenAI response requests.
 	Error            ResponseListResponseError `json:"error" api:"nullable"`
-	FrequencyPenalty float64                   `json:"frequency_penalty" api:"nullable"`
+	FrequencyPenalty float64                   `json:"frequency_penalty"`
 	// Details explaining why a response was incomplete.
 	IncompleteDetails ResponseListResponseIncompleteDetails `json:"incomplete_details" api:"nullable"`
 	Instructions      string                                `json:"instructions" api:"nullable"`
@@ -8604,8 +8604,8 @@ type ResponseListResponse struct {
 	Metadata          map[string]string                     `json:"metadata" api:"nullable"`
 	// Any of "response".
 	Object             ResponseListResponseObject `json:"object"`
-	ParallelToolCalls  bool                       `json:"parallel_tool_calls" api:"nullable"`
-	PresencePenalty    float64                    `json:"presence_penalty" api:"nullable"`
+	ParallelToolCalls  bool                       `json:"parallel_tool_calls"`
+	PresencePenalty    float64                    `json:"presence_penalty"`
 	PreviousResponseID string                     `json:"previous_response_id" api:"nullable"`
 	// OpenAI compatible Prompt object that is used in OpenAI responses.
 	Prompt         ResponseListResponsePrompt `json:"prompt" api:"nullable"`
@@ -8615,15 +8615,15 @@ type ResponseListResponse struct {
 	// Controls how much reasoning the model performs before generating a response.
 	Reasoning        ResponseListResponseReasoning `json:"reasoning" api:"nullable"`
 	SafetyIdentifier string                        `json:"safety_identifier" api:"nullable"`
-	ServiceTier      string                        `json:"service_tier" api:"nullable"`
-	Temperature      float64                       `json:"temperature" api:"nullable"`
+	ServiceTier      string                        `json:"service_tier"`
+	Temperature      float64                       `json:"temperature"`
 	// Text response configuration for OpenAI responses.
 	Text ResponseListResponseText `json:"text"`
 	// Enumeration of simple tool choice modes for response generation.
 	ToolChoice  ResponseListResponseToolChoiceUnion `json:"tool_choice" api:"nullable"`
-	Tools       []ResponseListResponseToolUnion     `json:"tools" api:"nullable"`
-	TopLogprobs int64                               `json:"top_logprobs" api:"nullable"`
-	TopP        float64                             `json:"top_p" api:"nullable"`
+	Tools       []ResponseListResponseToolUnion     `json:"tools"`
+	TopLogprobs int64                               `json:"top_logprobs"`
+	TopP        float64                             `json:"top_p"`
 	Truncation  string                              `json:"truncation" api:"nullable"`
 	// Usage information for OpenAI response.
 	Usage ResponseListResponseUsage `json:"usage" api:"nullable"`
@@ -12402,8 +12402,6 @@ type ResponseNewParams struct {
 	PromptCacheKey param.Opt[string] `json:"prompt_cache_key,omitzero"`
 	// A stable identifier used for safety monitoring and abuse detection.
 	SafetyIdentifier param.Opt[string] `json:"safety_identifier,omitzero"`
-	// Whether to store the response in the database.
-	Store param.Opt[bool] `json:"store,omitzero"`
 	// Sampling temperature.
 	Temperature param.Opt[float64] `json:"temperature,omitzero"`
 	// The number of most likely tokens to return at each position, along with their
@@ -12415,18 +12413,13 @@ type ResponseNewParams struct {
 	// Whether to run the model response in the background. When true, returns
 	// immediately with status 'queued'.
 	Background param.Opt[bool] `json:"background,omitzero"`
+	// Whether to store the response in the database.
+	Store param.Opt[bool] `json:"store,omitzero"`
 	// Context management configuration. When set with type 'compaction', automatically
 	// compacts conversation history when token count exceeds the compact_threshold.
 	ContextManagement []ResponseNewParamsContextManagement `json:"context_management,omitzero"`
 	// List of guardrails to apply during response generation.
 	Guardrails []ResponseNewParamsGuardrailUnion `json:"guardrails,omitzero"`
-	// Additional fields to include in the response.
-	//
-	// Any of "web_search_call.action.sources", "code_interpreter_call.outputs",
-	// "computer_call_output.output.image_url", "file_search_call.results",
-	// "message.input_image.image_url", "message.output_text.logprobs",
-	// "reasoning.encrypted_content".
-	Include []string `json:"include,omitzero"`
 	// Dictionary of metadata key-value pairs to attach to the response.
 	Metadata map[string]string `json:"metadata,omitzero"`
 	// OpenAI compatible Prompt object that is used in OpenAI responses.
@@ -12452,6 +12445,13 @@ type ResponseNewParams struct {
 	//
 	// Any of "auto", "disabled".
 	Truncation ResponseNewParamsTruncation `json:"truncation,omitzero"`
+	// Additional fields to include in the response.
+	//
+	// Any of "web_search_call.action.sources", "code_interpreter_call.outputs",
+	// "computer_call_output.output.image_url", "file_search_call.results",
+	// "message.input_image.image_url", "message.output_text.logprobs",
+	// "reasoning.encrypted_content".
+	Include []string `json:"include,omitzero"`
 	paramObj
 }
 
