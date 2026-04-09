@@ -160,7 +160,7 @@ type VectorStoreFileBatches struct {
 	// Any of "in_progress", "completed", "cancelled", "failed".
 	Status        VectorStoreFileBatchesStatus `json:"status" api:"required"`
 	VectorStoreID string                       `json:"vector_store_id" api:"required"`
-	// Any of "vector_store.file_batch".
+	// Any of "vector_store.files_batch".
 	Object VectorStoreFileBatchesObject `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
@@ -218,7 +218,7 @@ const (
 type VectorStoreFileBatchesObject string
 
 const (
-	VectorStoreFileBatchesObjectVectorStoreFileBatch VectorStoreFileBatchesObject = "vector_store.file_batch"
+	VectorStoreFileBatchesObjectVectorStoreFilesBatch VectorStoreFileBatchesObject = "vector_store.files_batch"
 )
 
 type VectorStoreFileBatchNewParams struct {
