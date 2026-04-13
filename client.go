@@ -22,7 +22,9 @@ import (
 // interacting with the llama-stack-client API. You should not instantiate this
 // client directly, and instead use the [NewClient] method instead.
 type Client struct {
-	Options   []option.RequestOption
+	Options []option.RequestOption
+	// OpenAI Responses API for agent orchestration with tool use, multi-turn
+	// conversations, and background processing.
 	Responses ResponseService
 	// Protocol for prompt management operations.
 	Prompts PromptService

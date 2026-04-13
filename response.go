@@ -27,6 +27,9 @@ import (
 	"github.com/llamastack/llama-stack-client-go/packages/ssestream"
 )
 
+// OpenAI Responses API for agent orchestration with tool use, multi-turn
+// conversations, and background processing.
+//
 // ResponseService contains methods and other services that help with interacting
 // with the llama-stack-client API.
 //
@@ -34,7 +37,9 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewResponseService] method instead.
 type ResponseService struct {
-	Options    []option.RequestOption
+	Options []option.RequestOption
+	// OpenAI Responses API for agent orchestration with tool use, multi-turn
+	// conversations, and background processing.
 	InputItems ResponseInputItemService
 }
 

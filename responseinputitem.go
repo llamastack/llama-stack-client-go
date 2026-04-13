@@ -25,6 +25,9 @@ import (
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 )
 
+// OpenAI Responses API for agent orchestration with tool use, multi-turn
+// conversations, and background processing.
+//
 // ResponseInputItemService contains methods and other services that help with
 // interacting with the llama-stack-client API.
 //
