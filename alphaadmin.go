@@ -23,6 +23,8 @@ import (
 	"github.com/llamastack/llama-stack-client-go/packages/respjson"
 )
 
+// Administrative APIs for inspecting providers, routes, health, and version.
+//
 // AlphaAdminService contains methods and other services that help with interacting
 // with the llama-stack-client API.
 //

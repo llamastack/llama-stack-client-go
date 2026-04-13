@@ -20,7 +20,8 @@ import (
 // the [NewAlphaService] method instead.
 type AlphaService struct {
 	Options []option.RequestOption
-	Admin   AlphaAdminService
+	// Administrative APIs for inspecting providers, routes, health, and version.
+	Admin AlphaAdminService
 	// Llama Stack Inference API for generating completions, chat completions, and
 	// embeddings.
 	//
