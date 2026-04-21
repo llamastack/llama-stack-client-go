@@ -4718,7 +4718,7 @@ func (r *ResponseObjectUsageOutputTokensDetails) UnmarshalJSON(data []byte) erro
 // [ResponseObjectStreamResponseFileSearchCallSearching],
 // [ResponseObjectStreamResponseFileSearchCallCompleted],
 // [ResponseObjectStreamResponseIncomplete], [ResponseObjectStreamResponseFailed],
-// [ResponseObjectStreamResponseCompleted].
+// [ResponseObjectStreamResponseCompleted], [ResponseObjectStreamError].
 //
 // Use the [ResponseObjectStreamUnion.AsAny] method to switch on the variant.
 //
@@ -4744,7 +4744,7 @@ type ResponseObjectStreamUnion struct {
 	// "response.output_text.annotation.added",
 	// "response.file_search_call.in_progress", "response.file_search_call.searching",
 	// "response.file_search_call.completed", "response.incomplete", "response.failed",
-	// "response.completed".
+	// "response.completed", "error".
 	Type string `json:"type"`
 	// This field is a union of [ResponseObjectStreamResponseOutputItemAddedItemUnion],
 	// [ResponseObjectStreamResponseOutputItemDoneItemUnion]
@@ -4773,7 +4773,13 @@ type ResponseObjectStreamUnion struct {
 	// This field is from variant
 	// [ResponseObjectStreamResponseOutputTextAnnotationAdded].
 	AnnotationIndex int64 `json:"annotation_index"`
-	JSON            struct {
+	// This field is from variant [ResponseObjectStreamError].
+	Message string `json:"message"`
+	// This field is from variant [ResponseObjectStreamError].
+	Code string `json:"code"`
+	// This field is from variant [ResponseObjectStreamError].
+	Param string `json:"param"`
+	JSON  struct {
 		Response        respjson.Field
 		SequenceNumber  respjson.Field
 		Type            respjson.Field
@@ -4791,6 +4797,9 @@ type ResponseObjectStreamUnion struct {
 		Refusal         respjson.Field
 		Annotation      respjson.Field
 		AnnotationIndex respjson.Field
+		Message         respjson.Field
+		Code            respjson.Field
+		Param           respjson.Field
 		raw             string
 	} `json:"-"`
 }
@@ -4838,6 +4847,7 @@ func (ResponseObjectStreamResponseFileSearchCallCompleted) implResponseObjectStr
 func (ResponseObjectStreamResponseIncomplete) implResponseObjectStreamUnion()                 {}
 func (ResponseObjectStreamResponseFailed) implResponseObjectStreamUnion()                     {}
 func (ResponseObjectStreamResponseCompleted) implResponseObjectStreamUnion()                  {}
+func (ResponseObjectStreamError) implResponseObjectStreamUnion()                              {}
 
 // Use the following switch statement to find the correct variant
 //
@@ -4878,6 +4888,7 @@ func (ResponseObjectStreamResponseCompleted) implResponseObjectStreamUnion()    
 //	case llamastackclient.ResponseObjectStreamResponseIncomplete:
 //	case llamastackclient.ResponseObjectStreamResponseFailed:
 //	case llamastackclient.ResponseObjectStreamResponseCompleted:
+//	case llamastackclient.ResponseObjectStreamError:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -4955,6 +4966,8 @@ func (u ResponseObjectStreamUnion) AsAny() anyResponseObjectStream {
 		return u.AsResponseFailed()
 	case "response.completed":
 		return u.AsResponseCompleted()
+	case "error":
+		return u.AsError()
 	}
 	return nil
 }
@@ -5135,6 +5148,11 @@ func (u ResponseObjectStreamUnion) AsResponseFailed() (v ResponseObjectStreamRes
 }
 
 func (u ResponseObjectStreamUnion) AsResponseCompleted() (v ResponseObjectStreamResponseCompleted) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseObjectStreamUnion) AsError() (v ResponseObjectStreamError) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -8584,6 +8602,35 @@ type ResponseObjectStreamResponseCompleted struct {
 // Returns the unmodified JSON received from the API
 func (r ResponseObjectStreamResponseCompleted) RawJSON() string { return r.JSON.raw }
 func (r *ResponseObjectStreamResponseCompleted) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Standalone error event emitted during streaming when an error occurs.
+//
+// This is distinct from response.failed which is a response lifecycle event. The
+// error event signals transport/infrastructure-level errors to the client.
+type ResponseObjectStreamError struct {
+	Message        string `json:"message" api:"required"`
+	SequenceNumber int64  `json:"sequence_number" api:"required"`
+	Code           string `json:"code" api:"nullable"`
+	Param          string `json:"param" api:"nullable"`
+	// Any of "error".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Message        respjson.Field
+		SequenceNumber respjson.Field
+		Code           respjson.Field
+		Param          respjson.Field
+		Type           respjson.Field
+		ExtraFields    map[string]respjson.Field
+		raw            string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseObjectStreamError) RawJSON() string { return r.JSON.raw }
+func (r *ResponseObjectStreamError) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
