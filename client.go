@@ -92,7 +92,7 @@ type Client struct {
 // DefaultClientOptions read from the environment (LLAMA_STACK_CLIENT_API_KEY,
 // LLAMA_STACK_CLIENT_BASE_URL). This should be used to initialize new clients.
 func DefaultClientOptions() []option.RequestOption {
-	defaults := []option.RequestOption{option.WithEnvironmentProduction()}
+	defaults := []option.RequestOption{option.WithHTTPClient(defaultHTTPClient()), option.WithEnvironmentProduction()}
 	if o, ok := os.LookupEnv("LLAMA_STACK_CLIENT_BASE_URL"); ok {
 		defaults = append(defaults, option.WithBaseURL(o))
 	}
