@@ -1,4 +1,4 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
+// Copyright (c) The OGX Contributors.
 // All rights reserved.
 //
 // This source code is licensed under the terms described in the LICENSE file in
@@ -6,7 +6,7 @@
 //
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package llamastackclient_test
+package ogxclient_test
 
 import (
 	"context"
@@ -14,9 +14,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/llamastack/llama-stack-client-go"
-	"github.com/llamastack/llama-stack-client-go/internal/testutil"
-	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/ogx-ai/ogx-client-go"
+	"github.com/ogx-ai/ogx-client-go/internal/testutil"
+	"github.com/ogx-ai/ogx-client-go/option"
 )
 
 func TestEmbeddingNewWithOptionalParams(t *testing.T) {
@@ -27,20 +27,20 @@ func TestEmbeddingNewWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Embeddings.New(context.TODO(), llamastackclient.EmbeddingNewParams{
-		Input: llamastackclient.EmbeddingNewParamsInputUnion{
-			OfString: llamastackclient.String("string"),
+	_, err := client.Embeddings.New(context.TODO(), ogxclient.EmbeddingNewParams{
+		Input: ogxclient.EmbeddingNewParamsInputUnion{
+			OfString: ogxclient.String("string"),
 		},
 		Model:          "model",
-		Dimensions:     llamastackclient.Int(1),
-		EncodingFormat: llamastackclient.EmbeddingNewParamsEncodingFormatFloat,
-		User:           llamastackclient.String("user"),
+		Dimensions:     ogxclient.Int(1),
+		EncodingFormat: ogxclient.EmbeddingNewParamsEncodingFormatFloat,
+		User:           ogxclient.String("user"),
 	})
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}

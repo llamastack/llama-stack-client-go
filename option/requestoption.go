@@ -1,4 +1,4 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
+// Copyright (c) The OGX Contributors.
 // All rights reserved.
 //
 // This source code is licensed under the terms described in the LICENSE file in
@@ -17,15 +17,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
+	"github.com/ogx-ai/ogx-client-go/internal/requestconfig"
 	"github.com/tidwall/sjson"
 )
 
-// RequestOption is an option for the requests made by the llama-stack-client API Client
+// RequestOption is an option for the requests made by the ogx-client API Client
 // which can be supplied to clients, services, and methods. You can read more about this functional
 // options pattern in our [README].
 //
-// [README]: https://pkg.go.dev/github.com/llamastack/llama-stack-client-go#readme-requestoptions
+// [README]: https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#readme-requestoptions
 type RequestOption = requestconfig.RequestOption
 
 // WithBaseURL returns a RequestOption that sets the BaseURL for the client.
@@ -269,7 +269,7 @@ func WithRequestTimeout(dur time.Duration) RequestOption {
 // environment to be the "production" environment. An environment specifies which base URL
 // to use by default.
 func WithEnvironmentProduction() RequestOption {
-	return requestconfig.WithDefaultBaseURL("http://any-hosted-llama-stack.com/")
+	return requestconfig.WithDefaultBaseURL("http://any-hosted-ogx.com/")
 }
 
 // WithAPIKey returns a RequestOption that sets the client setting "api_key".

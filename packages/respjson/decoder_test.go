@@ -3,8 +3,8 @@ package respjson_test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/llamastack/llama-stack-client-go/internal/apijson"
-	rj "github.com/llamastack/llama-stack-client-go/packages/respjson"
+	"github.com/ogx-ai/ogx-client-go/internal/apijson"
+	rj "github.com/ogx-ai/ogx-client-go/packages/respjson"
 	"reflect"
 	"testing"
 )

@@ -1,4 +1,4 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
+// Copyright (c) The OGX Contributors.
 // All rights reserved.
 //
 // This source code is licensed under the terms described in the LICENSE file in
@@ -6,7 +6,7 @@
 //
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package llamastackclient_test
+package ogxclient_test
 
 import (
 	"context"
@@ -14,9 +14,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/llamastack/llama-stack-client-go"
-	"github.com/llamastack/llama-stack-client-go/internal/testutil"
-	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/ogx-ai/ogx-client-go"
+	"github.com/ogx-ai/ogx-client-go/internal/testutil"
+	"github.com/ogx-ai/ogx-client-go/option"
 )
 
 func TestVectorIoInsertWithOptionalParams(t *testing.T) {
@@ -27,25 +27,25 @@ func TestVectorIoInsertWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	err := client.VectorIo.Insert(context.TODO(), llamastackclient.VectorIoInsertParams{
-		Chunks: []llamastackclient.VectorIoInsertParamsChunk{{
+	err := client.VectorIo.Insert(context.TODO(), ogxclient.VectorIoInsertParams{
+		Chunks: []ogxclient.VectorIoInsertParamsChunk{{
 			ChunkID: "chunk_id",
-			ChunkMetadata: llamastackclient.VectorIoInsertParamsChunkChunkMetadata{
-				ChunkID:            llamastackclient.String("chunk_id"),
-				ChunkTokenizer:     llamastackclient.String("chunk_tokenizer"),
-				ChunkWindow:        llamastackclient.String("chunk_window"),
-				ContentTokenCount:  llamastackclient.Int(0),
-				CreatedTimestamp:   llamastackclient.Int(0),
-				DocumentID:         llamastackclient.String("document_id"),
-				MetadataTokenCount: llamastackclient.Int(0),
-				Source:             llamastackclient.String("source"),
-				UpdatedTimestamp:   llamastackclient.Int(0),
+			ChunkMetadata: ogxclient.VectorIoInsertParamsChunkChunkMetadata{
+				ChunkID:            ogxclient.String("chunk_id"),
+				ChunkTokenizer:     ogxclient.String("chunk_tokenizer"),
+				ChunkWindow:        ogxclient.String("chunk_window"),
+				ContentTokenCount:  ogxclient.Int(0),
+				CreatedTimestamp:   ogxclient.Int(0),
+				DocumentID:         ogxclient.String("document_id"),
+				MetadataTokenCount: ogxclient.Int(0),
+				Source:             ogxclient.String("source"),
+				UpdatedTimestamp:   ogxclient.Int(0),
 			},
-			Content: llamastackclient.VectorIoInsertParamsChunkContentUnion{
-				OfString: llamastackclient.String("string"),
+			Content: ogxclient.VectorIoInsertParamsChunkContentUnion{
+				OfString: ogxclient.String("string"),
 			},
 			Embedding:          []float64{0},
 			EmbeddingDimension: 0,
@@ -55,10 +55,10 @@ func TestVectorIoInsertWithOptionalParams(t *testing.T) {
 			},
 		}},
 		VectorStoreID: "vector_store_id",
-		TtlSeconds:    llamastackclient.Int(0),
+		TtlSeconds:    ogxclient.Int(0),
 	})
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -74,12 +74,12 @@ func TestVectorIoQueryWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.VectorIo.Query(context.TODO(), llamastackclient.VectorIoQueryParams{
-		Query: llamastackclient.VectorIoQueryParamsQueryUnion{
-			OfString: llamastackclient.String("string"),
+	_, err := client.VectorIo.Query(context.TODO(), ogxclient.VectorIoQueryParams{
+		Query: ogxclient.VectorIoQueryParamsQueryUnion{
+			OfString: ogxclient.String("string"),
 		},
 		VectorStoreID: "vector_store_id",
 		Params: map[string]any{
@@ -87,7 +87,7 @@ func TestVectorIoQueryWithOptionalParams(t *testing.T) {
 		},
 	})
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}

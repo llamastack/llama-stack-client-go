@@ -1,4 +1,4 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
+// Copyright (c) The OGX Contributors.
 // All rights reserved.
 //
 // This source code is licensed under the terms described in the LICENSE file in
@@ -6,7 +6,7 @@
 //
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package llamastackclient_test
+package ogxclient_test
 
 import (
 	"context"
@@ -17,9 +17,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/llamastack/llama-stack-client-go"
-	"github.com/llamastack/llama-stack-client-go/internal"
-	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/ogx-ai/ogx-client-go"
+	"github.com/ogx-ai/ogx-client-go/internal"
+	"github.com/ogx-ai/ogx-client-go/option"
 )
 
 type closureTransport struct {
@@ -32,7 +32,7 @@ func (t *closureTransport) RoundTrip(req *http.Request) (*http.Response, error) 
 
 func TestUserAgentHeader(t *testing.T) {
 	var userAgent string
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithHTTPClient(&http.Client{
 			Transport: &closureTransport{
 				fn: func(req *http.Request) (*http.Response, error) {
@@ -44,25 +44,25 @@ func TestUserAgentHeader(t *testing.T) {
 			},
 		}),
 	)
-	_, _ = client.Chat.Completions.New(context.Background(), llamastackclient.ChatCompletionNewParams{
-		Messages: []llamastackclient.ChatCompletionNewParamsMessageUnion{{
-			OfUser: &llamastackclient.ChatCompletionNewParamsMessageUser{
-				Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
-					OfString: llamastackclient.String("string"),
+	_, _ = client.Chat.Completions.New(context.Background(), ogxclient.ChatCompletionNewParams{
+		Messages: []ogxclient.ChatCompletionNewParamsMessageUnion{{
+			OfUser: &ogxclient.ChatCompletionNewParamsMessageUser{
+				Content: ogxclient.ChatCompletionNewParamsMessageUserContentUnion{
+					OfString: ogxclient.String("string"),
 				},
 				Role: "user",
 			},
 		}},
 		Model: "model",
 	})
-	if userAgent != fmt.Sprintf("LlamaStackClient/Go %s", internal.PackageVersion) {
+	if userAgent != fmt.Sprintf("OgxClient/Go %s", internal.PackageVersion) {
 		t.Errorf("Expected User-Agent to be correct, but got: %#v", userAgent)
 	}
 }
 
 func TestRetryAfter(t *testing.T) {
 	retryCountHeaders := make([]string, 0)
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithHTTPClient(&http.Client{
 			Transport: &closureTransport{
 				fn: func(req *http.Request) (*http.Response, error) {
@@ -77,11 +77,11 @@ func TestRetryAfter(t *testing.T) {
 			},
 		}),
 	)
-	_, err := client.Chat.Completions.New(context.Background(), llamastackclient.ChatCompletionNewParams{
-		Messages: []llamastackclient.ChatCompletionNewParamsMessageUnion{{
-			OfUser: &llamastackclient.ChatCompletionNewParamsMessageUser{
-				Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
-					OfString: llamastackclient.String("string"),
+	_, err := client.Chat.Completions.New(context.Background(), ogxclient.ChatCompletionNewParams{
+		Messages: []ogxclient.ChatCompletionNewParamsMessageUnion{{
+			OfUser: &ogxclient.ChatCompletionNewParamsMessageUser{
+				Content: ogxclient.ChatCompletionNewParamsMessageUserContentUnion{
+					OfString: ogxclient.String("string"),
 				},
 				Role: "user",
 			},
@@ -105,7 +105,7 @@ func TestRetryAfter(t *testing.T) {
 
 func TestDeleteRetryCountHeader(t *testing.T) {
 	retryCountHeaders := make([]string, 0)
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithHTTPClient(&http.Client{
 			Transport: &closureTransport{
 				fn: func(req *http.Request) (*http.Response, error) {
@@ -121,11 +121,11 @@ func TestDeleteRetryCountHeader(t *testing.T) {
 		}),
 		option.WithHeaderDel("X-Stainless-Retry-Count"),
 	)
-	_, err := client.Chat.Completions.New(context.Background(), llamastackclient.ChatCompletionNewParams{
-		Messages: []llamastackclient.ChatCompletionNewParamsMessageUnion{{
-			OfUser: &llamastackclient.ChatCompletionNewParamsMessageUser{
-				Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
-					OfString: llamastackclient.String("string"),
+	_, err := client.Chat.Completions.New(context.Background(), ogxclient.ChatCompletionNewParams{
+		Messages: []ogxclient.ChatCompletionNewParamsMessageUnion{{
+			OfUser: &ogxclient.ChatCompletionNewParamsMessageUser{
+				Content: ogxclient.ChatCompletionNewParamsMessageUserContentUnion{
+					OfString: ogxclient.String("string"),
 				},
 				Role: "user",
 			},
@@ -144,7 +144,7 @@ func TestDeleteRetryCountHeader(t *testing.T) {
 
 func TestOverwriteRetryCountHeader(t *testing.T) {
 	retryCountHeaders := make([]string, 0)
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithHTTPClient(&http.Client{
 			Transport: &closureTransport{
 				fn: func(req *http.Request) (*http.Response, error) {
@@ -160,11 +160,11 @@ func TestOverwriteRetryCountHeader(t *testing.T) {
 		}),
 		option.WithHeader("X-Stainless-Retry-Count", "42"),
 	)
-	_, err := client.Chat.Completions.New(context.Background(), llamastackclient.ChatCompletionNewParams{
-		Messages: []llamastackclient.ChatCompletionNewParamsMessageUnion{{
-			OfUser: &llamastackclient.ChatCompletionNewParamsMessageUser{
-				Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
-					OfString: llamastackclient.String("string"),
+	_, err := client.Chat.Completions.New(context.Background(), ogxclient.ChatCompletionNewParams{
+		Messages: []ogxclient.ChatCompletionNewParamsMessageUnion{{
+			OfUser: &ogxclient.ChatCompletionNewParamsMessageUser{
+				Content: ogxclient.ChatCompletionNewParamsMessageUserContentUnion{
+					OfString: ogxclient.String("string"),
 				},
 				Role: "user",
 			},
@@ -183,7 +183,7 @@ func TestOverwriteRetryCountHeader(t *testing.T) {
 
 func TestRetryAfterMs(t *testing.T) {
 	attempts := 0
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithHTTPClient(&http.Client{
 			Transport: &closureTransport{
 				fn: func(req *http.Request) (*http.Response, error) {
@@ -198,11 +198,11 @@ func TestRetryAfterMs(t *testing.T) {
 			},
 		}),
 	)
-	_, err := client.Chat.Completions.New(context.Background(), llamastackclient.ChatCompletionNewParams{
-		Messages: []llamastackclient.ChatCompletionNewParamsMessageUnion{{
-			OfUser: &llamastackclient.ChatCompletionNewParamsMessageUser{
-				Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
-					OfString: llamastackclient.String("string"),
+	_, err := client.Chat.Completions.New(context.Background(), ogxclient.ChatCompletionNewParams{
+		Messages: []ogxclient.ChatCompletionNewParamsMessageUnion{{
+			OfUser: &ogxclient.ChatCompletionNewParamsMessageUser{
+				Content: ogxclient.ChatCompletionNewParamsMessageUserContentUnion{
+					OfString: ogxclient.String("string"),
 				},
 				Role: "user",
 			},
@@ -218,7 +218,7 @@ func TestRetryAfterMs(t *testing.T) {
 }
 
 func TestContextCancel(t *testing.T) {
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithHTTPClient(&http.Client{
 			Transport: &closureTransport{
 				fn: func(req *http.Request) (*http.Response, error) {
@@ -230,11 +230,11 @@ func TestContextCancel(t *testing.T) {
 	)
 	cancelCtx, cancel := context.WithCancel(context.Background())
 	cancel()
-	_, err := client.Chat.Completions.New(cancelCtx, llamastackclient.ChatCompletionNewParams{
-		Messages: []llamastackclient.ChatCompletionNewParamsMessageUnion{{
-			OfUser: &llamastackclient.ChatCompletionNewParamsMessageUser{
-				Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
-					OfString: llamastackclient.String("string"),
+	_, err := client.Chat.Completions.New(cancelCtx, ogxclient.ChatCompletionNewParams{
+		Messages: []ogxclient.ChatCompletionNewParamsMessageUnion{{
+			OfUser: &ogxclient.ChatCompletionNewParamsMessageUser{
+				Content: ogxclient.ChatCompletionNewParamsMessageUserContentUnion{
+					OfString: ogxclient.String("string"),
 				},
 				Role: "user",
 			},
@@ -247,7 +247,7 @@ func TestContextCancel(t *testing.T) {
 }
 
 func TestContextCancelDelay(t *testing.T) {
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithHTTPClient(&http.Client{
 			Transport: &closureTransport{
 				fn: func(req *http.Request) (*http.Response, error) {
@@ -259,11 +259,11 @@ func TestContextCancelDelay(t *testing.T) {
 	)
 	cancelCtx, cancel := context.WithTimeout(context.Background(), 2*time.Millisecond)
 	defer cancel()
-	_, err := client.Chat.Completions.New(cancelCtx, llamastackclient.ChatCompletionNewParams{
-		Messages: []llamastackclient.ChatCompletionNewParamsMessageUnion{{
-			OfUser: &llamastackclient.ChatCompletionNewParamsMessageUser{
-				Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
-					OfString: llamastackclient.String("string"),
+	_, err := client.Chat.Completions.New(cancelCtx, ogxclient.ChatCompletionNewParams{
+		Messages: []ogxclient.ChatCompletionNewParamsMessageUnion{{
+			OfUser: &ogxclient.ChatCompletionNewParamsMessageUser{
+				Content: ogxclient.ChatCompletionNewParamsMessageUserContentUnion{
+					OfString: ogxclient.String("string"),
 				},
 				Role: "user",
 			},
@@ -284,7 +284,7 @@ func TestContextDeadline(t *testing.T) {
 	defer cancel()
 
 	go func() {
-		client := llamastackclient.NewClient(
+		client := ogxclient.NewClient(
 			option.WithHTTPClient(&http.Client{
 				Transport: &closureTransport{
 					fn: func(req *http.Request) (*http.Response, error) {
@@ -294,11 +294,11 @@ func TestContextDeadline(t *testing.T) {
 				},
 			}),
 		)
-		_, err := client.Chat.Completions.New(deadlineCtx, llamastackclient.ChatCompletionNewParams{
-			Messages: []llamastackclient.ChatCompletionNewParamsMessageUnion{{
-				OfUser: &llamastackclient.ChatCompletionNewParamsMessageUser{
-					Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
-						OfString: llamastackclient.String("string"),
+		_, err := client.Chat.Completions.New(deadlineCtx, ogxclient.ChatCompletionNewParams{
+			Messages: []ogxclient.ChatCompletionNewParamsMessageUnion{{
+				OfUser: &ogxclient.ChatCompletionNewParamsMessageUser{
+					Content: ogxclient.ChatCompletionNewParamsMessageUserContentUnion{
+						OfString: ogxclient.String("string"),
 					},
 					Role: "user",
 				},
@@ -330,7 +330,7 @@ func TestContextDeadlineStreaming(t *testing.T) {
 	defer cancel()
 
 	go func() {
-		client := llamastackclient.NewClient(
+		client := ogxclient.NewClient(
 			option.WithHTTPClient(&http.Client{
 				Transport: &closureTransport{
 					fn: func(req *http.Request) (*http.Response, error) {
@@ -348,11 +348,11 @@ func TestContextDeadlineStreaming(t *testing.T) {
 				},
 			}),
 		)
-		stream := client.Chat.Completions.NewStreaming(deadlineCtx, llamastackclient.ChatCompletionNewParams{
-			Messages: []llamastackclient.ChatCompletionNewParamsMessageUnion{{
-				OfUser: &llamastackclient.ChatCompletionNewParamsMessageUser{
-					Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
-						OfString: llamastackclient.String("string"),
+		stream := client.Chat.Completions.NewStreaming(deadlineCtx, ogxclient.ChatCompletionNewParams{
+			Messages: []ogxclient.ChatCompletionNewParamsMessageUnion{{
+				OfUser: &ogxclient.ChatCompletionNewParamsMessageUser{
+					Content: ogxclient.ChatCompletionNewParamsMessageUserContentUnion{
+						OfString: ogxclient.String("string"),
 					},
 					Role: "user",
 				},
@@ -384,7 +384,7 @@ func TestContextDeadlineStreamingWithRequestTimeout(t *testing.T) {
 	deadline := time.Now().Add(100 * time.Millisecond)
 
 	go func() {
-		client := llamastackclient.NewClient(
+		client := ogxclient.NewClient(
 			option.WithHTTPClient(&http.Client{
 				Transport: &closureTransport{
 					fn: func(req *http.Request) (*http.Response, error) {
@@ -404,11 +404,11 @@ func TestContextDeadlineStreamingWithRequestTimeout(t *testing.T) {
 		)
 		stream := client.Chat.Completions.NewStreaming(
 			context.Background(),
-			llamastackclient.ChatCompletionNewParams{
-				Messages: []llamastackclient.ChatCompletionNewParamsMessageUnion{{
-					OfUser: &llamastackclient.ChatCompletionNewParamsMessageUser{
-						Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
-							OfString: llamastackclient.String("string"),
+			ogxclient.ChatCompletionNewParams{
+				Messages: []ogxclient.ChatCompletionNewParamsMessageUnion{{
+					OfUser: &ogxclient.ChatCompletionNewParamsMessageUser{
+						Content: ogxclient.ChatCompletionNewParamsMessageUserContentUnion{
+							OfString: ogxclient.String("string"),
 						},
 						Role: "user",
 					},

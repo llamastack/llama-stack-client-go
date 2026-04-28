@@ -1,12 +1,12 @@
-# Llama Stack Client Go API Library
+# Ogx Client Go API Library
 
 <!-- x-release-please-start-version -->
 
-<a href="https://pkg.go.dev/github.com/llamastack/llama-stack-client-go"><img src="https://pkg.go.dev/badge/github.com/llamastack/llama-stack-client-go.svg" alt="Go Reference"></a>
+<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go"><img src="https://pkg.go.dev/badge/github.com/ogx-ai/ogx-client-go.svg" alt="Go Reference"></a>
 
 <!-- x-release-please-end -->
 
-The Llama Stack Client Go library provides convenient access to the [Llama Stack Client REST API](https://llama-stack.readthedocs.io/en/latest/)
+The Ogx Client Go library provides convenient access to the [Ogx Client REST API](https://ogx.readthedocs.io/en/latest/)
 from applications written in Go.
 
 It is generated with [Stainless](https://www.stainless.com/).
@@ -17,7 +17,7 @@ It is generated with [Stainless](https://www.stainless.com/).
 
 ```go
 import (
-	"github.com/llamastack/llama-stack-client-go" // imported as llamastackclient
+	"github.com/ogx-ai/ogx-client-go" // imported as ogxclient
 )
 ```
 
@@ -28,7 +28,7 @@ Or to pin the version:
 <!-- x-release-please-start-version -->
 
 ```sh
-go get -u 'github.com/llamastack/llama-stack-client-go@v0.4.0-alpha.1'
+go get -u 'github.com/ogx-ai/ogx-client-go@v0.4.0-alpha.1'
 ```
 
 <!-- x-release-please-end -->
@@ -48,11 +48,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/llamastack/llama-stack-client-go"
+	"github.com/ogx-ai/ogx-client-go"
 )
 
 func main() {
-	client := llamastackclient.NewClient()
+	client := ogxclient.NewClient()
 	listModelsResponse, err := client.Models.List(context.TODO())
 	if err != nil {
 		panic(err.Error())
@@ -64,13 +64,13 @@ func main() {
 
 ### Request fields
 
-The llamastackclient library uses the [`omitzero`](https://tip.golang.org/doc/go1.24#encodingjsonpkgencodingjson)
+The ogxclient library uses the [`omitzero`](https://tip.golang.org/doc/go1.24#encodingjsonpkgencodingjson)
 semantics from the Go 1.24+ `encoding/json` release for request fields.
 
 Required primitive fields (`int64`, `string`, etc.) feature the tag <code>\`api:"required"\`</code>. These
 fields are always serialized, even their zero values.
 
-Optional primitive types are wrapped in a `param.Opt[T]`. These fields can be set with the provided constructors, `llamastackclient.String(string)`, `llamastackclient.Int(int64)`, etc.
+Optional primitive types are wrapped in a `param.Opt[T]`. These fields can be set with the provided constructors, `ogxclient.String(string)`, `ogxclient.Int(int64)`, etc.
 
 Any `param.Opt[T]`, map, slice, struct or string enum uses the
 tag <code>\`json:"...,omitzero"\`</code>. Its zero value is considered omitted.
@@ -78,17 +78,17 @@ tag <code>\`json:"...,omitzero"\`</code>. Its zero value is considered omitted.
 The `param.IsOmitted(any)` function can confirm the presence of any `omitzero` field.
 
 ```go
-p := llamastackclient.ExampleParams{
-	ID:   "id_xxx",                       // required property
-	Name: llamastackclient.String("..."), // optional property
+p := ogxclient.ExampleParams{
+	ID:   "id_xxx",                // required property
+	Name: ogxclient.String("..."), // optional property
 
-	Point: llamastackclient.Point{
-		X: 0,                       // required field will serialize as 0
-		Y: llamastackclient.Int(1), // optional field will serialize as 1
+	Point: ogxclient.Point{
+		X: 0,                // required field will serialize as 0
+		Y: ogxclient.Int(1), // optional field will serialize as 1
 		// ... omitted non-required fields will not be serialized
 	},
 
-	Origin: llamastackclient.Origin{}, // the zero value of [Origin] is considered omitted
+	Origin: ogxclient.Origin{}, // the zero value of [Origin] is considered omitted
 }
 ```
 
@@ -117,7 +117,7 @@ p.SetExtraFields(map[string]any{
 })
 
 // Send a number instead of an object
-custom := param.Override[llamastackclient.FooParams](12)
+custom := param.Override[ogxclient.FooParams](12)
 ```
 
 ### Request unions
@@ -258,7 +258,7 @@ This library uses the functional options pattern. Functions defined in the
 requests. For example:
 
 ```go
-client := llamastackclient.NewClient(
+client := ogxclient.NewClient(
 	// Adds a header to every request made by the client
 	option.WithHeader("X-Some-Header", "custom_header_info"),
 )
@@ -273,7 +273,7 @@ client.Chat.Completions.New(context.TODO(), ...,
 
 The request option `option.WithDebugLog(nil)` may be helpful while debugging.
 
-See the [full list of request options](https://pkg.go.dev/github.com/llamastack/llama-stack-client-go/option).
+See the [full list of request options](https://pkg.go.dev/github.com/ogx-ai/ogx-client-go/option).
 
 ### Pagination
 
@@ -282,7 +282,7 @@ This library provides some conveniences for working with paginated list endpoint
 You can use `.ListAutoPaging()` methods to iterate through items across all pages:
 
 ```go
-iter := client.Responses.ListAutoPaging(context.TODO(), llamastackclient.ResponseListParams{})
+iter := client.Responses.ListAutoPaging(context.TODO(), ogxclient.ResponseListParams{})
 // Automatically fetches more pages as needed.
 for iter.Next() {
 	responseListResponse := iter.Current()
@@ -297,7 +297,7 @@ Or you can use simple `.List()` methods to fetch a single page and receive a sta
 with additional helper methods like `.GetNextPage()`, e.g.:
 
 ```go
-page, err := client.Responses.List(context.TODO(), llamastackclient.ResponseListParams{})
+page, err := client.Responses.List(context.TODO(), ogxclient.ResponseListParams{})
 for page != nil {
 	for _, response := range page.Data {
 		fmt.Printf("%+v\n", response)
@@ -312,18 +312,18 @@ if err != nil {
 ### Errors
 
 When the API returns a non-success status code, we return an error with type
-`*llamastackclient.Error`. This contains the `StatusCode`, `*http.Request`, and
+`*ogxclient.Error`. This contains the `StatusCode`, `*http.Request`, and
 `*http.Response` values of the request, as well as the JSON of the error body
 (much like other response objects in the SDK).
 
 To handle errors, we recommend that you use the `errors.As` pattern:
 
 ```go
-_, err := client.Chat.Completions.New(context.TODO(), llamastackclient.ChatCompletionNewParams{
-	Messages: []llamastackclient.ChatCompletionNewParamsMessageUnion{{
-		OfUser: &llamastackclient.ChatCompletionNewParamsMessageUser{
-			Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
-				OfString: llamastackclient.String("string"),
+_, err := client.Chat.Completions.New(context.TODO(), ogxclient.ChatCompletionNewParams{
+	Messages: []ogxclient.ChatCompletionNewParamsMessageUnion{{
+		OfUser: &ogxclient.ChatCompletionNewParamsMessageUser{
+			Content: ogxclient.ChatCompletionNewParamsMessageUserContentUnion{
+				OfString: ogxclient.String("string"),
 			},
 			Role: "user",
 		},
@@ -331,7 +331,7 @@ _, err := client.Chat.Completions.New(context.TODO(), llamastackclient.ChatCompl
 	Model: "model",
 })
 if err != nil {
-	var apierr *llamastackclient.Error
+	var apierr *ogxclient.Error
 	if errors.As(err, &apierr) {
 		println(string(apierr.DumpRequest(true)))  // Prints the serialized HTTP request
 		println(string(apierr.DumpResponse(true))) // Prints the serialized HTTP response
@@ -356,11 +356,11 @@ ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
 defer cancel()
 client.Chat.Completions.New(
 	ctx,
-	llamastackclient.ChatCompletionNewParams{
-		Messages: []llamastackclient.ChatCompletionNewParamsMessageUnion{{
-			OfUser: &llamastackclient.ChatCompletionNewParamsMessageUser{
-				Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
-					OfString: llamastackclient.String("string"),
+	ogxclient.ChatCompletionNewParams{
+		Messages: []ogxclient.ChatCompletionNewParamsMessageUnion{{
+			OfUser: &ogxclient.ChatCompletionNewParamsMessageUser{
+				Content: ogxclient.ChatCompletionNewParamsMessageUserContentUnion{
+					OfString: ogxclient.String("string"),
 				},
 				Role: "user",
 			},
@@ -382,27 +382,27 @@ The file name and content-type can be customized by implementing `Name() string`
 string` on the run-time type of `io.Reader`. Note that `os.File` implements `Name() string`, so a
 file returned by `os.Open` will be sent with the file name on disk.
 
-We also provide a helper `llamastackclient.NewFile(reader io.Reader, filename string, contentType string)`
+We also provide a helper `ogxclient.NewFile(reader io.Reader, filename string, contentType string)`
 which can be used to wrap any `io.Reader` with the appropriate file name and content type.
 
 ```go
 // A file from the file system
 file, err := os.Open("/path/to/file")
-llamastackclient.FileNewParams{
+ogxclient.FileNewParams{
 	File:    file,
-	Purpose: llamastackclient.FileNewParamsPurposeAssistants,
+	Purpose: ogxclient.FileNewParamsPurposeAssistants,
 }
 
 // A file from a string
-llamastackclient.FileNewParams{
+ogxclient.FileNewParams{
 	File:    strings.NewReader("my file contents"),
-	Purpose: llamastackclient.FileNewParamsPurposeAssistants,
+	Purpose: ogxclient.FileNewParamsPurposeAssistants,
 }
 
 // With a custom filename and contentType
-llamastackclient.FileNewParams{
-	File:    llamastackclient.NewFile(strings.NewReader(`{"hello": "foo"}`), "file.go", "application/json"),
-	Purpose: llamastackclient.FileNewParamsPurposeAssistants,
+ogxclient.FileNewParams{
+	File:    ogxclient.NewFile(strings.NewReader(`{"hello": "foo"}`), "file.go", "application/json"),
+	Purpose: ogxclient.FileNewParamsPurposeAssistants,
 }
 ```
 
@@ -416,18 +416,18 @@ You can use the `WithMaxRetries` option to configure or disable this:
 
 ```go
 // Configure the default for all requests:
-client := llamastackclient.NewClient(
+client := ogxclient.NewClient(
 	option.WithMaxRetries(0), // default is 2
 )
 
 // Override per-request:
 client.Chat.Completions.New(
 	context.TODO(),
-	llamastackclient.ChatCompletionNewParams{
-		Messages: []llamastackclient.ChatCompletionNewParamsMessageUnion{{
-			OfUser: &llamastackclient.ChatCompletionNewParamsMessageUser{
-				Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
-					OfString: llamastackclient.String("string"),
+	ogxclient.ChatCompletionNewParams{
+		Messages: []ogxclient.ChatCompletionNewParamsMessageUnion{{
+			OfUser: &ogxclient.ChatCompletionNewParamsMessageUser{
+				Content: ogxclient.ChatCompletionNewParamsMessageUserContentUnion{
+					OfString: ogxclient.String("string"),
 				},
 				Role: "user",
 			},
@@ -448,11 +448,11 @@ you need to examine response headers, status codes, or other details.
 var response *http.Response
 completion, err := client.Chat.Completions.New(
 	context.TODO(),
-	llamastackclient.ChatCompletionNewParams{
-		Messages: []llamastackclient.ChatCompletionNewParamsMessageUnion{{
-			OfUser: &llamastackclient.ChatCompletionNewParamsMessageUser{
-				Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
-					OfString: llamastackclient.String("string"),
+	ogxclient.ChatCompletionNewParams{
+		Messages: []ogxclient.ChatCompletionNewParamsMessageUnion{{
+			OfUser: &ogxclient.ChatCompletionNewParamsMessageUser{
+				Content: ogxclient.ChatCompletionNewParamsMessageUserContentUnion{
+					OfString: ogxclient.String("string"),
 				},
 				Role: "user",
 			},
@@ -505,7 +505,7 @@ or the `option.WithJSONSet()` methods.
 params := FooNewParams{
     ID:   "id_xxxx",
     Data: FooNewParamsData{
-        FirstName: llamastackclient.String("John"),
+        FirstName: ogxclient.String("John"),
     },
 }
 client.Foo.New(context.Background(), params, option.WithJSONSet("data.last_name", "Doe"))
@@ -540,7 +540,7 @@ func Logger(req *http.Request, next option.MiddlewareNext) (res *http.Response, 
     return res, err
 }
 
-client := llamastackclient.NewClient(
+client := ogxclient.NewClient(
 	option.WithMiddleware(Logger),
 )
 ```
@@ -565,7 +565,7 @@ This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) con
 
 We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
 
-We are keen for your feedback; please open an [issue](https://www.github.com/llamastack/llama-stack-client-go/issues) with questions, bugs, or suggestions.
+We are keen for your feedback; please open an [issue](https://www.github.com/ogx-ai/ogx-client-go/issues) with questions, bugs, or suggestions.
 
 ## Contributing
 

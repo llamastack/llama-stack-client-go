@@ -1,4 +1,4 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
+// Copyright (c) The OGX Contributors.
 // All rights reserved.
 //
 // This source code is licensed under the terms described in the LICENSE file in
@@ -6,7 +6,7 @@
 //
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package llamastackclient
+package ogxclient
 
 import (
 	"context"
@@ -16,18 +16,18 @@ import (
 	"net/url"
 	"slices"
 
-	"github.com/llamastack/llama-stack-client-go/internal/apijson"
-	"github.com/llamastack/llama-stack-client-go/internal/apiquery"
-	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
-	"github.com/llamastack/llama-stack-client-go/option"
-	"github.com/llamastack/llama-stack-client-go/packages/param"
-	"github.com/llamastack/llama-stack-client-go/packages/respjson"
+	"github.com/ogx-ai/ogx-client-go/internal/apijson"
+	"github.com/ogx-ai/ogx-client-go/internal/apiquery"
+	"github.com/ogx-ai/ogx-client-go/internal/requestconfig"
+	"github.com/ogx-ai/ogx-client-go/option"
+	"github.com/ogx-ai/ogx-client-go/packages/param"
+	"github.com/ogx-ai/ogx-client-go/packages/respjson"
 )
 
 // Protocol for prompt management operations.
 //
 // PromptService contains methods and other services that help with interacting
-// with the llama-stack-client API.
+// with the ogx-client API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
@@ -136,7 +136,7 @@ func (r *ListPromptsResponse) UnmarshalJSON(data []byte) error {
 }
 
 // A prompt resource representing a stored OpenAI Compatible prompt template in
-// Llama Stack.
+// OGX.
 type Prompt struct {
 	// Unique identifier in format 'pmpt\_<48-digit-hash>'
 	PromptID string `json:"prompt_id" api:"required"`

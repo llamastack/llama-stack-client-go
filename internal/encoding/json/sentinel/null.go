@@ -1,7 +1,7 @@
 package sentinel
 
 import (
-	"github.com/llamastack/llama-stack-client-go/internal/encoding/json/shims"
+	"github.com/ogx-ai/ogx-client-go/internal/encoding/json/shims"
 	"reflect"
 	"sync"
 )

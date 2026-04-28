@@ -1,4 +1,4 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
+// Copyright (c) The OGX Contributors.
 // All rights reserved.
 //
 // This source code is licensed under the terms described in the LICENSE file in
@@ -6,11 +6,11 @@
 //
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package llamastackclient
+package ogxclient
 
 import (
-	"github.com/llamastack/llama-stack-client-go/internal/apijson"
-	"github.com/llamastack/llama-stack-client-go/packages/respjson"
+	"github.com/ogx-ai/ogx-client-go/internal/apijson"
+	"github.com/ogx-ai/ogx-client-go/packages/respjson"
 )
 
 // Health status information for the service.

@@ -1,4 +1,4 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
+// Copyright (c) The OGX Contributors.
 // All rights reserved.
 //
 // This source code is licensed under the terms described in the LICENSE file in
@@ -6,7 +6,7 @@
 //
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package llamastackclient
+package ogxclient
 
 import (
 	"context"
@@ -17,18 +17,17 @@ import (
 	"net/url"
 	"slices"
 
-	"github.com/llamastack/llama-stack-client-go/internal/apijson"
-	"github.com/llamastack/llama-stack-client-go/internal/apiquery"
-	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
-	"github.com/llamastack/llama-stack-client-go/option"
-	"github.com/llamastack/llama-stack-client-go/packages/param"
-	"github.com/llamastack/llama-stack-client-go/packages/respjson"
-	"github.com/llamastack/llama-stack-client-go/packages/ssestream"
-	"github.com/llamastack/llama-stack-client-go/shared/constant"
+	"github.com/ogx-ai/ogx-client-go/internal/apijson"
+	"github.com/ogx-ai/ogx-client-go/internal/apiquery"
+	"github.com/ogx-ai/ogx-client-go/internal/requestconfig"
+	"github.com/ogx-ai/ogx-client-go/option"
+	"github.com/ogx-ai/ogx-client-go/packages/param"
+	"github.com/ogx-ai/ogx-client-go/packages/respjson"
+	"github.com/ogx-ai/ogx-client-go/packages/ssestream"
+	"github.com/ogx-ai/ogx-client-go/shared/constant"
 )
 
-// Llama Stack Inference API for generating completions, chat completions, and
-// embeddings.
+// OGX Inference API for generating completions, chat completions, and embeddings.
 //
 // This API provides the raw interface to the underlying models. Three kinds of
 // models are supported:
@@ -41,7 +40,7 @@ import (
 //     a query.
 //
 // ChatCompletionService contains methods and other services that help with
-// interacting with the llama-stack-client API.
+// interacting with the ogx-client API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
@@ -274,8 +273,8 @@ func (ChatCompletionNewResponseChoiceMessageToolCallCustom) implChatCompletionNe
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ChatCompletionNewResponseChoiceMessageToolCallUnion.AsAny().(type) {
-//	case llamastackclient.ChatCompletionNewResponseChoiceMessageToolCallFunction:
-//	case llamastackclient.ChatCompletionNewResponseChoiceMessageToolCallCustom:
+//	case ogxclient.ChatCompletionNewResponseChoiceMessageToolCallFunction:
+//	case ogxclient.ChatCompletionNewResponseChoiceMessageToolCallCustom:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -775,8 +774,8 @@ func (ChatCompletionGetResponseChoiceMessageToolCallCustom) implChatCompletionGe
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ChatCompletionGetResponseChoiceMessageToolCallUnion.AsAny().(type) {
-//	case llamastackclient.ChatCompletionGetResponseChoiceMessageToolCallFunction:
-//	case llamastackclient.ChatCompletionGetResponseChoiceMessageToolCallCustom:
+//	case ogxclient.ChatCompletionGetResponseChoiceMessageToolCallFunction:
+//	case ogxclient.ChatCompletionGetResponseChoiceMessageToolCallCustom:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -1082,11 +1081,11 @@ func (ChatCompletionGetResponseInputMessageDeveloper) implChatCompletionGetRespo
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ChatCompletionGetResponseInputMessageUnion.AsAny().(type) {
-//	case llamastackclient.ChatCompletionGetResponseInputMessageUser:
-//	case llamastackclient.ChatCompletionGetResponseInputMessageSystem:
-//	case llamastackclient.ChatCompletionGetResponseInputMessageAssistant:
-//	case llamastackclient.ChatCompletionGetResponseInputMessageTool:
-//	case llamastackclient.ChatCompletionGetResponseInputMessageDeveloper:
+//	case ogxclient.ChatCompletionGetResponseInputMessageUser:
+//	case ogxclient.ChatCompletionGetResponseInputMessageSystem:
+//	case ogxclient.ChatCompletionGetResponseInputMessageAssistant:
+//	case ogxclient.ChatCompletionGetResponseInputMessageTool:
+//	case ogxclient.ChatCompletionGetResponseInputMessageDeveloper:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -1290,9 +1289,9 @@ func (ChatCompletionGetResponseInputMessageUserContentListOpenAIChatCompletionCo
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ChatCompletionGetResponseInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion.AsAny().(type) {
-//	case llamastackclient.ChatCompletionGetResponseInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText:
-//	case llamastackclient.ChatCompletionGetResponseInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL:
-//	case llamastackclient.ChatCompletionGetResponseInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile:
+//	case ogxclient.ChatCompletionGetResponseInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText:
+//	case ogxclient.ChatCompletionGetResponseInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL:
+//	case ogxclient.ChatCompletionGetResponseInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -2159,8 +2158,8 @@ func (ChatCompletionListResponseDataChoiceMessageToolCallCustom) implChatComplet
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ChatCompletionListResponseDataChoiceMessageToolCallUnion.AsAny().(type) {
-//	case llamastackclient.ChatCompletionListResponseDataChoiceMessageToolCallFunction:
-//	case llamastackclient.ChatCompletionListResponseDataChoiceMessageToolCallCustom:
+//	case ogxclient.ChatCompletionListResponseDataChoiceMessageToolCallFunction:
+//	case ogxclient.ChatCompletionListResponseDataChoiceMessageToolCallCustom:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -2478,11 +2477,11 @@ func (ChatCompletionListResponseDataInputMessageDeveloper) implChatCompletionLis
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ChatCompletionListResponseDataInputMessageUnion.AsAny().(type) {
-//	case llamastackclient.ChatCompletionListResponseDataInputMessageUser:
-//	case llamastackclient.ChatCompletionListResponseDataInputMessageSystem:
-//	case llamastackclient.ChatCompletionListResponseDataInputMessageAssistant:
-//	case llamastackclient.ChatCompletionListResponseDataInputMessageTool:
-//	case llamastackclient.ChatCompletionListResponseDataInputMessageDeveloper:
+//	case ogxclient.ChatCompletionListResponseDataInputMessageUser:
+//	case ogxclient.ChatCompletionListResponseDataInputMessageSystem:
+//	case ogxclient.ChatCompletionListResponseDataInputMessageAssistant:
+//	case ogxclient.ChatCompletionListResponseDataInputMessageTool:
+//	case ogxclient.ChatCompletionListResponseDataInputMessageDeveloper:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -2688,9 +2687,9 @@ func (ChatCompletionListResponseDataInputMessageUserContentListOpenAIChatComplet
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ChatCompletionListResponseDataInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion.AsAny().(type) {
-//	case llamastackclient.ChatCompletionListResponseDataInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText:
-//	case llamastackclient.ChatCompletionListResponseDataInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL:
-//	case llamastackclient.ChatCompletionListResponseDataInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile:
+//	case ogxclient.ChatCompletionListResponseDataInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemText:
+//	case ogxclient.ChatCompletionListResponseDataInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemImageURL:
+//	case ogxclient.ChatCompletionListResponseDataInputMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemFile:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -3539,11 +3538,11 @@ type chatCompletionNewParamsMessageUnionContent struct{ any }
 //
 //	switch u.AsAny().(type) {
 //	case *string:
-//	case *[]llamastackclient.ChatCompletionNewParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion:
-//	case *[]llamastackclient.ChatCompletionNewParamsMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem:
-//	case *[]llamastackclient.ChatCompletionNewParamsMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem:
-//	case *[]llamastackclient.ChatCompletionNewParamsMessageToolContentListOpenAIChatCompletionContentPartTextParamItem:
-//	case *[]llamastackclient.ChatCompletionNewParamsMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem:
+//	case *[]ogxclient.ChatCompletionNewParamsMessageUserContentListOpenAIChatCompletionContentPartTextParamOpenAIChatCompletionContentPartImageParamOpenAIFileItemUnion:
+//	case *[]ogxclient.ChatCompletionNewParamsMessageSystemContentListOpenAIChatCompletionContentPartTextParamItem:
+//	case *[]ogxclient.ChatCompletionNewParamsMessageAssistantContentListOpenAIChatCompletionContentPartTextParamItem:
+//	case *[]ogxclient.ChatCompletionNewParamsMessageToolContentListOpenAIChatCompletionContentPartTextParamItem:
+//	case *[]ogxclient.ChatCompletionNewParamsMessageDeveloperContentListOpenAIChatCompletionContentPartTextParamItem:
 //	default:
 //	    fmt.Errorf("not present")
 //	}

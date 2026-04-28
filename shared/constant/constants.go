@@ -1,4 +1,4 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
+// Copyright (c) The OGX Contributors.
 // All rights reserved.
 //
 // This source code is licensed under the terms described in the LICENSE file in
@@ -9,7 +9,7 @@
 package constant
 
 import (
-	shimjson "github.com/llamastack/llama-stack-client-go/internal/encoding/json"
+	shimjson "github.com/ogx-ai/ogx-client-go/internal/encoding/json"
 )
 
 type Constant[T any] interface {

@@ -1,4 +1,4 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
+// Copyright (c) The OGX Contributors.
 // All rights reserved.
 //
 // This source code is licensed under the terms described in the LICENSE file in
@@ -6,7 +6,7 @@
 //
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package llamastackclient_test
+package ogxclient_test
 
 import (
 	"context"
@@ -14,9 +14,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/llamastack/llama-stack-client-go"
-	"github.com/llamastack/llama-stack-client-go/internal/testutil"
-	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/ogx-ai/ogx-client-go"
+	"github.com/ogx-ai/ogx-client-go/internal/testutil"
+	"github.com/ogx-ai/ogx-client-go/option"
 )
 
 func TestVectorStoreFileBatchNewWithOptionalParams(t *testing.T) {
@@ -27,33 +27,33 @@ func TestVectorStoreFileBatchNewWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.VectorStores.FileBatches.New(
 		context.TODO(),
 		"vector_store_id",
-		llamastackclient.VectorStoreFileBatchNewParams{
-			Attributes: map[string]llamastackclient.VectorStoreFileBatchNewParamsAttributeUnion{
+		ogxclient.VectorStoreFileBatchNewParams{
+			Attributes: map[string]ogxclient.VectorStoreFileBatchNewParamsAttributeUnion{
 				"foo": {
-					OfString: llamastackclient.String("string"),
+					OfString: ogxclient.String("string"),
 				},
 			},
-			ChunkingStrategy: llamastackclient.VectorStoreFileBatchNewParamsChunkingStrategyUnion{
-				OfAuto: &llamastackclient.VectorStoreFileBatchNewParamsChunkingStrategyAuto{
+			ChunkingStrategy: ogxclient.VectorStoreFileBatchNewParamsChunkingStrategyUnion{
+				OfAuto: &ogxclient.VectorStoreFileBatchNewParamsChunkingStrategyAuto{
 					Type: "auto",
 				},
 			},
 			FileIDs: []string{"string"},
-			Files: []llamastackclient.VectorStoreFileBatchNewParamsFile{{
+			Files: []ogxclient.VectorStoreFileBatchNewParamsFile{{
 				FileID: "file_id",
-				Attributes: map[string]llamastackclient.VectorStoreFileBatchNewParamsFileAttributeUnion{
+				Attributes: map[string]ogxclient.VectorStoreFileBatchNewParamsFileAttributeUnion{
 					"foo": {
-						OfString: llamastackclient.String("string"),
+						OfString: ogxclient.String("string"),
 					},
 				},
-				ChunkingStrategy: llamastackclient.VectorStoreFileBatchNewParamsFileChunkingStrategyUnion{
-					OfAuto: &llamastackclient.VectorStoreFileBatchNewParamsFileChunkingStrategyAuto{
+				ChunkingStrategy: ogxclient.VectorStoreFileBatchNewParamsFileChunkingStrategyUnion{
+					OfAuto: &ogxclient.VectorStoreFileBatchNewParamsFileChunkingStrategyAuto{
 						Type: "auto",
 					},
 				},
@@ -61,7 +61,7 @@ func TestVectorStoreFileBatchNewWithOptionalParams(t *testing.T) {
 		},
 	)
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -77,18 +77,18 @@ func TestVectorStoreFileBatchGet(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.VectorStores.FileBatches.Get(
 		context.TODO(),
 		"batch_id",
-		llamastackclient.VectorStoreFileBatchGetParams{
+		ogxclient.VectorStoreFileBatchGetParams{
 			VectorStoreID: "vector_store_id",
 		},
 	)
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -104,18 +104,18 @@ func TestVectorStoreFileBatchCancel(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.VectorStores.FileBatches.Cancel(
 		context.TODO(),
 		"batch_id",
-		llamastackclient.VectorStoreFileBatchCancelParams{
+		ogxclient.VectorStoreFileBatchCancelParams{
 			VectorStoreID: "vector_store_id",
 		},
 	)
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -131,23 +131,23 @@ func TestVectorStoreFileBatchListFilesWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.VectorStores.FileBatches.ListFiles(
 		context.TODO(),
 		"batch_id",
-		llamastackclient.VectorStoreFileBatchListFilesParams{
+		ogxclient.VectorStoreFileBatchListFilesParams{
 			VectorStoreID: "vector_store_id",
-			After:         llamastackclient.String("after"),
-			Before:        llamastackclient.String("before"),
-			Filter:        llamastackclient.String("filter"),
-			Limit:         llamastackclient.Int(1),
-			Order:         llamastackclient.String("order"),
+			After:         ogxclient.String("after"),
+			Before:        ogxclient.String("before"),
+			Filter:        ogxclient.String("filter"),
+			Limit:         ogxclient.Int(1),
+			Order:         ogxclient.String("order"),
 		},
 	)
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}

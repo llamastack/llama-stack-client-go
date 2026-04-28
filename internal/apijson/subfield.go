@@ -1,7 +1,7 @@
 package apijson
 
 import (
-	"github.com/llamastack/llama-stack-client-go/packages/respjson"
+	"github.com/ogx-ai/ogx-client-go/packages/respjson"
 	"reflect"
 )
 

@@ -1,4 +1,4 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
+// Copyright (c) The OGX Contributors.
 // All rights reserved.
 //
 // This source code is licensed under the terms described in the LICENSE file in
@@ -13,8 +13,8 @@ import (
 	"net/http"
 	"net/http/httputil"
 
-	"github.com/llamastack/llama-stack-client-go/internal/apijson"
-	"github.com/llamastack/llama-stack-client-go/packages/respjson"
+	"github.com/ogx-ai/ogx-client-go/internal/apijson"
+	"github.com/ogx-ai/ogx-client-go/packages/respjson"
 )
 
 // Error represents an error that originates from the API, i.e. when a request is

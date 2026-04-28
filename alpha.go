@@ -1,4 +1,4 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
+// Copyright (c) The OGX Contributors.
 // All rights reserved.
 //
 // This source code is licensed under the terms described in the LICENSE file in
@@ -6,14 +6,14 @@
 //
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package llamastackclient
+package ogxclient
 
 import (
-	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/ogx-ai/ogx-client-go/option"
 )
 
 // AlphaService contains methods and other services that help with interacting with
-// the llama-stack-client API.
+// the ogx-client API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
@@ -22,8 +22,7 @@ type AlphaService struct {
 	Options []option.RequestOption
 	// Administrative APIs for inspecting providers, routes, health, and version.
 	Admin AlphaAdminService
-	// Llama Stack Inference API for generating completions, chat completions, and
-	// embeddings.
+	// OGX Inference API for generating completions, chat completions, and embeddings.
 	//
 	// This API provides the raw interface to the underlying models. Three kinds of
 	// models are supported:

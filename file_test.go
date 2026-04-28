@@ -1,4 +1,4 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
+// Copyright (c) The OGX Contributors.
 // All rights reserved.
 //
 // This source code is licensed under the terms described in the LICENSE file in
@@ -6,7 +6,7 @@
 //
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package llamastackclient_test
+package ogxclient_test
 
 import (
 	"bytes"
@@ -16,9 +16,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/llamastack/llama-stack-client-go"
-	"github.com/llamastack/llama-stack-client-go/internal/testutil"
-	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/ogx-ai/ogx-client-go"
+	"github.com/ogx-ai/ogx-client-go/internal/testutil"
+	"github.com/ogx-ai/ogx-client-go/option"
 )
 
 func TestFileNewWithOptionalParams(t *testing.T) {
@@ -29,19 +29,19 @@ func TestFileNewWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Files.New(context.TODO(), llamastackclient.FileNewParams{
+	_, err := client.Files.New(context.TODO(), ogxclient.FileNewParams{
 		File:    io.Reader(bytes.NewBuffer([]byte("Example data"))),
-		Purpose: llamastackclient.FileNewParamsPurposeAssistants,
-		ExpiresAfter: llamastackclient.FileNewParamsExpiresAfter{
+		Purpose: ogxclient.FileNewParamsPurposeAssistants,
+		ExpiresAfter: ogxclient.FileNewParamsExpiresAfter{
 			Anchor:  "created_at",
 			Seconds: 3600,
 		},
 	})
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -57,12 +57,12 @@ func TestFileGet(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Files.Get(context.TODO(), "file_id")
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -78,17 +78,17 @@ func TestFileListWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Files.List(context.TODO(), llamastackclient.FileListParams{
-		After:   llamastackclient.String("after"),
-		Limit:   llamastackclient.Int(0),
-		Order:   llamastackclient.FileListParamsOrderAsc,
-		Purpose: llamastackclient.FileListParamsPurposeAssistants,
+	_, err := client.Files.List(context.TODO(), ogxclient.FileListParams{
+		After:   ogxclient.String("after"),
+		Limit:   ogxclient.Int(0),
+		Order:   ogxclient.FileListParamsOrderAsc,
+		Purpose: ogxclient.FileListParamsPurposeAssistants,
 	})
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -104,12 +104,12 @@ func TestFileDelete(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Files.Delete(context.TODO(), "file_id")
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -125,12 +125,12 @@ func TestFileContent(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Files.Content(context.TODO(), "file_id")
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}

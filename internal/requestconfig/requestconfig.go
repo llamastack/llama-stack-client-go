@@ -1,4 +1,4 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
+// Copyright (c) The OGX Contributors.
 // All rights reserved.
 //
 // This source code is licensed under the terms described in the LICENSE file in
@@ -24,15 +24,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/llamastack/llama-stack-client-go/internal"
-	"github.com/llamastack/llama-stack-client-go/internal/apierror"
-	"github.com/llamastack/llama-stack-client-go/internal/apiform"
-	"github.com/llamastack/llama-stack-client-go/internal/apiquery"
+	"github.com/ogx-ai/ogx-client-go/internal"
+	"github.com/ogx-ai/ogx-client-go/internal/apierror"
+	"github.com/ogx-ai/ogx-client-go/internal/apiform"
+	"github.com/ogx-ai/ogx-client-go/internal/apiquery"
 )
 
 func getDefaultHeaders() map[string]string {
 	return map[string]string{
-		"User-Agent": fmt.Sprintf("LlamaStackClient/Go %s", internal.PackageVersion),
+		"User-Agent": fmt.Sprintf("OgxClient/Go %s", internal.PackageVersion),
 	}
 }
 

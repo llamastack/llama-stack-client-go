@@ -1,4 +1,4 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
+// Copyright (c) The OGX Contributors.
 // All rights reserved.
 //
 // This source code is licensed under the terms described in the LICENSE file in
@@ -6,7 +6,7 @@
 //
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package llamastackclient_test
+package ogxclient_test
 
 import (
 	"context"
@@ -14,9 +14,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/llamastack/llama-stack-client-go"
-	"github.com/llamastack/llama-stack-client-go/internal/testutil"
-	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/ogx-ai/ogx-client-go"
+	"github.com/ogx-ai/ogx-client-go/internal/testutil"
+	"github.com/ogx-ai/ogx-client-go/option"
 )
 
 func TestPromptNewWithOptionalParams(t *testing.T) {
@@ -27,15 +27,15 @@ func TestPromptNewWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Prompts.New(context.TODO(), llamastackclient.PromptNewParams{
+	_, err := client.Prompts.New(context.TODO(), ogxclient.PromptNewParams{
 		Prompt:    "prompt",
 		Variables: []string{"string"},
 	})
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -51,18 +51,18 @@ func TestPromptGetWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Prompts.Get(
 		context.TODO(),
 		"prompt_id",
-		llamastackclient.PromptGetParams{
-			Version: llamastackclient.Int(0),
+		ogxclient.PromptGetParams{
+			Version: ogxclient.Int(0),
 		},
 	)
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -78,21 +78,21 @@ func TestPromptUpdateWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Prompts.Update(
 		context.TODO(),
 		"prompt_id",
-		llamastackclient.PromptUpdateParams{
+		ogxclient.PromptUpdateParams{
 			Prompt:       "prompt",
 			Version:      0,
-			SetAsDefault: llamastackclient.Bool(true),
+			SetAsDefault: ogxclient.Bool(true),
 			Variables:    []string{"string"},
 		},
 	)
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -108,12 +108,12 @@ func TestPromptList(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Prompts.List(context.TODO())
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -129,12 +129,12 @@ func TestPromptDelete(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
 	err := client.Prompts.Delete(context.TODO(), "prompt_id")
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -150,18 +150,18 @@ func TestPromptSetDefaultVersion(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Prompts.SetDefaultVersion(
 		context.TODO(),
 		"prompt_id",
-		llamastackclient.PromptSetDefaultVersionParams{
+		ogxclient.PromptSetDefaultVersionParams{
 			Version: 0,
 		},
 	)
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}

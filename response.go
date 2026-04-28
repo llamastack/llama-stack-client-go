@@ -1,4 +1,4 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
+// Copyright (c) The OGX Contributors.
 // All rights reserved.
 //
 // This source code is licensed under the terms described in the LICENSE file in
@@ -6,7 +6,7 @@
 //
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package llamastackclient
+package ogxclient
 
 import (
 	"context"
@@ -17,21 +17,21 @@ import (
 	"net/url"
 	"slices"
 
-	"github.com/llamastack/llama-stack-client-go/internal/apijson"
-	"github.com/llamastack/llama-stack-client-go/internal/apiquery"
-	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
-	"github.com/llamastack/llama-stack-client-go/option"
-	"github.com/llamastack/llama-stack-client-go/packages/pagination"
-	"github.com/llamastack/llama-stack-client-go/packages/param"
-	"github.com/llamastack/llama-stack-client-go/packages/respjson"
-	"github.com/llamastack/llama-stack-client-go/packages/ssestream"
+	"github.com/ogx-ai/ogx-client-go/internal/apijson"
+	"github.com/ogx-ai/ogx-client-go/internal/apiquery"
+	"github.com/ogx-ai/ogx-client-go/internal/requestconfig"
+	"github.com/ogx-ai/ogx-client-go/option"
+	"github.com/ogx-ai/ogx-client-go/packages/pagination"
+	"github.com/ogx-ai/ogx-client-go/packages/param"
+	"github.com/ogx-ai/ogx-client-go/packages/respjson"
+	"github.com/ogx-ai/ogx-client-go/packages/ssestream"
 )
 
 // OpenAI Responses API for agent orchestration with tool use, multi-turn
 // conversations, and background processing.
 //
 // ResponseService contains methods and other services that help with interacting
-// with the llama-stack-client API.
+// with the ogx-client API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
@@ -516,9 +516,9 @@ func (CompactedResponseOutputOpenAIResponseMessageOutputContentListOpenAIRespons
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := CompactedResponseOutputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion.AsAny().(type) {
-//	case llamastackclient.CompactedResponseOutputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText:
-//	case llamastackclient.CompactedResponseOutputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage:
-//	case llamastackclient.CompactedResponseOutputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile:
+//	case ogxclient.CompactedResponseOutputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText:
+//	case ogxclient.CompactedResponseOutputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage:
+//	case ogxclient.CompactedResponseOutputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -703,8 +703,8 @@ func (CompactedResponseOutputOpenAIResponseMessageOutputContentListOpenAIRespons
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := CompactedResponseOutputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion.AsAny().(type) {
-//	case llamastackclient.CompactedResponseOutputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputText:
-//	case llamastackclient.CompactedResponseOutputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemRefusal:
+//	case ogxclient.CompactedResponseOutputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputText:
+//	case ogxclient.CompactedResponseOutputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemRefusal:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -827,10 +827,10 @@ func (CompactedResponseOutputOpenAIResponseMessageOutputContentListOpenAIRespons
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := CompactedResponseOutputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion.AsAny().(type) {
-//	case llamastackclient.CompactedResponseOutputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation:
-//	case llamastackclient.CompactedResponseOutputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation:
-//	case llamastackclient.CompactedResponseOutputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation:
-//	case llamastackclient.CompactedResponseOutputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath:
+//	case ogxclient.CompactedResponseOutputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation:
+//	case ogxclient.CompactedResponseOutputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation:
+//	case ogxclient.CompactedResponseOutputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation:
+//	case ogxclient.CompactedResponseOutputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -1511,9 +1511,9 @@ func (CompactedResponseOutputOpenAIResponseInputFunctionToolCallOutputOutputList
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := CompactedResponseOutputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion.AsAny().(type) {
-//	case llamastackclient.CompactedResponseOutputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText:
-//	case llamastackclient.CompactedResponseOutputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage:
-//	case llamastackclient.CompactedResponseOutputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile:
+//	case ogxclient.CompactedResponseOutputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText:
+//	case ogxclient.CompactedResponseOutputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage:
+//	case ogxclient.CompactedResponseOutputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -1916,9 +1916,9 @@ func (ResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIRespo
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion.AsAny().(type) {
-//	case llamastackclient.ResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText:
-//	case llamastackclient.ResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage:
-//	case llamastackclient.ResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile:
+//	case ogxclient.ResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText:
+//	case ogxclient.ResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage:
+//	case ogxclient.ResponseMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -2103,8 +2103,8 @@ func (ResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOpen
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemUnion.AsAny().(type) {
-//	case llamastackclient.ResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputText:
-//	case llamastackclient.ResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemRefusal:
+//	case ogxclient.ResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputText:
+//	case ogxclient.ResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemRefusal:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -2227,10 +2227,10 @@ func (ResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOpen
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion.AsAny().(type) {
-//	case llamastackclient.ResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation:
-//	case llamastackclient.ResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation:
-//	case llamastackclient.ResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation:
-//	case llamastackclient.ResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath:
+//	case ogxclient.ResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation:
+//	case ogxclient.ResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation:
+//	case ogxclient.ResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation:
+//	case ogxclient.ResponseMessageContentListOpenAIResponseOutputMessageContentOutputTextOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -2644,14 +2644,14 @@ func (ResponseObjectOutputReasoning) implResponseObjectOutputUnion()          {}
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseObjectOutputUnion.AsAny().(type) {
-//	case llamastackclient.ResponseObjectOutputMessage:
-//	case llamastackclient.ResponseObjectOutputWebSearchCall:
-//	case llamastackclient.ResponseObjectOutputFileSearchCall:
-//	case llamastackclient.ResponseObjectOutputFunctionCall:
-//	case llamastackclient.ResponseObjectOutputMcpCall:
-//	case llamastackclient.ResponseObjectOutputMcpListTools:
-//	case llamastackclient.ResponseObjectOutputMcpApprovalRequest:
-//	case llamastackclient.ResponseObjectOutputReasoning:
+//	case ogxclient.ResponseObjectOutputMessage:
+//	case ogxclient.ResponseObjectOutputWebSearchCall:
+//	case ogxclient.ResponseObjectOutputFileSearchCall:
+//	case ogxclient.ResponseObjectOutputFunctionCall:
+//	case ogxclient.ResponseObjectOutputMcpCall:
+//	case ogxclient.ResponseObjectOutputMcpListTools:
+//	case ogxclient.ResponseObjectOutputMcpApprovalRequest:
+//	case ogxclient.ResponseObjectOutputReasoning:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -2909,9 +2909,9 @@ func (ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTex
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion.AsAny().(type) {
-//	case llamastackclient.ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText:
-//	case llamastackclient.ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage:
-//	case llamastackclient.ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile:
+//	case ogxclient.ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText:
+//	case ogxclient.ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage:
+//	case ogxclient.ResponseObjectOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -3096,8 +3096,8 @@ func (ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOu
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion.AsAny().(type) {
-//	case llamastackclient.ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputText:
-//	case llamastackclient.ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemRefusal:
+//	case ogxclient.ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputText:
+//	case ogxclient.ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemRefusal:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -3220,10 +3220,10 @@ func (ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOu
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion.AsAny().(type) {
-//	case llamastackclient.ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation:
-//	case llamastackclient.ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation:
-//	case llamastackclient.ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation:
-//	case llamastackclient.ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath:
+//	case ogxclient.ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation:
+//	case ogxclient.ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation:
+//	case ogxclient.ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation:
+//	case ogxclient.ResponseObjectOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -3872,9 +3872,9 @@ func (ResponseObjectPromptVariableInputFile) implResponseObjectPromptVariableUni
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseObjectPromptVariableUnion.AsAny().(type) {
-//	case llamastackclient.ResponseObjectPromptVariableInputText:
-//	case llamastackclient.ResponseObjectPromptVariableInputImage:
-//	case llamastackclient.ResponseObjectPromptVariableInputFile:
+//	case ogxclient.ResponseObjectPromptVariableInputText:
+//	case ogxclient.ResponseObjectPromptVariableInputImage:
+//	case ogxclient.ResponseObjectPromptVariableInputFile:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -4852,43 +4852,43 @@ func (ResponseObjectStreamError) implResponseObjectStreamUnion()                
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseObjectStreamUnion.AsAny().(type) {
-//	case llamastackclient.ResponseObjectStreamResponseCreated:
-//	case llamastackclient.ResponseObjectStreamResponseInProgress:
-//	case llamastackclient.ResponseObjectStreamResponseOutputItemAdded:
-//	case llamastackclient.ResponseObjectStreamResponseOutputItemDone:
-//	case llamastackclient.ResponseObjectStreamResponseOutputTextDelta:
-//	case llamastackclient.ResponseObjectStreamResponseOutputTextDone:
-//	case llamastackclient.ResponseObjectStreamResponseFunctionCallArgumentsDelta:
-//	case llamastackclient.ResponseObjectStreamResponseFunctionCallArgumentsDone:
-//	case llamastackclient.ResponseObjectStreamResponseWebSearchCallInProgress:
-//	case llamastackclient.ResponseObjectStreamResponseWebSearchCallSearching:
-//	case llamastackclient.ResponseObjectStreamResponseWebSearchCallCompleted:
-//	case llamastackclient.ResponseObjectStreamResponseMcpListToolsInProgress:
-//	case llamastackclient.ResponseObjectStreamResponseMcpListToolsFailed:
-//	case llamastackclient.ResponseObjectStreamResponseMcpListToolsCompleted:
-//	case llamastackclient.ResponseObjectStreamResponseMcpCallArgumentsDelta:
-//	case llamastackclient.ResponseObjectStreamResponseMcpCallArgumentsDone:
-//	case llamastackclient.ResponseObjectStreamResponseMcpCallInProgress:
-//	case llamastackclient.ResponseObjectStreamResponseMcpCallFailed:
-//	case llamastackclient.ResponseObjectStreamResponseMcpCallCompleted:
-//	case llamastackclient.ResponseObjectStreamResponseContentPartAdded:
-//	case llamastackclient.ResponseObjectStreamResponseContentPartDone:
-//	case llamastackclient.ResponseObjectStreamResponseReasoningTextDelta:
-//	case llamastackclient.ResponseObjectStreamResponseReasoningTextDone:
-//	case llamastackclient.ResponseObjectStreamResponseReasoningSummaryPartAdded:
-//	case llamastackclient.ResponseObjectStreamResponseReasoningSummaryPartDone:
-//	case llamastackclient.ResponseObjectStreamResponseReasoningSummaryTextDelta:
-//	case llamastackclient.ResponseObjectStreamResponseReasoningSummaryTextDone:
-//	case llamastackclient.ResponseObjectStreamResponseRefusalDelta:
-//	case llamastackclient.ResponseObjectStreamResponseRefusalDone:
-//	case llamastackclient.ResponseObjectStreamResponseOutputTextAnnotationAdded:
-//	case llamastackclient.ResponseObjectStreamResponseFileSearchCallInProgress:
-//	case llamastackclient.ResponseObjectStreamResponseFileSearchCallSearching:
-//	case llamastackclient.ResponseObjectStreamResponseFileSearchCallCompleted:
-//	case llamastackclient.ResponseObjectStreamResponseIncomplete:
-//	case llamastackclient.ResponseObjectStreamResponseFailed:
-//	case llamastackclient.ResponseObjectStreamResponseCompleted:
-//	case llamastackclient.ResponseObjectStreamError:
+//	case ogxclient.ResponseObjectStreamResponseCreated:
+//	case ogxclient.ResponseObjectStreamResponseInProgress:
+//	case ogxclient.ResponseObjectStreamResponseOutputItemAdded:
+//	case ogxclient.ResponseObjectStreamResponseOutputItemDone:
+//	case ogxclient.ResponseObjectStreamResponseOutputTextDelta:
+//	case ogxclient.ResponseObjectStreamResponseOutputTextDone:
+//	case ogxclient.ResponseObjectStreamResponseFunctionCallArgumentsDelta:
+//	case ogxclient.ResponseObjectStreamResponseFunctionCallArgumentsDone:
+//	case ogxclient.ResponseObjectStreamResponseWebSearchCallInProgress:
+//	case ogxclient.ResponseObjectStreamResponseWebSearchCallSearching:
+//	case ogxclient.ResponseObjectStreamResponseWebSearchCallCompleted:
+//	case ogxclient.ResponseObjectStreamResponseMcpListToolsInProgress:
+//	case ogxclient.ResponseObjectStreamResponseMcpListToolsFailed:
+//	case ogxclient.ResponseObjectStreamResponseMcpListToolsCompleted:
+//	case ogxclient.ResponseObjectStreamResponseMcpCallArgumentsDelta:
+//	case ogxclient.ResponseObjectStreamResponseMcpCallArgumentsDone:
+//	case ogxclient.ResponseObjectStreamResponseMcpCallInProgress:
+//	case ogxclient.ResponseObjectStreamResponseMcpCallFailed:
+//	case ogxclient.ResponseObjectStreamResponseMcpCallCompleted:
+//	case ogxclient.ResponseObjectStreamResponseContentPartAdded:
+//	case ogxclient.ResponseObjectStreamResponseContentPartDone:
+//	case ogxclient.ResponseObjectStreamResponseReasoningTextDelta:
+//	case ogxclient.ResponseObjectStreamResponseReasoningTextDone:
+//	case ogxclient.ResponseObjectStreamResponseReasoningSummaryPartAdded:
+//	case ogxclient.ResponseObjectStreamResponseReasoningSummaryPartDone:
+//	case ogxclient.ResponseObjectStreamResponseReasoningSummaryTextDelta:
+//	case ogxclient.ResponseObjectStreamResponseReasoningSummaryTextDone:
+//	case ogxclient.ResponseObjectStreamResponseRefusalDelta:
+//	case ogxclient.ResponseObjectStreamResponseRefusalDone:
+//	case ogxclient.ResponseObjectStreamResponseOutputTextAnnotationAdded:
+//	case ogxclient.ResponseObjectStreamResponseFileSearchCallInProgress:
+//	case ogxclient.ResponseObjectStreamResponseFileSearchCallSearching:
+//	case ogxclient.ResponseObjectStreamResponseFileSearchCallCompleted:
+//	case ogxclient.ResponseObjectStreamResponseIncomplete:
+//	case ogxclient.ResponseObjectStreamResponseFailed:
+//	case ogxclient.ResponseObjectStreamResponseCompleted:
+//	case ogxclient.ResponseObjectStreamError:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -5608,14 +5608,14 @@ func (ResponseObjectStreamResponseOutputItemAddedItemReasoning) implResponseObje
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseObjectStreamResponseOutputItemAddedItemUnion.AsAny().(type) {
-//	case llamastackclient.ResponseMessage:
-//	case llamastackclient.ResponseObjectStreamResponseOutputItemAddedItemWebSearchCall:
-//	case llamastackclient.ResponseObjectStreamResponseOutputItemAddedItemFileSearchCall:
-//	case llamastackclient.ResponseObjectStreamResponseOutputItemAddedItemFunctionCall:
-//	case llamastackclient.ResponseObjectStreamResponseOutputItemAddedItemMcpCall:
-//	case llamastackclient.ResponseObjectStreamResponseOutputItemAddedItemMcpListTools:
-//	case llamastackclient.ResponseObjectStreamResponseOutputItemAddedItemMcpApprovalRequest:
-//	case llamastackclient.ResponseObjectStreamResponseOutputItemAddedItemReasoning:
+//	case ogxclient.ResponseMessage:
+//	case ogxclient.ResponseObjectStreamResponseOutputItemAddedItemWebSearchCall:
+//	case ogxclient.ResponseObjectStreamResponseOutputItemAddedItemFileSearchCall:
+//	case ogxclient.ResponseObjectStreamResponseOutputItemAddedItemFunctionCall:
+//	case ogxclient.ResponseObjectStreamResponseOutputItemAddedItemMcpCall:
+//	case ogxclient.ResponseObjectStreamResponseOutputItemAddedItemMcpListTools:
+//	case ogxclient.ResponseObjectStreamResponseOutputItemAddedItemMcpApprovalRequest:
+//	case ogxclient.ResponseObjectStreamResponseOutputItemAddedItemReasoning:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -6162,14 +6162,14 @@ func (ResponseObjectStreamResponseOutputItemDoneItemReasoning) implResponseObjec
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseObjectStreamResponseOutputItemDoneItemUnion.AsAny().(type) {
-//	case llamastackclient.ResponseMessage:
-//	case llamastackclient.ResponseObjectStreamResponseOutputItemDoneItemWebSearchCall:
-//	case llamastackclient.ResponseObjectStreamResponseOutputItemDoneItemFileSearchCall:
-//	case llamastackclient.ResponseObjectStreamResponseOutputItemDoneItemFunctionCall:
-//	case llamastackclient.ResponseObjectStreamResponseOutputItemDoneItemMcpCall:
-//	case llamastackclient.ResponseObjectStreamResponseOutputItemDoneItemMcpListTools:
-//	case llamastackclient.ResponseObjectStreamResponseOutputItemDoneItemMcpApprovalRequest:
-//	case llamastackclient.ResponseObjectStreamResponseOutputItemDoneItemReasoning:
+//	case ogxclient.ResponseMessage:
+//	case ogxclient.ResponseObjectStreamResponseOutputItemDoneItemWebSearchCall:
+//	case ogxclient.ResponseObjectStreamResponseOutputItemDoneItemFileSearchCall:
+//	case ogxclient.ResponseObjectStreamResponseOutputItemDoneItemFunctionCall:
+//	case ogxclient.ResponseObjectStreamResponseOutputItemDoneItemMcpCall:
+//	case ogxclient.ResponseObjectStreamResponseOutputItemDoneItemMcpListTools:
+//	case ogxclient.ResponseObjectStreamResponseOutputItemDoneItemMcpApprovalRequest:
+//	case ogxclient.ResponseObjectStreamResponseOutputItemDoneItemReasoning:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -7087,9 +7087,9 @@ func (ResponseObjectStreamResponseContentPartAddedPartReasoningText) implRespons
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseObjectStreamResponseContentPartAddedPartUnion.AsAny().(type) {
-//	case llamastackclient.ResponseObjectStreamResponseContentPartAddedPartOutputText:
-//	case llamastackclient.ResponseObjectStreamResponseContentPartAddedPartRefusal:
-//	case llamastackclient.ResponseObjectStreamResponseContentPartAddedPartReasoningText:
+//	case ogxclient.ResponseObjectStreamResponseContentPartAddedPartOutputText:
+//	case ogxclient.ResponseObjectStreamResponseContentPartAddedPartRefusal:
+//	case ogxclient.ResponseObjectStreamResponseContentPartAddedPartReasoningText:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -7217,10 +7217,10 @@ func (ResponseObjectStreamResponseContentPartAddedPartOutputTextAnnotationFilePa
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseObjectStreamResponseContentPartAddedPartOutputTextAnnotationUnion.AsAny().(type) {
-//	case llamastackclient.ResponseObjectStreamResponseContentPartAddedPartOutputTextAnnotationFileCitation:
-//	case llamastackclient.ResponseObjectStreamResponseContentPartAddedPartOutputTextAnnotationURLCitation:
-//	case llamastackclient.ResponseObjectStreamResponseContentPartAddedPartOutputTextAnnotationContainerFileCitation:
-//	case llamastackclient.ResponseObjectStreamResponseContentPartAddedPartOutputTextAnnotationFilePath:
+//	case ogxclient.ResponseObjectStreamResponseContentPartAddedPartOutputTextAnnotationFileCitation:
+//	case ogxclient.ResponseObjectStreamResponseContentPartAddedPartOutputTextAnnotationURLCitation:
+//	case ogxclient.ResponseObjectStreamResponseContentPartAddedPartOutputTextAnnotationContainerFileCitation:
+//	case ogxclient.ResponseObjectStreamResponseContentPartAddedPartOutputTextAnnotationFilePath:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -7556,9 +7556,9 @@ func (ResponseObjectStreamResponseContentPartDonePartReasoningText) implResponse
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseObjectStreamResponseContentPartDonePartUnion.AsAny().(type) {
-//	case llamastackclient.ResponseObjectStreamResponseContentPartDonePartOutputText:
-//	case llamastackclient.ResponseObjectStreamResponseContentPartDonePartRefusal:
-//	case llamastackclient.ResponseObjectStreamResponseContentPartDonePartReasoningText:
+//	case ogxclient.ResponseObjectStreamResponseContentPartDonePartOutputText:
+//	case ogxclient.ResponseObjectStreamResponseContentPartDonePartRefusal:
+//	case ogxclient.ResponseObjectStreamResponseContentPartDonePartReasoningText:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -7686,10 +7686,10 @@ func (ResponseObjectStreamResponseContentPartDonePartOutputTextAnnotationFilePat
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseObjectStreamResponseContentPartDonePartOutputTextAnnotationUnion.AsAny().(type) {
-//	case llamastackclient.ResponseObjectStreamResponseContentPartDonePartOutputTextAnnotationFileCitation:
-//	case llamastackclient.ResponseObjectStreamResponseContentPartDonePartOutputTextAnnotationURLCitation:
-//	case llamastackclient.ResponseObjectStreamResponseContentPartDonePartOutputTextAnnotationContainerFileCitation:
-//	case llamastackclient.ResponseObjectStreamResponseContentPartDonePartOutputTextAnnotationFilePath:
+//	case ogxclient.ResponseObjectStreamResponseContentPartDonePartOutputTextAnnotationFileCitation:
+//	case ogxclient.ResponseObjectStreamResponseContentPartDonePartOutputTextAnnotationURLCitation:
+//	case ogxclient.ResponseObjectStreamResponseContentPartDonePartOutputTextAnnotationContainerFileCitation:
+//	case ogxclient.ResponseObjectStreamResponseContentPartDonePartOutputTextAnnotationFilePath:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -8306,10 +8306,10 @@ func (ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationFilePath) i
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationUnion.AsAny().(type) {
-//	case llamastackclient.ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationFileCitation:
-//	case llamastackclient.ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationURLCitation:
-//	case llamastackclient.ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationContainerFileCitation:
-//	case llamastackclient.ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationFilePath:
+//	case ogxclient.ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationFileCitation:
+//	case ogxclient.ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationURLCitation:
+//	case ogxclient.ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationContainerFileCitation:
+//	case ogxclient.ResponseObjectStreamResponseOutputTextAnnotationAddedAnnotationFilePath:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -9085,9 +9085,9 @@ func (ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIRespo
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion.AsAny().(type) {
-//	case llamastackclient.ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText:
-//	case llamastackclient.ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage:
-//	case llamastackclient.ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile:
+//	case ogxclient.ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText:
+//	case ogxclient.ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage:
+//	case ogxclient.ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -9272,8 +9272,8 @@ func (ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIRespo
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion.AsAny().(type) {
-//	case llamastackclient.ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputText:
-//	case llamastackclient.ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemRefusal:
+//	case ogxclient.ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputText:
+//	case ogxclient.ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemRefusal:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -9396,10 +9396,10 @@ func (ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIRespo
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion.AsAny().(type) {
-//	case llamastackclient.ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation:
-//	case llamastackclient.ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation:
-//	case llamastackclient.ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation:
-//	case llamastackclient.ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath:
+//	case ogxclient.ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation:
+//	case ogxclient.ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation:
+//	case ogxclient.ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation:
+//	case ogxclient.ResponseListResponseInputOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -10082,9 +10082,9 @@ func (ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputLi
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion.AsAny().(type) {
-//	case llamastackclient.ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText:
-//	case llamastackclient.ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage:
-//	case llamastackclient.ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile:
+//	case ogxclient.ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText:
+//	case ogxclient.ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage:
+//	case ogxclient.ResponseListResponseInputOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -10354,14 +10354,14 @@ func (ResponseListResponseOutputReasoning) implResponseListResponseOutputUnion()
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseListResponseOutputUnion.AsAny().(type) {
-//	case llamastackclient.ResponseListResponseOutputMessage:
-//	case llamastackclient.ResponseListResponseOutputWebSearchCall:
-//	case llamastackclient.ResponseListResponseOutputFileSearchCall:
-//	case llamastackclient.ResponseListResponseOutputFunctionCall:
-//	case llamastackclient.ResponseListResponseOutputMcpCall:
-//	case llamastackclient.ResponseListResponseOutputMcpListTools:
-//	case llamastackclient.ResponseListResponseOutputMcpApprovalRequest:
-//	case llamastackclient.ResponseListResponseOutputReasoning:
+//	case ogxclient.ResponseListResponseOutputMessage:
+//	case ogxclient.ResponseListResponseOutputWebSearchCall:
+//	case ogxclient.ResponseListResponseOutputFileSearchCall:
+//	case ogxclient.ResponseListResponseOutputFunctionCall:
+//	case ogxclient.ResponseListResponseOutputMcpCall:
+//	case ogxclient.ResponseListResponseOutputMcpListTools:
+//	case ogxclient.ResponseListResponseOutputMcpApprovalRequest:
+//	case ogxclient.ResponseListResponseOutputReasoning:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -10619,9 +10619,9 @@ func (ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageCont
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion.AsAny().(type) {
-//	case llamastackclient.ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText:
-//	case llamastackclient.ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage:
-//	case llamastackclient.ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile:
+//	case ogxclient.ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText:
+//	case ogxclient.ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage:
+//	case ogxclient.ResponseListResponseOutputMessageContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -10806,8 +10806,8 @@ func (ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageCon
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion.AsAny().(type) {
-//	case llamastackclient.ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputText:
-//	case llamastackclient.ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemRefusal:
+//	case ogxclient.ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputText:
+//	case ogxclient.ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemRefusal:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -10930,10 +10930,10 @@ func (ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageCon
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion.AsAny().(type) {
-//	case llamastackclient.ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation:
-//	case llamastackclient.ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation:
-//	case llamastackclient.ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation:
-//	case llamastackclient.ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath:
+//	case ogxclient.ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation:
+//	case ogxclient.ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation:
+//	case ogxclient.ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation:
+//	case ogxclient.ResponseListResponseOutputMessageContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -11582,9 +11582,9 @@ func (ResponseListResponsePromptVariableInputFile) implResponseListResponsePromp
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseListResponsePromptVariableUnion.AsAny().(type) {
-//	case llamastackclient.ResponseListResponsePromptVariableInputText:
-//	case llamastackclient.ResponseListResponsePromptVariableInputImage:
-//	case llamastackclient.ResponseListResponsePromptVariableInputFile:
+//	case ogxclient.ResponseListResponsePromptVariableInputText:
+//	case ogxclient.ResponseListResponsePromptVariableInputImage:
+//	case ogxclient.ResponseListResponsePromptVariableInputFile:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -12824,9 +12824,9 @@ type responseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunc
 //
 //	switch u.AsAny().(type) {
 //	case *string:
-//	case *[]llamastackclient.ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion:
-//	case *[]llamastackclient.ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion:
-//	case *[]llamastackclient.ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageReasoningItemContent:
+//	case *[]ogxclient.ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion:
+//	case *[]ogxclient.ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion:
+//	case *[]ogxclient.ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageReasoningItemContent:
 //	default:
 //	    fmt.Errorf("not present")
 //	}
@@ -12854,7 +12854,7 @@ type responseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunc
 //
 //	switch u.AsAny().(type) {
 //	case *string:
-//	case *[]llamastackclient.ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion:
+//	case *[]ogxclient.ResponseNewParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion:
 //	default:
 //	    fmt.Errorf("not present")
 //	}
@@ -15576,9 +15576,9 @@ type responseCompactParamsInputListOpenAIResponseMessageUnionOpenAIResponseInput
 //
 //	switch u.AsAny().(type) {
 //	case *string:
-//	case *[]llamastackclient.ResponseCompactParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion:
-//	case *[]llamastackclient.ResponseCompactParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion:
-//	case *[]llamastackclient.ResponseCompactParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageReasoningItemContent:
+//	case *[]ogxclient.ResponseCompactParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion:
+//	case *[]ogxclient.ResponseCompactParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseMessageInputContentListOpenAIResponseOutputMessageContentOutputTextInputOpenAIResponseContentPartRefusalItemUnion:
+//	case *[]ogxclient.ResponseCompactParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseOutputMessageReasoningItemContent:
 //	default:
 //	    fmt.Errorf("not present")
 //	}
@@ -15606,7 +15606,7 @@ type responseCompactParamsInputListOpenAIResponseMessageUnionOpenAIResponseInput
 //
 //	switch u.AsAny().(type) {
 //	case *string:
-//	case *[]llamastackclient.ResponseCompactParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion:
+//	case *[]ogxclient.ResponseCompactParamsInputListOpenAIResponseMessageUnionOpenAIResponseInputFunctionToolCallOutputItemOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion:
 //	default:
 //	    fmt.Errorf("not present")
 //	}

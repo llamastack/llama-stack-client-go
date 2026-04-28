@@ -14,7 +14,7 @@ import (
 	"encoding"
 	"encoding/base64"
 	"fmt"
-	"github.com/llamastack/llama-stack-client-go/internal/encoding/json/shims"
+	"github.com/ogx-ai/ogx-client-go/internal/encoding/json/shims"
 	"reflect"
 	"strconv"
 	"strings"

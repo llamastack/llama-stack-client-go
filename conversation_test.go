@@ -1,4 +1,4 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
+// Copyright (c) The OGX Contributors.
 // All rights reserved.
 //
 // This source code is licensed under the terms described in the LICENSE file in
@@ -6,7 +6,7 @@
 //
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package llamastackclient_test
+package ogxclient_test
 
 import (
 	"context"
@@ -14,9 +14,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/llamastack/llama-stack-client-go"
-	"github.com/llamastack/llama-stack-client-go/internal/testutil"
-	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/ogx-ai/ogx-client-go"
+	"github.com/ogx-ai/ogx-client-go/internal/testutil"
+	"github.com/ogx-ai/ogx-client-go/option"
 )
 
 func TestConversationNewWithOptionalParams(t *testing.T) {
@@ -27,18 +27,18 @@ func TestConversationNewWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Conversations.New(context.TODO(), llamastackclient.ConversationNewParams{
-		Items: []llamastackclient.ConversationNewParamsItemUnion{{
-			OfMessage: &llamastackclient.ConversationNewParamsItemMessage{
-				Content: llamastackclient.ConversationNewParamsItemMessageContentUnion{
-					OfString: llamastackclient.String("string"),
+	_, err := client.Conversations.New(context.TODO(), ogxclient.ConversationNewParams{
+		Items: []ogxclient.ConversationNewParamsItemUnion{{
+			OfMessage: &ogxclient.ConversationNewParamsItemMessage{
+				Content: ogxclient.ConversationNewParamsItemMessageContentUnion{
+					OfString: ogxclient.String("string"),
 				},
-				Role:   llamastackclient.ConversationNewParamsItemMessageRoleSystem,
-				ID:     llamastackclient.String("id"),
-				Status: llamastackclient.String("status"),
+				Role:   ogxclient.ConversationNewParamsItemMessageRoleSystem,
+				ID:     ogxclient.String("id"),
+				Status: ogxclient.String("status"),
 				Type:   "message",
 			},
 		}},
@@ -47,7 +47,7 @@ func TestConversationNewWithOptionalParams(t *testing.T) {
 		},
 	})
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -63,12 +63,12 @@ func TestConversationGet(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Conversations.Get(context.TODO(), "conversation_id")
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -84,20 +84,20 @@ func TestConversationUpdate(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Conversations.Update(
 		context.TODO(),
 		"conversation_id",
-		llamastackclient.ConversationUpdateParams{
+		ogxclient.ConversationUpdateParams{
 			Metadata: map[string]string{
 				"foo": "string",
 			},
 		},
 	)
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -113,12 +113,12 @@ func TestConversationDelete(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Conversations.Delete(context.TODO(), "conversation_id")
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}

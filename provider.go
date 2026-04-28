@@ -1,4 +1,4 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
+// Copyright (c) The OGX Contributors.
 // All rights reserved.
 //
 // This source code is licensed under the terms described in the LICENSE file in
@@ -6,7 +6,7 @@
 //
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package llamastackclient
+package ogxclient
 
 import (
 	"context"
@@ -15,17 +15,17 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/llamastack/llama-stack-client-go/internal/apijson"
-	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
-	"github.com/llamastack/llama-stack-client-go/option"
-	"github.com/llamastack/llama-stack-client-go/packages/respjson"
+	"github.com/ogx-ai/ogx-client-go/internal/apijson"
+	"github.com/ogx-ai/ogx-client-go/internal/requestconfig"
+	"github.com/ogx-ai/ogx-client-go/option"
+	"github.com/ogx-ai/ogx-client-go/packages/respjson"
 )
 
 // Providers API for inspecting, listing, and modifying providers and their
 // configurations.
 //
 // ProviderService contains methods and other services that help with interacting
-// with the llama-stack-client API.
+// with the ogx-client API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use

@@ -1,4 +1,4 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
+// Copyright (c) The OGX Contributors.
 // All rights reserved.
 //
 // This source code is licensed under the terms described in the LICENSE file in
@@ -6,7 +6,7 @@
 //
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package llamastackclient
+package ogxclient
 
 import (
 	"context"
@@ -17,19 +17,19 @@ import (
 	"net/url"
 	"slices"
 
-	"github.com/llamastack/llama-stack-client-go/internal/apijson"
-	"github.com/llamastack/llama-stack-client-go/internal/apiquery"
-	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
-	"github.com/llamastack/llama-stack-client-go/option"
-	"github.com/llamastack/llama-stack-client-go/packages/param"
-	"github.com/llamastack/llama-stack-client-go/packages/respjson"
+	"github.com/ogx-ai/ogx-client-go/internal/apijson"
+	"github.com/ogx-ai/ogx-client-go/internal/apiquery"
+	"github.com/ogx-ai/ogx-client-go/internal/requestconfig"
+	"github.com/ogx-ai/ogx-client-go/option"
+	"github.com/ogx-ai/ogx-client-go/packages/param"
+	"github.com/ogx-ai/ogx-client-go/packages/respjson"
 )
 
 // OpenAI Responses API for agent orchestration with tool use, multi-turn
 // conversations, and background processing.
 //
 // ResponseInputItemService contains methods and other services that help with
-// interacting with the llama-stack-client API.
+// interacting with the ogx-client API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
@@ -444,9 +444,9 @@ func (ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpe
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion.AsAny().(type) {
-//	case llamastackclient.ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText:
-//	case llamastackclient.ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage:
-//	case llamastackclient.ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile:
+//	case ogxclient.ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText:
+//	case ogxclient.ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage:
+//	case ogxclient.ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -631,8 +631,8 @@ func (ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpe
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemUnion.AsAny().(type) {
-//	case llamastackclient.ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputText:
-//	case llamastackclient.ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemRefusal:
+//	case ogxclient.ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputText:
+//	case ogxclient.ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemRefusal:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -755,10 +755,10 @@ func (ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpe
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationUnion.AsAny().(type) {
-//	case llamastackclient.ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation:
-//	case llamastackclient.ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation:
-//	case llamastackclient.ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation:
-//	case llamastackclient.ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath:
+//	case ogxclient.ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFileCitation:
+//	case ogxclient.ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationURLCitation:
+//	case ogxclient.ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationContainerFileCitation:
+//	case ogxclient.ResponseInputItemListResponseDataOpenAIResponseMessageOutputContentListOpenAIResponseOutputMessageContentOutputTextOutputOpenAIResponseContentPartRefusalItemOutputTextAnnotationFilePath:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -1441,9 +1441,9 @@ func (ResponseInputItemListResponseDataOpenAIResponseInputFunctionToolCallOutput
 // Use the following switch statement to find the correct variant
 //
 //	switch variant := ResponseInputItemListResponseDataOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemUnion.AsAny().(type) {
-//	case llamastackclient.ResponseInputItemListResponseDataOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText:
-//	case llamastackclient.ResponseInputItemListResponseDataOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage:
-//	case llamastackclient.ResponseInputItemListResponseDataOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile:
+//	case ogxclient.ResponseInputItemListResponseDataOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputText:
+//	case ogxclient.ResponseInputItemListResponseDataOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputImage:
+//	case ogxclient.ResponseInputItemListResponseDataOpenAIResponseInputFunctionToolCallOutputOutputListOpenAIResponseInputMessageContentTextOpenAIResponseInputMessageContentImageOpenAIResponseInputMessageContentFileItemInputFile:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}

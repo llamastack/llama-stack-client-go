@@ -2,7 +2,7 @@ package param_test
 
 import (
 	"encoding/json"
-	"github.com/llamastack/llama-stack-client-go/packages/param"
+	"github.com/ogx-ai/ogx-client-go/packages/param"
 	"testing"
 )
 

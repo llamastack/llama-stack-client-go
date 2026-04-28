@@ -1,4 +1,4 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
+// Copyright (c) The OGX Contributors.
 // All rights reserved.
 //
 // This source code is licensed under the terms described in the LICENSE file in
@@ -6,7 +6,7 @@
 //
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package llamastackclient
+package ogxclient
 
 import (
 	"context"
@@ -15,14 +15,14 @@ import (
 	"net/http"
 	"slices"
 
-	"github.com/llamastack/llama-stack-client-go/internal/apijson"
-	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
-	"github.com/llamastack/llama-stack-client-go/option"
-	"github.com/llamastack/llama-stack-client-go/packages/respjson"
+	"github.com/ogx-ai/ogx-client-go/internal/apijson"
+	"github.com/ogx-ai/ogx-client-go/internal/requestconfig"
+	"github.com/ogx-ai/ogx-client-go/option"
+	"github.com/ogx-ai/ogx-client-go/packages/respjson"
 )
 
 // ModelService contains methods and other services that help with interacting with
-// the llama-stack-client API.
+// the ogx-client API.
 //
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
@@ -93,7 +93,7 @@ const (
 //
 // :id: The ID of the model :object: The object type, which will be "model"
 // :created: The Unix timestamp in seconds when the model was created :owned_by:
-// The owner of the model :custom_metadata: Llama Stack-specific metadata including
+// The owner of the model :custom_metadata: OGX-specific metadata including
 // model_type, provider info, and additional metadata
 type Model struct {
 	ID             string         `json:"id" api:"required"`
@@ -126,11 +126,11 @@ const (
 	ModelObjectModel ModelObject = "model"
 )
 
-// A model resource representing an AI model registered in Llama Stack.
+// A model resource representing an AI model registered in OGX.
 type ModelGetResponse struct {
 	// The model identifier (OpenAI-compatible alias for identifier).
 	ID string `json:"id" api:"required"`
-	// Unique identifier for this resource in llama stack
+	// Unique identifier for this resource in ogx
 	Identifier string `json:"identifier" api:"required"`
 	// The object type, always 'model'.
 	//
@@ -142,7 +142,7 @@ type ModelGetResponse struct {
 	Created int64 `json:"created"`
 	// Any additional metadata for this model
 	Metadata map[string]any `json:"metadata"`
-	// Enumeration of supported model types in Llama Stack.
+	// Enumeration of supported model types in OGX.
 	//
 	// Any of "llm", "embedding", "rerank".
 	ModelType ModelGetResponseModelType `json:"model_type"`
@@ -187,7 +187,7 @@ const (
 	ModelGetResponseObjectModel ModelGetResponseObject = "model"
 )
 
-// Enumeration of supported model types in Llama Stack.
+// Enumeration of supported model types in OGX.
 type ModelGetResponseModelType string
 
 const (

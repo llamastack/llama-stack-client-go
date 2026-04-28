@@ -1,4 +1,4 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
+// Copyright (c) The OGX Contributors.
 // All rights reserved.
 //
 // This source code is licensed under the terms described in the LICENSE file in
@@ -6,7 +6,7 @@
 //
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package llamastackclient_test
+package ogxclient_test
 
 import (
 	"context"
@@ -14,9 +14,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/llamastack/llama-stack-client-go"
-	"github.com/llamastack/llama-stack-client-go/internal/testutil"
-	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/ogx-ai/ogx-client-go"
+	"github.com/ogx-ai/ogx-client-go/internal/testutil"
+	"github.com/ogx-ai/ogx-client-go/option"
 )
 
 func TestResponseNewWithOptionalParams(t *testing.T) {
@@ -27,86 +27,86 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Responses.New(context.TODO(), llamastackclient.ResponseNewParams{
-		Input: llamastackclient.ResponseNewParamsInputUnion{
-			OfString: llamastackclient.String("string"),
+	_, err := client.Responses.New(context.TODO(), ogxclient.ResponseNewParams{
+		Input: ogxclient.ResponseNewParamsInputUnion{
+			OfString: ogxclient.String("string"),
 		},
 		Model:      "model",
-		Background: llamastackclient.Bool(true),
-		ContextManagement: []llamastackclient.ResponseNewParamsContextManagement{{
+		Background: ogxclient.Bool(true),
+		ContextManagement: []ogxclient.ResponseNewParamsContextManagement{{
 			Type:             "compaction",
-			CompactThreshold: llamastackclient.Int(0),
+			CompactThreshold: ogxclient.Int(0),
 		}},
-		Conversation:     llamastackclient.String("conversation"),
-		FrequencyPenalty: llamastackclient.Float(-2),
-		Guardrails: []llamastackclient.ResponseNewParamsGuardrailUnion{{
-			OfString: llamastackclient.String("string"),
+		Conversation:     ogxclient.String("conversation"),
+		FrequencyPenalty: ogxclient.Float(-2),
+		Guardrails: []ogxclient.ResponseNewParamsGuardrailUnion{{
+			OfString: ogxclient.String("string"),
 		}},
 		Include:         []string{"web_search_call.action.sources"},
-		Instructions:    llamastackclient.String("instructions"),
-		MaxInferIters:   llamastackclient.Int(1),
-		MaxOutputTokens: llamastackclient.Int(16),
-		MaxToolCalls:    llamastackclient.Int(1),
+		Instructions:    ogxclient.String("instructions"),
+		MaxInferIters:   ogxclient.Int(1),
+		MaxOutputTokens: ogxclient.Int(16),
+		MaxToolCalls:    ogxclient.Int(1),
 		Metadata: map[string]string{
 			"foo": "string",
 		},
-		ParallelToolCalls:  llamastackclient.Bool(true),
-		PresencePenalty:    llamastackclient.Float(-2),
-		PreviousResponseID: llamastackclient.String("previous_response_id"),
-		Prompt: llamastackclient.ResponseNewParamsPrompt{
+		ParallelToolCalls:  ogxclient.Bool(true),
+		PresencePenalty:    ogxclient.Float(-2),
+		PreviousResponseID: ogxclient.String("previous_response_id"),
+		Prompt: ogxclient.ResponseNewParamsPrompt{
 			ID: "id",
-			Variables: map[string]llamastackclient.ResponseNewParamsPromptVariableUnion{
+			Variables: map[string]ogxclient.ResponseNewParamsPromptVariableUnion{
 				"foo": {
-					OfInputText: &llamastackclient.ResponseNewParamsPromptVariableInputText{
+					OfInputText: &ogxclient.ResponseNewParamsPromptVariableInputText{
 						Text: "text",
 						Type: "input_text",
 					},
 				},
 			},
-			Version: llamastackclient.String("version"),
+			Version: ogxclient.String("version"),
 		},
-		PromptCacheKey: llamastackclient.String("prompt_cache_key"),
-		Reasoning: llamastackclient.ResponseNewParamsReasoning{
+		PromptCacheKey: ogxclient.String("prompt_cache_key"),
+		Reasoning: ogxclient.ResponseNewParamsReasoning{
 			Effort:  "none",
 			Summary: "auto",
 		},
-		SafetyIdentifier: llamastackclient.String("safety_identifier"),
-		ServiceTier:      llamastackclient.ResponseNewParamsServiceTierAuto,
-		Store:            llamastackclient.Bool(true),
-		StreamOptions: llamastackclient.ResponseNewParamsStreamOptions{
-			IncludeObfuscation: llamastackclient.Bool(true),
+		SafetyIdentifier: ogxclient.String("safety_identifier"),
+		ServiceTier:      ogxclient.ResponseNewParamsServiceTierAuto,
+		Store:            ogxclient.Bool(true),
+		StreamOptions: ogxclient.ResponseNewParamsStreamOptions{
+			IncludeObfuscation: ogxclient.Bool(true),
 		},
-		Temperature: llamastackclient.Float(0),
-		Text: llamastackclient.ResponseNewParamsText{
-			Format: llamastackclient.ResponseNewParamsTextFormat{
-				Description: llamastackclient.String("description"),
-				Name:        llamastackclient.String("name"),
+		Temperature: ogxclient.Float(0),
+		Text: ogxclient.ResponseNewParamsText{
+			Format: ogxclient.ResponseNewParamsTextFormat{
+				Description: ogxclient.String("description"),
+				Name:        ogxclient.String("name"),
 				Schema: map[string]any{
 					"foo": "bar",
 				},
-				Strict: llamastackclient.Bool(true),
-				Type:   llamastackclient.ResponseNewParamsTextFormatTypeText,
+				Strict: ogxclient.Bool(true),
+				Type:   ogxclient.ResponseNewParamsTextFormatTypeText,
 			},
 			Verbosity: "low",
 		},
-		ToolChoice: llamastackclient.ResponseNewParamsToolChoiceUnion{
-			OfOpenAIResponseInputToolChoiceMode: llamastackclient.String("auto"),
+		ToolChoice: ogxclient.ResponseNewParamsToolChoiceUnion{
+			OfOpenAIResponseInputToolChoiceMode: ogxclient.String("auto"),
 		},
-		Tools: []llamastackclient.ResponseNewParamsToolUnion{{
-			OfOpenAIResponseInputToolWebSearch: &llamastackclient.ResponseNewParamsToolOpenAIResponseInputToolWebSearch{
-				SearchContextSize: llamastackclient.String("S?oC\"high"),
-				Type:              llamastackclient.ResponseNewParamsToolOpenAIResponseInputToolWebSearchTypeWebSearch,
+		Tools: []ogxclient.ResponseNewParamsToolUnion{{
+			OfOpenAIResponseInputToolWebSearch: &ogxclient.ResponseNewParamsToolOpenAIResponseInputToolWebSearch{
+				SearchContextSize: ogxclient.String("S?oC\"high"),
+				Type:              ogxclient.ResponseNewParamsToolOpenAIResponseInputToolWebSearchTypeWebSearch,
 			},
 		}},
-		TopLogprobs: llamastackclient.Int(0),
-		TopP:        llamastackclient.Float(0),
-		Truncation:  llamastackclient.ResponseNewParamsTruncationAuto,
+		TopLogprobs: ogxclient.Int(0),
+		TopP:        ogxclient.Float(0),
+		Truncation:  ogxclient.ResponseNewParamsTruncationAuto,
 	})
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -122,12 +122,12 @@ func TestResponseGet(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Responses.Get(context.TODO(), "response_id")
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -143,17 +143,17 @@ func TestResponseListWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Responses.List(context.TODO(), llamastackclient.ResponseListParams{
-		After: llamastackclient.String("after"),
-		Limit: llamastackclient.Int(0),
-		Model: llamastackclient.String("model"),
-		Order: llamastackclient.ResponseListParamsOrderAsc,
+	_, err := client.Responses.List(context.TODO(), ogxclient.ResponseListParams{
+		After: ogxclient.String("after"),
+		Limit: ogxclient.Int(0),
+		Model: ogxclient.String("model"),
+		Order: ogxclient.ResponseListParamsOrderAsc,
 	})
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -169,12 +169,12 @@ func TestResponseDelete(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Responses.Delete(context.TODO(), "response_id")
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -190,43 +190,43 @@ func TestResponseCompactWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Responses.Compact(context.TODO(), llamastackclient.ResponseCompactParams{
+	_, err := client.Responses.Compact(context.TODO(), ogxclient.ResponseCompactParams{
 		Model: "model",
-		Input: llamastackclient.ResponseCompactParamsInputUnion{
-			OfString: llamastackclient.String("string"),
+		Input: ogxclient.ResponseCompactParamsInputUnion{
+			OfString: ogxclient.String("string"),
 		},
-		Instructions:       llamastackclient.String("instructions"),
-		ParallelToolCalls:  llamastackclient.Bool(true),
-		PreviousResponseID: llamastackclient.String("previous_response_id"),
-		PromptCacheKey:     llamastackclient.String("prompt_cache_key"),
-		Reasoning: llamastackclient.ResponseCompactParamsReasoning{
+		Instructions:       ogxclient.String("instructions"),
+		ParallelToolCalls:  ogxclient.Bool(true),
+		PreviousResponseID: ogxclient.String("previous_response_id"),
+		PromptCacheKey:     ogxclient.String("prompt_cache_key"),
+		Reasoning: ogxclient.ResponseCompactParamsReasoning{
 			Effort:  "none",
 			Summary: "auto",
 		},
-		Text: llamastackclient.ResponseCompactParamsText{
-			Format: llamastackclient.ResponseCompactParamsTextFormat{
-				Description: llamastackclient.String("description"),
-				Name:        llamastackclient.String("name"),
+		Text: ogxclient.ResponseCompactParamsText{
+			Format: ogxclient.ResponseCompactParamsTextFormat{
+				Description: ogxclient.String("description"),
+				Name:        ogxclient.String("name"),
 				Schema: map[string]any{
 					"foo": "bar",
 				},
-				Strict: llamastackclient.Bool(true),
-				Type:   llamastackclient.ResponseCompactParamsTextFormatTypeText,
+				Strict: ogxclient.Bool(true),
+				Type:   ogxclient.ResponseCompactParamsTextFormatTypeText,
 			},
 			Verbosity: "low",
 		},
-		Tools: []llamastackclient.ResponseCompactParamsToolUnion{{
-			OfOpenAIResponseInputToolWebSearch: &llamastackclient.ResponseCompactParamsToolOpenAIResponseInputToolWebSearch{
-				SearchContextSize: llamastackclient.String("S?oC\"high"),
-				Type:              llamastackclient.ResponseCompactParamsToolOpenAIResponseInputToolWebSearchTypeWebSearch,
+		Tools: []ogxclient.ResponseCompactParamsToolUnion{{
+			OfOpenAIResponseInputToolWebSearch: &ogxclient.ResponseCompactParamsToolOpenAIResponseInputToolWebSearch{
+				SearchContextSize: ogxclient.String("S?oC\"high"),
+				Type:              ogxclient.ResponseCompactParamsToolOpenAIResponseInputToolWebSearchTypeWebSearch,
 			},
 		}},
 	})
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}

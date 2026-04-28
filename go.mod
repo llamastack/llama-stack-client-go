@@ -1,4 +1,4 @@
-module github.com/llamastack/llama-stack-client-go
+module github.com/ogx-ai/ogx-client-go
 
 go 1.22
 

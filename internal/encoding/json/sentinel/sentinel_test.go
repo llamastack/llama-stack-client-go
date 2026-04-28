@@ -1,8 +1,8 @@
 package sentinel_test
 
 import (
-	"github.com/llamastack/llama-stack-client-go/internal/encoding/json/sentinel"
-	"github.com/llamastack/llama-stack-client-go/packages/param"
+	"github.com/ogx-ai/ogx-client-go/internal/encoding/json/sentinel"
+	"github.com/ogx-ai/ogx-client-go/packages/param"
 	"reflect"
 	"slices"
 	"testing"

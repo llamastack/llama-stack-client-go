@@ -1,4 +1,4 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
+// Copyright (c) The OGX Contributors.
 // All rights reserved.
 //
 // This source code is licensed under the terms described in the LICENSE file in
@@ -6,7 +6,7 @@
 //
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package llamastackclient_test
+package ogxclient_test
 
 import (
 	"context"
@@ -14,9 +14,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/llamastack/llama-stack-client-go"
-	"github.com/llamastack/llama-stack-client-go/internal/testutil"
-	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/ogx-ai/ogx-client-go"
+	"github.com/ogx-ai/ogx-client-go/internal/testutil"
+	"github.com/ogx-ai/ogx-client-go/option"
 )
 
 func TestChatCompletionNewWithOptionalParams(t *testing.T) {
@@ -27,23 +27,23 @@ func TestChatCompletionNewWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Chat.Completions.New(context.TODO(), llamastackclient.ChatCompletionNewParams{
-		Messages: []llamastackclient.ChatCompletionNewParamsMessageUnion{{
-			OfUser: &llamastackclient.ChatCompletionNewParamsMessageUser{
-				Content: llamastackclient.ChatCompletionNewParamsMessageUserContentUnion{
-					OfString: llamastackclient.String("string"),
+	_, err := client.Chat.Completions.New(context.TODO(), ogxclient.ChatCompletionNewParams{
+		Messages: []ogxclient.ChatCompletionNewParamsMessageUnion{{
+			OfUser: &ogxclient.ChatCompletionNewParamsMessageUser{
+				Content: ogxclient.ChatCompletionNewParamsMessageUserContentUnion{
+					OfString: ogxclient.String("string"),
 				},
-				Name: llamastackclient.String("name"),
+				Name: ogxclient.String("name"),
 				Role: "user",
 			},
 		}},
 		Model:            "model",
-		FrequencyPenalty: llamastackclient.Float(-2),
-		FunctionCall: llamastackclient.ChatCompletionNewParamsFunctionCallUnion{
-			OfString: llamastackclient.String("string"),
+		FrequencyPenalty: ogxclient.Float(-2),
+		FunctionCall: ogxclient.ChatCompletionNewParamsFunctionCallUnion{
+			OfString: ogxclient.String("string"),
 		},
 		Functions: []map[string]any{{
 			"foo": "bar",
@@ -51,41 +51,41 @@ func TestChatCompletionNewWithOptionalParams(t *testing.T) {
 		LogitBias: map[string]float64{
 			"foo": 0,
 		},
-		Logprobs:            llamastackclient.Bool(true),
-		MaxCompletionTokens: llamastackclient.Int(1),
-		MaxTokens:           llamastackclient.Int(1),
-		N:                   llamastackclient.Int(1),
-		ParallelToolCalls:   llamastackclient.Bool(true),
-		PresencePenalty:     llamastackclient.Float(-2),
-		PromptCacheKey:      llamastackclient.String("prompt_cache_key"),
-		ReasoningEffort:     llamastackclient.ChatCompletionNewParamsReasoningEffortNone,
-		ResponseFormat: llamastackclient.ChatCompletionNewParamsResponseFormatUnion{
-			OfText: &llamastackclient.ChatCompletionNewParamsResponseFormatText{
+		Logprobs:            ogxclient.Bool(true),
+		MaxCompletionTokens: ogxclient.Int(1),
+		MaxTokens:           ogxclient.Int(1),
+		N:                   ogxclient.Int(1),
+		ParallelToolCalls:   ogxclient.Bool(true),
+		PresencePenalty:     ogxclient.Float(-2),
+		PromptCacheKey:      ogxclient.String("prompt_cache_key"),
+		ReasoningEffort:     ogxclient.ChatCompletionNewParamsReasoningEffortNone,
+		ResponseFormat: ogxclient.ChatCompletionNewParamsResponseFormatUnion{
+			OfText: &ogxclient.ChatCompletionNewParamsResponseFormatText{
 				Type: "text",
 			},
 		},
-		SafetyIdentifier: llamastackclient.String("safety_identifier"),
-		Seed:             llamastackclient.Int(0),
-		ServiceTier:      llamastackclient.ChatCompletionNewParamsServiceTierAuto,
-		Stop: llamastackclient.ChatCompletionNewParamsStopUnion{
-			OfString: llamastackclient.String("string"),
+		SafetyIdentifier: ogxclient.String("safety_identifier"),
+		Seed:             ogxclient.Int(0),
+		ServiceTier:      ogxclient.ChatCompletionNewParamsServiceTierAuto,
+		Stop: ogxclient.ChatCompletionNewParamsStopUnion{
+			OfString: ogxclient.String("string"),
 		},
 		StreamOptions: map[string]any{
 			"foo": "bar",
 		},
-		Temperature: llamastackclient.Float(0),
-		ToolChoice: llamastackclient.ChatCompletionNewParamsToolChoiceUnion{
-			OfString: llamastackclient.String("string"),
+		Temperature: ogxclient.Float(0),
+		ToolChoice: ogxclient.ChatCompletionNewParamsToolChoiceUnion{
+			OfString: ogxclient.String("string"),
 		},
 		Tools: []map[string]any{{
 			"foo": "bar",
 		}},
-		TopLogprobs: llamastackclient.Int(0),
-		TopP:        llamastackclient.Float(0),
-		User:        llamastackclient.String("user"),
+		TopLogprobs: ogxclient.Int(0),
+		TopP:        ogxclient.Float(0),
+		User:        ogxclient.String("user"),
 	})
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -101,12 +101,12 @@ func TestChatCompletionGet(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Chat.Completions.Get(context.TODO(), "completion_id")
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}
@@ -122,17 +122,17 @@ func TestChatCompletionListWithOptionalParams(t *testing.T) {
 	if !testutil.CheckTestServer(t, baseURL) {
 		return
 	}
-	client := llamastackclient.NewClient(
+	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Chat.Completions.List(context.TODO(), llamastackclient.ChatCompletionListParams{
-		After: llamastackclient.String("after"),
-		Limit: llamastackclient.Int(0),
-		Model: llamastackclient.String("model"),
-		Order: llamastackclient.ChatCompletionListParamsOrderAsc,
+	_, err := client.Chat.Completions.List(context.TODO(), ogxclient.ChatCompletionListParams{
+		After: ogxclient.String("after"),
+		Limit: ogxclient.Int(0),
+		Model: ogxclient.String("model"),
+		Order: ogxclient.ChatCompletionListParamsOrderAsc,
 	})
 	if err != nil {
-		var apierr *llamastackclient.Error
+		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {
 			t.Log(string(apierr.DumpRequest(true)))
 		}

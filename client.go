@@ -1,4 +1,4 @@
-// Copyright (c) Meta Platforms, Inc. and affiliates.
+// Copyright (c) The OGX Contributors.
 // All rights reserved.
 //
 // This source code is licensed under the terms described in the LICENSE file in
@@ -6,7 +6,7 @@
 //
 // File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-package llamastackclient
+package ogxclient
 
 import (
 	"context"
@@ -15,13 +15,13 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/llamastack/llama-stack-client-go/internal/requestconfig"
-	"github.com/llamastack/llama-stack-client-go/option"
+	"github.com/ogx-ai/ogx-client-go/internal/requestconfig"
+	"github.com/ogx-ai/ogx-client-go/option"
 )
 
 // Client creates a struct with services and top level methods that help with
-// interacting with the llama-stack-client API. You should not instantiate this
-// client directly, and instead use the [NewClient] method instead.
+// interacting with the ogx-client API. You should not instantiate this client
+// directly, and instead use the [NewClient] method instead.
 type Client struct {
 	Options []option.RequestOption
 	// OpenAI Responses API for agent orchestration with tool use, multi-turn
@@ -31,11 +31,10 @@ type Client struct {
 	Prompts PromptService
 	// Protocol for conversation management operations.
 	Conversations ConversationService
-	// APIs for inspecting the Llama Stack service, including health status, available
-	// API routes with methods and implementing providers.
+	// APIs for inspecting the OGX service, including health status, available API
+	// routes with methods and implementing providers.
 	Inspect InspectService
-	// Llama Stack Inference API for generating completions, chat completions, and
-	// embeddings.
+	// OGX Inference API for generating completions, chat completions, and embeddings.
 	//
 	// This API provides the raw interface to the underlying models. Three kinds of
 	// models are supported:
@@ -48,8 +47,7 @@ type Client struct {
 	//     a query.
 	Embeddings EmbeddingService
 	Chat       ChatService
-	// Llama Stack Inference API for generating completions, chat completions, and
-	// embeddings.
+	// OGX Inference API for generating completions, chat completions, and embeddings.
 	//
 	// This API provides the raw interface to the underlying models. Three kinds of
 	// models are supported:
@@ -67,16 +65,15 @@ type Client struct {
 	// Providers API for inspecting, listing, and modifying providers and their
 	// configurations.
 	Providers ProviderService
-	// APIs for inspecting the Llama Stack service, including health status, available
-	// API routes with methods and implementing providers.
+	// APIs for inspecting the OGX service, including health status, available API
+	// routes with methods and implementing providers.
 	Routes RouteService
 	// OpenAI-compatible Moderations API.
 	Moderations ModerationService
 	// OpenAI-compatible Moderations API.
 	Safety  SafetyService
 	Shields ShieldService
-	// This API is used to upload documents that can be used with other Llama Stack
-	// APIs.
+	// This API is used to upload documents that can be used with other OGX APIs.
 	Files FileService
 	// The API is designed to allow use of openai client libraries for seamless
 	// integration.
@@ -90,17 +87,17 @@ type Client struct {
 	Alpha   AlphaService
 }
 
-// DefaultClientOptions read from the environment (LLAMA_STACK_CLIENT_API_KEY,
-// LLAMA_STACK_CLIENT_BASE_URL). This should be used to initialize new clients.
+// DefaultClientOptions read from the environment (OGX_CLIENT_API_KEY,
+// OGX_CLIENT_BASE_URL). This should be used to initialize new clients.
 func DefaultClientOptions() []option.RequestOption {
 	defaults := []option.RequestOption{option.WithHTTPClient(defaultHTTPClient()), option.WithEnvironmentProduction()}
-	if o, ok := os.LookupEnv("LLAMA_STACK_CLIENT_BASE_URL"); ok {
+	if o, ok := os.LookupEnv("OGX_CLIENT_BASE_URL"); ok {
 		defaults = append(defaults, option.WithBaseURL(o))
 	}
-	if o, ok := os.LookupEnv("LLAMA_STACK_CLIENT_API_KEY"); ok {
+	if o, ok := os.LookupEnv("OGX_CLIENT_API_KEY"); ok {
 		defaults = append(defaults, option.WithAPIKey(o))
 	}
-	if o, ok := os.LookupEnv("LLAMA_STACK_CLIENT_CUSTOM_HEADERS"); ok {
+	if o, ok := os.LookupEnv("OGX_CLIENT_CUSTOM_HEADERS"); ok {
 		for _, line := range strings.Split(o, "\n") {
 			colon := strings.Index(line, ":")
 			if colon >= 0 {
@@ -112,9 +109,9 @@ func DefaultClientOptions() []option.RequestOption {
 }
 
 // NewClient generates a new client with the default option read from the
-// environment (LLAMA_STACK_CLIENT_API_KEY, LLAMA_STACK_CLIENT_BASE_URL). The
-// option passed in as arguments are applied after these default arguments, and all
-// option will be passed down to the services and requests that this client makes.
+// environment (OGX_CLIENT_API_KEY, OGX_CLIENT_BASE_URL). The option passed in as
+// arguments are applied after these default arguments, and all option will be
+// passed down to the services and requests that this client makes.
 func NewClient(opts ...option.RequestOption) (r Client) {
 	opts = append(DefaultClientOptions(), opts...)
 
