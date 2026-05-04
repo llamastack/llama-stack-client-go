@@ -126,6 +126,16 @@ Methods:
 - <code title="get /v1/chat/completions/{completion_id}">client.Chat.Completions.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ChatCompletionService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, completionID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ChatCompletionGetResponse">ChatCompletionGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 - <code title="get /v1/chat/completions">client.Chat.Completions.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ChatCompletionService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ChatCompletionListParams">ChatCompletionListParams</a>) (\*<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ChatCompletionListResponse">ChatCompletionListResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
+### Messages
+
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ChatCompletionMessageListResponse">ChatCompletionMessageListResponse</a>
+
+Methods:
+
+- <code title="get /v1/chat/completions/{completion_id}/messages">client.Chat.Completions.Messages.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ChatCompletionMessageService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, completionID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ChatCompletionMessageListParams">ChatCompletionMessageListParams</a>) (\*<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go/packages/pagination">pagination</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go/packages/pagination#OpenAICursorPage">OpenAICursorPage</a>[<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ChatCompletionMessageListResponse">ChatCompletionMessageListResponse</a>], <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+
 # Completions
 
 Response Types:

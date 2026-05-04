@@ -47,6 +47,18 @@ import (
 // the [NewChatCompletionService] method instead.
 type ChatCompletionService struct {
 	Options []option.RequestOption
+	// OGX Inference API for generating completions, chat completions, and embeddings.
+	//
+	// This API provides the raw interface to the underlying models. Three kinds of
+	// models are supported:
+	//
+	//   - LLM models: these models generate "raw" and "chat" (conversational)
+	//     completions.
+	//   - Embedding models: these models generate embeddings to be used for semantic
+	//     search.
+	//   - Rerank models: these models reorder the documents based on their relevance to
+	//     a query.
+	Messages ChatCompletionMessageService
 }
 
 // NewChatCompletionService generates a new service that applies the given options
@@ -55,6 +67,7 @@ type ChatCompletionService struct {
 func NewChatCompletionService(opts ...option.RequestOption) (r ChatCompletionService) {
 	r = ChatCompletionService{}
 	r.Options = opts
+	r.Messages = NewChatCompletionMessageService(opts...)
 	return
 }
 
