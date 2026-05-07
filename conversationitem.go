@@ -87,7 +87,7 @@ func (r *ConversationItemService) ListAutoPaging(ctx context.Context, conversati
 }
 
 // Delete a conversation item.
-func (r *ConversationItemService) Delete(ctx context.Context, itemID string, body ConversationItemDeleteParams, opts ...option.RequestOption) (res *ConversationItemDeleteResponse, err error) {
+func (r *ConversationItemService) Delete(ctx context.Context, itemID string, body ConversationItemDeleteParams, opts ...option.RequestOption) (res *ConversationObject, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if body.ConversationID == "" {
 		err = errors.New("missing required conversation_id parameter")
@@ -103,9 +103,9 @@ func (r *ConversationItemService) Delete(ctx context.Context, itemID string, bod
 }
 
 // Retrieve a conversation item.
-func (r *ConversationItemService) Get(ctx context.Context, itemID string, query ConversationItemGetParams, opts ...option.RequestOption) (res *ConversationItemGetResponseUnion, err error) {
+func (r *ConversationItemService) Get(ctx context.Context, itemID string, params ConversationItemGetParams, opts ...option.RequestOption) (res *ConversationItemGetResponseUnion, err error) {
 	opts = slices.Concat(r.Options, opts)
-	if query.ConversationID == "" {
+	if params.ConversationID == "" {
 		err = errors.New("missing required conversation_id parameter")
 		return nil, err
 	}
@@ -113,8 +113,8 @@ func (r *ConversationItemService) Get(ctx context.Context, itemID string, query 
 		err = errors.New("missing required item_id parameter")
 		return nil, err
 	}
-	path := fmt.Sprintf("v1/conversations/%s/items/%s", query.ConversationID, itemID)
-	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, nil, &res, opts...)
+	path := fmt.Sprintf("v1/conversations/%s/items/%s", params.ConversationID, itemID)
+	err = requestconfig.ExecuteNewRequest(ctx, http.MethodGet, path, params, &res, opts...)
 	return res, err
 }
 
@@ -122,14 +122,16 @@ func (r *ConversationItemService) Get(ctx context.Context, itemID string, query 
 type ConversationItemNewResponse struct {
 	// List of conversation items
 	Data []ConversationItemNewResponseDataUnion `json:"data" api:"required"`
-	// The ID of the first item in the list
-	FirstID string `json:"first_id" api:"nullable"`
-	// Whether there are more items available
-	HasMore bool `json:"has_more"`
-	// The ID of the last item in the list
-	LastID string `json:"last_id" api:"nullable"`
-	// Object type
-	Object string `json:"object"`
+	// The ID of the first item in the list.
+	FirstID string `json:"first_id" api:"required"`
+	// Whether there are more items available.
+	HasMore bool `json:"has_more" api:"required"`
+	// The ID of the last item in the list.
+	LastID string `json:"last_id" api:"required"`
+	// The type of object returned, must be list.
+	//
+	// Any of "list".
+	Object ConversationItemNewResponseObject `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		Data        respjson.Field
@@ -158,7 +160,8 @@ func (r *ConversationItemNewResponse) UnmarshalJSON(data []byte) error {
 // [ConversationItemNewResponseDataMcpApprovalResponse],
 // [ConversationItemNewResponseDataMcpCall],
 // [ConversationItemNewResponseDataMcpListTools],
-// [ConversationItemNewResponseDataReasoning].
+// [ConversationItemNewResponseDataReasoning],
+// [ConversationItemNewResponseDataCompaction].
 //
 // Use the [ConversationItemNewResponseDataUnion.AsAny] method to switch on the
 // variant.
@@ -174,7 +177,7 @@ type ConversationItemNewResponseDataUnion struct {
 	Status string                                     `json:"status"`
 	// Any of "message", "web_search_call", "file_search_call", "function_call",
 	// "function_call_output", "mcp_approval_request", "mcp_approval_response",
-	// "mcp_call", "mcp_list_tools", "reasoning".
+	// "mcp_call", "mcp_list_tools", "reasoning", "compaction".
 	Type string `json:"type"`
 	// This field is from variant [ConversationItemNewResponseDataFileSearchCall].
 	Queries []string `json:"queries"`
@@ -199,7 +202,9 @@ type ConversationItemNewResponseDataUnion struct {
 	Tools []ConversationItemNewResponseDataMcpListToolsTool `json:"tools"`
 	// This field is from variant [ConversationItemNewResponseDataReasoning].
 	Summary []ConversationItemNewResponseDataReasoningSummary `json:"summary"`
-	JSON    struct {
+	// This field is from variant [ConversationItemNewResponseDataCompaction].
+	EncryptedContent string `json:"encrypted_content"`
+	JSON             struct {
 		Content           respjson.Field
 		Role              respjson.Field
 		ID                respjson.Field
@@ -218,6 +223,7 @@ type ConversationItemNewResponseDataUnion struct {
 		Error             respjson.Field
 		Tools             respjson.Field
 		Summary           respjson.Field
+		EncryptedContent  respjson.Field
 		raw               string
 	} `json:"-"`
 }
@@ -240,6 +246,7 @@ func (ConversationItemNewResponseDataMcpApprovalResponse) implConversationItemNe
 func (ConversationItemNewResponseDataMcpCall) implConversationItemNewResponseDataUnion()      {}
 func (ConversationItemNewResponseDataMcpListTools) implConversationItemNewResponseDataUnion() {}
 func (ConversationItemNewResponseDataReasoning) implConversationItemNewResponseDataUnion()    {}
+func (ConversationItemNewResponseDataCompaction) implConversationItemNewResponseDataUnion()   {}
 
 // Use the following switch statement to find the correct variant
 //
@@ -254,6 +261,7 @@ func (ConversationItemNewResponseDataReasoning) implConversationItemNewResponseD
 //	case ogxclient.ConversationItemNewResponseDataMcpCall:
 //	case ogxclient.ConversationItemNewResponseDataMcpListTools:
 //	case ogxclient.ConversationItemNewResponseDataReasoning:
+//	case ogxclient.ConversationItemNewResponseDataCompaction:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -279,6 +287,8 @@ func (u ConversationItemNewResponseDataUnion) AsAny() anyConversationItemNewResp
 		return u.AsMcpListTools()
 	case "reasoning":
 		return u.AsReasoning()
+	case "compaction":
+		return u.AsCompaction()
 	}
 	return nil
 }
@@ -329,6 +339,11 @@ func (u ConversationItemNewResponseDataUnion) AsMcpListTools() (v ConversationIt
 }
 
 func (u ConversationItemNewResponseDataUnion) AsReasoning() (v ConversationItemNewResponseDataReasoning) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ConversationItemNewResponseDataUnion) AsCompaction() (v ConversationItemNewResponseDataCompaction) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -1689,6 +1704,28 @@ func (r *ConversationItemNewResponseDataReasoningContent) UnmarshalJSON(data []b
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A compaction item that summarizes prior conversation context.
+type ConversationItemNewResponseDataCompaction struct {
+	EncryptedContent string `json:"encrypted_content" api:"required"`
+	ID               string `json:"id" api:"nullable"`
+	// Any of "compaction".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		EncryptedContent respjson.Field
+		ID               respjson.Field
+		Type             respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemNewResponseDataCompaction) RawJSON() string { return r.JSON.raw }
+func (r *ConversationItemNewResponseDataCompaction) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type ConversationItemNewResponseDataRole string
 
 const (
@@ -1696,6 +1733,13 @@ const (
 	ConversationItemNewResponseDataRoleDeveloper ConversationItemNewResponseDataRole = "developer"
 	ConversationItemNewResponseDataRoleUser      ConversationItemNewResponseDataRole = "user"
 	ConversationItemNewResponseDataRoleAssistant ConversationItemNewResponseDataRole = "assistant"
+)
+
+// The type of object returned, must be list.
+type ConversationItemNewResponseObject string
+
+const (
+	ConversationItemNewResponseObjectList ConversationItemNewResponseObject = "list"
 )
 
 // ConversationItemListResponseUnion contains all possible properties and values
@@ -1708,7 +1752,8 @@ const (
 // [ConversationItemListResponseMcpApprovalResponse],
 // [ConversationItemListResponseMcpCall],
 // [ConversationItemListResponseMcpListTools],
-// [ConversationItemListResponseReasoning].
+// [ConversationItemListResponseReasoning],
+// [ConversationItemListResponseCompaction].
 //
 // Use the [ConversationItemListResponseUnion.AsAny] method to switch on the
 // variant.
@@ -1724,7 +1769,7 @@ type ConversationItemListResponseUnion struct {
 	Status string                                  `json:"status"`
 	// Any of "message", "web_search_call", "file_search_call", "function_call",
 	// "function_call_output", "mcp_approval_request", "mcp_approval_response",
-	// "mcp_call", "mcp_list_tools", "reasoning".
+	// "mcp_call", "mcp_list_tools", "reasoning", "compaction".
 	Type string `json:"type"`
 	// This field is from variant [ConversationItemListResponseFileSearchCall].
 	Queries []string `json:"queries"`
@@ -1749,7 +1794,9 @@ type ConversationItemListResponseUnion struct {
 	Tools []ConversationItemListResponseMcpListToolsTool `json:"tools"`
 	// This field is from variant [ConversationItemListResponseReasoning].
 	Summary []ConversationItemListResponseReasoningSummary `json:"summary"`
-	JSON    struct {
+	// This field is from variant [ConversationItemListResponseCompaction].
+	EncryptedContent string `json:"encrypted_content"`
+	JSON             struct {
 		Content           respjson.Field
 		Role              respjson.Field
 		ID                respjson.Field
@@ -1768,6 +1815,7 @@ type ConversationItemListResponseUnion struct {
 		Error             respjson.Field
 		Tools             respjson.Field
 		Summary           respjson.Field
+		EncryptedContent  respjson.Field
 		raw               string
 	} `json:"-"`
 }
@@ -1789,6 +1837,7 @@ func (ConversationItemListResponseMcpApprovalResponse) implConversationItemListR
 func (ConversationItemListResponseMcpCall) implConversationItemListResponseUnion()             {}
 func (ConversationItemListResponseMcpListTools) implConversationItemListResponseUnion()        {}
 func (ConversationItemListResponseReasoning) implConversationItemListResponseUnion()           {}
+func (ConversationItemListResponseCompaction) implConversationItemListResponseUnion()          {}
 
 // Use the following switch statement to find the correct variant
 //
@@ -1803,6 +1852,7 @@ func (ConversationItemListResponseReasoning) implConversationItemListResponseUni
 //	case ogxclient.ConversationItemListResponseMcpCall:
 //	case ogxclient.ConversationItemListResponseMcpListTools:
 //	case ogxclient.ConversationItemListResponseReasoning:
+//	case ogxclient.ConversationItemListResponseCompaction:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -1828,6 +1878,8 @@ func (u ConversationItemListResponseUnion) AsAny() anyConversationItemListRespon
 		return u.AsMcpListTools()
 	case "reasoning":
 		return u.AsReasoning()
+	case "compaction":
+		return u.AsCompaction()
 	}
 	return nil
 }
@@ -1878,6 +1930,11 @@ func (u ConversationItemListResponseUnion) AsMcpListTools() (v ConversationItemL
 }
 
 func (u ConversationItemListResponseUnion) AsReasoning() (v ConversationItemListResponseReasoning) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ConversationItemListResponseUnion) AsCompaction() (v ConversationItemListResponseCompaction) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -3236,6 +3293,28 @@ func (r *ConversationItemListResponseReasoningContent) UnmarshalJSON(data []byte
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A compaction item that summarizes prior conversation context.
+type ConversationItemListResponseCompaction struct {
+	EncryptedContent string `json:"encrypted_content" api:"required"`
+	ID               string `json:"id" api:"nullable"`
+	// Any of "compaction".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		EncryptedContent respjson.Field
+		ID               respjson.Field
+		Type             respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemListResponseCompaction) RawJSON() string { return r.JSON.raw }
+func (r *ConversationItemListResponseCompaction) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type ConversationItemListResponseRole string
 
 const (
@@ -3244,30 +3323,6 @@ const (
 	ConversationItemListResponseRoleUser      ConversationItemListResponseRole = "user"
 	ConversationItemListResponseRoleAssistant ConversationItemListResponseRole = "assistant"
 )
-
-// Response for deleted conversation item.
-type ConversationItemDeleteResponse struct {
-	// The deleted item identifier
-	ID string `json:"id" api:"required"`
-	// Whether the object was deleted
-	Deleted bool `json:"deleted"`
-	// Object type
-	Object string `json:"object"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ID          respjson.Field
-		Deleted     respjson.Field
-		Object      respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r ConversationItemDeleteResponse) RawJSON() string { return r.JSON.raw }
-func (r *ConversationItemDeleteResponse) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
 
 // ConversationItemGetResponseUnion contains all possible properties and values
 // from [ConversationItemGetResponseMessage],
@@ -3278,7 +3333,7 @@ func (r *ConversationItemDeleteResponse) UnmarshalJSON(data []byte) error {
 // [ConversationItemGetResponseMcpApprovalRequest],
 // [ConversationItemGetResponseMcpApprovalResponse],
 // [ConversationItemGetResponseMcpCall], [ConversationItemGetResponseMcpListTools],
-// [ConversationItemGetResponseReasoning].
+// [ConversationItemGetResponseReasoning], [ConversationItemGetResponseCompaction].
 //
 // Use the [ConversationItemGetResponseUnion.AsAny] method to switch on the
 // variant.
@@ -3294,7 +3349,7 @@ type ConversationItemGetResponseUnion struct {
 	Status string                                 `json:"status"`
 	// Any of "message", "web_search_call", "file_search_call", "function_call",
 	// "function_call_output", "mcp_approval_request", "mcp_approval_response",
-	// "mcp_call", "mcp_list_tools", "reasoning".
+	// "mcp_call", "mcp_list_tools", "reasoning", "compaction".
 	Type string `json:"type"`
 	// This field is from variant [ConversationItemGetResponseFileSearchCall].
 	Queries []string `json:"queries"`
@@ -3319,7 +3374,9 @@ type ConversationItemGetResponseUnion struct {
 	Tools []ConversationItemGetResponseMcpListToolsTool `json:"tools"`
 	// This field is from variant [ConversationItemGetResponseReasoning].
 	Summary []ConversationItemGetResponseReasoningSummary `json:"summary"`
-	JSON    struct {
+	// This field is from variant [ConversationItemGetResponseCompaction].
+	EncryptedContent string `json:"encrypted_content"`
+	JSON             struct {
 		Content           respjson.Field
 		Role              respjson.Field
 		ID                respjson.Field
@@ -3338,6 +3395,7 @@ type ConversationItemGetResponseUnion struct {
 		Error             respjson.Field
 		Tools             respjson.Field
 		Summary           respjson.Field
+		EncryptedContent  respjson.Field
 		raw               string
 	} `json:"-"`
 }
@@ -3359,6 +3417,7 @@ func (ConversationItemGetResponseMcpApprovalResponse) implConversationItemGetRes
 func (ConversationItemGetResponseMcpCall) implConversationItemGetResponseUnion()             {}
 func (ConversationItemGetResponseMcpListTools) implConversationItemGetResponseUnion()        {}
 func (ConversationItemGetResponseReasoning) implConversationItemGetResponseUnion()           {}
+func (ConversationItemGetResponseCompaction) implConversationItemGetResponseUnion()          {}
 
 // Use the following switch statement to find the correct variant
 //
@@ -3373,6 +3432,7 @@ func (ConversationItemGetResponseReasoning) implConversationItemGetResponseUnion
 //	case ogxclient.ConversationItemGetResponseMcpCall:
 //	case ogxclient.ConversationItemGetResponseMcpListTools:
 //	case ogxclient.ConversationItemGetResponseReasoning:
+//	case ogxclient.ConversationItemGetResponseCompaction:
 //	default:
 //	  fmt.Errorf("no variant present")
 //	}
@@ -3398,6 +3458,8 @@ func (u ConversationItemGetResponseUnion) AsAny() anyConversationItemGetResponse
 		return u.AsMcpListTools()
 	case "reasoning":
 		return u.AsReasoning()
+	case "compaction":
+		return u.AsCompaction()
 	}
 	return nil
 }
@@ -3448,6 +3510,11 @@ func (u ConversationItemGetResponseUnion) AsMcpListTools() (v ConversationItemGe
 }
 
 func (u ConversationItemGetResponseUnion) AsReasoning() (v ConversationItemGetResponseReasoning) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ConversationItemGetResponseUnion) AsCompaction() (v ConversationItemGetResponseCompaction) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -4804,6 +4871,28 @@ func (r *ConversationItemGetResponseReasoningContent) UnmarshalJSON(data []byte)
 	return apijson.UnmarshalRoot(data, r)
 }
 
+// A compaction item that summarizes prior conversation context.
+type ConversationItemGetResponseCompaction struct {
+	EncryptedContent string `json:"encrypted_content" api:"required"`
+	ID               string `json:"id" api:"nullable"`
+	// Any of "compaction".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		EncryptedContent respjson.Field
+		ID               respjson.Field
+		Type             respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemGetResponseCompaction) RawJSON() string { return r.JSON.raw }
+func (r *ConversationItemGetResponseCompaction) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
 type ConversationItemGetResponseRole string
 
 const (
@@ -4842,6 +4931,7 @@ type ConversationItemNewParamsItemUnion struct {
 	OfMcpCall             *ConversationItemNewParamsItemMcpCall             `json:",omitzero,inline"`
 	OfMcpListTools        *ConversationItemNewParamsItemMcpListTools        `json:",omitzero,inline"`
 	OfReasoning           *ConversationItemNewParamsItemReasoning           `json:",omitzero,inline"`
+	OfCompaction          *ConversationItemNewParamsItemCompaction          `json:",omitzero,inline"`
 	paramUnion
 }
 
@@ -4855,7 +4945,8 @@ func (u ConversationItemNewParamsItemUnion) MarshalJSON() ([]byte, error) {
 		u.OfMcpApprovalResponse,
 		u.OfMcpCall,
 		u.OfMcpListTools,
-		u.OfReasoning)
+		u.OfReasoning,
+		u.OfCompaction)
 }
 func (u *ConversationItemNewParamsItemUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -4882,6 +4973,8 @@ func (u *ConversationItemNewParamsItemUnion) asAny() any {
 		return u.OfMcpListTools
 	} else if !param.IsOmitted(u.OfReasoning) {
 		return u.OfReasoning
+	} else if !param.IsOmitted(u.OfCompaction) {
+		return u.OfCompaction
 	}
 	return nil
 }
@@ -4959,6 +5052,14 @@ func (u ConversationItemNewParamsItemUnion) GetSummary() []ConversationItemNewPa
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u ConversationItemNewParamsItemUnion) GetEncryptedContent() *string {
+	if vt := u.OfCompaction; vt != nil {
+		return &vt.EncryptedContent
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u ConversationItemNewParamsItemUnion) GetID() *string {
 	if vt := u.OfMessage; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
@@ -4980,6 +5081,8 @@ func (u ConversationItemNewParamsItemUnion) GetID() *string {
 		return (*string)(&vt.ID)
 	} else if vt := u.OfReasoning; vt != nil {
 		return (*string)(&vt.ID)
+	} else if vt := u.OfCompaction; vt != nil && vt.ID.Valid() {
+		return &vt.ID.Value
 	}
 	return nil
 }
@@ -5023,6 +5126,8 @@ func (u ConversationItemNewParamsItemUnion) GetType() *string {
 	} else if vt := u.OfMcpListTools; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfReasoning; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfCompaction; vt != nil {
 		return (*string)(&vt.Type)
 	}
 	return nil
@@ -5143,6 +5248,7 @@ func init() {
 		apijson.Discriminator[ConversationItemNewParamsItemMcpCall]("mcp_call"),
 		apijson.Discriminator[ConversationItemNewParamsItemMcpListTools]("mcp_list_tools"),
 		apijson.Discriminator[ConversationItemNewParamsItemReasoning]("reasoning"),
+		apijson.Discriminator[ConversationItemNewParamsItemCompaction]("compaction"),
 	)
 }
 
@@ -6371,6 +6477,31 @@ func init() {
 	)
 }
 
+// A compaction item that summarizes prior conversation context.
+//
+// The property EncryptedContent is required.
+type ConversationItemNewParamsItemCompaction struct {
+	EncryptedContent string            `json:"encrypted_content" api:"required"`
+	ID               param.Opt[string] `json:"id,omitzero"`
+	// Any of "compaction".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ConversationItemNewParamsItemCompaction) MarshalJSON() (data []byte, err error) {
+	type shadow ConversationItemNewParamsItemCompaction
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ConversationItemNewParamsItemCompaction) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ConversationItemNewParamsItemCompaction](
+		"type", "compaction",
+	)
+}
+
 type ConversationItemListParams struct {
 	After param.Opt[string] `query:"after,omitzero" json:"-"`
 	Limit param.Opt[int64]  `query:"limit,omitzero" json:"-"`
@@ -6409,5 +6540,19 @@ type ConversationItemDeleteParams struct {
 type ConversationItemGetParams struct {
 	// The conversation identifier.
 	ConversationID string `path:"conversation_id" api:"required" json:"-"`
+	// Any of "web_search_call.action.sources", "code_interpreter_call.outputs",
+	// "computer_call_output.output.image_url", "file_search_call.results",
+	// "message.input_image.image_url", "message.output_text.logprobs",
+	// "reasoning.encrypted_content".
+	Include []string `query:"include,omitzero" json:"-"`
 	paramObj
+}
+
+// URLQuery serializes [ConversationItemGetParams]'s query parameters as
+// `url.Values`.
+func (r ConversationItemGetParams) URLQuery() (v url.Values, err error) {
+	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
+		ArrayFormat:  apiquery.ArrayQueryFormatComma,
+		NestedFormat: apiquery.NestedQueryFormatBrackets,
+	})
 }

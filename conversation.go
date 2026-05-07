@@ -97,9 +97,6 @@ type ConversationObject struct {
 	// The time at which the conversation was created, measured in seconds since the
 	// Unix epoch.
 	CreatedAt int64 `json:"created_at" api:"required"`
-	// Initial items to include in the conversation context. You may add up to 20 items
-	// at a time.
-	Items []map[string]any `json:"items" api:"nullable"`
 	// Set of 16 key-value pairs that can be attached to an object. This can be useful
 	// for storing additional information about the object in a structured format, and
 	// querying for objects via API or the dashboard.
@@ -112,7 +109,6 @@ type ConversationObject struct {
 	JSON struct {
 		ID          respjson.Field
 		CreatedAt   respjson.Field
-		Items       respjson.Field
 		Metadata    respjson.Field
 		Object      respjson.Field
 		ExtraFields map[string]respjson.Field
@@ -140,7 +136,9 @@ type ConversationDeleteResponse struct {
 	// Whether the object was deleted
 	Deleted bool `json:"deleted"`
 	// Object type
-	Object string `json:"object"`
+	//
+	// Any of "conversation.deleted".
+	Object ConversationDeleteResponseObject `json:"object"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
@@ -156,6 +154,13 @@ func (r ConversationDeleteResponse) RawJSON() string { return r.JSON.raw }
 func (r *ConversationDeleteResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
+
+// Object type
+type ConversationDeleteResponseObject string
+
+const (
+	ConversationDeleteResponseObjectConversationDeleted ConversationDeleteResponseObject = "conversation.deleted"
+)
 
 type ConversationNewParams struct {
 	// Initial items to include in the conversation context.
@@ -187,6 +192,7 @@ type ConversationNewParamsItemUnion struct {
 	OfMcpCall             *ConversationNewParamsItemMcpCall             `json:",omitzero,inline"`
 	OfMcpListTools        *ConversationNewParamsItemMcpListTools        `json:",omitzero,inline"`
 	OfReasoning           *ConversationNewParamsItemReasoning           `json:",omitzero,inline"`
+	OfCompaction          *ConversationNewParamsItemCompaction          `json:",omitzero,inline"`
 	paramUnion
 }
 
@@ -200,7 +206,8 @@ func (u ConversationNewParamsItemUnion) MarshalJSON() ([]byte, error) {
 		u.OfMcpApprovalResponse,
 		u.OfMcpCall,
 		u.OfMcpListTools,
-		u.OfReasoning)
+		u.OfReasoning,
+		u.OfCompaction)
 }
 func (u *ConversationNewParamsItemUnion) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, u)
@@ -227,6 +234,8 @@ func (u *ConversationNewParamsItemUnion) asAny() any {
 		return u.OfMcpListTools
 	} else if !param.IsOmitted(u.OfReasoning) {
 		return u.OfReasoning
+	} else if !param.IsOmitted(u.OfCompaction) {
+		return u.OfCompaction
 	}
 	return nil
 }
@@ -304,6 +313,14 @@ func (u ConversationNewParamsItemUnion) GetSummary() []ConversationNewParamsItem
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u ConversationNewParamsItemUnion) GetEncryptedContent() *string {
+	if vt := u.OfCompaction; vt != nil {
+		return &vt.EncryptedContent
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u ConversationNewParamsItemUnion) GetID() *string {
 	if vt := u.OfMessage; vt != nil && vt.ID.Valid() {
 		return &vt.ID.Value
@@ -325,6 +342,8 @@ func (u ConversationNewParamsItemUnion) GetID() *string {
 		return (*string)(&vt.ID)
 	} else if vt := u.OfReasoning; vt != nil {
 		return (*string)(&vt.ID)
+	} else if vt := u.OfCompaction; vt != nil && vt.ID.Valid() {
+		return &vt.ID.Value
 	}
 	return nil
 }
@@ -368,6 +387,8 @@ func (u ConversationNewParamsItemUnion) GetType() *string {
 	} else if vt := u.OfMcpListTools; vt != nil {
 		return (*string)(&vt.Type)
 	} else if vt := u.OfReasoning; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfCompaction; vt != nil {
 		return (*string)(&vt.Type)
 	}
 	return nil
@@ -488,6 +509,7 @@ func init() {
 		apijson.Discriminator[ConversationNewParamsItemMcpCall]("mcp_call"),
 		apijson.Discriminator[ConversationNewParamsItemMcpListTools]("mcp_list_tools"),
 		apijson.Discriminator[ConversationNewParamsItemReasoning]("reasoning"),
+		apijson.Discriminator[ConversationNewParamsItemCompaction]("compaction"),
 	)
 }
 
@@ -1713,6 +1735,31 @@ func (r *ConversationNewParamsItemReasoningContent) UnmarshalJSON(data []byte) e
 func init() {
 	apijson.RegisterFieldValidator[ConversationNewParamsItemReasoningContent](
 		"type", "reasoning_text",
+	)
+}
+
+// A compaction item that summarizes prior conversation context.
+//
+// The property EncryptedContent is required.
+type ConversationNewParamsItemCompaction struct {
+	EncryptedContent string            `json:"encrypted_content" api:"required"`
+	ID               param.Opt[string] `json:"id,omitzero"`
+	// Any of "compaction".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ConversationNewParamsItemCompaction) MarshalJSON() (data []byte, err error) {
+	type shadow ConversationNewParamsItemCompaction
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ConversationNewParamsItemCompaction) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ConversationNewParamsItemCompaction](
+		"type", "compaction",
 	)
 }
 

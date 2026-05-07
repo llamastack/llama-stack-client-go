@@ -113,7 +113,7 @@ func TestConversationItemDelete(t *testing.T) {
 	}
 }
 
-func TestConversationItemGet(t *testing.T) {
+func TestConversationItemGetWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -129,6 +129,7 @@ func TestConversationItemGet(t *testing.T) {
 		"item_id",
 		ogxclient.ConversationItemGetParams{
 			ConversationID: "conversation_id",
+			Include:        []string{"web_search_call.action.sources"},
 		},
 	)
 	if err != nil {
