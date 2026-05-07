@@ -42,6 +42,8 @@ func NewSafetyService(opts ...option.RequestOption) (r SafetyService) {
 }
 
 // Run a safety shield on messages to check for policy violations.
+//
+// Deprecated: deprecated
 func (r *SafetyService) RunShield(ctx context.Context, body SafetyRunShieldParams, opts ...option.RequestOption) (res *RunShieldResponse, err error) {
 	opts = slices.Concat(r.Options, opts)
 	path := "v1/safety/run-shield"

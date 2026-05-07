@@ -42,6 +42,8 @@ func NewShieldService(opts ...option.RequestOption) (r ShieldService) {
 }
 
 // Get a shield by its identifier.
+//
+// Deprecated: deprecated
 func (r *ShieldService) Get(ctx context.Context, identifier string, opts ...option.RequestOption) (res *Shield, err error) {
 	opts = slices.Concat(r.Options, opts)
 	if identifier == "" {
@@ -54,6 +56,8 @@ func (r *ShieldService) Get(ctx context.Context, identifier string, opts ...opti
 }
 
 // List all shields.
+//
+// Deprecated: deprecated
 func (r *ShieldService) List(ctx context.Context, opts ...option.RequestOption) (res *[]Shield, err error) {
 	var env ListShieldsResponse
 	opts = slices.Concat(r.Options, opts)
