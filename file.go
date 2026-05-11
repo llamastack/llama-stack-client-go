@@ -162,7 +162,8 @@ type File struct {
 	Filename string `json:"filename" api:"required"`
 	// The intended purpose of the file.
 	//
-	// Any of "assistants", "batch".
+	// Any of "assistants", "assistants_output", "batch", "batch_output", "evals",
+	// "fine-tune", "fine-tune-results", "vision", "user_data".
 	Purpose FilePurpose `json:"purpose" api:"required"`
 	// Deprecated. The current status of the file.
 	//
@@ -170,17 +171,17 @@ type File struct {
 	//
 	// Deprecated: deprecated
 	Status FileStatus `json:"status" api:"required"`
-	// Deprecated. For details on why a fine-tuning training file failed validation,
-	// see the error field on fine_tuning.job.
-	//
-	// Deprecated: deprecated
-	StatusDetails string `json:"status_details" api:"required"`
-	// The Unix timestamp (in seconds) for when the file expires.
-	ExpiresAt int64 `json:"expires_at" api:"nullable"`
+	// The Unix timestamp (in seconds) for when the file will expire.
+	ExpiresAt int64 `json:"expires_at"`
 	// The object type, which is always 'file'.
 	//
 	// Any of "file".
 	Object FileObject `json:"object"`
+	// Deprecated. For details on why a fine-tuning training file failed validation,
+	// see the error field on fine_tuning.job.
+	//
+	// Deprecated: deprecated
+	StatusDetails string `json:"status_details"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID            respjson.Field
@@ -189,9 +190,9 @@ type File struct {
 		Filename      respjson.Field
 		Purpose       respjson.Field
 		Status        respjson.Field
-		StatusDetails respjson.Field
 		ExpiresAt     respjson.Field
 		Object        respjson.Field
+		StatusDetails respjson.Field
 		ExtraFields   map[string]respjson.Field
 		raw           string
 	} `json:"-"`
@@ -207,8 +208,15 @@ func (r *File) UnmarshalJSON(data []byte) error {
 type FilePurpose string
 
 const (
-	FilePurposeAssistants FilePurpose = "assistants"
-	FilePurposeBatch      FilePurpose = "batch"
+	FilePurposeAssistants       FilePurpose = "assistants"
+	FilePurposeAssistantsOutput FilePurpose = "assistants_output"
+	FilePurposeBatch            FilePurpose = "batch"
+	FilePurposeBatchOutput      FilePurpose = "batch_output"
+	FilePurposeEvals            FilePurpose = "evals"
+	FilePurposeFineTune         FilePurpose = "fine-tune"
+	FilePurposeFineTuneResults  FilePurpose = "fine-tune-results"
+	FilePurposeVision           FilePurpose = "vision"
+	FilePurposeUserData         FilePurpose = "user_data"
 )
 
 // Deprecated. The current status of the file.
@@ -271,7 +279,7 @@ type FileNewParams struct {
 	File io.Reader `json:"file,omitzero" api:"required" format:"binary"`
 	// The intended purpose of the uploaded file.
 	//
-	// Any of "assistants", "batch".
+	// Any of "assistants", "batch", "fine-tune", "vision", "user_data", "evals".
 	Purpose FileNewParamsPurpose `json:"purpose,omitzero" api:"required"`
 	// Control expiration of uploaded files.
 	ExpiresAfter FileNewParamsExpiresAfter `json:"expires_after,omitzero"`
@@ -302,6 +310,10 @@ type FileNewParamsPurpose string
 const (
 	FileNewParamsPurposeAssistants FileNewParamsPurpose = "assistants"
 	FileNewParamsPurposeBatch      FileNewParamsPurpose = "batch"
+	FileNewParamsPurposeFineTune   FileNewParamsPurpose = "fine-tune"
+	FileNewParamsPurposeVision     FileNewParamsPurpose = "vision"
+	FileNewParamsPurposeUserData   FileNewParamsPurpose = "user_data"
+	FileNewParamsPurposeEvals      FileNewParamsPurpose = "evals"
 )
 
 // Control expiration of uploaded files.
@@ -342,7 +354,8 @@ type FileListParams struct {
 	Order FileListParamsOrder `query:"order,omitzero" json:"-"`
 	// Filter files by purpose.
 	//
-	// Any of "assistants", "batch".
+	// Any of "assistants", "assistants_output", "batch", "batch_output", "evals",
+	// "fine-tune", "fine-tune-results", "vision", "user_data".
 	Purpose FileListParamsPurpose `query:"purpose,omitzero" json:"-"`
 	paramObj
 }
@@ -367,6 +380,13 @@ const (
 type FileListParamsPurpose string
 
 const (
-	FileListParamsPurposeAssistants FileListParamsPurpose = "assistants"
-	FileListParamsPurposeBatch      FileListParamsPurpose = "batch"
+	FileListParamsPurposeAssistants       FileListParamsPurpose = "assistants"
+	FileListParamsPurposeAssistantsOutput FileListParamsPurpose = "assistants_output"
+	FileListParamsPurposeBatch            FileListParamsPurpose = "batch"
+	FileListParamsPurposeBatchOutput      FileListParamsPurpose = "batch_output"
+	FileListParamsPurposeEvals            FileListParamsPurpose = "evals"
+	FileListParamsPurposeFineTune         FileListParamsPurpose = "fine-tune"
+	FileListParamsPurposeFineTuneResults  FileListParamsPurpose = "fine-tune-results"
+	FileListParamsPurposeVision           FileListParamsPurpose = "vision"
+	FileListParamsPurposeUserData         FileListParamsPurpose = "user_data"
 )
