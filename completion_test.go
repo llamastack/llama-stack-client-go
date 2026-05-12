@@ -41,7 +41,7 @@ func TestCompletionNewWithOptionalParams(t *testing.T) {
 		LogitBias: map[string]float64{
 			"foo": 0,
 		},
-		Logprobs:        ogxclient.Bool(true),
+		Logprobs:        ogxclient.Int(0),
 		MaxTokens:       ogxclient.Int(1),
 		N:               ogxclient.Int(1),
 		PresencePenalty: ogxclient.Float(-2),

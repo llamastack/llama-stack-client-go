@@ -281,8 +281,8 @@ type CompletionNewParams struct {
 	Echo param.Opt[bool] `json:"echo,omitzero"`
 	// The penalty for repeated tokens.
 	FrequencyPenalty param.Opt[float64] `json:"frequency_penalty,omitzero"`
-	// The log probabilities to use.
-	Logprobs param.Opt[bool] `json:"logprobs,omitzero"`
+	// Include the log probabilities on the logprobs most likely output tokens.
+	Logprobs param.Opt[int64] `json:"logprobs,omitzero"`
 	// The maximum number of tokens to generate.
 	MaxTokens param.Opt[int64] `json:"max_tokens,omitzero"`
 	// The number of completions to generate.
