@@ -29,9 +29,9 @@ func TestUsage(t *testing.T) {
 	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	listModelsResponse, err := client.Models.List(context.TODO())
+	models, err := client.Models.List(context.TODO(), ogxclient.ModelListParams{})
 	if err != nil {
 		t.Fatalf("err should be nil: %s", err.Error())
 	}
-	t.Logf("%+v\n", listModelsResponse.Data)
+	t.Logf("%+v\n", models)
 }

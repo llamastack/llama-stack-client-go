@@ -210,18 +210,23 @@ Response Types:
 
 - <a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ListModelsResponse">ListModelsResponse</a>
 - <a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#Model">Model</a>
-- <a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ModelGetResponse">ModelGetResponse</a>
+- <a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ModelGetResponseUnion">ModelGetResponseUnion</a>
+- <a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ModelListResponseUnion">ModelListResponseUnion</a>
 
 Methods:
 
-- <code title="get /v1/models/{model_id}">client.Models.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ModelService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, modelID <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ModelGetResponse">ModelGetResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="get /v1/models">client.Models.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ModelService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (\*<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ListModelsResponse">ListModelsResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /v1/models/{model_id}">client.Models.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ModelService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, modelID <a href="https://pkg.go.dev/builtin#string">string</a>, query <a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ModelGetParams">ModelGetParams</a>) (\*<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ModelGetResponseUnion">ModelGetResponseUnion</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /v1/models">client.Models.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ModelService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ModelListParams">ModelListParams</a>) (\*<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ModelListResponseUnion">ModelListResponseUnion</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 ## OpenAI
 
+Response Types:
+
+- <a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ModelOpenAIListResponseUnion">ModelOpenAIListResponseUnion</a>
+
 Methods:
 
-- <code title="get /v1/models">client.Models.OpenAI.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ModelOpenAIService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (\*<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ListModelsResponse">ListModelsResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
+- <code title="get /v1/models">client.Models.OpenAI.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ModelOpenAIService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, params <a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ModelOpenAIListParams">ModelOpenAIListParams</a>) (\*<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ModelOpenAIListResponseUnion">ModelOpenAIListResponseUnion</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Providers
 

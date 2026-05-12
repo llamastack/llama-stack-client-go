@@ -19,7 +19,7 @@ import (
 	"github.com/ogx-ai/ogx-client-go/option"
 )
 
-func TestModelOpenAIList(t *testing.T) {
+func TestModelOpenAIListWithOptionalParams(t *testing.T) {
 	baseURL := "http://localhost:4010"
 	if envURL, ok := os.LookupEnv("TEST_API_BASE_URL"); ok {
 		baseURL = envURL
@@ -30,7 +30,15 @@ func TestModelOpenAIList(t *testing.T) {
 	client := ogxclient.NewClient(
 		option.WithBaseURL(baseURL),
 	)
-	_, err := client.Models.OpenAI.List(context.TODO())
+	_, err := client.Models.OpenAI.List(context.TODO(), ogxclient.ModelOpenAIListParams{
+		AfterID:          ogxclient.String("after_id"),
+		BeforeID:         ogxclient.String("before_id"),
+		Limit:            ogxclient.Int(1),
+		AnthropicVersion: ogxclient.String("anthropic-version"),
+		XGoogAPIClient:   ogxclient.String("x-goog-api-client"),
+		XGoogAPIKey:      ogxclient.String("x-goog-api-key"),
+		XGoogUserProject: ogxclient.String("x-goog-user-project"),
+	})
 	if err != nil {
 		var apierr *ogxclient.Error
 		if errors.As(err, &apierr) {

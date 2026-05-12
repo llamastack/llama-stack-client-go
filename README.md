@@ -53,11 +53,11 @@ import (
 
 func main() {
 	client := ogxclient.NewClient()
-	listModelsResponse, err := client.Models.List(context.TODO())
+	models, err := client.Models.List(context.TODO(), ogxclient.ModelListParams{})
 	if err != nil {
 		panic(err.Error())
 	}
-	fmt.Printf("%+v\n", listModelsResponse.Data)
+	fmt.Printf("%+v\n", models)
 }
 
 ```
