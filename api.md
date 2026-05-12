@@ -5,7 +5,6 @@
 - <a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ListRoutesResponse">ListRoutesResponse</a>
 - <a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ProviderInfo">ProviderInfo</a>
 - <a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#RouteInfo">RouteInfo</a>
-- <a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#SafetyViolation">SafetyViolation</a>
 - <a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#VersionInfo">VersionInfo</a>
 
 # Responses
@@ -236,40 +235,6 @@ Methods:
 Methods:
 
 - <code title="get /v1/inspect/routes">client.Routes.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#RouteService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, query <a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#RouteListParams">RouteListParams</a>) (\*[]<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#RouteInfo">RouteInfo</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
-# Moderations
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#CreateResponse">CreateResponse</a>
-
-Methods:
-
-- <code title="post /v1/moderations">client.Moderations.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ModerationService.New">New</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ModerationNewParams">ModerationNewParams</a>) (\*<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#CreateResponse">CreateResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
-# Safety
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#RunShieldResponse">RunShieldResponse</a>
-
-Methods:
-
-- <code title="post /v1/safety/run-shield">client.Safety.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#SafetyService.RunShield">RunShield</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#SafetyRunShieldParams">SafetyRunShieldParams</a>) (\*<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#RunShieldResponse">RunShieldResponse</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-
-# Shields
-
-Response Types:
-
-- <a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ListShieldsResponse">ListShieldsResponse</a>
-- <a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#Shield">Shield</a>
-
-Methods:
-
-- <code title="get /v1/shields/{identifier}">client.Shields.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ShieldService.Get">Get</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, identifier <a href="https://pkg.go.dev/builtin#string">string</a>) (\*<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#Shield">Shield</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="get /v1/shields">client.Shields.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ShieldService.List">List</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>) (\*[]<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#Shield">Shield</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
-- <code title="delete /v1/shields/{identifier}">client.Shields.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ShieldService.Delete">Delete</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, identifier <a href="https://pkg.go.dev/builtin#string">string</a>) <a href="https://pkg.go.dev/builtin#error">error</a></code>
-- <code title="post /v1/shields">client.Shields.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ShieldService.Register">Register</a>(ctx <a href="https://pkg.go.dev/context">context</a>.<a href="https://pkg.go.dev/context#Context">Context</a>, body <a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#ShieldRegisterParams">ShieldRegisterParams</a>) (\*<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go">ogxclient</a>.<a href="https://pkg.go.dev/github.com/ogx-ai/ogx-client-go#Shield">Shield</a>, <a href="https://pkg.go.dev/builtin#error">error</a>)</code>
 
 # Files
 

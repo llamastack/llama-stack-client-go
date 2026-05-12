@@ -134,41 +134,6 @@ func (r *RouteInfo) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-// Details of a safety violation detected by content moderation.
-type SafetyViolation struct {
-	// Severity level of the violation
-	//
-	// Any of "info", "warn", "error".
-	ViolationLevel SafetyViolationViolationLevel `json:"violation_level" api:"required"`
-	// Additional metadata including specific violation codes
-	Metadata map[string]any `json:"metadata"`
-	// Message to convey to the user about the violation
-	UserMessage string `json:"user_message" api:"nullable"`
-	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
-	JSON struct {
-		ViolationLevel respjson.Field
-		Metadata       respjson.Field
-		UserMessage    respjson.Field
-		ExtraFields    map[string]respjson.Field
-		raw            string
-	} `json:"-"`
-}
-
-// Returns the unmodified JSON received from the API
-func (r SafetyViolation) RawJSON() string { return r.JSON.raw }
-func (r *SafetyViolation) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-// Severity level of the violation
-type SafetyViolationViolationLevel string
-
-const (
-	SafetyViolationViolationLevelInfo  SafetyViolationViolationLevel = "info"
-	SafetyViolationViolationLevelWarn  SafetyViolationViolationLevel = "warn"
-	SafetyViolationViolationLevelError SafetyViolationViolationLevel = "error"
-)
-
 // Version information for the service.
 type VersionInfo struct {
 	// The version string of the service

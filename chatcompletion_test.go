@@ -64,9 +64,8 @@ func TestChatCompletionNewWithOptionalParams(t *testing.T) {
 				Type: "text",
 			},
 		},
-		SafetyIdentifier: ogxclient.String("safety_identifier"),
-		Seed:             ogxclient.Int(0),
-		ServiceTier:      ogxclient.ChatCompletionNewParamsServiceTierAuto,
+		Seed:        ogxclient.Int(0),
+		ServiceTier: ogxclient.ChatCompletionNewParamsServiceTierAuto,
 		Stop: ogxclient.ChatCompletionNewParamsStopUnion{
 			OfString: ogxclient.String("string"),
 		},

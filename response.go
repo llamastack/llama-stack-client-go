@@ -2509,10 +2509,9 @@ type ResponseObject struct {
 	// Configuration for reasoning effort in OpenAI responses.
 	//
 	// Controls how much reasoning the model performs before generating a response.
-	Reasoning        ResponseObjectReasoning `json:"reasoning" api:"nullable"`
-	SafetyIdentifier string                  `json:"safety_identifier" api:"nullable"`
-	ServiceTier      string                  `json:"service_tier"`
-	Temperature      float64                 `json:"temperature"`
+	Reasoning   ResponseObjectReasoning `json:"reasoning" api:"nullable"`
+	ServiceTier string                  `json:"service_tier"`
+	Temperature float64                 `json:"temperature"`
 	// Text response configuration for OpenAI responses.
 	Text ResponseObjectText `json:"text"`
 	// Enumeration of simple tool choice modes for response generation.
@@ -2547,7 +2546,6 @@ type ResponseObject struct {
 		Prompt             respjson.Field
 		PromptCacheKey     respjson.Field
 		Reasoning          respjson.Field
-		SafetyIdentifier   respjson.Field
 		ServiceTier        respjson.Field
 		Temperature        respjson.Field
 		Text               respjson.Field
@@ -8665,10 +8663,9 @@ type ResponseListResponse struct {
 	// Configuration for reasoning effort in OpenAI responses.
 	//
 	// Controls how much reasoning the model performs before generating a response.
-	Reasoning        ResponseListResponseReasoning `json:"reasoning" api:"nullable"`
-	SafetyIdentifier string                        `json:"safety_identifier" api:"nullable"`
-	ServiceTier      string                        `json:"service_tier"`
-	Temperature      float64                       `json:"temperature"`
+	Reasoning   ResponseListResponseReasoning `json:"reasoning" api:"nullable"`
+	ServiceTier string                        `json:"service_tier"`
+	Temperature float64                       `json:"temperature"`
 	// Text response configuration for OpenAI responses.
 	Text ResponseListResponseText `json:"text"`
 	// Enumeration of simple tool choice modes for response generation.
@@ -8704,7 +8701,6 @@ type ResponseListResponse struct {
 		Prompt             respjson.Field
 		PromptCacheKey     respjson.Field
 		Reasoning          respjson.Field
-		SafetyIdentifier   respjson.Field
 		ServiceTier        respjson.Field
 		Temperature        respjson.Field
 		Text               respjson.Field
@@ -12452,8 +12448,6 @@ type ResponseNewParams struct {
 	PreviousResponseID param.Opt[string] `json:"previous_response_id,omitzero"`
 	// A key to use when reading from or writing to the prompt cache.
 	PromptCacheKey param.Opt[string] `json:"prompt_cache_key,omitzero"`
-	// A stable identifier used for safety monitoring and abuse detection.
-	SafetyIdentifier param.Opt[string] `json:"safety_identifier,omitzero"`
 	// Sampling temperature.
 	Temperature param.Opt[float64] `json:"temperature,omitzero"`
 	// The number of most likely tokens to return at each position, along with their
@@ -12470,8 +12464,6 @@ type ResponseNewParams struct {
 	// Context management configuration. When set with type 'compaction', automatically
 	// compacts conversation history when token count exceeds the compact_threshold.
 	ContextManagement []ResponseNewParamsContextManagement `json:"context_management,omitzero"`
-	// List of guardrails to apply during response generation.
-	Guardrails []ResponseNewParamsGuardrailUnion `json:"guardrails,omitzero"`
 	// Dictionary of metadata key-value pairs to attach to the response.
 	Metadata map[string]string `json:"metadata,omitzero"`
 	// OpenAI compatible Prompt object that is used in OpenAI responses.
@@ -14137,47 +14129,6 @@ func init() {
 	apijson.RegisterFieldValidator[ResponseNewParamsContextManagement](
 		"type", "compaction",
 	)
-}
-
-// Only one field can be non-zero.
-//
-// Use [param.IsOmitted] to confirm if a field is set.
-type ResponseNewParamsGuardrailUnion struct {
-	OfString                param.Opt[string]                                `json:",omitzero,inline"`
-	OfResponseGuardrailSpec *ResponseNewParamsGuardrailResponseGuardrailSpec `json:",omitzero,inline"`
-	paramUnion
-}
-
-func (u ResponseNewParamsGuardrailUnion) MarshalJSON() ([]byte, error) {
-	return param.MarshalUnion(u, u.OfString, u.OfResponseGuardrailSpec)
-}
-func (u *ResponseNewParamsGuardrailUnion) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, u)
-}
-
-func (u *ResponseNewParamsGuardrailUnion) asAny() any {
-	if !param.IsOmitted(u.OfString) {
-		return &u.OfString.Value
-	} else if !param.IsOmitted(u.OfResponseGuardrailSpec) {
-		return u.OfResponseGuardrailSpec
-	}
-	return nil
-}
-
-// Specification for a guardrail to apply during response generation.
-//
-// The property Type is required.
-type ResponseNewParamsGuardrailResponseGuardrailSpec struct {
-	Type string `json:"type" api:"required"`
-	paramObj
-}
-
-func (r ResponseNewParamsGuardrailResponseGuardrailSpec) MarshalJSON() (data []byte, err error) {
-	type shadow ResponseNewParamsGuardrailResponseGuardrailSpec
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *ResponseNewParamsGuardrailResponseGuardrailSpec) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
 }
 
 // OpenAI compatible Prompt object that is used in OpenAI responses.

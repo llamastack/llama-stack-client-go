@@ -68,11 +68,6 @@ type Client struct {
 	// APIs for inspecting the OGX service, including health status, available API
 	// routes with methods and implementing providers.
 	Routes RouteService
-	// OpenAI-compatible Moderations API.
-	Moderations ModerationService
-	// OpenAI-compatible Moderations API.
-	Safety  SafetyService
-	Shields ShieldService
 	// This API is used to upload documents that can be used with other OGX APIs.
 	Files FileService
 	// The API is designed to allow use of openai client libraries for seamless
@@ -129,9 +124,6 @@ func NewClient(opts ...option.RequestOption) (r Client) {
 	r.Models = NewModelService(opts...)
 	r.Providers = NewProviderService(opts...)
 	r.Routes = NewRouteService(opts...)
-	r.Moderations = NewModerationService(opts...)
-	r.Safety = NewSafetyService(opts...)
-	r.Shields = NewShieldService(opts...)
 	r.Files = NewFileService(opts...)
 	r.Batches = NewBatchService(opts...)
 	r.Alpha = NewAlphaService(opts...)
