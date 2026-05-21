@@ -2519,7 +2519,11 @@ type ResponseObject struct {
 	Tools       []ResponseObjectToolUnion     `json:"tools"`
 	TopLogprobs int64                         `json:"top_logprobs"`
 	TopP        float64                       `json:"top_p"`
-	Truncation  string                        `json:"truncation" api:"nullable"`
+	// Controls how the service truncates input when it exceeds the model context
+	// window.
+	//
+	// Any of "auto", "disabled".
+	Truncation ResponseObjectTruncation `json:"truncation" api:"nullable"`
 	// Usage information for OpenAI response.
 	Usage ResponseObjectUsage `json:"usage" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -4003,16 +4007,23 @@ const (
 type ResponseObjectReasoning struct {
 	// Any of "none", "minimal", "low", "medium", "high", "xhigh".
 	Effort string `json:"effort" api:"nullable"`
+	// Deprecated: use 'summary' instead.
+	//
+	// Any of "auto", "concise", "detailed".
+	//
+	// Deprecated: deprecated
+	GenerateSummary string `json:"generate_summary" api:"nullable"`
 	// Summary mode for reasoning output. One of 'auto', 'concise', or 'detailed'.
 	//
 	// Any of "auto", "concise", "detailed".
 	Summary string `json:"summary" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Effort      respjson.Field
-		Summary     respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		Effort          respjson.Field
+		GenerateSummary respjson.Field
+		Summary         respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
 	} `json:"-"`
 }
 
@@ -4619,6 +4630,15 @@ const (
 	ResponseObjectToolTypeFileSearch                 ResponseObjectToolType = "file_search"
 	ResponseObjectToolTypeFunction                   ResponseObjectToolType = "function"
 	ResponseObjectToolTypeMcp                        ResponseObjectToolType = "mcp"
+)
+
+// Controls how the service truncates input when it exceeds the model context
+// window.
+type ResponseObjectTruncation string
+
+const (
+	ResponseObjectTruncationAuto     ResponseObjectTruncation = "auto"
+	ResponseObjectTruncationDisabled ResponseObjectTruncation = "disabled"
 )
 
 // Usage information for OpenAI response.
@@ -8673,7 +8693,11 @@ type ResponseListResponse struct {
 	Tools       []ResponseListResponseToolUnion     `json:"tools"`
 	TopLogprobs int64                               `json:"top_logprobs"`
 	TopP        float64                             `json:"top_p"`
-	Truncation  string                              `json:"truncation" api:"nullable"`
+	// Controls how the service truncates input when it exceeds the model context
+	// window.
+	//
+	// Any of "auto", "disabled".
+	Truncation ResponseListResponseTruncation `json:"truncation" api:"nullable"`
 	// Usage information for OpenAI response.
 	Usage ResponseListResponseUsage `json:"usage" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -11711,16 +11735,23 @@ const (
 type ResponseListResponseReasoning struct {
 	// Any of "none", "minimal", "low", "medium", "high", "xhigh".
 	Effort string `json:"effort" api:"nullable"`
+	// Deprecated: use 'summary' instead.
+	//
+	// Any of "auto", "concise", "detailed".
+	//
+	// Deprecated: deprecated
+	GenerateSummary string `json:"generate_summary" api:"nullable"`
 	// Summary mode for reasoning output. One of 'auto', 'concise', or 'detailed'.
 	//
 	// Any of "auto", "concise", "detailed".
 	Summary string `json:"summary" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
-		Effort      respjson.Field
-		Summary     respjson.Field
-		ExtraFields map[string]respjson.Field
-		raw         string
+		Effort          respjson.Field
+		GenerateSummary respjson.Field
+		Summary         respjson.Field
+		ExtraFields     map[string]respjson.Field
+		raw             string
 	} `json:"-"`
 }
 
@@ -12332,6 +12363,15 @@ const (
 	ResponseListResponseToolTypeFileSearch                 ResponseListResponseToolType = "file_search"
 	ResponseListResponseToolTypeFunction                   ResponseListResponseToolType = "function"
 	ResponseListResponseToolTypeMcp                        ResponseListResponseToolType = "mcp"
+)
+
+// Controls how the service truncates input when it exceeds the model context
+// window.
+type ResponseListResponseTruncation string
+
+const (
+	ResponseListResponseTruncationAuto     ResponseListResponseTruncation = "auto"
+	ResponseListResponseTruncationDisabled ResponseListResponseTruncation = "disabled"
 )
 
 // Usage information for OpenAI response.
@@ -14344,6 +14384,12 @@ func init() {
 type ResponseNewParamsReasoning struct {
 	// Any of "none", "minimal", "low", "medium", "high", "xhigh".
 	Effort string `json:"effort,omitzero"`
+	// Deprecated: use 'summary' instead.
+	//
+	// Any of "auto", "concise", "detailed".
+	//
+	// Deprecated: deprecated
+	GenerateSummary string `json:"generate_summary,omitzero"`
 	// Summary mode for reasoning output. One of 'auto', 'concise', or 'detailed'.
 	//
 	// Any of "auto", "concise", "detailed".
@@ -14362,6 +14408,9 @@ func (r *ResponseNewParamsReasoning) UnmarshalJSON(data []byte) error {
 func init() {
 	apijson.RegisterFieldValidator[ResponseNewParamsReasoning](
 		"effort", "none", "minimal", "low", "medium", "high", "xhigh",
+	)
+	apijson.RegisterFieldValidator[ResponseNewParamsReasoning](
+		"generate_summary", "auto", "concise", "detailed",
 	)
 	apijson.RegisterFieldValidator[ResponseNewParamsReasoning](
 		"summary", "auto", "concise", "detailed",
@@ -16821,6 +16870,12 @@ func init() {
 type ResponseCompactParamsReasoning struct {
 	// Any of "none", "minimal", "low", "medium", "high", "xhigh".
 	Effort string `json:"effort,omitzero"`
+	// Deprecated: use 'summary' instead.
+	//
+	// Any of "auto", "concise", "detailed".
+	//
+	// Deprecated: deprecated
+	GenerateSummary string `json:"generate_summary,omitzero"`
 	// Summary mode for reasoning output. One of 'auto', 'concise', or 'detailed'.
 	//
 	// Any of "auto", "concise", "detailed".
@@ -16839,6 +16894,9 @@ func (r *ResponseCompactParamsReasoning) UnmarshalJSON(data []byte) error {
 func init() {
 	apijson.RegisterFieldValidator[ResponseCompactParamsReasoning](
 		"effort", "none", "minimal", "low", "medium", "high", "xhigh",
+	)
+	apijson.RegisterFieldValidator[ResponseCompactParamsReasoning](
+		"generate_summary", "auto", "concise", "detailed",
 	)
 	apijson.RegisterFieldValidator[ResponseCompactParamsReasoning](
 		"summary", "auto", "concise", "detailed",

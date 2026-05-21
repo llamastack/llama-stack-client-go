@@ -67,8 +67,9 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 		},
 		PromptCacheKey: ogxclient.String("prompt_cache_key"),
 		Reasoning: ogxclient.ResponseNewParamsReasoning{
-			Effort:  "none",
-			Summary: "auto",
+			Effort:          "none",
+			GenerateSummary: "auto",
+			Summary:         "auto",
 		},
 		ServiceTier: ogxclient.ResponseNewParamsServiceTierAuto,
 		Store:       ogxclient.Bool(true),
@@ -199,8 +200,9 @@ func TestResponseCompactWithOptionalParams(t *testing.T) {
 		PreviousResponseID: ogxclient.String("previous_response_id"),
 		PromptCacheKey:     ogxclient.String("prompt_cache_key"),
 		Reasoning: ogxclient.ResponseCompactParamsReasoning{
-			Effort:  "none",
-			Summary: "auto",
+			Effort:          "none",
+			GenerateSummary: "auto",
+			Summary:         "auto",
 		},
 		Text: ogxclient.ResponseCompactParamsText{
 			Format: ogxclient.ResponseCompactParamsTextFormat{
