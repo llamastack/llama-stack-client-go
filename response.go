@@ -2497,7 +2497,7 @@ type ResponseObject struct {
 	Instructions      string                          `json:"instructions" api:"nullable"`
 	MaxOutputTokens   int64                           `json:"max_output_tokens" api:"nullable"`
 	MaxToolCalls      int64                           `json:"max_tool_calls" api:"nullable"`
-	Metadata          map[string]string               `json:"metadata" api:"nullable"`
+	Metadata          any                             `json:"metadata"`
 	// Any of "response".
 	Object             ResponseObjectObject `json:"object"`
 	ParallelToolCalls  bool                 `json:"parallel_tool_calls"`
@@ -2523,7 +2523,7 @@ type ResponseObject struct {
 	// window.
 	//
 	// Any of "auto", "disabled".
-	Truncation ResponseObjectTruncation `json:"truncation" api:"nullable"`
+	Truncation ResponseObjectTruncation `json:"truncation"`
 	// Usage information for OpenAI response.
 	Usage ResponseObjectUsage `json:"usage" api:"nullable"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
@@ -12524,11 +12524,6 @@ type ResponseNewParams struct {
 	ToolChoice ResponseNewParamsToolChoiceUnion `json:"tool_choice,omitzero"`
 	// List of tools available to the model.
 	Tools []ResponseNewParamsToolUnion `json:"tools,omitzero"`
-	// Controls how the service truncates input when it exceeds the model context
-	// window.
-	//
-	// Any of "auto", "disabled".
-	Truncation ResponseNewParamsTruncation `json:"truncation,omitzero"`
 	// Additional fields to include in the response.
 	//
 	// Any of "web_search_call.action.sources", "code_interpreter_call.outputs",
@@ -12536,6 +12531,11 @@ type ResponseNewParams struct {
 	// "message.input_image.image_url", "message.output_text.logprobs",
 	// "reasoning.encrypted_content".
 	Include []string `json:"include,omitzero"`
+	// Controls how the service truncates input when it exceeds the model context
+	// window.
+	//
+	// Any of "auto", "disabled".
+	Truncation ResponseNewParamsTruncation `json:"truncation,omitzero"`
 	paramObj
 }
 
