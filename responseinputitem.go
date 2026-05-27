@@ -81,7 +81,7 @@ func (r *ResponseInputItemListResponse) UnmarshalJSON(data []byte) error {
 
 // ResponseInputItemListResponseDataUnion contains all possible properties and
 // values from [ResponseInputItemListResponseDataOpenAIResponseMessageOutput],
-// [ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCall],
+// [ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutput],
 // [ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCall],
 // [ResponseInputItemListResponseDataOpenAIResponseOutputMessageFunctionToolCall],
 // [ResponseInputItemListResponseDataOpenAIResponseOutputMessageMcpCall],
@@ -104,6 +104,9 @@ type ResponseInputItemListResponseDataUnion struct {
 	ID     string                                                           `json:"id"`
 	Status string                                                           `json:"status"`
 	Type   string                                                           `json:"type"`
+	// This field is from variant
+	// [ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutput].
+	Action ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionUnion `json:"action"`
 	// This field is from variant
 	// [ResponseInputItemListResponseDataOpenAIResponseOutputMessageFileSearchToolCall].
 	Queries []string `json:"queries"`
@@ -144,6 +147,7 @@ type ResponseInputItemListResponseDataUnion struct {
 		ID                respjson.Field
 		Status            respjson.Field
 		Type              respjson.Field
+		Action            respjson.Field
 		Queries           respjson.Field
 		Results           respjson.Field
 		Arguments         respjson.Field
@@ -167,7 +171,7 @@ func (u ResponseInputItemListResponseDataUnion) AsOpenAIResponseMessageOutput() 
 	return
 }
 
-func (u ResponseInputItemListResponseDataUnion) AsOpenAIResponseOutputMessageWebSearchToolCall() (v ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCall) {
+func (u ResponseInputItemListResponseDataUnion) AsOpenAIResponseOutputMessageWebSearchToolCallOutput() (v ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutput) {
 	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
 	return
 }
@@ -1002,15 +1006,18 @@ const (
 )
 
 // Web search tool call output message for OpenAI responses.
-type ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCall struct {
+type ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutput struct {
 	ID     string `json:"id" api:"required"`
 	Status string `json:"status" api:"required"`
+	// Web search action: performs a search query.
+	Action ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionUnion `json:"action" api:"nullable"`
 	// Any of "web_search_call".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
 		Status      respjson.Field
+		Action      respjson.Field
 		Type        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -1018,10 +1025,161 @@ type ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCa
 }
 
 // Returns the unmodified JSON received from the API
-func (r ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCall) RawJSON() string {
+func (r ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutput) RawJSON() string {
 	return r.JSON.raw
 }
-func (r *ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCall) UnmarshalJSON(data []byte) error {
+func (r *ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutput) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionUnion
+// contains all possible properties and values from
+// [ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionWebSearchActionSearch],
+// [ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionWebSearchActionOpenPage],
+// [ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionWebSearchActionFind].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionUnion struct {
+	// This field is from variant
+	// [ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionWebSearchActionSearch].
+	Query string `json:"query"`
+	// This field is from variant
+	// [ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionWebSearchActionSearch].
+	Queries []string `json:"queries"`
+	// This field is from variant
+	// [ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionWebSearchActionSearch].
+	Sources []ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionWebSearchActionSearchSource `json:"sources"`
+	Type    string                                                                                                                 `json:"type"`
+	URL     string                                                                                                                 `json:"url"`
+	// This field is from variant
+	// [ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionWebSearchActionFind].
+	Pattern string `json:"pattern"`
+	JSON    struct {
+		Query   respjson.Field
+		Queries respjson.Field
+		Sources respjson.Field
+		Type    respjson.Field
+		URL     respjson.Field
+		Pattern respjson.Field
+		raw     string
+	} `json:"-"`
+}
+
+func (u ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionUnion) AsWebSearchActionSearch() (v ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionWebSearchActionSearch) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionUnion) AsWebSearchActionOpenPage() (v ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionWebSearchActionOpenPage) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionUnion) AsWebSearchActionFind() (v ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionWebSearchActionFind) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionUnion) RawJSON() string {
+	return u.JSON.raw
+}
+
+func (r *ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Web search action: performs a search query.
+type ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionWebSearchActionSearch struct {
+	Query   string                                                                                                                 `json:"query" api:"required"`
+	Queries []string                                                                                                               `json:"queries" api:"nullable"`
+	Sources []ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionWebSearchActionSearchSource `json:"sources" api:"nullable"`
+	// Any of "search".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Query       respjson.Field
+		Queries     respjson.Field
+		Sources     respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionWebSearchActionSearch) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionWebSearchActionSearch) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A source URL returned by a web search action.
+type ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionWebSearchActionSearchSource struct {
+	URL string `json:"url" api:"required"`
+	// Any of "url".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		URL         respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionWebSearchActionSearchSource) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionWebSearchActionSearchSource) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Web search action: opens a specific URL from search results.
+type ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionWebSearchActionOpenPage struct {
+	// Any of "open_page".
+	Type string `json:"type"`
+	URL  string `json:"url" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Type        respjson.Field
+		URL         respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionWebSearchActionOpenPage) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionWebSearchActionOpenPage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Web search action: searches for a pattern within a loaded page.
+type ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionWebSearchActionFind struct {
+	Pattern string `json:"pattern" api:"required"`
+	URL     string `json:"url" api:"required"`
+	// Any of "find_in_page".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Pattern     respjson.Field
+		URL         respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionWebSearchActionFind) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ResponseInputItemListResponseDataOpenAIResponseOutputMessageWebSearchToolCallOutputActionWebSearchActionFind) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 

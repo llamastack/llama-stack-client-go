@@ -249,6 +249,14 @@ func (u ConversationNewParamsItemUnion) GetRole() *string {
 }
 
 // Returns a pointer to the underlying variant's property, if present.
+func (u ConversationNewParamsItemUnion) GetAction() *ConversationNewParamsItemWebSearchCallActionUnion {
+	if vt := u.OfWebSearchCall; vt != nil {
+		return &vt.Action
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
 func (u ConversationNewParamsItemUnion) GetQueries() []string {
 	if vt := u.OfFileSearchCall; vt != nil {
 		return vt.Queries
@@ -1183,6 +1191,8 @@ const (
 type ConversationNewParamsItemWebSearchCall struct {
 	ID     string `json:"id" api:"required"`
 	Status string `json:"status" api:"required"`
+	// Web search action: performs a search query.
+	Action ConversationNewParamsItemWebSearchCallActionUnion `json:"action,omitzero"`
 	// Any of "web_search_call".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -1199,6 +1209,185 @@ func (r *ConversationNewParamsItemWebSearchCall) UnmarshalJSON(data []byte) erro
 func init() {
 	apijson.RegisterFieldValidator[ConversationNewParamsItemWebSearchCall](
 		"type", "web_search_call",
+	)
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type ConversationNewParamsItemWebSearchCallActionUnion struct {
+	OfWebSearchActionSearch   *ConversationNewParamsItemWebSearchCallActionWebSearchActionSearch   `json:",omitzero,inline"`
+	OfWebSearchActionOpenPage *ConversationNewParamsItemWebSearchCallActionWebSearchActionOpenPage `json:",omitzero,inline"`
+	OfWebSearchActionFind     *ConversationNewParamsItemWebSearchCallActionWebSearchActionFind     `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u ConversationNewParamsItemWebSearchCallActionUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfWebSearchActionSearch, u.OfWebSearchActionOpenPage, u.OfWebSearchActionFind)
+}
+func (u *ConversationNewParamsItemWebSearchCallActionUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *ConversationNewParamsItemWebSearchCallActionUnion) asAny() any {
+	if !param.IsOmitted(u.OfWebSearchActionSearch) {
+		return u.OfWebSearchActionSearch
+	} else if !param.IsOmitted(u.OfWebSearchActionOpenPage) {
+		return u.OfWebSearchActionOpenPage
+	} else if !param.IsOmitted(u.OfWebSearchActionFind) {
+		return u.OfWebSearchActionFind
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationNewParamsItemWebSearchCallActionUnion) GetQuery() *string {
+	if vt := u.OfWebSearchActionSearch; vt != nil {
+		return &vt.Query
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationNewParamsItemWebSearchCallActionUnion) GetQueries() []string {
+	if vt := u.OfWebSearchActionSearch; vt != nil {
+		return vt.Queries
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationNewParamsItemWebSearchCallActionUnion) GetSources() []ConversationNewParamsItemWebSearchCallActionWebSearchActionSearchSource {
+	if vt := u.OfWebSearchActionSearch; vt != nil {
+		return vt.Sources
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationNewParamsItemWebSearchCallActionUnion) GetPattern() *string {
+	if vt := u.OfWebSearchActionFind; vt != nil {
+		return &vt.Pattern
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationNewParamsItemWebSearchCallActionUnion) GetType() *string {
+	if vt := u.OfWebSearchActionSearch; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfWebSearchActionOpenPage; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfWebSearchActionFind; vt != nil {
+		return (*string)(&vt.Type)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationNewParamsItemWebSearchCallActionUnion) GetURL() *string {
+	if vt := u.OfWebSearchActionOpenPage; vt != nil && vt.URL.Valid() {
+		return &vt.URL.Value
+	} else if vt := u.OfWebSearchActionFind; vt != nil {
+		return (*string)(&vt.URL)
+	}
+	return nil
+}
+
+// Web search action: performs a search query.
+//
+// The property Query is required.
+type ConversationNewParamsItemWebSearchCallActionWebSearchActionSearch struct {
+	Query   string                                                                    `json:"query" api:"required"`
+	Queries []string                                                                  `json:"queries,omitzero"`
+	Sources []ConversationNewParamsItemWebSearchCallActionWebSearchActionSearchSource `json:"sources,omitzero"`
+	// Any of "search".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ConversationNewParamsItemWebSearchCallActionWebSearchActionSearch) MarshalJSON() (data []byte, err error) {
+	type shadow ConversationNewParamsItemWebSearchCallActionWebSearchActionSearch
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ConversationNewParamsItemWebSearchCallActionWebSearchActionSearch) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ConversationNewParamsItemWebSearchCallActionWebSearchActionSearch](
+		"type", "search",
+	)
+}
+
+// A source URL returned by a web search action.
+//
+// The property URL is required.
+type ConversationNewParamsItemWebSearchCallActionWebSearchActionSearchSource struct {
+	URL string `json:"url" api:"required"`
+	// Any of "url".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ConversationNewParamsItemWebSearchCallActionWebSearchActionSearchSource) MarshalJSON() (data []byte, err error) {
+	type shadow ConversationNewParamsItemWebSearchCallActionWebSearchActionSearchSource
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ConversationNewParamsItemWebSearchCallActionWebSearchActionSearchSource) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ConversationNewParamsItemWebSearchCallActionWebSearchActionSearchSource](
+		"type", "url",
+	)
+}
+
+// Web search action: opens a specific URL from search results.
+type ConversationNewParamsItemWebSearchCallActionWebSearchActionOpenPage struct {
+	URL param.Opt[string] `json:"url,omitzero"`
+	// Any of "open_page".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ConversationNewParamsItemWebSearchCallActionWebSearchActionOpenPage) MarshalJSON() (data []byte, err error) {
+	type shadow ConversationNewParamsItemWebSearchCallActionWebSearchActionOpenPage
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ConversationNewParamsItemWebSearchCallActionWebSearchActionOpenPage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ConversationNewParamsItemWebSearchCallActionWebSearchActionOpenPage](
+		"type", "open_page",
+	)
+}
+
+// Web search action: searches for a pattern within a loaded page.
+//
+// The properties Pattern, URL are required.
+type ConversationNewParamsItemWebSearchCallActionWebSearchActionFind struct {
+	Pattern string `json:"pattern" api:"required"`
+	URL     string `json:"url" api:"required"`
+	// Any of "find_in_page".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ConversationNewParamsItemWebSearchCallActionWebSearchActionFind) MarshalJSON() (data []byte, err error) {
+	type shadow ConversationNewParamsItemWebSearchCallActionWebSearchActionFind
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ConversationNewParamsItemWebSearchCallActionWebSearchActionFind) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ConversationNewParamsItemWebSearchCallActionWebSearchActionFind](
+		"type", "find_in_page",
 	)
 }
 

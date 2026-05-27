@@ -94,8 +94,18 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 		},
 		Tools: []ogxclient.ResponseNewParamsToolUnion{{
 			OfOpenAIResponseInputToolWebSearch: &ogxclient.ResponseNewParamsToolOpenAIResponseInputToolWebSearch{
-				SearchContextSize: ogxclient.String("S?oC\"high"),
+				Filters: ogxclient.ResponseNewParamsToolOpenAIResponseInputToolWebSearchFilters{
+					AllowedDomains: []string{"string"},
+				},
+				SearchContextSize: "low",
 				Type:              ogxclient.ResponseNewParamsToolOpenAIResponseInputToolWebSearchTypeWebSearch,
+				UserLocation: ogxclient.ResponseNewParamsToolOpenAIResponseInputToolWebSearchUserLocation{
+					City:     ogxclient.String("city"),
+					Country:  ogxclient.String("country"),
+					Region:   ogxclient.String("region"),
+					Timezone: ogxclient.String("timezone"),
+					Type:     "approximate",
+				},
 			},
 		}},
 		TopLogprobs: ogxclient.Int(0),
@@ -218,8 +228,18 @@ func TestResponseCompactWithOptionalParams(t *testing.T) {
 		},
 		Tools: []ogxclient.ResponseCompactParamsToolUnion{{
 			OfOpenAIResponseInputToolWebSearch: &ogxclient.ResponseCompactParamsToolOpenAIResponseInputToolWebSearch{
-				SearchContextSize: ogxclient.String("S?oC\"high"),
+				Filters: ogxclient.ResponseCompactParamsToolOpenAIResponseInputToolWebSearchFilters{
+					AllowedDomains: []string{"string"},
+				},
+				SearchContextSize: "low",
 				Type:              ogxclient.ResponseCompactParamsToolOpenAIResponseInputToolWebSearchTypeWebSearch,
+				UserLocation: ogxclient.ResponseCompactParamsToolOpenAIResponseInputToolWebSearchUserLocation{
+					City:     ogxclient.String("city"),
+					Country:  ogxclient.String("country"),
+					Region:   ogxclient.String("region"),
+					Timezone: ogxclient.String("timezone"),
+					Type:     "approximate",
+				},
 			},
 		}},
 	})

@@ -179,6 +179,8 @@ type ConversationItemNewResponseDataUnion struct {
 	// "function_call_output", "mcp_approval_request", "mcp_approval_response",
 	// "mcp_call", "mcp_list_tools", "reasoning", "compaction".
 	Type string `json:"type"`
+	// This field is from variant [ConversationItemNewResponseDataWebSearchCall].
+	Action ConversationItemNewResponseDataWebSearchCallActionUnion `json:"action"`
 	// This field is from variant [ConversationItemNewResponseDataFileSearchCall].
 	Queries []string `json:"queries"`
 	// This field is from variant [ConversationItemNewResponseDataFileSearchCall].
@@ -210,6 +212,7 @@ type ConversationItemNewResponseDataUnion struct {
 		ID                respjson.Field
 		Status            respjson.Field
 		Type              respjson.Field
+		Action            respjson.Field
 		Queries           respjson.Field
 		Results           respjson.Field
 		Arguments         respjson.Field
@@ -1131,12 +1134,15 @@ const (
 type ConversationItemNewResponseDataWebSearchCall struct {
 	ID     string `json:"id" api:"required"`
 	Status string `json:"status" api:"required"`
+	// Web search action: performs a search query.
+	Action ConversationItemNewResponseDataWebSearchCallActionUnion `json:"action" api:"nullable"`
 	// Any of "web_search_call".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
 		Status      respjson.Field
+		Action      respjson.Field
 		Type        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -1146,6 +1152,155 @@ type ConversationItemNewResponseDataWebSearchCall struct {
 // Returns the unmodified JSON received from the API
 func (r ConversationItemNewResponseDataWebSearchCall) RawJSON() string { return r.JSON.raw }
 func (r *ConversationItemNewResponseDataWebSearchCall) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ConversationItemNewResponseDataWebSearchCallActionUnion contains all possible
+// properties and values from
+// [ConversationItemNewResponseDataWebSearchCallActionWebSearchActionSearch],
+// [ConversationItemNewResponseDataWebSearchCallActionWebSearchActionOpenPage],
+// [ConversationItemNewResponseDataWebSearchCallActionWebSearchActionFind].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type ConversationItemNewResponseDataWebSearchCallActionUnion struct {
+	// This field is from variant
+	// [ConversationItemNewResponseDataWebSearchCallActionWebSearchActionSearch].
+	Query string `json:"query"`
+	// This field is from variant
+	// [ConversationItemNewResponseDataWebSearchCallActionWebSearchActionSearch].
+	Queries []string `json:"queries"`
+	// This field is from variant
+	// [ConversationItemNewResponseDataWebSearchCallActionWebSearchActionSearch].
+	Sources []ConversationItemNewResponseDataWebSearchCallActionWebSearchActionSearchSource `json:"sources"`
+	Type    string                                                                          `json:"type"`
+	URL     string                                                                          `json:"url"`
+	// This field is from variant
+	// [ConversationItemNewResponseDataWebSearchCallActionWebSearchActionFind].
+	Pattern string `json:"pattern"`
+	JSON    struct {
+		Query   respjson.Field
+		Queries respjson.Field
+		Sources respjson.Field
+		Type    respjson.Field
+		URL     respjson.Field
+		Pattern respjson.Field
+		raw     string
+	} `json:"-"`
+}
+
+func (u ConversationItemNewResponseDataWebSearchCallActionUnion) AsWebSearchActionSearch() (v ConversationItemNewResponseDataWebSearchCallActionWebSearchActionSearch) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ConversationItemNewResponseDataWebSearchCallActionUnion) AsWebSearchActionOpenPage() (v ConversationItemNewResponseDataWebSearchCallActionWebSearchActionOpenPage) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ConversationItemNewResponseDataWebSearchCallActionUnion) AsWebSearchActionFind() (v ConversationItemNewResponseDataWebSearchCallActionWebSearchActionFind) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u ConversationItemNewResponseDataWebSearchCallActionUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *ConversationItemNewResponseDataWebSearchCallActionUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Web search action: performs a search query.
+type ConversationItemNewResponseDataWebSearchCallActionWebSearchActionSearch struct {
+	Query   string                                                                          `json:"query" api:"required"`
+	Queries []string                                                                        `json:"queries" api:"nullable"`
+	Sources []ConversationItemNewResponseDataWebSearchCallActionWebSearchActionSearchSource `json:"sources" api:"nullable"`
+	// Any of "search".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Query       respjson.Field
+		Queries     respjson.Field
+		Sources     respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemNewResponseDataWebSearchCallActionWebSearchActionSearch) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ConversationItemNewResponseDataWebSearchCallActionWebSearchActionSearch) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A source URL returned by a web search action.
+type ConversationItemNewResponseDataWebSearchCallActionWebSearchActionSearchSource struct {
+	URL string `json:"url" api:"required"`
+	// Any of "url".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		URL         respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemNewResponseDataWebSearchCallActionWebSearchActionSearchSource) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ConversationItemNewResponseDataWebSearchCallActionWebSearchActionSearchSource) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Web search action: opens a specific URL from search results.
+type ConversationItemNewResponseDataWebSearchCallActionWebSearchActionOpenPage struct {
+	// Any of "open_page".
+	Type string `json:"type"`
+	URL  string `json:"url" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Type        respjson.Field
+		URL         respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemNewResponseDataWebSearchCallActionWebSearchActionOpenPage) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ConversationItemNewResponseDataWebSearchCallActionWebSearchActionOpenPage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Web search action: searches for a pattern within a loaded page.
+type ConversationItemNewResponseDataWebSearchCallActionWebSearchActionFind struct {
+	Pattern string `json:"pattern" api:"required"`
+	URL     string `json:"url" api:"required"`
+	// Any of "find_in_page".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Pattern     respjson.Field
+		URL         respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemNewResponseDataWebSearchCallActionWebSearchActionFind) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ConversationItemNewResponseDataWebSearchCallActionWebSearchActionFind) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -1771,6 +1926,8 @@ type ConversationItemListResponseUnion struct {
 	// "function_call_output", "mcp_approval_request", "mcp_approval_response",
 	// "mcp_call", "mcp_list_tools", "reasoning", "compaction".
 	Type string `json:"type"`
+	// This field is from variant [ConversationItemListResponseWebSearchCall].
+	Action ConversationItemListResponseWebSearchCallActionUnion `json:"action"`
 	// This field is from variant [ConversationItemListResponseFileSearchCall].
 	Queries []string `json:"queries"`
 	// This field is from variant [ConversationItemListResponseFileSearchCall].
@@ -1802,6 +1959,7 @@ type ConversationItemListResponseUnion struct {
 		ID                respjson.Field
 		Status            respjson.Field
 		Type              respjson.Field
+		Action            respjson.Field
 		Queries           respjson.Field
 		Results           respjson.Field
 		Arguments         respjson.Field
@@ -2720,12 +2878,15 @@ const (
 type ConversationItemListResponseWebSearchCall struct {
 	ID     string `json:"id" api:"required"`
 	Status string `json:"status" api:"required"`
+	// Web search action: performs a search query.
+	Action ConversationItemListResponseWebSearchCallActionUnion `json:"action" api:"nullable"`
 	// Any of "web_search_call".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
 		Status      respjson.Field
+		Action      respjson.Field
 		Type        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -2735,6 +2896,155 @@ type ConversationItemListResponseWebSearchCall struct {
 // Returns the unmodified JSON received from the API
 func (r ConversationItemListResponseWebSearchCall) RawJSON() string { return r.JSON.raw }
 func (r *ConversationItemListResponseWebSearchCall) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ConversationItemListResponseWebSearchCallActionUnion contains all possible
+// properties and values from
+// [ConversationItemListResponseWebSearchCallActionWebSearchActionSearch],
+// [ConversationItemListResponseWebSearchCallActionWebSearchActionOpenPage],
+// [ConversationItemListResponseWebSearchCallActionWebSearchActionFind].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type ConversationItemListResponseWebSearchCallActionUnion struct {
+	// This field is from variant
+	// [ConversationItemListResponseWebSearchCallActionWebSearchActionSearch].
+	Query string `json:"query"`
+	// This field is from variant
+	// [ConversationItemListResponseWebSearchCallActionWebSearchActionSearch].
+	Queries []string `json:"queries"`
+	// This field is from variant
+	// [ConversationItemListResponseWebSearchCallActionWebSearchActionSearch].
+	Sources []ConversationItemListResponseWebSearchCallActionWebSearchActionSearchSource `json:"sources"`
+	Type    string                                                                       `json:"type"`
+	URL     string                                                                       `json:"url"`
+	// This field is from variant
+	// [ConversationItemListResponseWebSearchCallActionWebSearchActionFind].
+	Pattern string `json:"pattern"`
+	JSON    struct {
+		Query   respjson.Field
+		Queries respjson.Field
+		Sources respjson.Field
+		Type    respjson.Field
+		URL     respjson.Field
+		Pattern respjson.Field
+		raw     string
+	} `json:"-"`
+}
+
+func (u ConversationItemListResponseWebSearchCallActionUnion) AsWebSearchActionSearch() (v ConversationItemListResponseWebSearchCallActionWebSearchActionSearch) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ConversationItemListResponseWebSearchCallActionUnion) AsWebSearchActionOpenPage() (v ConversationItemListResponseWebSearchCallActionWebSearchActionOpenPage) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ConversationItemListResponseWebSearchCallActionUnion) AsWebSearchActionFind() (v ConversationItemListResponseWebSearchCallActionWebSearchActionFind) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u ConversationItemListResponseWebSearchCallActionUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *ConversationItemListResponseWebSearchCallActionUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Web search action: performs a search query.
+type ConversationItemListResponseWebSearchCallActionWebSearchActionSearch struct {
+	Query   string                                                                       `json:"query" api:"required"`
+	Queries []string                                                                     `json:"queries" api:"nullable"`
+	Sources []ConversationItemListResponseWebSearchCallActionWebSearchActionSearchSource `json:"sources" api:"nullable"`
+	// Any of "search".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Query       respjson.Field
+		Queries     respjson.Field
+		Sources     respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemListResponseWebSearchCallActionWebSearchActionSearch) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ConversationItemListResponseWebSearchCallActionWebSearchActionSearch) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A source URL returned by a web search action.
+type ConversationItemListResponseWebSearchCallActionWebSearchActionSearchSource struct {
+	URL string `json:"url" api:"required"`
+	// Any of "url".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		URL         respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemListResponseWebSearchCallActionWebSearchActionSearchSource) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ConversationItemListResponseWebSearchCallActionWebSearchActionSearchSource) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Web search action: opens a specific URL from search results.
+type ConversationItemListResponseWebSearchCallActionWebSearchActionOpenPage struct {
+	// Any of "open_page".
+	Type string `json:"type"`
+	URL  string `json:"url" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Type        respjson.Field
+		URL         respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemListResponseWebSearchCallActionWebSearchActionOpenPage) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ConversationItemListResponseWebSearchCallActionWebSearchActionOpenPage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Web search action: searches for a pattern within a loaded page.
+type ConversationItemListResponseWebSearchCallActionWebSearchActionFind struct {
+	Pattern string `json:"pattern" api:"required"`
+	URL     string `json:"url" api:"required"`
+	// Any of "find_in_page".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Pattern     respjson.Field
+		URL         respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemListResponseWebSearchCallActionWebSearchActionFind) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ConversationItemListResponseWebSearchCallActionWebSearchActionFind) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -3351,6 +3661,8 @@ type ConversationItemGetResponseUnion struct {
 	// "function_call_output", "mcp_approval_request", "mcp_approval_response",
 	// "mcp_call", "mcp_list_tools", "reasoning", "compaction".
 	Type string `json:"type"`
+	// This field is from variant [ConversationItemGetResponseWebSearchCall].
+	Action ConversationItemGetResponseWebSearchCallActionUnion `json:"action"`
 	// This field is from variant [ConversationItemGetResponseFileSearchCall].
 	Queries []string `json:"queries"`
 	// This field is from variant [ConversationItemGetResponseFileSearchCall].
@@ -3382,6 +3694,7 @@ type ConversationItemGetResponseUnion struct {
 		ID                respjson.Field
 		Status            respjson.Field
 		Type              respjson.Field
+		Action            respjson.Field
 		Queries           respjson.Field
 		Results           respjson.Field
 		Arguments         respjson.Field
@@ -4300,12 +4613,15 @@ const (
 type ConversationItemGetResponseWebSearchCall struct {
 	ID     string `json:"id" api:"required"`
 	Status string `json:"status" api:"required"`
+	// Web search action: performs a search query.
+	Action ConversationItemGetResponseWebSearchCallActionUnion `json:"action" api:"nullable"`
 	// Any of "web_search_call".
 	Type string `json:"type"`
 	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
 	JSON struct {
 		ID          respjson.Field
 		Status      respjson.Field
+		Action      respjson.Field
 		Type        respjson.Field
 		ExtraFields map[string]respjson.Field
 		raw         string
@@ -4315,6 +4631,155 @@ type ConversationItemGetResponseWebSearchCall struct {
 // Returns the unmodified JSON received from the API
 func (r ConversationItemGetResponseWebSearchCall) RawJSON() string { return r.JSON.raw }
 func (r *ConversationItemGetResponseWebSearchCall) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// ConversationItemGetResponseWebSearchCallActionUnion contains all possible
+// properties and values from
+// [ConversationItemGetResponseWebSearchCallActionWebSearchActionSearch],
+// [ConversationItemGetResponseWebSearchCallActionWebSearchActionOpenPage],
+// [ConversationItemGetResponseWebSearchCallActionWebSearchActionFind].
+//
+// Use the methods beginning with 'As' to cast the union to one of its variants.
+type ConversationItemGetResponseWebSearchCallActionUnion struct {
+	// This field is from variant
+	// [ConversationItemGetResponseWebSearchCallActionWebSearchActionSearch].
+	Query string `json:"query"`
+	// This field is from variant
+	// [ConversationItemGetResponseWebSearchCallActionWebSearchActionSearch].
+	Queries []string `json:"queries"`
+	// This field is from variant
+	// [ConversationItemGetResponseWebSearchCallActionWebSearchActionSearch].
+	Sources []ConversationItemGetResponseWebSearchCallActionWebSearchActionSearchSource `json:"sources"`
+	Type    string                                                                      `json:"type"`
+	URL     string                                                                      `json:"url"`
+	// This field is from variant
+	// [ConversationItemGetResponseWebSearchCallActionWebSearchActionFind].
+	Pattern string `json:"pattern"`
+	JSON    struct {
+		Query   respjson.Field
+		Queries respjson.Field
+		Sources respjson.Field
+		Type    respjson.Field
+		URL     respjson.Field
+		Pattern respjson.Field
+		raw     string
+	} `json:"-"`
+}
+
+func (u ConversationItemGetResponseWebSearchCallActionUnion) AsWebSearchActionSearch() (v ConversationItemGetResponseWebSearchCallActionWebSearchActionSearch) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ConversationItemGetResponseWebSearchCallActionUnion) AsWebSearchActionOpenPage() (v ConversationItemGetResponseWebSearchCallActionWebSearchActionOpenPage) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+func (u ConversationItemGetResponseWebSearchCallActionUnion) AsWebSearchActionFind() (v ConversationItemGetResponseWebSearchCallActionWebSearchActionFind) {
+	apijson.UnmarshalRoot(json.RawMessage(u.JSON.raw), &v)
+	return
+}
+
+// Returns the unmodified JSON received from the API
+func (u ConversationItemGetResponseWebSearchCallActionUnion) RawJSON() string { return u.JSON.raw }
+
+func (r *ConversationItemGetResponseWebSearchCallActionUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Web search action: performs a search query.
+type ConversationItemGetResponseWebSearchCallActionWebSearchActionSearch struct {
+	Query   string                                                                      `json:"query" api:"required"`
+	Queries []string                                                                    `json:"queries" api:"nullable"`
+	Sources []ConversationItemGetResponseWebSearchCallActionWebSearchActionSearchSource `json:"sources" api:"nullable"`
+	// Any of "search".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Query       respjson.Field
+		Queries     respjson.Field
+		Sources     respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemGetResponseWebSearchCallActionWebSearchActionSearch) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ConversationItemGetResponseWebSearchCallActionWebSearchActionSearch) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// A source URL returned by a web search action.
+type ConversationItemGetResponseWebSearchCallActionWebSearchActionSearchSource struct {
+	URL string `json:"url" api:"required"`
+	// Any of "url".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		URL         respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemGetResponseWebSearchCallActionWebSearchActionSearchSource) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ConversationItemGetResponseWebSearchCallActionWebSearchActionSearchSource) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Web search action: opens a specific URL from search results.
+type ConversationItemGetResponseWebSearchCallActionWebSearchActionOpenPage struct {
+	// Any of "open_page".
+	Type string `json:"type"`
+	URL  string `json:"url" api:"nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Type        respjson.Field
+		URL         respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemGetResponseWebSearchCallActionWebSearchActionOpenPage) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ConversationItemGetResponseWebSearchCallActionWebSearchActionOpenPage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+// Web search action: searches for a pattern within a loaded page.
+type ConversationItemGetResponseWebSearchCallActionWebSearchActionFind struct {
+	Pattern string `json:"pattern" api:"required"`
+	URL     string `json:"url" api:"required"`
+	// Any of "find_in_page".
+	Type string `json:"type"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Pattern     respjson.Field
+		URL         respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
+}
+
+// Returns the unmodified JSON received from the API
+func (r ConversationItemGetResponseWebSearchCallActionWebSearchActionFind) RawJSON() string {
+	return r.JSON.raw
+}
+func (r *ConversationItemGetResponseWebSearchCallActionWebSearchActionFind) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
@@ -4983,6 +5448,14 @@ func (u *ConversationItemNewParamsItemUnion) asAny() any {
 func (u ConversationItemNewParamsItemUnion) GetRole() *string {
 	if vt := u.OfMessage; vt != nil {
 		return (*string)(&vt.Role)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationItemNewParamsItemUnion) GetAction() *ConversationItemNewParamsItemWebSearchCallActionUnion {
+	if vt := u.OfWebSearchCall; vt != nil {
+		return &vt.Action
 	}
 	return nil
 }
@@ -5922,6 +6395,8 @@ const (
 type ConversationItemNewParamsItemWebSearchCall struct {
 	ID     string `json:"id" api:"required"`
 	Status string `json:"status" api:"required"`
+	// Web search action: performs a search query.
+	Action ConversationItemNewParamsItemWebSearchCallActionUnion `json:"action,omitzero"`
 	// Any of "web_search_call".
 	Type string `json:"type,omitzero"`
 	paramObj
@@ -5938,6 +6413,185 @@ func (r *ConversationItemNewParamsItemWebSearchCall) UnmarshalJSON(data []byte) 
 func init() {
 	apijson.RegisterFieldValidator[ConversationItemNewParamsItemWebSearchCall](
 		"type", "web_search_call",
+	)
+}
+
+// Only one field can be non-zero.
+//
+// Use [param.IsOmitted] to confirm if a field is set.
+type ConversationItemNewParamsItemWebSearchCallActionUnion struct {
+	OfWebSearchActionSearch   *ConversationItemNewParamsItemWebSearchCallActionWebSearchActionSearch   `json:",omitzero,inline"`
+	OfWebSearchActionOpenPage *ConversationItemNewParamsItemWebSearchCallActionWebSearchActionOpenPage `json:",omitzero,inline"`
+	OfWebSearchActionFind     *ConversationItemNewParamsItemWebSearchCallActionWebSearchActionFind     `json:",omitzero,inline"`
+	paramUnion
+}
+
+func (u ConversationItemNewParamsItemWebSearchCallActionUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion(u, u.OfWebSearchActionSearch, u.OfWebSearchActionOpenPage, u.OfWebSearchActionFind)
+}
+func (u *ConversationItemNewParamsItemWebSearchCallActionUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *ConversationItemNewParamsItemWebSearchCallActionUnion) asAny() any {
+	if !param.IsOmitted(u.OfWebSearchActionSearch) {
+		return u.OfWebSearchActionSearch
+	} else if !param.IsOmitted(u.OfWebSearchActionOpenPage) {
+		return u.OfWebSearchActionOpenPage
+	} else if !param.IsOmitted(u.OfWebSearchActionFind) {
+		return u.OfWebSearchActionFind
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationItemNewParamsItemWebSearchCallActionUnion) GetQuery() *string {
+	if vt := u.OfWebSearchActionSearch; vt != nil {
+		return &vt.Query
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationItemNewParamsItemWebSearchCallActionUnion) GetQueries() []string {
+	if vt := u.OfWebSearchActionSearch; vt != nil {
+		return vt.Queries
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationItemNewParamsItemWebSearchCallActionUnion) GetSources() []ConversationItemNewParamsItemWebSearchCallActionWebSearchActionSearchSource {
+	if vt := u.OfWebSearchActionSearch; vt != nil {
+		return vt.Sources
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationItemNewParamsItemWebSearchCallActionUnion) GetPattern() *string {
+	if vt := u.OfWebSearchActionFind; vt != nil {
+		return &vt.Pattern
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationItemNewParamsItemWebSearchCallActionUnion) GetType() *string {
+	if vt := u.OfWebSearchActionSearch; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfWebSearchActionOpenPage; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfWebSearchActionFind; vt != nil {
+		return (*string)(&vt.Type)
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ConversationItemNewParamsItemWebSearchCallActionUnion) GetURL() *string {
+	if vt := u.OfWebSearchActionOpenPage; vt != nil && vt.URL.Valid() {
+		return &vt.URL.Value
+	} else if vt := u.OfWebSearchActionFind; vt != nil {
+		return (*string)(&vt.URL)
+	}
+	return nil
+}
+
+// Web search action: performs a search query.
+//
+// The property Query is required.
+type ConversationItemNewParamsItemWebSearchCallActionWebSearchActionSearch struct {
+	Query   string                                                                        `json:"query" api:"required"`
+	Queries []string                                                                      `json:"queries,omitzero"`
+	Sources []ConversationItemNewParamsItemWebSearchCallActionWebSearchActionSearchSource `json:"sources,omitzero"`
+	// Any of "search".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ConversationItemNewParamsItemWebSearchCallActionWebSearchActionSearch) MarshalJSON() (data []byte, err error) {
+	type shadow ConversationItemNewParamsItemWebSearchCallActionWebSearchActionSearch
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ConversationItemNewParamsItemWebSearchCallActionWebSearchActionSearch) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ConversationItemNewParamsItemWebSearchCallActionWebSearchActionSearch](
+		"type", "search",
+	)
+}
+
+// A source URL returned by a web search action.
+//
+// The property URL is required.
+type ConversationItemNewParamsItemWebSearchCallActionWebSearchActionSearchSource struct {
+	URL string `json:"url" api:"required"`
+	// Any of "url".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ConversationItemNewParamsItemWebSearchCallActionWebSearchActionSearchSource) MarshalJSON() (data []byte, err error) {
+	type shadow ConversationItemNewParamsItemWebSearchCallActionWebSearchActionSearchSource
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ConversationItemNewParamsItemWebSearchCallActionWebSearchActionSearchSource) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ConversationItemNewParamsItemWebSearchCallActionWebSearchActionSearchSource](
+		"type", "url",
+	)
+}
+
+// Web search action: opens a specific URL from search results.
+type ConversationItemNewParamsItemWebSearchCallActionWebSearchActionOpenPage struct {
+	URL param.Opt[string] `json:"url,omitzero"`
+	// Any of "open_page".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ConversationItemNewParamsItemWebSearchCallActionWebSearchActionOpenPage) MarshalJSON() (data []byte, err error) {
+	type shadow ConversationItemNewParamsItemWebSearchCallActionWebSearchActionOpenPage
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ConversationItemNewParamsItemWebSearchCallActionWebSearchActionOpenPage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ConversationItemNewParamsItemWebSearchCallActionWebSearchActionOpenPage](
+		"type", "open_page",
+	)
+}
+
+// Web search action: searches for a pattern within a loaded page.
+//
+// The properties Pattern, URL are required.
+type ConversationItemNewParamsItemWebSearchCallActionWebSearchActionFind struct {
+	Pattern string `json:"pattern" api:"required"`
+	URL     string `json:"url" api:"required"`
+	// Any of "find_in_page".
+	Type string `json:"type,omitzero"`
+	paramObj
+}
+
+func (r ConversationItemNewParamsItemWebSearchCallActionWebSearchActionFind) MarshalJSON() (data []byte, err error) {
+	type shadow ConversationItemNewParamsItemWebSearchCallActionWebSearchActionFind
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ConversationItemNewParamsItemWebSearchCallActionWebSearchActionFind) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
+}
+
+func init() {
+	apijson.RegisterFieldValidator[ConversationItemNewParamsItemWebSearchCallActionWebSearchActionFind](
+		"type", "find_in_page",
 	)
 }
 
