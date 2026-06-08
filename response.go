@@ -2667,9 +2667,10 @@ type ResponseObject struct {
 	// Configuration for reasoning effort in OpenAI responses.
 	//
 	// Controls how much reasoning the model performs before generating a response.
-	Reasoning   ResponseObjectReasoning `json:"reasoning" api:"nullable"`
-	ServiceTier string                  `json:"service_tier"`
-	Temperature float64                 `json:"temperature"`
+	Reasoning        ResponseObjectReasoning `json:"reasoning" api:"nullable"`
+	SafetyIdentifier string                  `json:"safety_identifier" api:"nullable"`
+	ServiceTier      string                  `json:"service_tier"`
+	Temperature      float64                 `json:"temperature"`
 	// Text response configuration for OpenAI responses.
 	Text ResponseObjectText `json:"text"`
 	// Enumeration of simple tool choice modes for response generation.
@@ -2708,6 +2709,7 @@ type ResponseObject struct {
 		Prompt             respjson.Field
 		PromptCacheKey     respjson.Field
 		Reasoning          respjson.Field
+		SafetyIdentifier   respjson.Field
 		ServiceTier        respjson.Field
 		Temperature        respjson.Field
 		Text               respjson.Field
@@ -9462,9 +9464,10 @@ type ResponseListResponse struct {
 	// Configuration for reasoning effort in OpenAI responses.
 	//
 	// Controls how much reasoning the model performs before generating a response.
-	Reasoning   ResponseListResponseReasoning `json:"reasoning" api:"nullable"`
-	ServiceTier string                        `json:"service_tier"`
-	Temperature float64                       `json:"temperature"`
+	Reasoning        ResponseListResponseReasoning `json:"reasoning" api:"nullable"`
+	SafetyIdentifier string                        `json:"safety_identifier" api:"nullable"`
+	ServiceTier      string                        `json:"service_tier"`
+	Temperature      float64                       `json:"temperature"`
 	// Text response configuration for OpenAI responses.
 	Text ResponseListResponseText `json:"text"`
 	// Enumeration of simple tool choice modes for response generation.
@@ -9504,6 +9507,7 @@ type ResponseListResponse struct {
 		Prompt             respjson.Field
 		PromptCacheKey     respjson.Field
 		Reasoning          respjson.Field
+		SafetyIdentifier   respjson.Field
 		ServiceTier        respjson.Field
 		Temperature        respjson.Field
 		Text               respjson.Field
@@ -13666,6 +13670,9 @@ type ResponseNewParams struct {
 	PreviousResponseID param.Opt[string] `json:"previous_response_id,omitzero"`
 	// A key to use when reading from or writing to the prompt cache.
 	PromptCacheKey param.Opt[string] `json:"prompt_cache_key,omitzero"`
+	// A stable identifier used to associate the request with an end user, for safety
+	// monitoring. Echoed back on the response.
+	SafetyIdentifier param.Opt[string] `json:"safety_identifier,omitzero"`
 	// Sampling temperature.
 	Temperature param.Opt[float64] `json:"temperature,omitzero"`
 	// The number of most likely tokens to return at each position, along with their

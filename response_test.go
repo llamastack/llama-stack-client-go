@@ -71,8 +71,9 @@ func TestResponseNewWithOptionalParams(t *testing.T) {
 			GenerateSummary: "auto",
 			Summary:         "auto",
 		},
-		ServiceTier: ogxclient.ResponseNewParamsServiceTierAuto,
-		Store:       ogxclient.Bool(true),
+		SafetyIdentifier: ogxclient.String("safety_identifier"),
+		ServiceTier:      ogxclient.ResponseNewParamsServiceTierAuto,
+		Store:            ogxclient.Bool(true),
 		StreamOptions: ogxclient.ResponseNewParamsStreamOptions{
 			IncludeObfuscation: ogxclient.Bool(true),
 		},
