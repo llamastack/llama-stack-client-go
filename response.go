@@ -16685,8 +16685,8 @@ const (
 )
 
 type ResponseCompactParams struct {
-	// The model to use for generating the compacted summary.
-	Model string `json:"model" api:"required"`
+	// Model identifier.
+	Model param.Opt[string] `json:"model,omitzero" api:"required"`
 	// Instructions to guide the compaction.
 	Instructions param.Opt[string] `json:"instructions,omitzero"`
 	// Whether to enable parallel tool calls. Accepted for compatibility but not used

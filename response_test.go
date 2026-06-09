@@ -202,7 +202,7 @@ func TestResponseCompactWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Responses.Compact(context.TODO(), ogxclient.ResponseCompactParams{
-		Model: "model",
+		Model: ogxclient.String("model"),
 		Input: ogxclient.ResponseCompactParamsInputUnion{
 			OfString: ogxclient.String("string"),
 		},
