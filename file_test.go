@@ -33,12 +33,9 @@ func TestFileNewWithOptionalParams(t *testing.T) {
 		option.WithBaseURL(baseURL),
 	)
 	_, err := client.Files.New(context.TODO(), ogxclient.FileNewParams{
-		File:    io.Reader(bytes.NewBuffer([]byte("Example data"))),
-		Purpose: ogxclient.FileNewParamsPurposeAssistants,
-		ExpiresAfter: ogxclient.FileNewParamsExpiresAfter{
-			Anchor:  "created_at",
-			Seconds: 3600,
-		},
+		File:         io.Reader(bytes.NewBuffer([]byte("Example data"))),
+		Purpose:      ogxclient.FileNewParamsPurposeAssistants,
+		ExpiresAfter: ogxclient.String("expires_after"),
 	})
 	if err != nil {
 		var apierr *ogxclient.Error

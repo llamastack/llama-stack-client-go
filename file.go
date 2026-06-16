@@ -281,8 +281,8 @@ type FileNewParams struct {
 	//
 	// Any of "assistants", "batch", "fine-tune", "vision", "user_data", "evals".
 	Purpose FileNewParamsPurpose `json:"purpose,omitzero" api:"required"`
-	// Control expiration of uploaded files.
-	ExpiresAfter FileNewParamsExpiresAfter `json:"expires_after,omitzero"`
+	// Optional expiration settings for the file.
+	ExpiresAfter param.Opt[string] `json:"expires_after,omitzero"`
 	paramObj
 }
 
@@ -315,33 +315,6 @@ const (
 	FileNewParamsPurposeUserData   FileNewParamsPurpose = "user_data"
 	FileNewParamsPurposeEvals      FileNewParamsPurpose = "evals"
 )
-
-// Control expiration of uploaded files.
-//
-// The properties Anchor, Seconds are required.
-type FileNewParamsExpiresAfter struct {
-	// The anchor point for expiration, must be 'created_at'.
-	//
-	// Any of "created_at".
-	Anchor string `json:"anchor,omitzero" api:"required"`
-	// Seconds until expiration, between 3600 (1 hour) and 2592000 (30 days).
-	Seconds int64 `json:"seconds" api:"required"`
-	paramObj
-}
-
-func (r FileNewParamsExpiresAfter) MarshalJSON() (data []byte, err error) {
-	type shadow FileNewParamsExpiresAfter
-	return param.MarshalObject(r, (*shadow)(&r))
-}
-func (r *FileNewParamsExpiresAfter) UnmarshalJSON(data []byte) error {
-	return apijson.UnmarshalRoot(data, r)
-}
-
-func init() {
-	apijson.RegisterFieldValidator[FileNewParamsExpiresAfter](
-		"anchor", "created_at",
-	)
-}
 
 type FileListParams struct {
 	// A cursor for pagination. Returns files after this ID.
